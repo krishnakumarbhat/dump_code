@@ -1,10 +1,10 @@
 # simg_zmq Documentation Hub
 
-This folder now documents the current HPCC runtime stack that uses `main_html` as the single user-facing entrypoint, `main_html/temp_dir/hpcc_main.py` as the runtime broker/supervisor, containerized KPI and RAG services, and the integrated Hyperlink viewer.
+This folder now documents the current HPCC runtime stack that uses `main_html` as the single user-facing entrypoint, `hpcc_main.py` as the runtime broker/supervisor, containerized KPI and RAG services, and the integrated Hyperlink viewer.
 
 The documentation in this folder is intended to describe the current architecture, deployment model, operational flow, and extension points for the stack that was validated with:
 
-- `python .\simg_zmq\main_html\temp_dir\hpcc_main.py`
+- `python .\\hpcc_main.py`
 - `http://127.0.0.1:5001/html`
 - `http://127.0.0.1:5100/health`
 - `127.0.0.1:9100` broker access
@@ -15,7 +15,16 @@ The documentation in this folder is intended to describe the current architectur
 
 This file is the entrypoint into the documentation set.
 
-### 2. Integration And Operations Guide
+### 2. Developer Runbook
+
+See `README_dev.md` for:
+
+- the current developer workflow
+- the meaning of the large artifact files commonly left out of git
+- exact build, upload, and run commands
+- a practical explanation of when to rebuild images versus when to sync source only
+
+### 3. Integration And Operations Guide
 
 See `README_hpcc_integration.md` for:
 
@@ -26,7 +35,7 @@ See `README_hpcc_integration.md` for:
 - broker and runtime-store behavior
 - operational troubleshooting
 
-### 3. System Design Deep Dive
+### 4. System Design Deep Dive
 
 See `HPCC_RUNTIME_SYSTEM_DESIGN.md` for:
 
@@ -36,7 +45,7 @@ See `HPCC_RUNTIME_SYSTEM_DESIGN.md` for:
 - data ownership and persistence model
 - architectural decisions and extension guidance
 
-### 4. Diagram Pack
+### 5. Diagram Pack
 
 See `hpcc_integration.drawio` for multi-page diagrams covering:
 
@@ -78,34 +87,32 @@ The most important folders for the integrated runtime are:
 
 ```text
 simg_zmq/
+|-- hpcc_main.py                     # Broker, launcher, Windows/WSL forwarding
 |-- main_html/                      # Primary web application and runtime map
 |   |-- app.py
-|   |-- models.py
 |   |-- runtime_store.py
 |   |-- hpcc_broker_client.py
 |   |-- rag_client.py
-|   |-- templates/
-|   `-- temp_dir/
-|       `-- hpcc_main.py            # Broker, launcher, Windows/WSL forwarding
+|   `-- templates/
 |-- rag/                            # RAG service and storage
 |-- KPI/                            # CAN KPI, UDP KPI, and Interactive Plot implementations
 |-- Hyperlink_tool/                 # Integrated viewer code
-|-- scripts/                        # Build helpers (wsl_build_hpcc_bundle.sh, etc.)
-|-- Readme/                         # This documentation set
-`-- requirements.txt
+|-- scripts/                        # Build helpers
+|-- simg_sh_hpcc/                   # Built images and runtime state
+`-- Readme/                         # This documentation set
 ```
 
 ## Quick Start
 
 ### Build Images
 
-Run inside WSL from `simg_zmq/`:
+Run inside WSL:
 
 ```bash
 bash scripts/wsl_build_hpcc_bundle.sh
 ```
 
-Expected outputs in `simg_zmq/`:
+Expected outputs in `simg_sh_hpcc/`:
 
 - `main_html.simg`
 - `kpi/can/can_kpi.simg`
@@ -118,7 +125,7 @@ Expected outputs in `simg_zmq/`:
 Run on Windows from the repository root:
 
 ```powershell
-python .\simg_zmq\main_html\temp_dir\hpcc_main.py
+python .\hpcc_main.py
 ```
 
 ### Verify Health
@@ -140,16 +147,17 @@ Invoke-WebRequest -UseBasicParsing http://127.0.0.1:5100/health
 
 | Path | Purpose |
 |------|---------|
-| `simg_zmq/runtime_state/main_html/cache_html/` | `main_html` cache and SQLite database |
-| `simg_zmq/runtime_state/rag/` | RAG SQLite data and vector store |
-| `simg_zmq/runtime_local/` | Fast local runtime root (broker DB, per-run logs and outputs) |
+| `simg_sh_hpcc/runtime_state/main_html/cache_html/` | `main_html` cache and SQLite database |
+| `simg_sh_hpcc/runtime_state/rag/` | RAG SQLite data and vector store |
+| `simg_sh_hpcc/runs/` | Broker-created per-run logs and outputs |
 
 ## Recommended Reading Order
 
-1. Read `README_hpcc_integration.md` to understand the end-to-end stack.
-2. Read `HPCC_RUNTIME_SYSTEM_DESIGN.md` if you need component-level design detail.
-3. Open `hpcc_integration.drawio` in diagrams.net for the architecture and sequence views.
+1. Read `README_dev.md` if your immediate goal is to build, upload, run, or explain the current artifact set.
+2. Read `README_hpcc_integration.md` to understand the end-to-end stack.
+3. Read `HPCC_RUNTIME_SYSTEM_DESIGN.md` if you need component-level design detail.
+4. Open `hpcc_integration.drawio` in diagrams.net for the architecture and sequence views.
 
 ## Scope Note
 
-Some older files in the repository still describe previous layouts such as legacy `all_services`, Docker-first workflows, or older cluster packaging approaches. This documentation set is specifically about the current `main_html` + `hpcc_main.py` (`main_html/temp_dir/hpcc_main.py`) architecture.
+Some older files in the repository still describe previous layouts such as legacy `all_services`, Docker-first workflows, or older cluster packaging approaches. This documentation set is specifically about the current `main_html` + `hpcc_main.py` + `simg_sh_hpcc` architecture.
