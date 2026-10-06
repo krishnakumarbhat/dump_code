@@ -21,14 +21,22 @@ class JiraIntegration:
         self.user = os.environ.get('JIRA_USER', '')
         self.api_token = os.environ.get('JIRA_API_TOKEN', '')
         self.default_project = os.environ.get('JIRA_DEFAULT_PROJECT', '')
-        self.default_board = os.environ.get('JIRA_DEFAULT_BOARD', 'FHW')
+        self.default_board = os.environ.get('JIRA_DEFAULT_BOARD') or self.default_project or 'FHW'
+        self.resim_issue_type = os.environ.get('JIRA_RESIM_ISSUE_TYPE', 'Story')
+        self.resim_story_points_field = os.environ.get('JIRA_RESIM_STORY_POINTS_FIELD', 'customfield_10002')
+        self.story_points_field = os.environ.get('JIRA_KPI_STORY_POINTS_FIELD', 'customfield_10016')
+        self.last_error = ''
         self._enabled = bool(self.base_url and (self.pat or (self.user and self.api_token)))
         if not self._enabled:
             logger.warning('Jira not configured: set JIRA_BASE_URL and JIRA_PAT (or JIRA_USER + JIRA_API_TOKEN)')
 
     @staticmethod
     def _load_runtime_config_file() -> None:
-        config_path = os.environ.get('HPCC_JIRA_CONFIG_FILE', '')
+        config_path = os.environ.get('HPCC_JIRA_CONFIG_FILE', '').strip()
+        if not config_path:
+            bundle_root = (os.environ.get('HPCC_BUNDLE_ROOT') or '').strip()
+            if bundle_root:
+                config_path = str(Path(bundle_root) / 'runtime_secrets' / 'jira.json')
         if not config_path:
             return
         try:
@@ -40,7 +48,8 @@ class JiraIntegration:
 
         allowed_keys = {
             'JIRA_BASE_URL', 'JIRA_PAT', 'JIRA_USER', 'JIRA_API_TOKEN',
-            'JIRA_DEFAULT_PROJECT', 'JIRA_DEFAULT_BOARD',
+            'JIRA_DEFAULT_PROJECT', 'JIRA_DEFAULT_BOARD', 'JIRA_RESIM_ISSUE_TYPE',
+            'JIRA_RESIM_STORY_POINTS_FIELD', 'JIRA_KPI_STORY_POINTS_FIELD',
         }
         if not isinstance(settings, dict):
             return
@@ -72,7 +81,8 @@ class JiraIntegration:
             resp.raise_for_status()
             return resp.json()
         except Exception as e:
-            logger.error(f'Jira API GET error: {e}')
+            self.last_error = str(e)
+            logger.error('Jira API GET error: %s', e)
             return None
 
     def _post(self, url: str, data: dict) -> Optional[Dict[str, Any]]:
@@ -84,7 +94,18 @@ class JiraIntegration:
             resp.raise_for_status()
             return resp.json()
         except Exception as e:
-            logger.error(f'Jira API error: {e}')
+            response = getattr(e, 'response', None)
+            details = ''
+            if response is not None:
+                try:
+                    body = response.json()
+                    details = '; '.join(body.get('errorMessages', []) + [f'{k}: {v}' for k, v in body.get('errors', {}).items()])
+                except (ValueError, AttributeError, TypeError):
+                    details = str(getattr(response, 'text', '') or '')[:500]
+                self.last_error = f'HTTP {response.status_code}: {details or str(e)}'
+            else:
+                self.last_error = str(e)
+            logger.error('Jira API error: %s', self.last_error)
             return None
 
     def find_users(self, query: str = '') -> List[Dict[str, str]]:
@@ -134,22 +155,28 @@ class JiraIntegration:
         summary = f'[RAG Report] Analysis from {os.path.basename(html_path)}'
         return self._create_ticket(summary, rag_answer, story_points=1, board=self.default_board)
 
-    def _create_ticket(self, summary: str, description: str, story_points: int = 1, board: str = 'FHW') -> Optional[str]:
+    def _create_ticket(
+        self, summary: str, description: str, story_points: int = 1,
+        board: str = 'FHW', issue_type: str = 'Task', story_points_field: str = '',
+    ) -> Optional[str]:
         if not self._enabled:
+            self.last_error = 'Jira credentials are not configured on this runtime.'
             return None
-        project_key = (board or '').strip() or self.default_project
+        project_key = (board or '').strip().upper() or self.default_project.strip().upper()
         if not project_key:
             logger.error('Jira project key is not configured')
+            self.last_error = 'Jira project key is not configured.'
             return None
         url = f'{self.base_url}/rest/api/2/issue'
         fields = {
             'project': {'key': project_key},
             'summary': summary,
             'description': description,
-            'issuetype': {'name': 'Task'},
+            'issuetype': {'name': issue_type},
         }
-        if story_points is not None:
-            fields['customfield_10016'] = story_points
+        selected_story_points_field = story_points_field or self.story_points_field
+        if story_points is not None and selected_story_points_field:
+            fields[selected_story_points_field] = story_points
         data = {'fields': fields}
         result = self._post(url, data)
         if result:
@@ -166,13 +193,24 @@ class JiraIntegration:
         notes: str = '',
         assignee: str = '',
         job_id: int = 0,
-        board: str = 'FHW',
+        board: str = '',
         story_points: int = 1,
     ) -> Optional[str]:
         """Create a JIRA ticket for a resim run result."""
+        self.last_error = ''
+        if not self._enabled:
+            self.last_error = 'Jira credentials are not configured on this runtime.'
+            return None
         desc = self._build_resim_description(input_txt, simg_path, log_path, notes, job_id)
         summary = f'[Resim Run] {Path(input_txt).name} - Job #{job_id}'
-        ticket_key = self._create_ticket(summary, desc, story_points=story_points, board=board)
+        ticket_key = self._create_ticket(
+            summary, desc, story_points=story_points,
+            board=board or self.default_project or self.default_board,
+            issue_type=self.resim_issue_type,
+            story_points_field=self.resim_story_points_field,
+        )
+        if not ticket_key and not self.last_error:
+            self.last_error = 'Jira did not return a created issue key.'
 
         if ticket_key and assignee:
             resolved = self.find_nearest_user(assignee)
@@ -196,13 +234,6 @@ class JiraIntegration:
         if notes:
             parts.append(f'Additional notes from user:')
             parts.append(f'{notes}')
-            parts.append('')
-
-        gemma_analysis = self._call_gemma_for_resim(input_txt, simg_path, log_path)
-        if gemma_analysis:
-            parts.append('Gemma AI Analysis:')
-            parts.append('')
-            parts.append(gemma_analysis)
             parts.append('')
 
         parts.append('This ticket was auto-generated from the HPCC Runtime Console.')

@@ -59,7 +59,7 @@ select_fast_runtime_root() {
 FAST_RUNTIME_ROOT="$(select_fast_runtime_root)"
 export HPCC_RUNTIME_LOCAL_ROOT="$FAST_RUNTIME_ROOT"
 
-LOG_DIR="$SCRIPT_DIR/logs"
+LOG_DIR="${HPCC_LOG_DIR:-$SCRIPT_DIR/logs}"
 RUNTIME_STATE_DIR="$SCRIPT_DIR/runtime_state"
 MAIN_HTML_STATE_DIR="$RUNTIME_STATE_DIR/main_html"
 export HPCC_RUNTIME_WORK_ROOT="${HPCC_RUNTIME_WORK_ROOT:-$RUNTIME_STATE_DIR/hpcc_runtime}"

@@ -1,4 +1,4 @@
-import os, platform, shutil, subprocess, sys, json, hashlib, socket, threading, time
+import os, platform, shutil, subprocess, sys, json, hashlib, socket, threading, time, shlex
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path, PurePosixPath
 
@@ -25,7 +25,7 @@ SIMGG_SRC = {
     'kpi/can_intplot/canintplot_kpi.simg': [ROOT / 'KPI' / 'can_interactive_plot' / 'singularity_canintplot.def', ROOT / 'KPI' / 'can_interactive_plot', ROOT / 'KPI' / 'intplot_kpi' / 'ConfigInteractivePlots_bordnet.xml'],
 }
 
-SCRIPTS = ['bundle_common.sh', 'cleanup_memory.sh', 'kpi_runtime_launcher.sh', 'hpcc_runtime_5006.env']
+SCRIPTS = ['bundle_common.sh', 'cleanup_memory.sh', 'kpi_runtime_launcher.sh', 'hpcc_runtime_5006.env', 'hpcc_runtime_5007.env', 'run_hpcc_5007.sh']
 BUNDLE_DIRS = ['main_html', 'Hyperlink_tool', 'KPI']
 
 
@@ -114,13 +114,19 @@ def _save_meta(meta):
 
 
 def _remove_tree(path: Path) -> None:
-    """Remove a generated tree, including transient WSL 9p directory races."""
+    """Remove generated contents and tolerate a locked-but-empty WSL directory."""
     if not path.exists():
         return
     shutil.rmtree(path, ignore_errors=True)
     if path.exists() and os.name != 'nt':
         subprocess.run(['rm', '-rf', '--', str(path)], check=False)
     if path.exists():
+        try:
+            next(path.iterdir())
+        except StopIteration:
+            # WSL/DrvFs can deny removing an open directory after its contents
+            # are gone. copytree(..., dirs_exist_ok=True) safely reuses it.
+            return
         raise OSError(f'Unable to remove generated directory: {path}')
 
 
@@ -352,9 +358,11 @@ def generate(no_rag=False):
     legacy_resim_sh_src = ROOT / 'rResim_Gen7.sh'
     if resim_sh_src.exists():
         shutil.copy2(resim_sh_src, GEN / 'trig_helios.sh')
+        (GEN / 'trig_helios.sh').chmod(0o755)
         print('  copied trig_helios.sh')
     elif legacy_resim_sh_src.exists():
         shutil.copy2(legacy_resim_sh_src, GEN / 'trig_helios.sh')
+        (GEN / 'trig_helios.sh').chmod(0o755)
         print('  copied legacy rResim_Gen7.sh as trig_helios.sh')
     else:
         print('  WARNING: trig_helios.sh not found at project root')
@@ -391,12 +399,14 @@ def generate(no_rag=False):
         src = ROOT / name
         dst = GEN / 'bundle_src' / name
         if src.is_dir():
-            if dst.exists():
-                _remove_tree(dst)
+            # WSL/DrvFs can keep this mount-backed directory open (e.g. by an
+            # editor), making rmdir fail after rmtree has already removed its
+            # files. Reuse the directory and replace files in place instead.
             shutil.copytree(
                 src,
                 dst,
                 ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '.git', '.cache_html', '*.db', '*.sqlite', '*.sqlite3'),
+                dirs_exist_ok=True,
             )
             print(f'  copied bundle_src/{name}/')
 
@@ -437,6 +447,8 @@ _CRITICAL_BUNDLE_FILES = [
     'bundle_src/main_html/app.py',
     'bundle_src/KPI',
     'run_hpcc.sh',
+    'run_hpcc_5007.sh',
+    'hpcc_runtime_5007.env',
     'hpcc_main.pyz',
 ]
 
@@ -633,30 +645,52 @@ def _save_upload_hashes():
 
 
 def _load_env():
-    env_path = ROOT / '.env'
-    if not env_path.exists():
-        return {}
     env = {}
-    for line in env_path.read_text().splitlines():
-        line = line.strip()
-        if not line or line.startswith('#'):
+    # Deployment auth may be in either root .env or the Jira CLI's jira/.env.
+    for env_path in (ROOT / '.env', ROOT / 'jira' / '.env'):
+        if not env_path.exists():
             continue
-        if '=' in line:
-            k, v = line.split('=', 1)
-            env[k.strip()] = v.strip().strip('"').strip("'")
+        for line in env_path.read_text(encoding='utf-8').splitlines():
+            line = line.strip()
+            if not line or line.startswith('#') or '=' not in line:
+                continue
+            key, value = line.split('=', 1)
+            env.setdefault(key.strip(), value.strip().strip('"').strip("'"))
     return env
+
+
+def _deployment_targets(env):
+    """Resolve only the explicitly configured runtime deployment roots."""
+    runtime_path = ROOT / 'hpcc_runtime_5007.env'
+    runtime = {}
+    if runtime_path.exists():
+        for line in runtime_path.read_text(encoding='utf-8').splitlines():
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                key, value = line.split('=', 1)
+                runtime[key.strip()] = value.strip().strip('"').strip("'")
+    configured = [
+        ('krakow', env.get('krakow_host') or env.get('KRAKOW_HOST') or '10.214.45.45', runtime.get('HPCC_KRAKOW_DEPLOY_ROOT') or env.get('krakow_path', '')),
+        ('southfield', env.get('southfield_host') or env.get('SOUTHFIELD_HOST') or '10.192.224.131', runtime.get('HPCC_SOUTHFIELD_DEPLOY_ROOT') or env.get('southfield_path', '')),
+    ]
+    return [(name, host, str(PurePosixPath(path))) for name, host, path in configured if path]
 
 
 def _jira_config_payload(env):
     keys = (
         'JIRA_BASE_URL', 'JIRA_PAT', 'JIRA_USER', 'JIRA_API_TOKEN',
-        'JIRA_DEFAULT_PROJECT', 'JIRA_DEFAULT_BOARD',
+        'JIRA_DEFAULT_PROJECT', 'JIRA_DEFAULT_BOARD', 'JIRA_RESIM_ISSUE_TYPE',
     )
     settings = {}
+    env = dict(env)
     for key in keys:
         value = os.environ.get(key) or env.get(key, '')
         if value:
             settings[key] = value
+    # The Resim integration needs a Jira project key, not a board numeric ID.
+    # The Jira CLI's JIRA_DEFAULT_BOARD_ID is unrelated to issue creation.
+    settings.setdefault('JIRA_DEFAULT_BOARD', settings.get('JIRA_DEFAULT_PROJECT', ''))
+    settings.setdefault('JIRA_RESIM_ISSUE_TYPE', 'Story')
     if not settings.get('JIRA_BASE_URL') or not (
         settings.get('JIRA_PAT') or (settings.get('JIRA_USER') and settings.get('JIRA_API_TOKEN'))
     ):
@@ -691,7 +725,10 @@ def _upload_private_jira_config(sftp, remote_root, known_dirs, payload):
         with sftp.open(staged_path, 'wb') as secret_file:
             secret_file.write(payload)
         sftp.chmod(staged_path, 0o600)
-        sftp.posix_rename(staged_path, remote_path)
+        if hasattr(sftp, 'posix_rename'):
+            sftp.posix_rename(staged_path, remote_path)
+        else:
+            sftp.rename(staged_path, remote_path)
         sftp.chmod(remote_path, 0o600)
     except Exception:
         try:
@@ -762,8 +799,6 @@ def upload():
 
     netid = env.get('netid', '')
     password = env.get('netid_password', '') or os.environ.get('HPCC_NETID_PASSWORD', '')
-    krakow_path = env.get('krakow_path', '')
-    southfield_path = env.get('southfield_path', '')
     host = env.get('host', '') or env.get('HOST', '')
     port = int(env.get('port', '22'))
     timeout_s = int(env.get('sftp_timeout', '120'))
@@ -771,15 +806,10 @@ def upload():
     krakow_host = env.get('krakow_host', '') or env.get('KRAKOW_HOST', '') or '10.214.45.45'
     southfield_host = env.get('southfield_host', '') or env.get('SOUTHFIELD_HOST', '') or '10.192.224.131'
 
-    if not netid or not password or not (krakow_path or southfield_path):
+    targets = _deployment_targets(env)
+    if not netid or not password or not targets:
         print('ERROR: .env must set netid, netid_password, and krakow_path and/or southfield_path')
         raise SystemExit(1)
-
-    targets = []
-    if krakow_path:
-        targets.append(('krakow', krakow_host if southfield_path else (host or krakow_host), krakow_path))
-    if southfield_path:
-        targets.append(('southfield', southfield_host if krakow_path else (host or southfield_host), southfield_path))
 
     # Runtime data dirs that must NOT be overwritten (exist cluster-side with real data)
     _RUNTIME_EXCLUDE_DIRS = {
@@ -899,7 +929,6 @@ def upload():
         _sftp_ensure_dir(sftp, remote_root, ensured_dirs)
         try:
             sentinel_pairs = (
-                ('main_html.simg', GEN / 'main_html.simg'),
                 ('hpcc_main.pyz', GEN / 'hpcc_main.pyz'),
                 ('bundle_src/main_html/app.py', GEN / 'bundle_src' / 'main_html' / 'app.py'),
             )
@@ -996,15 +1025,46 @@ def upload():
                     print(msg, flush=True)
                     with failures_lock:
                         failures.append(msg)
-            if jira_config_payload is not None:
-                if sftp is None:
-                    transport, sftp, ensured_dirs, remote_has_bundle = _connect_target(
-                        target_name, target_host, remote_root
-                    )
-                _upload_private_jira_config(sftp, remote_root, ensured_dirs, jira_config_payload)
-                print(f'[{target_name}] Updated owner-only Jira runtime secret.', flush=True)
         except Exception as exc:
             msg = f'[{target_name}] FAIL stage=connect remote_root={remote_root} error={exc}'
+            print(msg, flush=True)
+            with failures_lock:
+                failures.append(msg)
+        finally:
+            if sftp is not None:
+                sftp.close()
+            if transport is not None:
+                transport.close()
+
+    def _sync_jira_secret(target_name, target_host, remote_root):
+        if jira_config_payload is None:
+            print(f'[{target_name}] No complete Jira config found; existing runtime secret was left intact.', flush=True)
+            return
+        transport = None
+        sftp = None
+        try:
+            transport, sftp, ensured_dirs, remote_has_bundle = _connect_target(target_name, target_host, remote_root)
+            _upload_private_jira_config(sftp, remote_root, ensured_dirs, jira_config_payload)
+            print(f'[{target_name}] Updated owner-only Jira runtime secret.', flush=True)
+            if remote_has_bundle:
+                command = (
+                    "master=$(ps -u \"$USER\" -o pid=,args= | "
+                    "awk '/gunicorn.*main_html/ && !/awk/ {print $1; exit}'); "
+                    "if [ -n \"$master\" ]; then kill -HUP \"$master\"; "
+                    "echo \"reloaded 5007 UI master $master\"; else "
+                    "echo 'no matching Gunicorn master; restart the 5007 launcher'; exit 1; fi"
+                )
+                stdin, stdout, stderr = transport.open_session(), None, None
+                stdin.exec_command(f"cd {shlex.quote(remote_root)} && {command}")
+                stdout = stdin.makefile('rb', -1)
+                stderr = stdin.makefile_stderr('rb', -1)
+                result = stdout.read().decode('utf-8', 'replace').strip()
+                error = stderr.read().decode('utf-8', 'replace').strip()
+                if error or 'reloaded 5007 UI master' not in result:
+                    raise RuntimeError(error or result or '5007 Gunicorn reload failed')
+                print(f'[{target_name}] {result}', flush=True)
+        except Exception as exc:
+            msg = f'[{target_name}] FAIL stage=jira_secret remote_root={remote_root} error={exc}'
             print(msg, flush=True)
             with failures_lock:
                 failures.append(msg)
@@ -1026,6 +1086,11 @@ def upload():
 
     for target_thread in target_threads:
         target_thread.join()
+
+    # Secret delivery is independent of source/image transfer; always attempt it,
+    # including when reconnecting a live bundle whose source files already match.
+    for target_name, target_host, remote_root in targets:
+        _sync_jira_secret(target_name, target_host, remote_root)
 
     if failures:
         print(f'ERROR: {len(failures)} uploads failed:')

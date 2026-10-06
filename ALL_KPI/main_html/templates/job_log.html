@@ -92,6 +92,21 @@
         <i class="bi bi-folder2-open"></i> Output
       </a>
       {% endif %}
+      {% set job_parameters = job.parameters or {} %}
+      {% if job.tool_name == 'resim_run' and job_parameters.get('create_jira') %}
+      <span class="align-self-center text-muted" id="jiraTicketState">
+        {% if job_parameters.get('jira_ticket_key') %}
+        Jira ticket: <a href="{{ jira_base_url }}/browse/{{ job_parameters.get('jira_ticket_key') }}" target="_blank" rel="noopener">{{ job_parameters.get('jira_ticket_key') }}</a>
+        {% elif job_parameters.get('jira_error') %}
+        Jira: {{ job_parameters.get('jira_error') }}
+        {% else %}
+        {% if job.status in ['SUBMITTED', 'RUNNING', 'PENDING', 'QUEUED'] %}Jira ticket will be created when Slurm accepts this run.{% else %}Jira ticket creation pending.{% endif %}
+        {% endif %}
+      </span>
+      {% if not job_parameters.get('jira_ticket_key') %}
+      <button class="btn btn-outline-warning" type="button" id="retryJiraButton">Retry Jira ticket</button>
+      {% endif %}
+      {% endif %}
       <div class="console-shell">
         <div class="card shadow-sm">
           <div class="card-body">
@@ -229,6 +244,26 @@ const consoleModeChip = document.getElementById('consoleModeChip');
 const consoleInputState = document.getElementById('consoleInputState');
 const consoleStatusNote = document.getElementById('consoleStatusNote');
 const viewerCanSendInput = {{ can_send_input|tojson }};
+const retryJiraButton = document.getElementById('retryJiraButton');
+const jiraTicketState = document.getElementById('jiraTicketState');
+
+if (retryJiraButton && jiraTicketState) {
+  retryJiraButton.addEventListener('click', async () => {
+    retryJiraButton.disabled = true;
+    retryJiraButton.textContent = 'Creating...';
+    try {
+      const response = await fetch(`/api/job/{{ job.id }}/jira`, { method: 'POST' });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || 'Jira issue creation failed.');
+      jiraTicketState.textContent = `Jira ticket: ${data.ticket_key}`;
+      retryJiraButton.remove();
+    } catch (error) {
+      jiraTicketState.textContent = `Jira error: ${error.message}`;
+      retryJiraButton.disabled = false;
+      retryJiraButton.textContent = 'Retry Jira ticket';
+    }
+  });
+}
 
 if (consoleOutput && consolePaneSelect && consoleInput && sendConsoleInputBtn && sendInterruptBtn && consoleStatusChip && consoleModeChip && consoleInputState && consoleStatusNote) {
   let consoleOffset = {{ initial_offset|default(0) }};

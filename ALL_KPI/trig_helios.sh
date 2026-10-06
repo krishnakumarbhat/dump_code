@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 echo "[ver-3.0] : Starting Resim Execution"
+if [[ "${RESIM_SLURM_MODULE:-}" == "slurm/helios" ]]; then
+    # Helios compute nodes cannot execute scripts from Krakow's /net mount directly,
+    # and the RNA-SDV wrapper targets the unrelated STLA-SMALL pipeline. Call the
+    # shared CEER ReSim source under its own compatible environment instead.
+    source /etc/profile.d/modules.sh >/dev/null 2>&1 || true
+    module load slurm/helios || exit 127
+    source /net/8k3/e0fs01/irods/PLKRA-PROJECTS/CEER-PROGRAM/4-Checkout/Environment/env/bin/activate || exit 1
+    python /net/8k3/e0fs01/irods/PLKRA-PROJECTS/CEER-PROGRAM/7-Tools/ReSimAutoMng/Support/Resim/resim_main.py "$@"
+    status=$?
+    deactivate >/dev/null 2>&1 || true
+    exit "$status"
+fi
 if [[ $1 == *'/projects/'* ]]; then
     $(xxd -p -r <<<"73 6F 75 72 63 65 20 2F 6D 6E 74 2F 75 73 6D 69 64 65 74 2F 70 72 6F 6A 65 63 74 73 2F 52 41 44 41 52 43 4F 52 45 2F 32 2D 53 69 6D 2F 55 53 45 52 5F 44 41 54 41 2F 7A 35 64 61 61 39 2F 76 69 72 74 75 61 6C 5F 65 6E 76 2F 67 65 6E 37 76 32 2F 62 69 6E 2F 61 63 74 69 76 61 74 65")
     $(xxd -p -r <<<"70 79 74 68 6f 6e 20 2d 42 20 2f 6d 6e 74 2f 75 73 6d 69 64 65 74 2f 70 72 6f 6a 65 63 74 73 2f 47 50 4f 2d 49 46 56 37 58 58 2f 34 2d 43 68 65 63 6b 6f 75 74 2f 52 65 53 69 6d 41 75 74 6f 4d 6e 67 2f 53 75 70 70 6f 72 74 2f 52 65 73 69 6d 2f 72 65 73 69 6d 5f 6d 61 69 6e 2e 70 79") "$@"

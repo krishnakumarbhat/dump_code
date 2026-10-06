@@ -24,11 +24,13 @@ The current HPCC wrapper passes the input list, SIMG path, `highPrio` mode, and 
 
 ## 2. Entry Point
 
-### `trig_helios.sh` (formerly `rResim_Gen7.sh`)
+### `trig_helios.sh` (Krakow default / Helios dispatch)
 
 The deployed wrapper is version `3.0`.
 
-It performs three operations:
+Krakow's default route retains the historical wrapper. Helios uses the submitting user's Cyfronet key through the Krakow jump host, then native `srun` with account `8k3p89`. Both SSH hops accept new host keys without a prompt and reject changed keys; batch mode makes missing key access fail promptly. This bypasses the site Slurm wrapper's quoting and stdin problems. Inside the allocation, the selected configuration answers are piped directly into `bash Main/trig_pip.sh` in the shared CEER `Core_RESIM_HPCC/Resim_Pipeline` checkout. That dispatcher selects the compatible environment and ReSim entry point.
+
+The wrapper performs three operations on its legacy/default route:
 
 1. Detects Southfield when the first argument contains `/projects/`.
 2. Sources the Southfield Gen7 virtual environment.

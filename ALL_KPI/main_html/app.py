@@ -294,6 +294,7 @@ KRAKOW_RUNTIME_PROFILES = {
         'label': 'Helios',
         'module': 'slurm/helios',
         'srun': '/app/software/slurm/helios/bin/srun',
+        'pipeline_root': '/net/8k3/e0fs01/irods/PLKRA-PROJECTS/CEER-PROGRAM/4-Checkout/Resim_Pipeline/Core_RESIM_HPCC/Resim_Pipeline',
         'account': '8k3p89',
         'partition': '8k3',
         'memory': '4G',
@@ -1068,9 +1069,12 @@ def api_resim_run_submit():
     simg_path = (data.get('simg_path') or '').strip()
     config_xml = (data.get('config_xml') or data.get('xml_path') or '').strip()
     profile_id = (data.get('profile') or 'krakow').strip().lower()
-    bus_tag = (data.get('bus_tag') or 'b02').strip().lower()
+    bus_tag = (data.get('bus_tag') or '').strip().lower()
+    if not bus_tag and 'bus_tag' not in data:
+        bus_tag = 'b02'
+    rm_zero = str(data.get('rm_zero', '')).strip().lower() in ('1', 'true', 'yes')
     create_jira = data.get('create_jira') in (True, '1', 'true')
-    jira_board = (data.get('jira_board') or '').strip() or 'FHW'
+    jira_board = (data.get('jira_board') or '').strip()
     jira_assignee = (data.get('jira_assignee') or '').strip()
     jira_notes = (data.get('jira_notes') or '').strip()
 
@@ -1078,27 +1082,25 @@ def api_resim_run_submit():
         return jsonify({'ok': False, 'error': 'Input file (input.txt) path is required.'}), 400
     if not simg_path:
         return jsonify({'ok': False, 'error': 'Simg file path is required.'}), 400
-    if not config_xml:
-        return jsonify({'ok': False, 'error': 'XML configuration file path is required.'}), 400
-    if not config_xml.lower().endswith('.xml'):
+    if config_xml and not config_xml.lower().endswith('.xml'):
         return jsonify({'ok': False, 'error': 'XML configuration path must point to a .xml file.'}), 400
     if profile_id not in KRAKOW_RUNTIME_PROFILES:
         return jsonify({'ok': False, 'error': 'Unknown Krakow Resim runtime profile.'}), 400
-    if bus_tag not in ('b02', 'b04'):
-        return jsonify({'ok': False, 'error': "Unknown bus tag. Choose 'b02' or 'b04'."}), 400
+    if bus_tag not in ('', 'b02', 'b04'):
+        return jsonify({'ok': False, 'error': "Unknown bus tag. Choose default, 'b02', or 'b04'."}), 400
 
     cluster_txt = cluster_from_path(input_txt)
     cluster_simg = cluster_from_path(simg_path)
-    cluster_xml = cluster_from_path(config_xml)
+    cluster_xml = cluster_from_path(config_xml) if config_xml else None
     if not cluster_txt:
         return jsonify({'ok': False, 'error': 'Input file path must start with /net/ (Krakow) or /mnt/ (Southfield).'}), 400
     if not cluster_simg:
         return jsonify({'ok': False, 'error': 'Simg file path must start with /net/ (Krakow) or /mnt/ (Southfield).'}), 400
-    if not cluster_xml:
+    if config_xml and not cluster_xml:
         return jsonify({'ok': False, 'error': 'XML configuration path must start with /net/ (Krakow) or /mnt/ (Southfield).'}), 400
     if cluster_txt != cluster_simg:
         return jsonify({'ok': False, 'error': f'Both files must be in the same partition. Input is on {cluster_txt}, simg is on {cluster_simg}.'}), 400
-    if cluster_txt != cluster_xml:
+    if cluster_xml and cluster_txt != cluster_xml:
         return jsonify({'ok': False, 'error': f'All files must be in the same partition. XML is on {cluster_xml}, input is on {cluster_txt}.'}), 400
     if cluster_txt != 'krakow':
         profile_id = 'krakow'
@@ -1120,7 +1122,7 @@ def api_resim_run_submit():
     log_path = os.path.join(log_dir, f'resim_run_{job_uuid}.log')
 
     resim_script_src = _resim_script_source_path()
-    if not os.path.isfile(resim_script_src):
+    if profile_id != 'helios' and not os.path.isfile(resim_script_src):
         return jsonify({'ok': False, 'error': f'trig_helios.sh not found (looked at: {resim_script_src}).'}), 500
 
     # Fetch the logged-in user's stored cluster password
@@ -1153,12 +1155,41 @@ def api_resim_run_submit():
     # the first-ever SSH to 127.0.0.1 for this user, which otherwise hangs
     # forever with no tty/askpass path to answer it.
     profile = KRAKOW_RUNTIME_PROFILES[profile_id]
-    resim_invocation = (
-        f"env RESIM_SLURM_MODULE={shlex.quote(profile['module'])} "
-        f"{shlex.quote(resim_script_src)} {shlex.quote(input_txt)} "
-        f"{shlex.quote(simg_path)} highPrio {shlex.quote(bus_tag)}"
-    )
-    if cluster_txt == 'krakow' and profile_id != 'krakow':
+    rm_zero_args = ['rm_zero'] if rm_zero else []
+    if cluster_txt == 'krakow' and profile_id == 'helios':
+        pipeline_root = profile['pipeline_root']
+        # ponytail: bypass the site's SSH wrapper; it loses quoting/stdin and prompts on the jump host.
+        pipeline_args = [input_txt, simg_path, 'highPrio', *([bus_tag] if bus_tag else []), *rm_zero_args]
+        answers = 'n\n1\n' + config_xml + '\n' if config_xml else 'y\n'
+        allocated_command = (
+            f"cd {shlex.quote(pipeline_root)} && "
+            f"printf %s {shlex.quote(answers)} | bash Main/trig_pip.sh {shlex.join(pipeline_args)}"
+        )
+        helios_srun = [
+            'srun', f"--account={profile['account']}", f"--partition={profile['partition']}",
+            f"--mem={profile['memory']}", f"--cpus-per-task={profile['cpus']}",
+            f"--time={profile['time_limit']}", 'bash', '-lc', allocated_command,
+        ]
+        net_id = current_user.net_id.removeprefix('8k3')
+        jump_command = (
+            'ssh -i "$HOME/.ssh/id_rsa_cyfronet" -o StrictHostKeyChecking=accept-new '
+            '-o BatchMode=yes -o ConnectTimeout=20 -W %h:%p '
+            + shlex.quote(f'{net_id}@10.214.45.149')
+        )
+        resim_invocation = (
+            'ssh -T -i "$HOME/.ssh/id_rsa_cyfronet" '
+            '-o StrictHostKeyChecking=accept-new -o BatchMode=yes -o ConnectTimeout=20 '
+            f"-o {shlex.quote('ProxyCommand=' + jump_command)} "
+            f"{shlex.quote('8k3' + net_id + '@149.156.176.25')} "
+            + shlex.quote('bash -lc ' + shlex.quote(shlex.join(helios_srun)))
+        )
+        remote_working_directory = project_root
+    else:
+        resim_args = [resim_script_src, input_txt, simg_path, 'highPrio', *([bus_tag] if bus_tag else [])]
+        resim_args.extend(rm_zero_args)
+        resim_invocation = f"env RESIM_SLURM_MODULE={shlex.quote(profile['module'])} {shlex.join(resim_args)}"
+        remote_working_directory = project_root
+    if cluster_txt == 'krakow' and profile_id not in {'krakow', 'helios'}:
         srun_command = shlex.quote(profile.get('srun') or 'srun')
         resim_invocation = (
             f"module load {shlex.quote(profile['module'])} && "
@@ -1168,7 +1199,7 @@ def api_resim_run_submit():
         )
     remote_command = (
         f"stty -echo 2>/dev/null; {env_prefix}"
-        f"cd {shlex.quote(project_root)} 2>/dev/null || cd {shlex.quote(log_dir)}; "
+        f"cd {shlex.quote(remote_working_directory)} 2>/dev/null || cd {shlex.quote(log_dir)}; "
         f"{resim_invocation}"
     )
     cmd = [
@@ -1200,6 +1231,7 @@ def api_resim_run_submit():
             'simg_path': simg_path,
             'config_xml': config_xml,
             'bus_tag': bus_tag,
+            'rm_zero': rm_zero,
             'create_jira': create_jira,
             'jira_board': jira_board,
             'jira_assignee': jira_assignee,
@@ -3494,21 +3526,27 @@ def _windows_path_to_wsl_path(path: str) -> str:
 
 def _create_jira_ticket_for_job(job: 'JobHistory', log_path: str) -> None:
     """Create a JIRA ticket for a completed job if configured."""
-    params = job.parameters or {}
-    if not params.get('create_jira'):
+    params = dict(job.parameters or {})
+    if not params.get('create_jira') or params.get('jira_ticket_key'):
         return
+    params.pop('jira_error', None)
 
     from jira_integration import JiraIntegration
     jira = JiraIntegration()
     if not jira._enabled:
-        logger.warning('JIRA not configured, skipping ticket creation')
+        params['jira_error'] = 'Jira credentials are not configured on this runtime.'
+        job.parameters = params
+        db.session.commit()
+        logger.warning('JIRA not configured for job %s', job.id)
         return
 
     assignee = (params.get('jira_assignee') or '').strip()
     notes = (params.get('jira_notes') or '').strip()
     input_txt = (params.get('input_txt') or job.input_path or '').strip()
     simg_path = (params.get('simg_path') or '').strip()
-    board = (params.get('jira_board') or '').strip() or 'FHW'
+    board = (params.get('jira_board') or '').strip()
+    if not board:
+        board = jira.default_project or jira.default_board
 
     key = jira.create_resim_ticket(
         input_txt=input_txt,
@@ -3523,8 +3561,32 @@ def _create_jira_ticket_for_job(job: 'JobHistory', log_path: str) -> None:
     if key:
         logger.info('Created JIRA ticket %s for job %s', key, job.id)
         params['jira_ticket_key'] = key
+        params.pop('jira_error', None)
         job.parameters = params
         db.session.commit()
+    else:
+        params['jira_error'] = jira.last_error or 'Jira issue creation failed; inspect application logs.'
+        job.parameters = params
+        db.session.commit()
+
+
+@app.route('/api/job/<int:job_id>/jira', methods=['POST'])
+@login_required
+def retry_job_jira_ticket(job_id: int):
+    """Create or retry the Jira ticket requested for a ReSim job."""
+    job = _get_manageable_job(job_id)
+    params = dict(job.parameters or {})
+    if job.tool_name != 'resim_run' or not params.get('create_jira'):
+        return jsonify({'success': False, 'error': 'This job did not request a ReSim Jira ticket.'}), 400
+    if params.get('jira_ticket_key'):
+        return jsonify({'success': True, 'ticket_key': params['jira_ticket_key'], 'already_created': True})
+
+    log_path, _console = _resolve_job_log_path(job)
+    _create_jira_ticket_for_job(job, log_path or '')
+    params = dict(job.parameters or {})
+    if params.get('jira_ticket_key'):
+        return jsonify({'success': True, 'ticket_key': params['jira_ticket_key']})
+    return jsonify({'success': False, 'error': params.get('jira_error', 'Jira issue creation failed.')}), 502
 
 
 def _run_local_job_background(job_id: int, cmd, cwd: str, log_path: str, env=None):
@@ -3710,6 +3772,7 @@ def _write_askpass_script(password: str, path: str) -> None:
 
 _LOG_FAILURE_MARKERS = [
     ('permission denied', 'Permission denied (likely an NFS/ACL restriction on a third-party project path).'),
+    ('[error] : inputs validation', 'ReSim rejected its arguments; verify the input-list and SIMG paths.'),
     ('no such file or directory', 'A required file/script was not found.'),
     ('command not found', 'A required command was not found in the remote shell.'),
     ('traceback (most recent call last)', 'The remote Python script raised an unhandled exception.'),
@@ -3735,8 +3798,7 @@ def _first_failure_marker_in_log(log_path: str) -> str:
 
 
 def _start_resim_input_feeder(config_xml: str):
-    # The vendor prompt asks whether to use the default Docker configuration.
-    # An external XML requires answering No, then supplying its path.
+    # Select the vendor default config when no XML is supplied; otherwise pass custom XML.
     input_payload = 'n\n1\n' if config_xml else 'y\n'
     if config_xml:
         input_payload += f'{config_xml}\n'
@@ -3903,6 +3965,8 @@ def _run_ssh_job_background(
                                     params['resim_slurm_job_ids'] = pipeline_ids
                                     job.parameters = params
                                     db.session.commit()
+                                    if params.get('create_jira'):
+                                        _create_jira_ticket_for_job(job, log_path)
 
                     rc = proc.poll()
                     if rc is not None:
@@ -4035,10 +4099,6 @@ def submit_tool_job(tool_name: str):
         if not simg_path:
             flash('Simg file path is required', 'error')
             return redirect(request.referrer or url_for('dashboard'))
-        if not config_xml:
-            flash('XML configuration file is required', 'error')
-            return redirect(request.referrer or url_for('dashboard'))
-        
     else:
         # Default behavior for other tools
         input_path = parameters.get('input_path', '').strip()
@@ -4843,6 +4903,15 @@ def view_job_log(job_id):
     if console.get('tmux_session_name'):
         tmux_cmd = f"tmux attach -t {console['tmux_session_name']}"
 
+    params = dict(job.parameters or {})
+    if (
+        job.tool_name == 'resim_run'
+        and params.get('create_jira')
+        and not params.get('jira_ticket_key')
+        and job.status in {'SUBMITTED', 'COMPLETED', 'FAILED'}
+    ):
+        _create_jira_ticket_for_job(job, log_path or '')
+
     return render_template(
         'job_log.html',
         job=job,
@@ -4859,6 +4928,7 @@ def view_job_log(job_id):
         runtime_job=runtime_job,
         job_owner=_job_owner(job),
         can_send_input=_can_manage_job(job),
+        jira_base_url=jira_integration.base_url,
         job_artifacts=(runtime_job or {}).get('artifacts') or ((job.parameters or {}).get('runtime_artifacts') if isinstance(job.parameters, dict) else []) or [],
     )
 
