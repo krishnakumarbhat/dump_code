@@ -198,7 +198,7 @@
         </div>
         <div class="collapse show" id="resimFormBody">
             <div class="card-body">
-                <p class="lead-copy">Provide the <code>input.txt</code>, <code>.simg</code>, and Resim <code>.xml</code> paths. The console runs <code>trig_helios.sh &lt;input&gt; &lt;simg&gt; highPrio &lt;b02|b04&gt;</code>. The XML path is supplied after the vendor confirmation prompt.</p>
+                <p class="lead-copy">Provide the <code>input.txt</code> and <code>.simg</code> paths. Resim XML is optional: leave it blank to use the vendor default configuration. Bus tag is optional and defaults to the pipeline setting.</p>
                 <form id="resimRunForm">
                     {% if detected_cluster == 'krakow' %}
                     <div class="row g-3 mb-2">
@@ -214,10 +214,18 @@
                         <div class="col-md-3">
                             <label class="form-label" for="bus_tag">Bus tag</label>
                             <select class="form-select" id="bus_tag" name="bus_tag">
-                                <option value="b02" selected>b02</option>
+                                <option value="" selected>Default (pipeline setting)</option>
+                                <option value="b02">b02</option>
                                 <option value="b04">b04</option>
                             </select>
-                            <small class="text-muted">Passed as <code>highPrio &lt;bus-tag&gt;</code> to <code>trig_helios.sh</code>.</small>
+                            <small class="text-muted">Default omits the bus-tag argument; the pipeline uses its configured default.</small>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input" type="checkbox" role="switch" id="rm_zero" name="rm_zero" value="1">
+                                <label class="form-check-label" for="rm_zero">Remove segment 0000</label>
+                            </div>
+                            <small class="text-muted">Skips the <code>_0000_</code> log segment. Passed as a trailing <code>rm_zero</code> flag.</small>
                         </div>
                     </div>
                     {% else %}
@@ -225,10 +233,18 @@
                         <div class="col-md-3">
                             <label class="form-label" for="bus_tag">Bus tag</label>
                             <select class="form-select" id="bus_tag" name="bus_tag">
-                                <option value="b02" selected>b02</option>
+                                <option value="" selected>Default (pipeline setting)</option>
+                                <option value="b02">b02</option>
                                 <option value="b04">b04</option>
                             </select>
-                            <small class="text-muted">Passed as <code>highPrio &lt;bus-tag&gt;</code> to <code>trig_helios.sh</code>.</small>
+                            <small class="text-muted">Default omits the bus-tag argument; the pipeline uses its configured default.</small>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input" type="checkbox" role="switch" id="rm_zero" name="rm_zero" value="1">
+                                <label class="form-check-label" for="rm_zero">Remove segment 0000</label>
+                            </div>
+                            <small class="text-muted">Skips the <code>_0000_</code> log segment. Passed as a trailing <code>rm_zero</code> flag.</small>
                         </div>
                     </div>
                     {% endif %}
@@ -248,11 +264,12 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Resim XML configuration</label>
+                            <label class="form-label">Resim XML configuration (optional)</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="config_xml" id="config_xml" placeholder="/net/.../*.xml" required>
+                                <input type="text" class="form-control" name="config_xml" id="config_xml" placeholder="Leave blank for vendor default">
                                 <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('config_xml', ['xml'])">Browse</button>
                             </div>
+                            <small class="text-muted">Provide a custom XML path when needed; otherwise Resim uses its default Docker configuration.</small>
                         </div>
                     </div>
 
@@ -288,8 +305,8 @@
 
                     <div class="row g-3 mt-2" id="jiraFields" style="display:none;">
                         <div class="col-md-4">
-                            <label class="form-label">JIRA board</label>
-                            <input type="text" class="form-control" name="jira_board" id="jira_board" placeholder="FHW (default)">
+                            <label class="form-label">JIRA project key</label>
+                            <input type="text" class="form-control" name="jira_board" id="jira_board" placeholder="Use configured default">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Assignee</label>
@@ -1464,11 +1481,7 @@ function validateResimPaths(inputTxt, simgPath, configXml) {
         showResimToast('Simg file path is required.', true);
         return false;
     }
-    if (!configXml) {
-        showResimToast('XML configuration file path is required.', true);
-        return false;
-    }
-    if (!configXml.toLowerCase().endsWith('.xml')) {
+    if (configXml && !configXml.toLowerCase().endsWith('.xml')) {
         showResimToast('XML configuration path must point to a .xml file.', true);
         return false;
     }
@@ -1486,12 +1499,12 @@ function validateResimPaths(inputTxt, simgPath, configXml) {
         showResimToast('Simg file path must start with /net/ (Krakow) or /mnt/ (Southfield).', true);
         return false;
     }
-    if (!isNetXml && !isMntXml) {
+    if (configXml && !isNetXml && !isMntXml) {
         showResimToast('XML configuration path must start with /net/ (Krakow) or /mnt/ (Southfield).', true);
         return false;
     }
     if ((isNetTxt && isMntSimg) || (isMntTxt && isNetSimg)
-        || (isNetTxt && isMntXml) || (isMntTxt && isNetXml)) {
+        || (configXml && ((isNetTxt && isMntXml) || (isMntTxt && isNetXml)))) {
         showResimToast('All files must be in the same partition (/net or /mnt).', true);
         return false;
     }
@@ -1504,7 +1517,9 @@ document.getElementById('resimRunForm').addEventListener('submit', async functio
     const simgPath = document.getElementById('simg_path').value.trim();
     const configXml = document.getElementById('config_xml').value.trim();
     const busTagEl = document.getElementById('bus_tag');
-    const busTag = busTagEl ? busTagEl.value : 'b02';
+    const busTag = busTagEl ? busTagEl.value : '';
+    const rmZeroEl = document.getElementById('rm_zero');
+    const rmZero = rmZeroEl ? rmZeroEl.checked : false;
     const createJira = document.getElementById('create_jira').checked;
     const jiraBoard = document.getElementById('jira_board').value.trim();
     const jiraAssignee = document.getElementById('jira_assignee').value.trim();
@@ -1527,9 +1542,10 @@ document.getElementById('resimRunForm').addEventListener('submit', async functio
                 simg_path: simgPath,
                 config_xml: configXml,
                 bus_tag: busTag,
+                rm_zero: rmZero,
                 profile: resimProfile ? resimProfile.value : 'krakow',
                 create_jira: createJira,
-                jira_board: jiraBoard || 'FHW',
+                jira_board: jiraBoard,
                 jira_assignee: jiraAssignee,
                 jira_notes: jiraNotes,
             }),

@@ -1,4 +1,5 @@
 from pathlib import Path
+import shlex
 from types import SimpleNamespace
 
 import pytest
@@ -168,8 +169,48 @@ def test_runtime_map_template_exposes_helios_and_updates_profile_metadata():
     assert 'id="detectedPartition"' in html
     assert 'profile: resimProfile ? resimProfile.value : \'krakow\'' in html
     assert 'id="bus_tag"' in html
+    assert 'Default (pipeline setting)' in html
     assert 'value="b02"' in html
     assert 'value="b04"' in html
+    assert 'id="rm_zero"' in html
+    assert 'rm_zero: rmZero' in html
+    assert 'Resim XML configuration (optional)' in html
+    assert 'Leave blank for vendor default' in html
+
+
+def test_resim_passes_rm_zero_flag_after_bus_tag(resim_boundary_mocks):
+    session, thread_class, _tmp_path = resim_boundary_mocks
+
+    result = _submit_resim(_resim_payload(bus_tag='b04', rm_zero=True))
+    status, _data = _response_parts(result)
+
+    assert status == 200
+    command = thread_class.instances[0].kwargs['args'][1][-1]
+    assert 'highPrio b04 rm_zero' in command
+    assert session.jobs[0].parameters['rm_zero'] is True
+
+
+def test_resim_omits_rm_zero_by_default(resim_boundary_mocks):
+    session, thread_class, _tmp_path = resim_boundary_mocks
+
+    result = _submit_resim(_resim_payload())
+    status, _data = _response_parts(result)
+
+    assert status == 200
+    command = thread_class.instances[0].kwargs['args'][1][-1]
+    assert command.endswith("highPrio b02'")
+    assert session.jobs[0].parameters['rm_zero'] is False
+
+
+def test_resim_omits_bus_tag_by_default(resim_boundary_mocks):
+    _, thread_class, _ = resim_boundary_mocks
+    result = _submit_resim(_resim_payload(bus_tag=''))
+    status, _ = _response_parts(result)
+
+    assert status == 200
+    command = thread_class.instances[0].kwargs['args'][1][-1]
+    assert 'highPrio b02' not in command
+    assert 'highPrio b04' not in command
 
 
 def test_runtime_map_template_keeps_highprio_for_southfield():
@@ -177,6 +218,7 @@ def test_runtime_map_template_keeps_highprio_for_southfield():
 
     assert 'let detectedResimCluster = "southfield";' in html
     assert " : 'highPrio';" in html
+    assert 'Resim XML configuration (optional)' in html
 
 
 def test_runtime_map_route_supplies_profile_context(monkeypatch):
@@ -219,6 +261,30 @@ def test_resim_defaults_to_normal_krakow_runtime(resim_boundary_mocks):
     assert thread_class.instances[0].started is True
 
 
+@pytest.mark.parametrize(
+    ('input_txt', 'simg_path'),
+    [
+        ('/net/8k3/project/input.txt', '/net/8k3/project/resim.simg'),
+        ('/mnt/usmidet/project/input.txt', '/mnt/usmidet/project/resim.simg'),
+    ],
+)
+def test_resim_xml_is_optional_on_krakow_and_southfield(
+    input_txt, simg_path, resim_boundary_mocks
+):
+    session, thread_class, _tmp_path = resim_boundary_mocks
+
+    result = _submit_resim(_resim_payload(
+        input_txt=input_txt,
+        simg_path=simg_path,
+        config_xml='',
+    ))
+    status, _data = _response_parts(result)
+
+    assert status == 200
+    assert session.jobs[0].parameters['config_xml'] == ''
+    assert thread_class.instances[0].kwargs['kwargs']['config_xml'] == ''
+
+
 def test_resim_passes_b04_bus_tag_through(resim_boundary_mocks):
     _session, thread_class, _tmp_path = resim_boundary_mocks
 
@@ -254,6 +320,16 @@ def test_resim_input_feeder_sends_xml_after_yes():
         feeder.wait()
 
 
+def test_resim_input_feeder_selects_default_config_when_xml_is_blank():
+    feeder = main._start_resim_input_feeder('')
+    try:
+        assert feeder.stdout.readline().decode().strip() == 'y'
+        assert feeder.stdout.readline() == b''
+    finally:
+        feeder.kill()
+        feeder.wait()
+
+
 def test_resim_pipeline_submission_marker_parses_all_slurm_ids():
     marker = (
         '[INFO] : PipeLine Triggered  ReSIm_docker: 25682374 '
@@ -266,6 +342,13 @@ def test_resim_pipeline_submission_marker_parses_all_slurm_ids():
         'stats_mining': '25682376',
     }
     assert main._parse_resim_pipeline_submission('Still waiting for ReSim') is None
+
+
+def test_resim_input_validation_error_is_reported_as_failure(tmp_path):
+    log_path = tmp_path / 'resim.log'
+    log_path.write_text('[ERROR] : Inputs Validation :- short of needed argument', encoding='utf-8')
+
+    assert 'rejected its arguments' in main._first_failure_marker_in_log(str(log_path))
 
 
 @pytest.mark.parametrize(
@@ -300,24 +383,105 @@ def test_resim_accepts_case_insensitive_profile_and_uses_athena(resim_boundary_m
     assert '/app/software/slurm/athena/bin/srun -A 8k3p89 -p athena' in command
 
 
+def test_helios_invokes_shared_launcher_with_bash_on_compute_node(resim_boundary_mocks):
+    _session, thread_class, _tmp_path = resim_boundary_mocks
+    result = _submit_resim(_resim_payload(profile='helios'))
+    status, _data = _response_parts(result)
+
+    assert status == 200
+    command = thread_class.instances[0].kwargs['args'][1][-1]
+    assert '8k3tester@149.156.176.25' in command
+    assert 'tester@10.214.45.149' in command
+    assert command.count('StrictHostKeyChecking=accept-new') == 2
+    assert command.count('BatchMode=yes') == 2
+    assert (
+        'bash Main/trig_pip.sh /net/8k3/project/input.txt '
+        '/net/8k3/project/resim.simg highPrio b02'
+    ) in command
+    assert ' "$@"' not in command
+    assert 'Core_RESIM_HPCC/Resim_Pipeline' in command
+    assert 'STLA-SMALL/7-Tools/ReSimAutoMng' not in command
+
+
+@pytest.mark.parametrize('net_id', ['ouymc2', 'pcmzxl'])
+@pytest.mark.parametrize('config_xml', ['', '/net/8k3/project/custom config.xml'])
+def test_helios_keeps_arguments_and_answers_inside_allocation(net_id, config_xml, resim_boundary_mocks, monkeypatch):
+    _, threads, _ = resim_boundary_mocks
+    monkeypatch.setattr(main, 'current_user', SimpleNamespace(id=7, net_id=net_id))
+    status, _ = _response_parts(_submit_resim(_resim_payload(profile='helios', config_xml=config_xml, rm_zero=True)))
+    assert status == 200
+    outer = shlex.split(threads.instances[0].kwargs['args'][1][-1])[2]
+    hop = shlex.split(outer[outer.index('ssh -T'):])
+    assert hop[-2] == f'8k3{net_id}@149.156.176.25'
+    assert any(f'{net_id}@10.214.45.149' in token for token in hop if token.startswith('ProxyCommand='))
+    native = shlex.split(shlex.split(hop[-1])[2])
+    assert native[0] == 'srun'
+    compute = native[-1]
+    tokens = shlex.split(compute)
+    assert tokens[tokens.index('%s') + 1] == ('n\n1\n' + config_xml + '\n' if config_xml else 'y\n')
+    assert tokens[-5:] == ['/net/8k3/project/input.txt', '/net/8k3/project/resim.simg', 'highPrio', 'b02', 'rm_zero']
+
+
+def test_helios_omits_bus_tag_when_using_pipeline_default(resim_boundary_mocks, monkeypatch):
+    _, threads, _ = resim_boundary_mocks
+    result = _submit_resim(_resim_payload(profile='helios', bus_tag=''))
+    assert _response_parts(result)[0] == 200
+    command = threads.instances[0].kwargs['args'][1][-1]
+    assert 'trig_pip.sh /net/8k3/project/input.txt /net/8k3/project/resim.simg highPrio\'' in command
+    assert 'b02' not in command and 'b04' not in command
+
+
 @pytest.mark.parametrize('profile_id', tuple(main.KRAKOW_RUNTIME_PROFILES))
 def test_resim_supports_every_krakow_profile(profile_id, resim_boundary_mocks):
     _session, thread_class, _tmp_path = resim_boundary_mocks
-
     result = _submit_resim(_resim_payload(profile=profile_id))
     status, _data = _response_parts(result)
 
     assert status == 200
     profile = main.KRAKOW_RUNTIME_PROFILES[profile_id]
     command = thread_class.instances[0].kwargs['args'][1][-1]
-    assert f"RESIM_SLURM_MODULE={profile['module']}" in command
     if profile_id == 'krakow':
+        assert f"RESIM_SLURM_MODULE={profile['module']}" in command
         assert 'srun -A' not in command
+    elif profile_id == 'helios':
+        assert 'bash Main/trig_pip.sh /net/8k3/project/input.txt' in command
     else:
+        assert f"RESIM_SLURM_MODULE={profile['module']}" in command
         assert f"module load {profile['module']}" in command
         assert f"{profile['srun']} -A {profile['account']} -p {profile['partition']}" in command
         assert f"--mem={profile['memory']} --cpus-per-task={profile['cpus']}" in command
         assert f"--time={profile['time_limit']}" in command
+
+
+def test_explicit_fhw_jira_project_is_not_replaced_by_configured_default(monkeypatch):
+    from types import SimpleNamespace
+    import sys
+
+    captured = {}
+
+    class _Jira:
+        _enabled = True
+        default_project = 'HZP'
+        default_board = 'HZP'
+        last_error = ''
+
+        def create_resim_ticket(self, **kwargs):
+            captured.update(kwargs)
+            return 'FHW-123'
+
+    monkeypatch.setattr(sys.modules['jira_integration'], 'JiraIntegration', _Jira)
+    commits = []
+    monkeypatch.setattr(main.db, 'session', SimpleNamespace(commit=lambda: commits.append(True), remove=lambda: None))
+    job = SimpleNamespace(
+        parameters={'create_jira': True, 'jira_board': 'FHW', 'input_txt': '/net/in.txt', 'simg_path': '/net/run.simg'},
+        input_path='/net/in.txt', id=81,
+    )
+    with main.app.app_context():
+        main._create_jira_ticket_for_job(job, '')
+
+    assert job.parameters['jira_ticket_key'] == 'FHW-123'
+    assert captured['board'] == 'FHW'
+    assert commits
 
 
 def test_resim_keeps_southfield_execution_unchanged(resim_boundary_mocks):
@@ -369,13 +533,17 @@ def test_generated_dashboard_copies_include_the_runtime_map_changes():
     root = Path(__file__).resolve().parent.parent
     pairs = [
         ('main_html/app.py', 'generate_upload/bundle_src/main_html/app.py'),
+        ('main_html/jira_integration.py', 'generate_upload/bundle_src/main_html/jira_integration.py'),
         ('main_html/templates/tools/kpi.html', 'generate_upload/bundle_src/main_html/templates/tools/kpi.html'),
         ('main_html/templates/runtime_map.html', 'generate_upload/bundle_src/main_html/templates/runtime_map.html'),
+        ('main_html/templates/job_log.html', 'generate_upload/bundle_src/main_html/templates/job_log.html'),
     ]
     markers = {
-        'main_html/app.py': ('_runtime_customer_accounts', 'Unknown Krakow Resim runtime profile.', "data.get('config_xml')", 'RESIM_CONFIG_XML', 'bus_tag'),
+        'main_html/app.py': ('_runtime_customer_accounts', 'Unknown Krakow Resim runtime profile.', "data.get('config_xml')", 'RESIM_CONFIG_XML', 'bus_tag', 'rm_zero', 'if config_xml and not config_xml.lower().endswith'),
+        'main_html/jira_integration.py': ('HPCC_BUNDLE_ROOT', 'default_project or \'FHW\'', 'last_error'),
         'main_html/templates/tools/kpi.html': ('Prepare the bundle', 'Customer Name', 'Other'),
-        'main_html/templates/runtime_map.html': ('resimProfile', 'Helios', 'profile:', 'config_xml', 'bus_tag'),
+        'main_html/templates/runtime_map.html': ('resimProfile', 'Helios', 'profile:', 'config_xml', 'bus_tag', 'rm_zero', 'Resim XML configuration (optional)', 'vendor default'),
+        'main_html/templates/job_log.html': ('Retry Jira ticket', 'jira_ticket_key', '/api/job/{{ job.id }}/jira'),
     }
 
     for source_name, generated_name in pairs:
@@ -383,14 +551,23 @@ def test_generated_dashboard_copies_include_the_runtime_map_changes():
         generated = (root / generated_name).read_text(encoding='utf-8')
         assert all(marker in source and marker in generated for marker in markers[source_name])
 
+    app_source = (root / 'main_html/app.py').read_text(encoding='utf-8')
+    bundle_app = (root / 'generate_upload/bundle_src/main_html/app.py').read_text(encoding='utf-8')
+    helios_dispatch = 'bash Main/trig_pip.sh '
+    assert helios_dispatch in app_source
+    assert helios_dispatch in bundle_app
+    assert 'Core_RESIM_HPCC/Resim_Pipeline' in app_source
+    assert 'Core_RESIM_HPCC/Resim_Pipeline' in bundle_app
+
 
 @pytest.mark.parametrize(
     ('payload', 'expected_error'),
     [
         ({}, 'Input file (input.txt) path is required.'),
         ({'input_txt': '/net/8k3/project/input.txt'}, 'Simg file path is required.'),
-        ({'input_txt': '/net/8k3/project/input.txt', 'simg_path': '/net/8k3/project/resim.simg'}, 'XML configuration file path is required.'),
         ({'input_txt': 'C:/project/input.txt', 'simg_path': 'C:/project/resim.simg', 'config_xml': 'C:/project/resim.xml'}, 'Input file path must start'),
+        ({'input_txt': '/net/8k3/project/input.txt', 'simg_path': '/net/8k3/project/resim.simg', 'config_xml': 'relative.xml'}, 'XML configuration path must start'),
+        ({'input_txt': '/net/8k3/project/input.txt', 'simg_path': '/net/8k3/project/resim.simg', 'config_xml': '/mnt/usmidet/project/resim.xml'}, 'All files must be in the same partition'),
         ({'input_txt': '/net/8k3/project/input.txt', 'simg_path': '/mnt/usmidet/project/resim.simg', 'config_xml': '/net/8k3/project/resim.xml'}, 'Both files must be in the same partition'),
         ({'input_txt': '/net/8k3/project/input.txt', 'simg_path': '/net/8k3/project/resim.simg', 'config_xml': '/net/8k3/project/resim.xml', 'profile': 'unknown'}, 'Unknown Krakow Resim runtime profile.'),
         ({'input_txt': '/net/8k3/project/input.txt', 'simg_path': '/net/8k3/project/resim.simg', 'config_xml': '/net/8k3/project/resim.xml', 'bus_tag': 'b07'}, 'Unknown bus tag'),
