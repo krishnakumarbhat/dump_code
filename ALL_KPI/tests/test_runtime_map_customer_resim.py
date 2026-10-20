@@ -217,6 +217,9 @@ def test_runtime_map_template_keeps_highprio_for_southfield():
     html = _render('runtime_map.html', **_runtime_context(cluster='southfield'))
 
     assert 'let detectedResimCluster = "southfield";' in html
+    assert 'Southfield runtime' in html
+    assert '/mnt/.../projects/.../input.txt' in html
+    assert '/mnt/.../*.simg' in html
     assert " : 'highPrio';" in html
     assert 'Resim XML configuration (optional)' in html
 
@@ -496,11 +499,35 @@ def test_resim_keeps_southfield_execution_unchanged(resim_boundary_mocks):
     status, _data = _response_parts(result)
 
     assert status == 200
-    assert session.jobs[0].parameters['profile'] == 'krakow'
+    assert session.jobs[0].parameters['profile'] == 'southfield'
     command = thread_class.instances[0].kwargs['args'][1][-1]
     assert 'module load slurm/' not in command
     assert 'srun -A' not in command
     assert '/mnt/usmidet/project/input.txt /mnt/usmidet/project/resim.simg highPrio b02' in command
+
+
+@pytest.mark.parametrize('bus_tag', ['', 'b02', 'b04'])
+def test_southfield_resim_preserves_bus_tag_choice_and_jira_project(resim_boundary_mocks, bus_tag):
+    _session, thread_class, _tmp_path = resim_boundary_mocks
+
+    result = _submit_resim(_resim_payload(
+        input_txt='/mnt/usmidet/project/input.txt',
+        simg_path='/mnt/usmidet/project/resim.simg',
+        config_xml='',
+        bus_tag=bus_tag,
+        create_jira=True,
+        jira_board='FHW',
+    ))
+
+    assert _response_parts(result)[0] == 200
+    command = thread_class.instances[0].kwargs['args'][1][-1]
+    expected_args = 'highPrio' + (f' {bus_tag}' if bus_tag else '')
+    assert f'/mnt/usmidet/project/resim.simg {expected_args}' in command
+    assert command.rstrip("'").endswith(expected_args)
+    assert thread_class.instances[0].kwargs['kwargs']['config_xml'] == ''
+    assert _session.jobs[0].parameters['create_jira'] is True
+    assert _session.jobs[0].parameters['jira_board'] == 'FHW'
+    assert _session.jobs[0].parameters['profile'] == 'southfield'
 
 
 def test_resim_rejects_missing_cluster_password_without_starting_a_job(resim_boundary_mocks, monkeypatch):
