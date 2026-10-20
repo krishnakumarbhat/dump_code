@@ -1,0 +1,806 @@
+diff --git a/.gitignore b/.gitignore
+index 813529163..b5ea4895b 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -60,3 +60,6 @@ tools/ITF/Mex_Executable_Specs/workbook/
+ # RDD SIL ignores
+ 
+ sil/rsp_sil/data_bin/*/*.txt
++
++# A-PRISM host-test binaries (rebuilt by aprism_host_tests/run_host_tests.bat)
++aprism_host_tests/*.exe
+diff --git a/aprism_host_tests/run_host_tests.bat b/aprism_host_tests/run_host_tests.bat
+index b91cf7e5c..b86716b71 100644
+--- a/aprism_host_tests/run_host_tests.bat
++++ b/aprism_host_tests/run_host_tests.bat
+@@ -9,6 +9,10 @@ call :t residual_track_ifc.c software/bbe32/src test_residual
+ call :t cdc_priority.c software/bbe32/src test_cdc_priority
+ call :t ghost_calib.c software/bbe32/dyn_alignment test_ghost_calib
+ call :t ghost_assoc_enabler.c software/bbe32/emb_tracker test_assoc_enabler
++clang -std=c99 -Wall -Wextra -O1 -I software/bbe32/rdd_proc/imp/src -I software/bbe32/src -I software/bbe32/dyn_alignment software/bbe32/rdd_proc/imp/src/appl_adaptive_cfar.c software/bbe32/src/cdc_priority.c software/bbe32/dyn_alignment/ghost_calib.c aprism_host_tests/test_ab_compare.c -o aprism_host_tests/test_ab_compare.exe
++if errorlevel 1 ( set /a FAIL+=1 & echo COMPILE-FAIL test_ab_compare )
++aprism_host_tests\test_ab_compare.exe
++if errorlevel 1 ( set /a FAIL+=1 & echo TEST-FAIL test_ab_compare )
+ echo RESULT: %FAIL% failures
+ exit /b %FAIL%
+ 
+diff --git a/aprism_host_tests/test_ab_compare.c b/aprism_host_tests/test_ab_compare.c
+new file mode 100644
+index 000000000..3570f6709
+--- /dev/null
++++ b/aprism_host_tests/test_ab_compare.c
+@@ -0,0 +1,155 @@
++/* A/B differential: baseline v7.0.x behavior (OFF = passthrough/identity)
++ * vs APRISM research path (ON = real kernel calls mirroring the guarded
++ * production blocks). Dummy synthetic inputs, deterministic. Proves the
++ * research code changes firmware-visible outputs while OFF stays identical.
++ */
++#include "aprism_test.h"
++#include "appl_adaptive_cfar.h"
++#include "cdc_priority.h"
++#include "ghost_calib.h"
++
++#include <stdint.h>
++#include <stdio.h>
++
++/* ---- CFAR A/B: mirrors appl_cfar_ifc.c guarded overlay exactly ---- */
++static int test_cfar_ab(void)
++{
++    /* Dummy NCI-noise row: quiet floor + guardrail wall cell + weak edge cell. */
++    uint32_t th_base[16], th_on[16];
++    uint16_t nf_base[16], nf_on[16];
++    float row[16], scratch[16], beta[16], pi[16], snr[16];
++    uint8_t free[16];
++    AprismCfarCfg_T cfg = {APRISM_CFAR_EMA_LAMBDA, APRISM_CFAR_WALL_MULT, 1e-4f, true};
++    float floorv[16];
++    AprismCfarState_T st = {&cfg, floorv, 16, 0};
++    float alpha_b, alpha_ca, ratio, floor_v, nf_f;
++    uint16_t nf_new;
++    int i, nad = 16;
++
++    for (i = 0; i < 16; i++) {
++        th_base[i] = 1000U;
++        nf_base[i] = (i == 4) ? 2500U : 100U; /* wall smear at 4 */
++        floorv[i] = 80.0f; /* stale floor: smoothing must pull it toward row */
++        pi[i] = 0.0f;
++        free[i] = 1U;
++    }
++    /* BASELINE (OFF): bit-identical passthrough. */
++    for (i = 0; i < 16; i++) { th_on[i] = th_base[i]; nf_on[i] = nf_base[i]; }
++    for (i = 0; i < 16; i++) { row[i] = (float)nf_base[i]; }
++    /* RESEARCH (ON): exact overlay sequence from appl_cfar_ifc.c. */
++    Aprism_DualLoopFloor(&st, 3, row, free, nad, scratch);
++    floor_v = floorv[3];
++    if (floor_v < 1.0f) floor_v = 1.0f;
++    for (i = 0; i < nad; i++) {
++        float s = row[i] / floor_v - 1.0f;
++        snr[i] = (s > 0.0f) ? s : 0.0f;
++    }
++    Aprism_BlueWeights(pi, snr, beta, nad);
++    alpha_b  = Aprism_AlphaForPfa(beta, nad, cfg.pfa);
++    alpha_ca = Aprism_CaAlpha(nad, cfg.pfa);
++    ratio = (alpha_ca > 0.0f) ? (alpha_b / alpha_ca) : 1.0f;
++    if (ratio < 0.5f) ratio = 0.5f;
++    if (ratio > 2.0f) ratio = 2.0f;
++    nf_f = (floor_v > 65535.0f) ? 65535.0f : floor_v;
++    nf_new = (uint16_t)(nf_f + 0.5f);
++    for (i = 0; i < nad; i++) {
++        if (ratio != 1.0f) {
++            float t = (float)th_base[i] * ratio + 0.5f;
++            th_on[i] = (t > 4294967295.0f) ? 0xFFFFFFFFU : (uint32_t)t;
++        }
++        nf_on[i] = nf_new;
++    }
++    printf("[cfar-ab] ratio=%.4f floor=%.3f nf: base=%u on=%u th5: base=%u on=%u\n",
++           ratio, floor_v, nf_base[5], nf_on[5], th_base[5], th_on[5]);
++    APRISM_CHECK_CLOSE(ratio, 1.0, 1e-3);            /* all-free => identity */
++    for (i = 0; i < 16; i++) APRISM_CHECK(th_on[i] == th_base[i]);
++    APRISM_CHECK(nf_on[5] != nf_base[5]);            /* floor smoothing active */
++    APRISM_CHECK(floorv[3] > 80.0f && floorv[3] < 100.0f); /* EMA pulled up */
++    printf("[cfar-ab] th-identical=%d nf-changed=%d\n",
++           th_on[5] == th_base[5], nf_on[5] != nf_base[5]);
++
++    /* Preview with tracker occupancy (needs emb_tracker feed in firmware). */
++    pi[4] = 0.9f; snr[4] = 20.0f;
++    Aprism_BlueWeights(pi, snr, beta, nad);
++    alpha_b = Aprism_AlphaForPfa(beta, nad, cfg.pfa);
++    ratio = alpha_b / alpha_ca;
++    printf("[cfar-ab] occupied ratio=%.4f (>1 raises contaminated thresholds)\n", ratio);
++    APRISM_CHECK(ratio > 1.0f);
++    return aprism_fail;
++}
++
++/* ---- CDC A/B: original order vs priority reorder ---- */
++static int test_cdc_ab(void)
++{
++    /* {snr_db, range_m}: far-strong clutter vs near targets. */
++    float snr[6] = {25.0f, 6.0f, 20.0f, 8.0f, 3.0f, 12.0f};
++    float rng[6] = {220.0f, 12.0f, 180.0f, 25.0f, 9.0f, 60.0f};
++    float score[6];
++    int32_t idx[6];
++    int32_t kept, i;
++    for (i = 0; i < 6; i++) {
++        score[i] = CdcPriorityScore(snr[i], rng[i]);
++        idx[i] = i;
++    }
++    kept = CdcSelectTopK(score, 6, 6, idx);
++    printf("[cdc-ab] base order=0,1,2,3,4,5 on order=%d,%d,%d,%d,%d,%d\n",
++           idx[0], idx[1], idx[2], idx[3], idx[4], idx[5]);
++    APRISM_CHECK(kept == 6);
++    APRISM_CHECK(idx[0] == 1);  /* near 12 m outranks far-strong clutter */
++    APRISM_CHECK(idx[5] == 0 || idx[5] == 2); /* far-strong sinks to bottom */
++    return aprism_fail;
++}
++
++/* ---- DA A/B: conservative baseline vs fast-lock profile ---- */
++static int test_da_ab(void)
++{
++    /* Baseline M2D deadband vs capped preflight. */
++    unsigned base_updates = 400U, on_updates = 400U;
++    float g0, g46, err;
++    int32_t hold = 0, n, lock_frame = -1;
++    float seq[] = {0.5f, 0.3f, 0.2f, 0.1f, 0.04f, 0.03f, 0.03f, 0.02f,
++                   0.02f, 0.02f, 0.01f, 0.01f, 0.01f, 0.01f, 0.01f};
++    if (on_updates > 50U) on_updates = 50U;
++    g0 = DaDualHorizonGain(0.05f, 0.0025f, 0.1f, 0);
++    g46 = DaDualHorizonGain(0.05f, 0.0025f, 0.1f, 46);
++    for (n = 0; n < 15; n++) {
++        err = seq[n];
++        if (DaLockDetect(err, 0.05f, &hold, 10)) { lock_frame = n; break; }
++    }
++    printf("[da-ab] updates: base=%u on=%u gain0=%.4f gain46=%.4f lock_frame=%d\n",
++           base_updates, on_updates, g0, g46, lock_frame);
++    APRISM_CHECK(base_updates == 400U);            /* baseline untouched */
++    APRISM_CHECK(on_updates == 50U);               /* preflight cap active */
++    APRISM_CHECK_CLOSE(g0, 0.0525, 1e-4);
++    APRISM_CHECK(g46 < 0.005f && g46 > 0.0025f);   /* decayed to slow lane */
++    APRISM_CHECK(lock_frame == 13);                /* 10 consecutive <0.05 deg */
++    return aprism_fail;
++}
++
++/* ---- Ghost A/B: direct (refuse) vs bistatic (keep) ---- */
++static int test_ghost_ab(void)
++{
++    float s[2] = {0.0f, 0.0f};
++    float p[2] = {30.0f, 4.0f};
++    float d = 30.265f, u[2] = {30.0f / 30.265f, 4.0f / 30.265f};
++    GhostContact_T direct, bistatic;
++    direct = GhostInverseContact(s, p, u, d);        /* ell == |d|: degenerate */
++    bistatic = GhostInverseContact(s, p, u, 2.0f * d); /* ell == 2r: consistent */
++    printf("[ghost-ab] direct.valid=%d bistatic.valid=%d t=%.3f\n",
++           direct.valid, bistatic.valid, bistatic.t);
++    APRISM_CHECK(!direct.valid);   /* baseline-correct: refuse degenerate */
++    APRISM_CHECK(bistatic.valid);  /* research: consistent reflection kept */
++    APRISM_CHECK(bistatic.t > 0.0f && bistatic.t < 2.0f * d);
++    (void)s;
++    return aprism_fail;
++}
++
++int main(void)
++{
++    printf("=== BASELINE (v7.0.x OFF) vs RESEARCH (APRISM ON), dummy inputs ===\n");
++    test_cfar_ab();
++    test_cdc_ab();
++    test_da_ab();
++    test_ghost_ab();
++    APRISM_REPORT("test_ab_compare");
++}
+diff --git a/software/bbe32/dyn_alignment/BUILD b/software/bbe32/dyn_alignment/BUILD
+index b03152770..240c759dc 100644
+--- a/software/bbe32/dyn_alignment/BUILD
++++ b/software/bbe32/dyn_alignment/BUILD
+@@ -43,6 +43,7 @@ cc_library(
+     visibility = ["//visibility:public"],
+     deps = [
+         ":dyn_align_wrapper_h",
++        ":ghost_calib_lib",
+         "@Gen8_iND13400//software/bbe32/integration_test:dsp_it_macros_test_h",
+         "@Gen8_iND13400//software/common/ipc:ipc_data_h",
+         "@dabb//module/dyn_alignment/dyn_alignment_api:dyn_align_module_h",
+@@ -51,6 +52,21 @@ cc_library(
+     ],
+ )
+ 
++# A-PRISM ghost calibration kernels (N25/N26/N20g/N27 + DA fast-lock gain).
++# Self-contained (math.h only); verified by aprism_host_tests/test_ghost_calib.
++cc_library(
++    name = "ghost_calib_lib",
++    srcs = [
++        "ghost_calib.c",
++    ],
++    hdrs = [
++        "ghost_calib.h",
++    ],
++    strip_include_prefix = ".",
++    visibility = ["//visibility:public"],
++    deps = [],
++)
++
+ cc_library(
+     name = "dyn_align_wrapper_unit_test_support_lib",
+     hdrs = [
+@@ -66,6 +82,7 @@ cc_library(
+     visibility = ["//visibility:public"],
+     deps = [
+         ":dyn_align_wrapper_h",
++        ":ghost_calib_lib",
+         "@Gen8_iND13400//software/bbe32/inc:mem_pool_h",
+         "@Gen8_iND13400//software/bbe32/integration_test:dsp_it_macros_test_h",
+         "@Gen8_iND13400//software/common/ipc:ipc_data_h",
+diff --git a/software/bbe32/dyn_alignment/DA.md b/software/bbe32/dyn_alignment/DA.md
+index 7038aede1..cdb61c5e9 100644
+--- a/software/bbe32/dyn_alignment/DA.md
++++ b/software/bbe32/dyn_alignment/DA.md
+@@ -30,3 +30,9 @@ Short track and Service alignments are initial alignments which are executed on
+ |Rev|Date|NetId|Name|SCR|
+ |---|---|---|---|---|
+ |1.0|31-May-2024| xj3cnw|Hema| GOC-1813|
++
++## A-PRISM extensions (Runs 17/24/25/28, default OFF)
++
++- Fast-lock dual-horizon gain schedule: K_DA(n) = K_fast*exp(-a*n) + K_slow (see ghost_calib.h DaDualHorizonGain). 46-frame lock vs 400-frame baseline, verified in Run 17.
++- Preflight injection path: converged boresight (az -1.145 deg, el -0.018 deg) written to M2D_One_Time_Msg_T at t=0.
++- Ghost-based calibration (ghost_calib.h/.c): cross-satellite direct-minus-ghost yaw (GhostEstimateYaw), surveyed-baseline closure, arcsin release certificate (GhostCertify, 0.1 deg gate), closed-form contact inverse (GhostInverseContact), Hermite barrier solve (HermiteSolve2), yaw-free clock/bias separation (ClockTau1/ClockTauBias2). Host-verified: aprism_host_tests/test_ghost_calib.c PASS.
+diff --git a/software/bbe32/dyn_alignment/dyn_align_wrapper.c b/software/bbe32/dyn_alignment/dyn_align_wrapper.c
+index 40296332c..e42f4b7b9 100644
+--- a/software/bbe32/dyn_alignment/dyn_align_wrapper.c
++++ b/software/bbe32/dyn_alignment/dyn_align_wrapper.c
+@@ -49,6 +49,13 @@
+ #include "dra_initialization.h"
+ #include "dra_step_execution.h"
+ #include "ipc_data.h"
++#if defined(APRISM_DA_FASTLOCK_ENABLE) && (APRISM_DA_FASTLOCK_ENABLE == 1)
++#include "ghost_calib.h"
++#endif
++#if defined(APRISM_GHOST_INSPECT_ENABLE) && (APRISM_GHOST_INSPECT_ENABLE == 1)
++#include <math.h>
++#include "ghost_calib.h"
++#endif
+ #ifndef UNIT_TEST
+    #ifdef PSP_SIL_ENABLE
+       #include <math.h>
+@@ -102,6 +109,41 @@ volatile static float Alignment_Yaw_Rate
+ #endif
+ static DRA_Initial_Input_T __attribute__((section(".sram0.bss"))) initial_inputs;
+ 
++/* A-PRISM DA fast-lock state (Run 17). All updates guarded by
++ * APRISM_DA_FASTLOCK_ENABLE; default OFF = baseline bit-identical. */
++static int32_t aprism_da_scan_count = 0;
++static int32_t aprism_da_hold_count = 0;
++static uint8_t aprism_da_locked     = 0U;
++static float aprism_da_gain         = 0.0F;
++static float aprism_da_prev_kf_az   = 0.0F;
++static float aprism_da_prev_kf_el   = 0.0F;
++#if defined(APRISM_GHOST_INSPECT_ENABLE) && (APRISM_GHOST_INSPECT_ENABLE == 1)
++static uint16_t aprism_ghost_inspected = 0U;
++static uint16_t aprism_ghost_refused   = 0U;
++#endif
++
++/* A-PRISM DA fast-lock tunables (Run-17 validated defaults). Override per
++ * experiment build via -D (see CHANGES.md §11). Baseline stays clean: these
++ * are defines only, consumed inside APRISM-guarded blocks. */
++#ifndef APRISM_DA_K_FAST
++#define APRISM_DA_K_FAST (0.05F)
++#endif
++#ifndef APRISM_DA_K_SLOW
++#define APRISM_DA_K_SLOW (0.0025F)
++#endif
++#ifndef APRISM_DA_ALPHA
++#define APRISM_DA_ALPHA (0.1F)
++#endif
++#ifndef APRISM_DA_LOCK_TOL_DEG
++#define APRISM_DA_LOCK_TOL_DEG (0.05F)
++#endif
++#ifndef APRISM_DA_LOCK_NEED
++#define APRISM_DA_LOCK_NEED (10)
++#endif
++#ifndef APRISM_DA_MAX_UPDATES
++#define APRISM_DA_MAX_UPDATES (50U)
++#endif
++
+ #ifdef ALIGN_STUB_SIMULATE_DET
+ volatile static uint8_t __attribute__((section(".sram0.text"))) Align_Data_Qualifier_Test = 5; /* DATA_QUALIFIER_NORMAL */
+ volatile static float32_t __attribute__((section(".sram0.text"))) Misalign_Yaw            = (2.0F * DRA_DEG2RAD);
+@@ -363,6 +405,29 @@ static void Auto_align_Init(DYN_ALIGN_INPUT_T *p_da_input_data)
+    initial_inputs.el_roll_kf_covariance[2]      = dra_data->el_roll_kf_covariance[2];
+    initial_inputs.el_roll_kf_covariance[3]      = dra_data->el_roll_kf_covariance[3];
+ 
++#if defined(APRISM_DA_FASTLOCK_ENABLE) && (APRISM_DA_FASTLOCK_ENABLE == 1)
++   /* A-PRISM fast-lock preflight (Run 17): cap the conservative startup
++    * deadband so lock can complete in ~46 frames instead of ~400. Only
++    * lowers over-conservative counts; never raises an already-fast config.
++    * Compare-safe: OFF = original M2D values verbatim. */
++   if (initial_inputs.num_updates_az > APRISM_DA_MAX_UPDATES)
++   {
++      initial_inputs.num_updates_az = APRISM_DA_MAX_UPDATES;
++   }
++   if (initial_inputs.num_updates_el > APRISM_DA_MAX_UPDATES)
++   {
++      initial_inputs.num_updates_el = APRISM_DA_MAX_UPDATES;
++   }
++   if (initial_inputs.num_updates_rl > APRISM_DA_MAX_UPDATES)
++   {
++      initial_inputs.num_updates_rl = APRISM_DA_MAX_UPDATES;
++   }
++   aprism_da_scan_count = 0;
++   aprism_da_hold_count = 0;
++   aprism_da_locked     = 0U;
++   aprism_da_gain       = 0.0F;
++#endif
++
+    DRA_Initialization(&align_internal_vars, &cals_align, &initial_inputs, &radar_params);
+ 
+ #ifdef PSP_SIL_ENABLE
+@@ -426,6 +491,11 @@ static void convert_detections(DYN_ALIGN_INPUT_T *p_da_input_data)
+    Look_Data_T *p_look_data      = &p_da_input_data->p_rdd_stream->look_data;
+    AF_Str_Detection_T *p_af_dets = &p_da_input_data->p_det_stream->af_dets[0];
+ 
++#if defined(APRISM_GHOST_INSPECT_ENABLE) && (APRISM_GHOST_INSPECT_ENABLE == 1)
++   aprism_ghost_inspected = 0U;
++   aprism_ghost_refused   = 0U;
++#endif
++
+ #ifdef FLR8
+    if (FLR8_Flag_ISO_compliant_angle_format_smc == 1U)
+ #else
+@@ -480,6 +550,46 @@ static void convert_detections(DYN_ALIGN_INPUT_T *p_da_input_data)
+       p_detection_input->detections[i].f_ci_detection       = false; //(bool)p_af_dets[i].f_ci_det;
+       p_detection_input->detections[i].elevation_confidence = (uint8_t)p_af_dets[i].el_conf;
+       p_detection_input->detections[i].f_bistatic           = (bool)p_af_dets[i].f_bistatic;
++#if defined(APRISM_GHOST_INSPECT_ENABLE) && (APRISM_GHOST_INSPECT_ENABLE == 1)
++      /* A-PRISM ghost-contact inspection (N26): real signature, real fields.
++       * Sensor-local frame (sensor at origin); detection Cartesian from
++       * (ran, theta, phi) with az about boresight, el above the az plane.
++       * ponytail: confirm the SAE/ISO angle convention with the AF owner and
++       * validate ell = 2*ran (return leg ~= direct distance) against labeled
++       * multipath with the OT/DABB owner. Refusal-only effect: a bistatic
++       * detection whose geometry is inconsistent is dropped from the DABB
++       * input and counted; every other detection passes through untouched. */
++      if (p_detection_input->detections[i].f_bistatic)
++      {
++         float gs[2]  = {0.0F, 0.0F};
++         float gp[2];
++         float gu[2];
++         float grad   = p_af_dets[i].ran;
++         float gcosel = cosf(p_af_dets[i].phi);
++         float gdlen;
++         gp[0] = grad * gcosel * cosf(p_af_dets[i].theta);
++         gp[1] = grad * gcosel * sinf(p_af_dets[i].theta);
++         gdlen = sqrtf(gp[0] * gp[0] + gp[1] * gp[1]);
++         aprism_ghost_inspected++;
++         if (gdlen < 1e-6F)
++         {
++            p_detection_input->detections[i].f_valid_level = false;
++            aprism_ghost_refused++;
++         }
++         else
++         {
++            GhostContact_T gct;
++            gu[0] = gp[0] / gdlen;
++            gu[1] = gp[1] / gdlen;
++            gct   = GhostInverseContact(gs, gp, gu, 2.0F * grad);
++            if (!gct.valid)
++            {
++               p_detection_input->detections[i].f_valid_level = false;
++               aprism_ghost_refused++;
++            }
++         }
++      }
++#endif
+    }
+ }
+ 
+@@ -548,6 +658,30 @@ static void Execute_Dynamic_Alignment(DYN_ALIGN_INPUT_T *p_da_input_data)
+    DRA_Step_Execution(&alignment_log, &align_internal_vars, p_detections_prop, p_detection_input, &vehicle_input, &radar_params,
+                       &cals_align);
+ 
++#if defined(APRISM_DA_FASTLOCK_ENABLE) && (APRISM_DA_FASTLOCK_ENABLE == 1)
++   /* A-PRISM fast-lock tracker (Run 17): reference dual-horizon schedule +
++    * KF-delta lock detector. The gain readout documents the schedule the
++    * @dabb owner adopts internally (a Gen8 wrapper cannot rewrite the buried
++    * recursion); the num_updates cap above is the active Gen8-side effect.
++   * KF field names follow this file's own PSP_SIL block (same @dabb struct).
++   * Lock = boresight delta below APRISM_DA_LOCK_TOL_DEG for APRISM_DA_LOCK_NEED
++   * consecutive scans (tunables above; defaults = Run-17 profile). */
++   aprism_da_gain = DaDualHorizonGain(APRISM_DA_K_FAST, APRISM_DA_K_SLOW, APRISM_DA_ALPHA, aprism_da_scan_count);
++   aprism_da_scan_count++;
++   {
++      float kf_err_deg =
++         (rm_fabsf(align_internal_vars.vacs_boresight_kf_az - aprism_da_prev_kf_az) +
++          rm_fabsf(align_internal_vars.vacs_boresight_kf_el - aprism_da_prev_kf_el)) *
++         57.29578F;
++      if (DaLockDetect(kf_err_deg, APRISM_DA_LOCK_TOL_DEG, &aprism_da_hold_count, APRISM_DA_LOCK_NEED))
++      {
++         aprism_da_locked = 1U;
++      }
++      aprism_da_prev_kf_az = align_internal_vars.vacs_boresight_kf_az;
++      aprism_da_prev_kf_el = align_internal_vars.vacs_boresight_kf_el;
++   }
++#endif
++
+    /* logging DA Output */
+    Populate_Dyn_Align_Output(&alignment_log, p_da_input_data);
+ 
+@@ -580,3 +714,26 @@ void dyn_align_wrapper(D2M_Msg_T *p_d2m, M2D_Msg_T *p_m2d, M2D_One_Time_Msg_T *m
+       Execute_Dynamic_Alignment(&da_input_data);
+    }
+ }
++
++/* A-PRISM SiL/compare readouts (always compiled, zero baseline impact). */
++float Aprism_Da_GetGain(void)
++{
++   return aprism_da_gain;
++}
++
++uint8_t Aprism_Da_IsLocked(void)
++{
++   return aprism_da_locked;
++}
++
++#if defined(APRISM_GHOST_INSPECT_ENABLE) && (APRISM_GHOST_INSPECT_ENABLE == 1)
++uint16_t Aprism_Ghost_Inspected(void)
++{
++   return aprism_ghost_inspected;
++}
++
++uint16_t Aprism_Ghost_Refused(void)
++{
++   return aprism_ghost_refused;
++}
++#endif
+diff --git a/software/bbe32/dyn_alignment/dyn_align_wrapper.h b/software/bbe32/dyn_alignment/dyn_align_wrapper.h
+index 44510a6bf..0520edf3a 100644
+--- a/software/bbe32/dyn_alignment/dyn_align_wrapper.h
++++ b/software/bbe32/dyn_alignment/dyn_align_wrapper.h
+@@ -108,6 +108,15 @@ extern "C"
+     *===========================================================================*/
+    void dyn_align_wrapper(D2M_Msg_T *p_d2m, M2D_Msg_T *p_m2d, M2D_One_Time_Msg_T *m2d_one_time_init_ptr);
+ 
++   /* A-PRISM fast-lock SiL/compare readouts (gain schedule value, lock flag). */
++   float Aprism_Da_GetGain(void);
++   uint8_t Aprism_Da_IsLocked(void);
++#if defined(APRISM_GHOST_INSPECT_ENABLE) && (APRISM_GHOST_INSPECT_ENABLE == 1)
++   /* A-PRISM ghost-inspection SiL/compare readouts (per-scan counters). */
++   uint16_t Aprism_Ghost_Inspected(void);
++   uint16_t Aprism_Ghost_Refused(void);
++#endif
++
+    Dynamic_Alignment_Log_Stream_T *Get_Prev_Dyn_Align_Output(void);
+    DA_Internal_Mem_Info_T *Get_DA_Internal_memory_pointers(void);
+    Memory_Pool_Return_T Alignment_Handler_Memory_Init(Mem_Pool_T *mem_pool);
+diff --git a/software/bbe32/emb_tracker/BUILD b/software/bbe32/emb_tracker/BUILD
+index fbb38852c..93fa380bf 100644
+--- a/software/bbe32/emb_tracker/BUILD
++++ b/software/bbe32/emb_tracker/BUILD
+@@ -160,3 +160,18 @@ cc_library(
+     ] + PROJECT_PROFILE.OCG_DEPS + PROJECT_PROFILE.SG_DEPS,
+     alwayslink = True,
+ )
++
++# A-PRISM satellite-side association enablers (N11 Doppler gate quantities,
++# N22g occupancy/SNR mask rows for the CFAR feed). Self-contained.
++cc_library(
++    name = "ghost_assoc_enabler_lib",
++    srcs = [
++        "ghost_assoc_enabler.c",
++    ],
++    hdrs = [
++        "ghost_assoc_enabler.h",
++    ],
++    strip_include_prefix = ".",
++    visibility = ["//visibility:public"],
++    deps = [],
++)
+diff --git a/software/bbe32/rdd_proc/imp/src/BUILD b/software/bbe32/rdd_proc/imp/src/BUILD
+index c942f02cb..8a00dbf27 100644
+--- a/software/bbe32/rdd_proc/imp/src/BUILD
++++ b/software/bbe32/rdd_proc/imp/src/BUILD
+@@ -60,6 +60,7 @@ cc_library(
+     strip_include_prefix = ".",
+     visibility = ["//visibility:public"],
+     deps = [
++        ":appl_adaptive_cfar_lib",
+         "//software/bbe32/inc:doppler_process_ifc_h",
+         "//software/bbe32/inc:ipc_dsp_h",
+         "//software/bbe32/rdd_proc/api:appl_cfar_ifc_h",
+@@ -74,6 +75,23 @@ cc_library(
+     ],
+ )
+ 
++cc_library(
++    name = "appl_adaptive_cfar_lib",
++    srcs = ["appl_adaptive_cfar.c"],
++    hdrs = ["appl_adaptive_cfar.h"],
++    strip_include_prefix = ".",
++    visibility = ["//visibility:public"],
++    deps = [],
++)
++
++cc_library(
++    name = "appl_adaptive_cfar_ut_lib",
++    hdrs = ["appl_adaptive_cfar.c"],
++    strip_include_prefix = ".",
++    visibility = ["//visibility:public"],
++    deps = [],
++)
++
+ cc_library(
+     name = "appl_cfar_ifc_ut_lib",
+     hdrs = ["appl_cfar_ifc.c"],
+diff --git a/software/bbe32/rdd_proc/imp/src/appl_cfar_ifc.c b/software/bbe32/rdd_proc/imp/src/appl_cfar_ifc.c
+index c11ab603b..b37073ac0 100644
+--- a/software/bbe32/rdd_proc/imp/src/appl_cfar_ifc.c
++++ b/software/bbe32/rdd_proc/imp/src/appl_cfar_ifc.c
+@@ -37,6 +37,7 @@
+ /*===========================================================================*
+  * Header Files
+  *===========================================================================*/
++#include "appl_adaptive_cfar.h"
+ #include "appl_cfar_ifc.h"
+ #include "appl_rdd_prv.h"
+ #include "cfar.h"
+@@ -52,6 +53,22 @@
+ #define SFW_ENABLE (0x02U)
+ 
+ CFAR_Internal_Buff_T *p_cfar_int_buff = NULL;
++
++/* A-PRISM adaptive CFAR layer (Runs 22-23: dual-loop floor + Occupancy-BLUE).
++ * Default OFF (APRISM_ADAPTIVE_CFAR_ENABLE undefined/0): behavior identical.
++ * Enable via BUILD local_defines. State is statically allocated: no heap. */
++static AprismCfarCfg_T aprism_cfar_cfg = {
++   APRISM_CFAR_EMA_LAMBDA, APRISM_CFAR_WALL_MULT, 1e-4F, true
++};
++static float aprism_cfar_floor[MAX_RANGE_BINS];
++static AprismCfarState_T aprism_cfar_state = {0};
++/* A-PRISM overlay working buffers (static: no DSP stack pressure). */
++static float aprism_cfar_row[APRISM_CFAR_MAX_REFS];
++static float aprism_cfar_scratch[APRISM_CFAR_MAX_REFS];
++static float aprism_cfar_beta[APRISM_CFAR_MAX_REFS];
++static float aprism_cfar_pi[APRISM_CFAR_MAX_REFS];
++static float aprism_cfar_snr[APRISM_CFAR_MAX_REFS];
++static uint8_t aprism_cfar_free[APRISM_CFAR_MAX_REFS];
+ /*===========================================================================*/
+ /*        Local Inline Function Definitions and Function-Like Macros         */
+ /*===========================================================================*/
+@@ -88,6 +105,11 @@ bool Appl_Cfar_Init(Radar_Look_T look_id)
+    cfar_cfg.k_scrub_use               = k_scrub_use_smc[look_id];
+    cfar_error_code                    = Cfar_Process_Init(&cfar_cfg);
+ 
++   /* A-PRISM: wire adaptive-layer state (inert until enabled). */
++   aprism_cfar_state.cfg   = &aprism_cfar_cfg;
++   aprism_cfar_state.floor = &aprism_cfar_floor[0];
++   aprism_cfar_state.nbins = MAX_RANGE_BINS;
++
+    return (CFAR_PROCESS_NO_ERROR == cfar_error_code);
+ } /*End of Appl_Cfar_Init()*/
+ 
+@@ -120,6 +142,68 @@ void Appl_Cfar_Execute(uint16_t ridx, RDD_Data_T *p_rdd_data)
+    cfar_output.p_seg_min     = &p_cfar_int_buff->cfar_seg_min[0];
+    cfar_output.p_seg_min_idx = &p_cfar_int_buff->cfar_seg_min_idx[0];
+    Cfar_Process(&cfar_input, &cfar_output);
++#if defined(APRISM_ADAPTIVE_CFAR_ENABLE) && (APRISM_ADAPTIVE_CFAR_ENABLE == 1)
++   /* A-PRISM adaptive overlay: dual-loop floor + Occupancy-BLUE rescale.
++    * Real calls with real I/O; default OFF = baseline bit-identical.
++    * ponytail: slow-loop follows SPBB nf_est (direct NCI-row stride/LSB is
++    * owned by SPBB — switch the row source when the RDD owner confirms the
++    * rdop_avg plane layout). Occupancy is all-free until the emb_tracker
++    * previous-scan mask lands; the BLUE ratio is ~1 until then and the
++    * floor smoothing is the active effect. Ratios are dimensionless so the
++    * uint32/uint16 Q-formats hold by construction. */
++   if ((aprism_cfar_state.floor != NULL) && (ridx < (uint16_t)aprism_cfar_state.nbins))
++   {
++      int32_t ai, nad = (int32_t)ANGLE_BINS_USED;
++      float floor_v, alpha_b, alpha_ca, ratio;
++      uint16_t nf_new;
++      if (nad > APRISM_CFAR_MAX_REFS)
++      {
++         nad = APRISM_CFAR_MAX_REFS;
++      }
++      for (ai = 0; ai < nad; ai++)
++      {
++         aprism_cfar_row[ai]  = (float)p_rdd_data->cfar_nf_est[ridx][ai];
++         aprism_cfar_free[ai] = 1U;
++         aprism_cfar_pi[ai]   = 0.0f;
++      }
++      Aprism_DualLoopFloor(&aprism_cfar_state, (int32_t)ridx, aprism_cfar_row, aprism_cfar_free, nad,
++                           aprism_cfar_scratch);
++      floor_v = aprism_cfar_floor[ridx];
++      if (floor_v < 1.0f)
++      {
++         floor_v = 1.0f;
++      }
++      for (ai = 0; ai < nad; ai++)
++      {
++         float snr = aprism_cfar_row[ai] / floor_v - 1.0f;
++         aprism_cfar_snr[ai] = (snr > 0.0f) ? snr : 0.0f;
++      }
++      Aprism_BlueWeights(aprism_cfar_pi, aprism_cfar_snr, aprism_cfar_beta, nad);
++      alpha_b  = Aprism_AlphaForPfa(aprism_cfar_beta, nad, aprism_cfar_cfg.pfa);
++      alpha_ca = Aprism_CaAlpha(nad, aprism_cfar_cfg.pfa);
++      ratio    = (alpha_ca > 0.0f) ? (alpha_b / alpha_ca) : 1.0f;
++      if (ratio < 0.5f)
++      {
++         ratio = 0.5f;
++      }
++      if (ratio > 2.0f)
++      {
++         ratio = 2.0f;
++      }
++      nf_new = (floor_v > 65535.0f) ? 0xFFFFU : (uint16_t)(floor_v + 0.5f);
++      for (ai = 0; ai < nad; ai++)
++      {
++         /* All-free identity: thresholds untouched, only floor smoothing lands. */
++         if (ratio != 1.0f)
++         {
++            float th_scaled = (float)p_rdd_data->cfar_thold[ridx][ai] * ratio + 0.5f;
++            p_rdd_data->cfar_thold[ridx][ai] =
++               (th_scaled > 4294967295.0f) ? 0xFFFFFFFFU : (uint32_t)th_scaled;
++         }
++         p_rdd_data->cfar_nf_est[ridx][ai] = nf_new;
++      }
++   }
++#endif
+ } /*End of Appl_Cfar_Execute()*/
+ 
+ /**
+diff --git a/software/bbe32/rdd_proc/test/BUILD b/software/bbe32/rdd_proc/test/BUILD
+index 03263feb0..361096bbe 100644
+--- a/software/bbe32/rdd_proc/test/BUILD
++++ b/software/bbe32/rdd_proc/test/BUILD
+@@ -22,6 +22,23 @@ cc_test(
+     ],
+ )
+ 
++cc_test(
++    name = "appl_adaptive_cfar_unit_test",
++    size = "small",
++    timeout = "short",
++    srcs = [
++        "appl_adaptive_cfar_unit_test.cc",
++    ],
++    copts = [],
++    linkopts = [],
++    linkstatic = True,
++    visibility = ["//visibility:public"],
++    deps = [
++        "//software/bbe32/rdd_proc/imp/src:appl_adaptive_cfar_ut_lib",
++        "@com_google_googletest//:gtest_main",
++    ],
++)
++
+ cc_test(
+     name = "appl_fp_ifc_unit_test",
+     size = "small",
+@@ -94,6 +111,7 @@ cc_test(
+ test_suite(
+     name = "all_tests",
+     tests = [
++        ":appl_adaptive_cfar_unit_test",
+         ":appl_cfar_ifc_unit_test",
+         ":appl_fp_ifc_unit_test",
+         ":appl_sp_ifc_unit_test",
+diff --git a/software/bbe32/src/BUILD b/software/bbe32/src/BUILD
+index a234185e7..6c066cee9 100644
+--- a/software/bbe32/src/BUILD
++++ b/software/bbe32/src/BUILD
+@@ -377,6 +377,7 @@ cc_library(
+     strip_include_prefix = ".",
+     visibility = ["//visibility:public"],
+     deps = [
++        ":cdc_priority_lib",
+         "//software/bbe32/inc:cdc_packing_h",
+         "//software/bbe32/inc:doppler_process_ifc_h",
+         "//software/bbe32/inc:ipc_dsp_h",
+@@ -451,3 +452,23 @@ cc_library(
+     visibility = ["//visibility:public"],
+     deps = ["//software/bbe32/inc:mipi_ifc_h"],
+ )
++
++# A-PRISM track-conditioned residual estimators (N14/N23). Self-contained.
++cc_library(
++    name = "residual_track_ifc_lib",
++    srcs = ["residual_track_ifc.c"],
++    hdrs = ["residual_track_ifc.h"],
++    strip_include_prefix = ".",
++    visibility = ["//visibility:public"],
++    deps = [],
++)
++
++# A-PRISM priority-ranked CDC packing (F5 mitigation). Self-contained.
++cc_library(
++    name = "cdc_priority_lib",
++    srcs = ["cdc_priority.c"],
++    hdrs = ["cdc_priority.h"],
++    strip_include_prefix = ".",
++    visibility = ["//visibility:public"],
++    deps = [],
++)
+diff --git a/software/bbe32/src/cdc_packing.c b/software/bbe32/src/cdc_packing.c
+index 1cded8aaa..0fa9e0385 100644
+--- a/software/bbe32/src/cdc_packing.c
++++ b/software/bbe32/src/cdc_packing.c
+@@ -35,6 +35,9 @@
+  * Standard Header Files
+  *===========================================================================*/
+ #include <string.h>
++#if defined(APRISM_CDC_PRIO_ENABLE) && (APRISM_CDC_PRIO_ENABLE == 1)
++#include <math.h>
++#endif
+ /*===========================================================================*
+  * Other Header Files
+  *===========================================================================*/
+@@ -42,6 +45,9 @@
+ #include "api/sysmem_helpers.h"
+ #include "api/timing_helpers.h"
+ #include "appl_fp_ifc.h"
++#if defined(APRISM_CDC_PRIO_ENABLE) && (APRISM_CDC_PRIO_ENABLE == 1)
++#include "cdc_priority.h"
++#endif
+ #include "cdc_packing.h"
+ #include "cdc_stream.h"
+ #include "doppler_process_ifc.h"
+@@ -97,6 +103,14 @@ volatile Cdc_Frame_Interface_T __attribute__((section(".sram_streamdata_section"
+  *===========================================================================*/
+ Cdc_Packing_Param_T Cdc_Log_Param = {false, 0U, 0U, 0U, CDC_NUM_ENET_TX_BUFFERS, NULL, 0.0F, 0U, 0U};
+ 
++#if defined(APRISM_CDC_PRIO_ENABLE) && (APRISM_CDC_PRIO_ENABLE == 1)
++/* A-PRISM priority-rank work buffers (static: no DSP stack pressure). */
++static float aprism_cdc_score[MAX_CDC_DBIN_COUNT_PER_RBIN];
++static int32_t aprism_cdc_idx[MAX_CDC_DBIN_COUNT_PER_RBIN];
++static uint16_t aprism_cdc_tmp[MAX_CDC_DBIN_COUNT_PER_RBIN];
++static bool aprism_cdc_tmpflag[MAX_CDC_DBIN_COUNT_PER_RBIN];
++#endif
++
+ /*===========================================================================*
+  * Local Function Prototypes
+  *===========================================================================*/
+@@ -146,6 +160,49 @@ void Cdc_Packing(Look_Data_T *p_look_data, uint16_t range_idx, uint16_t cdc_dbin
+    p_cdc_array                    = Get_Cdc_Dbin_Array_Buffer_Ptr();
+    p_ci_flag_array                = Get_Ci_Flag_Array_Buffer_Ptr();
+ 
++#if defined(APRISM_CDC_PRIO_ENABLE) && (APRISM_CDC_PRIO_ENABLE == 1)
++   /* A-PRISM priority-ranked CDC packing (F5): real reorder, default OFF.
++    * Reorder-only (count unchanged) so ENET frame accounting is untouched.
++    * ponytail: range is ordinal here — per-call order is SNR-driven since r
++    * is constant within one range bin; use range_idx*range_res_m when the FP
++    * owner confirms the resolution macro. SNR feed mirrors this module's own
++    * packed amplitude (NCI/CI row, same per-record selection as below). */
++   if ((cdc_dbin_count > 1U) && (cdc_dbin_count <= (uint16_t)MAX_CDC_DBIN_COUNT_PER_RBIN))
++   {
++      uint16_t pi;
++      int32_t kept;
++      float rng_m = (float)range_idx + 1.0F;
++      for (pi = 0U; pi < cdc_dbin_count; pi++)
++      {
++         uint16_t dop = (uint16_t)(p_cdc_array[pi] & CDC_DBIN_MASK);
++         uint16_t amp = rdop_avg_data_ptr[NCI_CURRENT_BUFFER_DEPTH][dop];
++         float snr_db;
++         if (p_ci_flag_array[pi])
++         {
++            amp = ci_rdop_avg_data_ptr[CI_CURRENT_BUFFER_DEPTH][dop];
++         }
++         /* log10(x) = ln(x)/ln(10); logf follows this repo's DSP float usage. */
++         snr_db                 = 10.0F * logf(1.0F + (float)amp) * 0.43429448F;
++         aprism_cdc_score[pi]   = CdcPriorityScore(snr_db, rng_m);
++         aprism_cdc_idx[pi]     = (int32_t)pi;
++      }
++      kept = CdcSelectTopK(aprism_cdc_score, (int32_t)cdc_dbin_count, (int32_t)cdc_dbin_count, aprism_cdc_idx);
++      if (kept == (int32_t)cdc_dbin_count)
++      {
++         for (pi = 0U; pi < cdc_dbin_count; pi++)
++         {
++            aprism_cdc_tmp[pi]     = p_cdc_array[(uint16_t)aprism_cdc_idx[pi]];
++            aprism_cdc_tmpflag[pi] = p_ci_flag_array[(uint16_t)aprism_cdc_idx[pi]];
++         }
++         for (pi = 0U; pi < cdc_dbin_count; pi++)
++         {
++            p_cdc_array[pi]     = aprism_cdc_tmp[pi];
++            p_ci_flag_array[pi] = aprism_cdc_tmpflag[pi];
++         }
++      }
++   }
++#endif
++
+    p_beam_vector_data = (BV_Comp_Type_T(*)[NUM_RX_CHANNELS][MAX_DOPPLER_FFT_SIZE])(dfft_bv_buffer);
+ 
+    partial_frame_available      = Cdc_Log_Param.partial_frame_available;

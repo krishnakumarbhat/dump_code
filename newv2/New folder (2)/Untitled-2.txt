@@ -1,0 +1,15 @@
+[ouymc2@plcyf-com-prod-log01 ~]$ module load slurm/helios
+[ouymc2@plcyf-com-prod-log01 ~]$ srun -A 8k3p89 -p 8k3 --mem=4G --cpus-per-task=6 --time 00:30:00 --pty /bin/bash
+srun: error: ioctl(TIOCGWINSZ): Inappropriate ioctl for device
+srun: error: Not using a pseudo-terminal, disregarding --pty option
+^C[ouymc2@plcyf-com-prod-log01 ~]$ ^C
+[ouymc2@plcyf-com-prod-log01 ~]$ ^C
+[ouymc2@plcyf-com-prod-log01 ~]$ srun -A 8k3p89 -p 8k3 --mem=4G --cpus-per-task=6 --time=00:30:00 hostname
+x1001c4s0b0n3
+[ouymc2@plcyf-com-prod-log01 ~]$ pwd
+/net/8k3/e0fs01/users/ouymc2
+[ouymc2@plcyf-com-prod-log01 ~]$ module load slurm/helios && srun -A 8k3p105 -p 8k3 -q normal -N 1 -n 1 -c 1 --mem=2G -t 00:10:00 hostname^C
+[ouymc2@plcyf-com-prod-log01 ~]$ module load slurm/helios && srun -A 8k3p89 -p 8k3 --mem=4G --cpus-per-task=6 --time=00:30:00 sh -c 'hostname; pwd; id'
+x1001c4s0b0n3
+/net/8k3/e0fs01/users/ouymc2
+uid=1039541(8k3ouymc2) gid=80188(8k3p89) groups=80188(8k3p89),80204(8k3p105)

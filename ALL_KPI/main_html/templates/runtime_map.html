@@ -178,6 +178,7 @@
         <div class="hero-copy">
             <span class="eyebrow">Runtime topology</span>
             <h1>Build and save your own SIMG application graph.</h1>
+            <span class="badge text-bg-primary">{{ detected_cluster|title }} runtime</span>
             <p>Drag nodes, add new SIMG tools, document their input and output contracts, connect them to other nodes, and save multiple runtime-map variations for different deployment flows.</p>
         </div>
         <div class="hero-actions">
@@ -252,14 +253,14 @@
                         <div class="col-md-6">
                             <label class="form-label">Input file (input.txt)</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="input_txt" id="input_txt" placeholder="/net/.../PLKRA-PROJECTS/.../input.txt" required>
+                                <input type="text" class="form-control" name="input_txt" id="input_txt" placeholder="{{ '/mnt/.../projects/.../input.txt' if detected_cluster == 'southfield' else '/net/.../PLKRA-PROJECTS/.../input.txt' }}" required>
                                 <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('input_txt')">Browse</button>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Simg file</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="simg_path" id="simg_path" placeholder="/net/.../*.simg" required>
+                                <input type="text" class="form-control" name="simg_path" id="simg_path" placeholder="{{ '/mnt/.../*.simg' if detected_cluster == 'southfield' else '/net/.../*.simg' }}" required>
                                 <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('simg_path')">Browse</button>
                             </div>
                         </div>
