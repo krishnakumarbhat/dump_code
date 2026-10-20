@@ -5,6 +5,7 @@ let currentKey = null;
 let currentImages = [];
 let currentImageIndex = 0;
 let remoteLogs = {};
+let remoteLogVisibleCount = 100;
 let vlmInFlight = false;
 let vlmEnabled = true;
 let vlmModelDir = '';
@@ -66,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   await checkClusterStatus();
 });
 
-async function loadMappings() {
+async function loadMappings(preferredKey) {
   try {
     const resp = await fetch(apiPath('api/mappings'));
     const data = await resp.json();
@@ -86,7 +87,9 @@ async function loadMappings() {
     return;
   }
 
-  if (!currentKey || !mappings[currentKey]) {
+  if (preferredKey && mappings[String(preferredKey)]) {
+    currentKey = String(preferredKey);
+  } else if (!currentKey || !mappings[currentKey]) {
     currentKey = keys[0];
   }
   await updateScenario(currentKey);
@@ -418,57 +421,14 @@ function setOverlayPanelVisible(isVisible) {
   panel.classList.toggle('hidden', !isVisible);
 }
 
-function buildVideoChunkUrl(url, start, size) {
-  const chunkBase = url
-    .replace('/hyperlink/data/video/', '/hyperlink/api/video-chunk/')
-    .replace('/data/video/', '/hyperlink/api/video-chunk/');
-  const separator = chunkBase.includes('?') ? '&' : '?';
-  return chunkBase + separator + 'start=' + start + '&size=' + size;
-}
-
-async function fetchVideoBlob(url, onProgress, slot, loadToken) {
-  const state = getVideoState(slot);
-  const chunks = [];
-  const chunkSize = 16 * 1024;
-  let downloaded = 0;
-  let expectedSize = null;
-  let contentType = 'video/mp4';
-
-  while (expectedSize === null || downloaded < expectedSize) {
-    const response = await fetch(buildVideoChunkUrl(url, downloaded, chunkSize), {
-      credentials: 'same-origin',
-    });
-
-    if (!response.ok) {
-      throw new Error('Video download failed with status ' + response.status);
-    }
-
-    expectedSize = Number(response.headers.get('x-file-size')) || expectedSize;
-
-    const buffer = await response.arrayBuffer();
-    if (loadToken !== state.token) {
-      return null;
-    }
-
-    const byteLength = buffer.byteLength;
-    if (!byteLength) {
-      break;
-    }
-
-    chunks.push(buffer);
-    downloaded += byteLength;
-
-    if (typeof onProgress === 'function') {
-      onProgress(downloaded, expectedSize);
-    }
-
-    if (byteLength < chunkSize) {
-      expectedSize = expectedSize || downloaded;
-      break;
-    }
+async function probeVideoRange(url) {
+  const response = await fetch(url, {
+    headers: { Range: 'bytes=0-1' },
+    credentials: 'same-origin',
+  });
+  if (!response.ok && response.status !== 206) {
+    throw new Error('Video probe failed with status ' + response.status);
   }
-
-  return new Blob(chunks, { type: contentType });
 }
 
 async function loadVideoIntoPlayer(video, entry, label, options) {
@@ -487,34 +447,19 @@ async function loadVideoIntoPlayer(video, entry, label, options) {
   videoInfo.textContent = 'Loading video...';
 
   try {
-    const blob = await fetchVideoBlob(entry[urlKey], function (downloaded, expectedSize) {
-      if (loadToken !== state.token) {
-        return;
-      }
-      if (expectedSize) {
-        const percent = Math.max(1, Math.min(100, Math.round((downloaded / expectedSize) * 100)));
-        videoInfo.textContent = 'Loading video... ' + percent + '%';
-      }
-    }, slot, loadToken);
-
-    if (loadToken !== state.token || !blob) {
-      return;
-    }
-
-    state.blobUrl = URL.createObjectURL(blob);
-    video.src = state.blobUrl;
-    video.preload = 'auto';
+    video.preload = 'metadata';
+    video.src = entry[urlKey];
     video.load();
-    videoInfo.textContent = entry[nameKey] || label;
+    await probeVideoRange(entry[urlKey]);
+    if (loadToken === state.token) {
+      videoInfo.textContent = entry[nameKey] || label;
+    }
   } catch (error) {
     if (loadToken !== state.token) {
       return;
     }
     console.error('Video blob preload failed:', error);
-    video.src = entry[urlKey];
-    video.preload = 'metadata';
-    video.load();
-    videoInfo.textContent = 'Loading video...';
+    videoInfo.textContent = 'Video could not be loaded';
   }
 }
 
@@ -626,13 +571,18 @@ async function updateScenario(key) {
     videoInfo.textContent = entry.video_name || label;
   };
   video.onerror = function () {
-    videoInfo.textContent = 'Video could not be loaded';
+    videoInfo.textContent = entry.remote_video_path
+      ? 'Video unavailable: ' + entry.remote_video_path
+      : 'Video could not be loaded';
   };
-  if (!entry.video) {
-    resetVideoPlayer(video, 'videoInfo', 'No video', 'primary');
+  const primaryVideoUrl = entry.cached_video && entry.video_cache_name
+    ? '/hyperlink/data/video/' + entry.video_cache_name.split('/').map(encodeURIComponent).join('/')
+    : (entry.video || '');
+  if (!primaryVideoUrl) {
+    resetVideoPlayer(video, 'videoInfo', entry.remote_video_path ? 'Video not cached yet; use Add from scan results.' : 'No video', 'primary');
   } else {
     video.currentTime = 0;
-    await loadVideoIntoPlayer(video, entry, label, {
+    await loadVideoIntoPlayer(video, { ...entry, video: primaryVideoUrl }, label, {
       slot: 'primary',
       urlKey: 'video',
       nameKey: 'video_name',
@@ -1140,8 +1090,8 @@ async function clusterConnect() {
   const password = authContext.password;
   const usingSavedPassword = authContext.hasSavedPassword && !password;
 
-  if (!htmlPath || !videoPath) {
-    showClusterMessage('Enter both HTML and video paths first.', 'error');
+  if (!htmlPath && !videoPath) {
+    showClusterMessage('Enter an HTML path, a video path, or both.', 'error');
     return false;
   }
   if (!netId) {
@@ -1219,6 +1169,7 @@ async function clusterDisconnect() {
   try {
     await fetch(apiPath('api/cluster/disconnect'), { method: 'POST' });
     remoteLogs = {};
+    remoteLogVisibleCount = 100;
     document.getElementById('remoteLogsList').innerHTML = '';
     document.getElementById('remoteLogsSection').style.display = 'none';
     document.getElementById('passwordInput').value = '';
@@ -1237,8 +1188,8 @@ async function scanRemoteLogs(skipConnect) {
   const overlayPath = document.getElementById('remoteOverlayPathInput').value.trim();
   const outputPath = document.getElementById('outputPathInput').value.trim();
 
-  if (!htmlPath || !videoPath) {
-    showClusterMessage('Enter both HTML and video paths.', 'error');
+  if (!htmlPath && !videoPath) {
+    showClusterMessage('Enter an HTML path, a video path, or both.', 'error');
     return;
   }
 
@@ -1249,7 +1200,7 @@ async function scanRemoteLogs(skipConnect) {
     }
   }
 
-  showLoading('Scanning matching pairs...');
+  showLoading(htmlPath && videoPath ? 'Scanning and matching logs...' : 'Scanning selected media...');
   try {
     const resp = await fetch(apiPath('api/cluster/scan-logs'), {
       method: 'POST',
@@ -1267,8 +1218,13 @@ async function scanRemoteLogs(skipConnect) {
       throw new Error(data.error || 'Scan failed');
     }
     remoteLogs = data.logs || {};
+    remoteLogVisibleCount = 100;
     displayRemoteLogs();
-    showClusterMessage('Found ' + Object.keys(remoteLogs).length + ' matching pairs.', 'success');
+    const scanNote = data.truncated ? ' Scan limit reached; narrow the selected folder for the rest.' : '';
+    const unreadableNote = data.unreadable_dirs ? ' ' + data.unreadable_dirs + ' directories were unreadable.' : '';
+    showClusterMessage(htmlPath && videoPath
+      ? 'Found ' + Object.keys(remoteLogs).length + ' matching pairs.' + scanNote + unreadableNote
+      : 'Found ' + Object.keys(remoteLogs).length + ' ' + (htmlPath ? 'HTML' : 'video') + ' entries.' + scanNote + unreadableNote, 'success');
   } catch (error) {
     hideLoading();
     showClusterMessage('Scan error: ' + error.message, 'error');
@@ -1287,12 +1243,17 @@ function displayRemoteLogs() {
   });
 
   if (!logKeys.length) {
-    section.style.display = 'none';
+    section.style.display = 'block';
+    const empty = document.createElement('div');
+    empty.className = 'remote-log-status';
+    empty.textContent = 'No supported media found in the selected root.';
+    list.appendChild(empty);
     return;
   }
 
   section.style.display = 'block';
-  logKeys.forEach(function (key) {
+  const fragment = document.createDocumentFragment();
+  logKeys.slice(0, remoteLogVisibleCount).forEach(function (key) {
     const log = remoteLogs[key];
     const item = document.createElement('div');
     item.className = 'remote-log-item' + (log.saved ? ' cached' : '');
@@ -1308,21 +1269,21 @@ function displayRemoteLogs() {
 
     const path = document.createElement('div');
     path.className = 'remote-log-path';
-    path.textContent = log.video_name || log.video_path || '';
+    path.textContent = log.video_name || log.video_path || log.html_path || '';
     path.title = path.textContent;
 
     const overlay = document.createElement('div');
     overlay.className = 'remote-log-overlay';
-    overlay.textContent = log.has_overlay
+    overlay.textContent = log.html_missing ? 'HTML not selected' : (log.video_missing ? 'Video not selected' : (log.has_overlay
       ? 'Overlay: ' + (log.overlay_name || log.overlay_path || 'matched')
-      : 'No overlay matched';
+      : 'No overlay matched'));
     overlay.title = overlay.textContent;
 
     const status = document.createElement('div');
     status.className = 'remote-log-status';
     status.textContent = log.saved
       ? 'Already saved to your stream list'
-      : (log.has_overlay ? 'Ready to add with overlay' : 'Ready to add');
+      : (log.html_missing || log.video_missing ? 'Single media: add downloads available files only' : (log.has_overlay ? 'Ready to add with overlay' : 'Ready to add'));
 
     body.appendChild(title);
     body.appendChild(path);
@@ -1343,8 +1304,26 @@ function displayRemoteLogs() {
     actions.appendChild(actionButton);
     item.appendChild(body);
     item.appendChild(actions);
-    list.appendChild(item);
+    fragment.appendChild(item);
   });
+
+  const rootsMatched = logKeys.length > 0 && logKeys.every(function (key) {
+    return !remoteLogs[key].html_missing && !remoteLogs[key].video_missing;
+  });
+  const heading = document.getElementById('remoteLogsHeading');
+  if (heading) heading.textContent = rootsMatched ? 'Matching Pairs' : 'Scanned Media';
+  list.appendChild(fragment);
+  if (logKeys.length > remoteLogVisibleCount) {
+    const more = document.createElement('button');
+    more.type = 'button';
+    more.className = 'btn-secondary';
+    more.textContent = 'Show next 100 (' + (logKeys.length - remoteLogVisibleCount) + ' remaining)';
+    more.addEventListener('click', function () {
+      remoteLogVisibleCount += 100;
+      displayRemoteLogs();
+    });
+    list.appendChild(more);
+  }
 }
 
 async function downloadLog(key) {
@@ -1354,10 +1333,11 @@ async function downloadLog(key) {
   }
 
   if (log.saved && log.saved_id) {
-    await loadMappings();
+    await loadMappings(log.saved_id);
     if (mappings[String(log.saved_id)]) {
-      await updateScenario(String(log.saved_id));
       closeClusterModal();
+    } else {
+      showClusterMessage('Saved stream ' + log.saved_id + ' is not in the viewer mapping. Reload the stream list and try again.', 'error');
     }
     return;
   }
@@ -1376,8 +1356,9 @@ async function downloadLog(key) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         key: key,
-        html_path: log.html_path,
-        video_path: log.video_path,
+        html_path: log.html_missing ? '' : log.html_path,
+        video_path: log.video_missing ? '' : log.video_path,
+        video_cache_name: log.video_cache_name || '',
         overlay_path: log.overlay_path || '',
         output_path: document.getElementById('outputPathInput').value.trim(),
       })
@@ -1387,15 +1368,19 @@ async function downloadLog(key) {
     if (!data.success) {
       throw new Error(data.error || 'Add failed');
     }
-    log.saved = true;
-    log.cached = true;
-    log.saved_id = data.saved_id;
-    await loadMappings();
-    displayRemoteLogs();
-    if (data.saved_id && mappings[String(data.saved_id)]) {
-      await updateScenario(String(data.saved_id));
+    if (data.saved_id) {
+      log.saved = true;
+      log.cached = true;
+      log.saved_id = data.saved_id;
+      await loadMappings();
+      displayRemoteLogs();
+      if (mappings[String(data.saved_id)]) {
+        await updateScenario(String(data.saved_id));
+      }
+    } else if (log.html_missing || log.video_missing) {
+      await loadMappings();
     }
-    showClusterMessage('Added to your stream list.', 'success');
+    showClusterMessage(data.message || 'Added to your stream list.', 'success');
   } catch (error) {
     hideLoading();
     if (actionButton) {
