@@ -17,6 +17,7 @@ import platform
 import signal
 import shutil
 import importlib.util
+import posixpath
 import time
 import shlex
 import re
@@ -1156,7 +1157,12 @@ def api_resim_run_submit():
     # forever with no tty/askpass path to answer it.
     profile = KRAKOW_RUNTIME_PROFILES[profile_id]
     rm_zero_args = ['rm_zero'] if rm_zero else []
-    if cluster_txt == 'krakow' and profile_id == 'helios':
+    if cluster_txt == 'southfield':
+        # Southfield's shared Core_RESIM_HPCC launcher path lacks execute bits for project users.
+        southfield_args = [input_txt, simg_path, 'highPrio', *([bus_tag] if bus_tag else []), *rm_zero_args]
+        resim_invocation = f"bash {shlex.quote(resim_script_src)} {shlex.join(southfield_args)}"
+        remote_working_directory = project_root
+    elif cluster_txt == 'krakow' and profile_id == 'helios':
         pipeline_root = profile['pipeline_root']
         # ponytail: bypass the site's SSH wrapper; it loses quoting/stdin and prompts on the jump host.
         pipeline_args = [input_txt, simg_path, 'highPrio', *([bus_tag] if bus_tag else []), *rm_zero_args]
@@ -1238,8 +1244,8 @@ def api_resim_run_submit():
             'jira_notes': jira_notes,
             'project': project_name,
             'project_root': project_root,
-            'profile': profile_id,
-            'profile_label': KRAKOW_RUNTIME_PROFILES[profile_id]['label'],
+            'profile': 'southfield' if cluster_txt == 'southfield' else profile_id,
+            'profile_label': 'Southfield' if cluster_txt == 'southfield' else KRAKOW_RUNTIME_PROFILES[profile_id]['label'],
         },
         status='QUEUED',
     )
@@ -1368,13 +1374,14 @@ def _hyperlink_resolve_video_abs_path(file_path: str) -> str:
 
 
 def _hyperlink_key_from_name(name: str):
-    base = os.path.splitext(os.path.basename(name or ''))[0]
-    if base.endswith('_web'):
-        base = base[:-4]
-    parts = base.split('_')
-    if len(parts) >= 2:
-        return '_'.join(parts[-2:])
-    return None
+    module = _load_hyperlink_module('hyperlink_html_online_main', 'main.py')
+    return module.mapping_key_from_name(name)
+
+
+def _hyperlink_video_session_key(relative_path: str, filename: str = ''):
+    """Match a nested MP4 using its nearest session ancestor."""
+    module = _load_hyperlink_module('hyperlink_html_online_main', 'main.py')
+    return module.video_session_key(relative_path or filename)
 
 
 def _hyperlink_overlay_tools():
@@ -1415,8 +1422,53 @@ def _hyperlink_saved_pair_or_404(saved_id: int) -> HyperlinkSavedPair:
 def _hyperlink_saved_pair_cached(saved_pair: HyperlinkSavedPair) -> bool:
     _, html_dir, video_dir = _hyperlink_get_user_dirs()
     html_path = os.path.join(html_dir, saved_pair.html_folder)
-    video_path = os.path.join(video_dir, saved_pair.video_name)
-    return os.path.isdir(html_path) and os.path.isfile(video_path)
+    video_path = os.path.join(video_dir, *(saved_pair.video_name or '').replace('\\', '/').split('/'))
+    html_ok = not saved_pair.html_folder or os.path.isdir(html_path)
+    video_ok = not saved_pair.video_name or os.path.isfile(video_path)
+    return html_ok and video_ok and (bool(saved_pair.html_folder) or bool(saved_pair.video_name))
+
+
+def _hyperlink_saved_video_cache_name(video_dir: str, saved_name: str, discovered_name: str = '') -> str:
+    """Resolve a saved video cache path, preferring a matching discovered nested file."""
+    saved_name = (saved_name or '').replace('\\', '/')
+    discovered_name = (discovered_name or '').replace('\\', '/')
+    if discovered_name and os.path.basename(discovered_name) == os.path.basename(saved_name):
+        return discovered_name
+    if saved_name:
+        candidate = os.path.join(video_dir, *saved_name.split('/'))
+        if os.path.isfile(candidate):
+            return saved_name
+    if discovered_name:
+        candidate = os.path.join(video_dir, *discovered_name.split('/'))
+        if os.path.isfile(candidate):
+            return discovered_name
+    return saved_name or discovered_name
+
+
+def _hyperlink_remote_video_cache_name(remote_path: str) -> str:
+    """Recover the video-root-relative cache path from a saved remote path."""
+    parts = [part for part in (remote_path or '').replace('\\', '/').split('/') if part]
+    lowered = [part.lower() for part in parts]
+    for marker in ('out_jpeg', 'video'):
+        if marker in lowered:
+            index = lowered.index(marker) + 1
+            if index < len(parts):
+                return '/'.join(parts[index:])
+    return '/'.join(parts[-4:]) if len(parts) >= 4 else (parts[-1] if parts else '')
+
+
+def _hyperlink_recover_saved_video(video_dir: str, video_path: str, relative_name: str) -> bool:
+    """Recover only from the exact readable source; shared basenames are ambiguous."""
+    remote_relative = _hyperlink_remote_video_cache_name(video_path)
+    if remote_relative != (relative_name or '').replace('\\', '/'):
+        return False
+    source = video_path
+    destination = os.path.join(video_dir, *remote_relative.split('/'))
+    if not os.path.isfile(source) or os.path.abspath(source) == os.path.abspath(destination):
+        return False
+    os.makedirs(os.path.dirname(destination), exist_ok=True)
+    shutil.copy2(source, destination)
+    return True
 
 
 def _hyperlink_saved_overlay_cached(saved_pair: HyperlinkSavedPair) -> bool:
@@ -1424,24 +1476,24 @@ def _hyperlink_saved_overlay_cached(saved_pair: HyperlinkSavedPair) -> bool:
     overlay_name = (saved_pair.overlay_name or os.path.basename(saved_pair.remote_overlay_path or '')).strip()
     if not overlay_name:
         return False
-    overlay_path = os.path.join(video_dir, overlay_name)
+    overlay_path = os.path.join(video_dir, *overlay_name.replace('\\', '/').split('/'))
     return os.path.isfile(overlay_path)
 
 
 def _hyperlink_remove_saved_pair_cache(saved_pair: HyperlinkSavedPair) -> None:
     _, html_dir, video_dir = _hyperlink_get_user_dirs()
-    html_path = os.path.join(html_dir, saved_pair.html_folder)
-    video_path = os.path.join(video_dir, saved_pair.video_name)
+    html_path = os.path.join(html_dir, saved_pair.html_folder) if saved_pair.html_folder else ''
+    video_path = os.path.join(video_dir, *(saved_pair.video_name or '').replace('\\', '/').split('/')) if saved_pair.video_name else ''
     overlay_name = (saved_pair.overlay_name or os.path.basename(saved_pair.remote_overlay_path or '')).strip()
-    if os.path.isdir(html_path):
+    if html_path and os.path.isdir(html_path):
         shutil.rmtree(html_path, ignore_errors=True)
-    if os.path.isfile(video_path):
+    if video_path and os.path.isfile(video_path):
         try:
             os.remove(video_path)
         except OSError:
             logger.warning('Could not remove cached hyperlink video %s', video_path)
     if overlay_name:
-        overlay_path = os.path.join(video_dir, overlay_name)
+        overlay_path = os.path.join(video_dir, *overlay_name.replace('\\', '/').split('/'))
         if os.path.isfile(overlay_path):
             try:
                 os.remove(overlay_path)
@@ -1449,23 +1501,22 @@ def _hyperlink_remove_saved_pair_cache(saved_pair: HyperlinkSavedPair) -> None:
                 logger.warning('Could not remove cached hyperlink overlay %s', overlay_path)
 
 
-def _hyperlink_upsert_saved_pair(*, key: str, html_path: str, video_path: str, overlay_path: str = '', output_root: str) -> HyperlinkSavedPair:
+def _hyperlink_upsert_saved_pair(*, key: str, html_path: str, video_path: str, overlay_path: str = '', output_root: str, video_cache_name: str = '') -> HyperlinkSavedPair:
     owner_net_id, user_id = _hyperlink_saved_owner()
     if not owner_net_id:
         raise ValueError('Unable to determine the current user for this hyperlink stream')
 
     folder_name = os.path.basename((html_path or '').rstrip('/'))
-    video_name = os.path.basename(video_path or '')
+    video_name = (video_cache_name or os.path.basename(video_path or '')).replace('\\', '/')
     overlay_name = os.path.basename(overlay_path or '')
     now = datetime.utcnow()
 
-    saved_pair = HyperlinkSavedPair.query.filter_by(
-        owner_net_id=owner_net_id,
-        remote_html_path=html_path,
-        remote_video_path=video_path,
-    ).first()
+    query = HyperlinkSavedPair.query.filter_by(owner_net_id=owner_net_id)
+    query = query.filter_by(remote_html_path=html_path) if html_path else query.filter_by(remote_video_path=video_path)
+    saved_pair = query.first()
 
     if saved_pair is None:
+        stored_html_folder = folder_name or key
         saved_pair = HyperlinkSavedPair(
             user_id=user_id,
             owner_net_id=owner_net_id,
@@ -1474,8 +1525,8 @@ def _hyperlink_upsert_saved_pair(*, key: str, html_path: str, video_path: str, o
             html_folder=folder_name or key,
             video_name=video_name,
             overlay_name=overlay_name or None,
-            remote_html_path=html_path,
-            remote_video_path=video_path,
+            remote_html_path=html_path or '',
+            remote_video_path=video_path or '',
             remote_overlay_path=overlay_path or None,
             output_root=output_root,
             last_used_at=now,
@@ -1486,6 +1537,8 @@ def _hyperlink_upsert_saved_pair(*, key: str, html_path: str, video_path: str, o
         saved_pair.pair_key = key or saved_pair.pair_key
         saved_pair.html_folder = folder_name or saved_pair.html_folder
         saved_pair.video_name = video_name or saved_pair.video_name
+        saved_pair.remote_html_path = html_path or saved_pair.remote_html_path
+        saved_pair.remote_video_path = video_path or saved_pair.remote_video_path
         saved_pair.overlay_name = overlay_name or saved_pair.overlay_name
         saved_pair.remote_overlay_path = overlay_path or saved_pair.remote_overlay_path
         saved_pair.output_root = output_root or saved_pair.output_root
@@ -1790,6 +1843,17 @@ def _hyperlink_browser_video_cache_path(file_path: str) -> str:
     return os.path.join(cache_dir, stem + '.browser.mp4')
 
 
+def _hyperlink_browser_video_cache_lock(file_path: str) -> threading.Lock:
+    """Return a per-target lock so concurrent requests do not transcode twice."""
+    locks = getattr(_hyperlink_browser_video_cache_lock, '_locks', None)
+    if locks is None:
+        locks = {}
+        _hyperlink_browser_video_cache_lock._locks = locks
+    key = os.path.abspath(file_path)
+    with _HYPERLINK_SSH_LOCK:
+        return locks.setdefault(key, threading.Lock())
+
+
 def _hyperlink_video_marker_sample(file_path: str) -> bytes:
     sample_size = 2 * 1024 * 1024
     file_size = os.path.getsize(file_path)
@@ -1814,60 +1878,48 @@ def _hyperlink_prepare_browser_video(file_path: str) -> str:
         return file_path
 
     browser_path = _hyperlink_browser_video_cache_path(file_path)
-    source_mtime = os.path.getmtime(file_path)
-    if os.path.exists(browser_path) and os.path.getmtime(browser_path) >= source_mtime:
+    with _hyperlink_browser_video_cache_lock(browser_path), open(browser_path + '.lock', 'a+b') as lock_file:
+        if os.name == 'posix':
+            import fcntl
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+        source_mtime = os.path.getmtime(file_path)
+        if os.path.exists(browser_path) and os.path.getmtime(browser_path) >= source_mtime:
+            return browser_path
+        ffmpeg_bin = shutil.which('ffmpeg') or '/usr/bin/ffmpeg'
+        temp_path = browser_path + f'.{os.getpid()}.{threading.get_ident()}.tmp.mp4'
+        command = [
+            ffmpeg_bin, '-nostdin', '-y', '-loglevel', 'error',
+            '-threads', '1', '-filter_threads', '1', '-i', file_path,
+            '-map', '0:v:0', '-map', '0:a?', '-c:v', 'libx264',
+            '-threads', '1', '-preset', 'ultrafast', '-crf', '23',
+            '-pix_fmt', 'yuv420p', '-c:a', 'aac',
+            '-movflags', '+faststart', temp_path,
+        ]
+        logger.info('Transcoding browser-safe video for %s', os.path.basename(file_path))
+        try:
+            completed = subprocess.run(command, check=False, stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE, text=True, timeout=1800)
+        except Exception:
+            logger.exception('Failed to launch ffmpeg for %s', file_path)
+            raise
+
+        if completed.returncode != 0 or not os.path.exists(temp_path):
+            reason = (completed.stderr or completed.stdout or 'ffmpeg exited without diagnostics').strip()
+            logger.error('ffmpeg transcode failed for %s (exit %s): %s', file_path,
+                         completed.returncode, reason)
+            for stale_path in (temp_path, browser_path + '.tmp.mp4'):
+                try:
+                    os.remove(stale_path)
+                except OSError:
+                    pass
+            raise RuntimeError(f'Browser video conversion failed (exit {completed.returncode}): {reason}')
+
+        os.replace(temp_path, browser_path)
+        try:
+            os.remove(browser_path + '.failed')
+        except OSError:
+            pass
         return browser_path
-
-    ffmpeg_bin = shutil.which('ffmpeg') or '/usr/bin/ffmpeg'
-    temp_path = browser_path + '.tmp.mp4'
-    command = [
-        ffmpeg_bin,
-        '-y',
-        '-loglevel',
-        'error',
-        '-i',
-        file_path,
-        '-map',
-        '0:v:0',
-        '-map',
-        '0:a?',
-        '-c:v',
-        'libx264',
-        '-preset',
-        'veryfast',
-        '-pix_fmt',
-        'yuv420p',
-        '-c:a',
-        'aac',
-        '-movflags',
-        '+faststart',
-        temp_path,
-    ]
-
-    logger.info('Transcoding browser-safe video for %s', os.path.basename(file_path))
-    try:
-        completed = subprocess.run(
-            command,
-            check=False,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            timeout=1800,
-        )
-    except Exception:
-        logger.exception('Failed to launch ffmpeg for %s', file_path)
-        return file_path
-
-    if completed.returncode != 0 or not os.path.exists(temp_path):
-        logger.error(
-            'ffmpeg transcode failed for %s: %s',
-            file_path,
-            (completed.stderr or completed.stdout or '').strip(),
-        )
-        return file_path
-
-    os.replace(temp_path, browser_path)
-    return browser_path
 
 
 @app.route('/hyperlink/data/video/<path:filename>', methods=['GET', 'HEAD'])
@@ -1876,10 +1928,32 @@ def hyperlink_video_data(filename):
     try:
         request_started = time.perf_counter()
         _, _, video_dir = _hyperlink_get_user_dirs()
-        file_path = os.path.join(video_dir, filename)
+        relative = _hyperlink_safe_relative_path(filename)
+        file_path = os.path.join(video_dir, relative)
+        if os.path.commonpath([os.path.abspath(file_path), os.path.abspath(video_dir)]) != os.path.abspath(video_dir):
+            return 'Invalid video path', 400
         if not os.path.exists(file_path):
-            logger.error(f"Video file not found: {file_path}")
-            return "File not found", 404
+            relative_name = relative.replace('\\', '/')
+            saved_pair = next((
+                pair for pair in _hyperlink_saved_pairs()
+                if _hyperlink_remote_video_cache_name(pair.remote_video_path) == relative_name
+            ), None)
+            if saved_pair is None:
+                logger.error(f"Video file not found: {file_path}")
+                return "File not found", 404
+            if not _hyperlink_recover_saved_video(video_dir, saved_pair.remote_video_path, relative_name):
+                cluster_name = cluster_from_path(saved_pair.remote_video_path)
+                user_key = _hyperlink_get_user_key()
+                sess = _hyperlink_get_live_session(user_key)
+                if not sess or not sess.get('sftp') or sess.get('server') != cluster_name:
+                    sess = _hyperlink_restore_session(user_key, cluster_name=cluster_name)
+                if not sess or not sess.get('sftp') or sess.get('server') != cluster_name:
+                    return "Reconnect to the source cluster to cache this video", 503
+                if not _hyperlink_sftp_download_file(sess['sftp'], saved_pair.remote_video_path, file_path):
+                    return "Source video is not readable", 403
+                logger.info('Downloaded missing saved video cache %s from %s', relative_name, saved_pair.remote_video_path)
+            else:
+                logger.info('Recovered saved video cache %s from flat legacy cache', relative_name)
         file_path = _hyperlink_prepare_browser_video(file_path)
         logger.info(
             'Hyperlink video request resolved %s user=%s method=%s range=%s resolve_ms=%.1f',
@@ -1900,7 +1974,10 @@ def hyperlink_video_chunk(filename):
     """Serve authenticated video chunks over a simple 200 response."""
     try:
         _, _, video_dir = _hyperlink_get_user_dirs()
-        file_path = os.path.join(video_dir, filename)
+        relative = _hyperlink_safe_relative_path(filename)
+        file_path = os.path.join(video_dir, relative)
+        if os.path.commonpath([os.path.abspath(file_path), os.path.abspath(video_dir)]) != os.path.abspath(video_dir):
+            return jsonify({'error': 'Invalid video path'}), 400
         if not os.path.exists(file_path):
             logger.error(f"Video chunk file not found: {file_path}")
             return jsonify({'error': 'File not found'}), 404
@@ -1941,11 +2018,64 @@ def hyperlink_mappings():
         if os.path.isdir(html_dir) and os.path.isdir(video_dir):
             cache_key = _hyperlink_cache_user_key()
             cached_mapping = _hyperlink_cached_mapping(cache_key, html_dir, video_dir)
+            saved_pairs = _hyperlink_saved_pairs()
             if cached_mapping is not None:
-                return jsonify({'success': True, 'mappings': cached_mapping})
+                cached_saved_ids = {
+                    int(entry['saved_id'])
+                    for entry in cached_mapping.values()
+                    if isinstance(entry, dict) and entry.get('saved_id') is not None
+                }
+                current_saved_ids = {pair.id for pair in saved_pairs}
+                if cached_saved_ids == current_saved_ids:
+                    return jsonify({'success': True, 'mappings': cached_mapping})
 
             viewer_app = LogViewerApp(html_dir, video_dir)
             mapping = viewer_app.build_mapping() or {}
+            video_root = os.path.abspath(video_dir)
+            for entry in mapping.values():
+                if not isinstance(entry, dict) or not entry.get('video'):
+                    continue
+                relative = (entry.get('video_relative_path') or entry['video'].split('/data/video/', 1)[-1]).replace('\\', '/')
+                candidate = os.path.abspath(os.path.join(video_dir, *relative.split('/')))
+                if os.path.commonpath([candidate, video_root]) == video_root and os.path.isfile(candidate):
+                    entry['video_cache_name'] = relative
+            mapping_by_pair_key = {entry.get('saved_key') or key: (key, entry) for key, entry in mapping.items()}
+            for saved_pair in saved_pairs:
+                if saved_pair.pair_key in mapping_by_pair_key:
+                    continue
+                video_cache_name = _hyperlink_saved_video_cache_name(
+                    video_dir,
+                    saved_pair.video_name,
+                    _hyperlink_remote_video_cache_name(saved_pair.remote_video_path),
+                )
+                cached_video_path = os.path.join(video_dir, *video_cache_name.split('/')) if video_cache_name else ''
+                html_path = os.path.join(html_dir, saved_pair.html_folder) if saved_pair.html_folder else ''
+                images = {}
+                if html_path and os.path.isdir(html_path):
+                    try:
+                        images = _load_hyperlink_module('hyperlink_html_online_main', 'main.py').LogViewerApp(html_path, '')._scan_images()
+                        images = next(iter(images.values()), {})
+                    except OSError:
+                        logger.exception('Could not index saved Hyperlink images for %s', saved_pair.id)
+                mapping[saved_pair.pair_key] = {
+                    'video': _hyperlink_rewrite_data_url('/data/video/' + video_cache_name) if video_cache_name else '',
+                    'video_name': os.path.basename(video_cache_name or saved_pair.remote_video_path or ''),
+                    'video_cache_name': video_cache_name,
+                    'cached_video': bool(saved_pair.remote_video_path and video_cache_name),
+                    'video_missing': not bool(saved_pair.remote_video_path),
+                    'html_files': [],
+                    'html_folder': saved_pair.html_folder,
+                    'images': images,
+                    'remote_html_path': saved_pair.remote_html_path,
+                    'remote_video_path': saved_pair.remote_video_path,
+                    'remote_overlay_path': saved_pair.remote_overlay_path or '',
+                    'saved_id': saved_pair.id,
+                    'saved_key': saved_pair.pair_key,
+                    'saved_label': saved_pair.label or saved_pair.html_folder or saved_pair.pair_key,
+                    'saved_at': saved_pair.created_at.isoformat() if saved_pair.created_at else None,
+                    'last_used_at': saved_pair.last_used_at.isoformat() if saved_pair.last_used_at else None,
+                    'cached': _hyperlink_saved_pair_cached(saved_pair),
+                }
             # Rewrite /data/* URLs to platform-mounted /hyperlink/data/*
             for _k, entry in (mapping or {}).items():
                 if not isinstance(entry, dict):
@@ -1954,6 +2084,13 @@ def hyperlink_mappings():
                 entry['overlay_video'] = _hyperlink_rewrite_data_url(entry.get('overlay_video', ''))
                 entry['comment_path'] = _hyperlink_rewrite_data_url(entry.get('comment_path', ''))
                 entry['html_files'] = [_hyperlink_rewrite_data_url(x) for x in (entry.get('html_files') or [])]
+                video_cache_name = entry.get('video_cache_name') or entry.get('video_relative_path') or entry.get('video_name') or ''
+                if video_cache_name:
+                    entry['video'] = _hyperlink_rewrite_data_url('/data/video/' + video_cache_name.replace('\\', '/'))
+                    entry['video_cache_name'] = video_cache_name
+                cached_video_path = os.path.join(video_dir, *video_cache_name.replace('\\', '/').split('/')) if video_cache_name else ''
+                entry['video_missing'] = bool(entry.get('video')) and not os.path.isfile(cached_video_path)
+                entry['cached_video'] = bool(entry.get('video')) and os.path.isfile(cached_video_path)
                 images = entry.get('images') or {}
                 if isinstance(images, dict):
                     for sensor, positions in images.items():
@@ -1961,7 +2098,7 @@ def hyperlink_mappings():
                             continue
                         for pos, img_path in list(positions.items()):
                             positions[pos] = _hyperlink_rewrite_data_url(img_path)
-            saved_pairs_by_key = {saved_pair.pair_key: saved_pair for saved_pair in _hyperlink_saved_pairs()}
+            saved_pairs_by_key = {saved_pair.pair_key: saved_pair for saved_pair in saved_pairs}
             response_mapping = {}
             for raw_key, base_entry in (mapping or {}).items():
                 if not isinstance(base_entry, dict):
@@ -1993,6 +2130,17 @@ def hyperlink_mappings():
                     entry['remote_html_path'] = saved_pair.remote_html_path
                     entry['remote_video_path'] = saved_pair.remote_video_path
                     entry['remote_overlay_path'] = saved_pair.remote_overlay_path or ''
+                    entry['video_cache_name'] = _hyperlink_saved_video_cache_name(
+                        video_dir,
+                        saved_pair.video_name,
+                        entry.get('video_cache_name', '') or _hyperlink_remote_video_cache_name(saved_pair.remote_video_path),
+                    )
+                    cached_video_path = os.path.join(video_dir, *entry['video_cache_name'].replace('\\', '/').split('/')) if entry['video_cache_name'] else ''
+                    entry['cached_video'] = bool(
+                        saved_pair.remote_video_path and entry['video_cache_name']
+                    )
+                    if entry['video_cache_name']:
+                        entry['video'] = _hyperlink_rewrite_data_url('/data/video/' + entry['video_cache_name'])
                     if saved_overlay_name:
                         entry['overlay_video_name'] = saved_overlay_name
                     if saved_overlay_url:
@@ -2046,6 +2194,12 @@ def hyperlink_save_comment():
         
         return jsonify({'success': True, 'path': abs_path})
     except Exception as e:
+        if getattr(e, 'errno', None) == 13 or 'permission denied' in str(e).lower():
+            return jsonify({
+                'success': False,
+                'error': 'Permission denied while scanning this media root. Your cluster account needs directory traverse and read access.',
+                'errno': 13,
+            }), 403
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
@@ -2227,15 +2381,13 @@ def hyperlink_cluster_connect():
     if not password:
         password = _stored_cluster_password_for_current_user(net_id).strip()
 
-    if not html_path or not video_path:
-        return jsonify({'success': False, 'error': 'Both remote HTML and Video paths are required'}), 400
     if not net_id:
         return jsonify({'success': False, 'error': 'Net ID is required'}), 400
     if not password:
         return jsonify({'success': False, 'error': 'Password required. Sign in through the dashboard again or enter it once for this stream session.'}), 400
 
-    c1 = cluster_from_path(html_path)
-    c2 = cluster_from_path(video_path)
+    c1 = cluster_from_path(html_path) if html_path else None
+    c2 = cluster_from_path(video_path) if video_path else None
     c3 = cluster_from_path(overlay_path) if overlay_path else None
     cluster_name = c1 or c2
     if not cluster_name or (c1 and c2 and c1 != c2) or (c3 and c3 != cluster_name):
@@ -2363,18 +2515,53 @@ def _hyperlink_resolve_overlay_remote_path(sftp, overlay_path: str, *, log_name:
     return f"{resolved_path.rstrip('/')}/{overlay_name}", overlay_name
 
 
-def _hyperlink_sftp_download_dir(sftp, remote_dir: str, local_dir: str) -> None:
+def _hyperlink_sftp_download_dir(sftp, remote_dir: str, local_dir: str) -> int:
     import stat
 
     os.makedirs(local_dir, exist_ok=True)
-    for attr in sftp.listdir_attr(remote_dir):
+    try:
+        entries = sftp.listdir_attr(remote_dir)
+    except (OSError, IOError):
+        return 1
+    skipped = 0
+    for attr in entries:
         r = remote_dir.rstrip('/') + '/' + attr.filename
         local_path = os.path.join(local_dir, attr.filename)
         if stat.S_ISDIR(attr.st_mode):
-            _hyperlink_sftp_download_dir(sftp, r, local_path)
+            skipped += _hyperlink_sftp_download_dir(sftp, r, local_path)
         else:
-            os.makedirs(os.path.dirname(local_path), exist_ok=True)
-            sftp.get(r, local_path)
+            try:
+                os.makedirs(os.path.dirname(local_path), exist_ok=True)
+                sftp.get(r, local_path)
+            except (OSError, IOError):
+                skipped += 1
+    return skipped
+
+
+def _hyperlink_sftp_download_file(sftp, remote_path: str, local_path: str) -> bool:
+    """Download one readable remote file; false means an ACL/read denial."""
+    try:
+        os.makedirs(os.path.dirname(local_path), exist_ok=True)
+        sftp.get(remote_path, local_path)
+        return True
+    except (OSError, IOError):
+        return False
+
+
+def _hyperlink_safe_component(value: str) -> str:
+    """Return a filesystem-safe final component from a remote display name."""
+    value = (value or '').replace('\\', '/').rstrip('/').split('/')[-1]
+    if value in {'', '.', '..'}:
+        raise ValueError('Invalid remote media name')
+    return value
+
+
+def _hyperlink_safe_relative_path(value: str) -> str:
+    """Validate a slash-separated cache path received from the pairing UI."""
+    parts = (value or '').replace('\\', '/').split('/')
+    if not parts or any(part in {'', '.', '..'} for part in parts):
+        raise ValueError('Invalid relative media path')
+    return os.path.join(*parts)
 
 
 @app.route('/hyperlink/api/cluster/scan-logs', methods=['POST'])
@@ -2385,8 +2572,8 @@ def hyperlink_cluster_scan_logs():
     overlay_path = (data.get('overlay_path') or '').strip()
     output_path = (data.get('output_path') or '').strip()
 
-    if not html_path or not video_path:
-        return jsonify({'success': False, 'error': 'Both remote HTML and Video paths are required'}), 400
+    if not html_path and not video_path:
+        return jsonify({'success': False, 'error': 'Provide an HTML path, a video path, or both'}), 400
 
     if output_path:
         session['hyperlink_output_root'] = _hyperlink_resolve_output_root(output_path)
@@ -2411,19 +2598,56 @@ def hyperlink_cluster_scan_logs():
 
     try:
         find_overlay_video_name, is_supported_video_file, is_overlay_video_name = _hyperlink_overlay_tools()
-        html_items = _hyperlink_sftp_list_dir(sftp, html_path)
-        video_items = _hyperlink_sftp_list_dir(sftp, video_path)
-        overlay_items = _hyperlink_sftp_list_dir(sftp, overlay_path) if overlay_path else []
+        try:
+            html_items = _hyperlink_sftp_list_dir(sftp, html_path) if html_path and os.path.isdir(html_path) else []
+        except OSError:
+            html_items = []
+        video_items = []
+        # Video roots may be organized as session/g02/bus/video.mp4.
+        scan_budget = {'dirs': 0, 'files': 0, 'truncated': False}
+
+        def scan_video_dir(path: str, depth: int = 0) -> None:
+            if scan_budget['truncated']:
+                return
+            if depth > 8 or scan_budget['dirs'] >= 10000:
+                scan_budget['truncated'] = True
+                return
+            scan_budget['dirs'] += 1
+            try:
+                items = _hyperlink_sftp_list_dir(sftp, path)
+            except OSError:
+                scan_budget['unreadable_dirs'] = scan_budget.get('unreadable_dirs', 0) + 1
+                return
+            for item in items:
+                item_path = f"{path.rstrip('/')}/{item['name']}"
+                if item.get('is_dir'):
+                    scan_video_dir(item_path, depth + 1)
+                else:
+                    scan_budget['files'] += 1
+                    if scan_budget['files'] > 10000:
+                        scan_budget['truncated'] = True
+                        break
+                    video_items.append({**item, 'path': item_path})
+            if scan_budget['truncated']:
+                return
+
+        if video_path:
+            scan_video_dir(video_path)
+        try:
+            overlay_items = _hyperlink_sftp_list_dir(sftp, overlay_path) if overlay_path and os.path.isdir(overlay_path) else []
+        except OSError:
+            overlay_items = []
 
         html_folders = {item['name']: item for item in html_items if item.get('is_dir')}
         video_files = {}
         for item in video_items:
             name = item.get('name') or ''
-            if item.get('is_dir') or not is_supported_video_file(name) or is_overlay_video_name(name):
+            if not is_supported_video_file(name) or is_overlay_video_name(name):
                 continue
-            key = _hyperlink_key_from_name(name)
+            rel = posixpath.relpath(item['path'], video_path) if video_path else name
+            key = _hyperlink_video_session_key(rel, name)
             if key:
-                video_files[key] = name
+                video_files[key] = item['path']
 
         overlay_names = []
         for item in overlay_items:
@@ -2437,40 +2661,65 @@ def hyperlink_cluster_scan_logs():
             (item.remote_html_path, item.remote_video_path): item
             for item in _hyperlink_saved_pairs()
         }
+        html_items_by_key = {}
+        for item in html_items:
+            if item.get('is_dir'):
+                key = _hyperlink_key_from_name(item['name'])
+                if key:
+                    html_items_by_key.setdefault(key, []).append(item['name'])
         logs = {}
-        for folder_name in html_folders:
-            key = _hyperlink_key_from_name(folder_name)
-            if not key:
-                continue
-            if key not in video_files:
-                continue
-
-            remote_html_path = f"{html_path.rstrip('/')}/{folder_name}"
-            remote_video_path = f"{video_path.rstrip('/')}/{video_files[key]}"
-            saved_pair = saved_pairs.get((remote_html_path, remote_video_path))
+        if html_path and video_path:
+            candidates = []
+            for session_key in sorted(set(html_items_by_key) & set(video_files)):
+                for folder_name in sorted(html_items_by_key[session_key]):
+                    row_key = f'{session_key}::{folder_name}'
+                    candidates.append((row_key, session_key, folder_name, video_files[session_key]))
+        elif html_path:
+            candidates = [
+                (f'{session_key}::{folder_name}', session_key, folder_name, '')
+                for session_key in sorted(html_items_by_key)
+                for folder_name in sorted(html_items_by_key[session_key])
+            ]
+        else:
+            candidates = [(key, key, '', video_files[key]) for key in sorted(video_files)]
+        for row_key, key, folder_name, remote_video_path in candidates:
+            remote_html_path = f"{html_path.rstrip('/')}/{folder_name}" if folder_name else ''
+            video_name = os.path.basename(remote_video_path) if remote_video_path else ''
+            video_relpath = posixpath.relpath(remote_video_path, video_path) if remote_video_path and video_path else ''
+            video_cache_name = video_relpath
+            saved_pair = saved_pairs.get((remote_html_path, remote_video_path)) if remote_html_path and remote_video_path else None
             saved_overlay_name = ''
             saved_overlay_path = ''
             if saved_pair is not None:
                 saved_overlay_name = (saved_pair.overlay_name or os.path.basename(saved_pair.remote_overlay_path or '')).strip()
                 saved_overlay_path = (saved_pair.remote_overlay_path or '').strip()
 
-            overlay_name = find_overlay_video_name(folder_name, video_files[key], overlay_names)
+            overlay_name = find_overlay_video_name(folder_name, video_name, overlay_names) if folder_name and video_name else None
             remote_overlay_path = f"{overlay_path.rstrip('/')}/{overlay_name}" if overlay_path and overlay_name else ''
             if not overlay_name and saved_overlay_name:
                 overlay_name = saved_overlay_name
             if not remote_overlay_path and saved_overlay_path:
                 remote_overlay_path = saved_overlay_path
 
-            cached_html = os.path.join(html_dir, folder_name)
-            cached_video = os.path.join(video_dir, video_files[key])
-            is_cached = os.path.isdir(cached_html) and os.path.isfile(cached_video)
+            cached_html = os.path.join(html_dir, folder_name) if folder_name else ''
+            cached_video = os.path.join(video_dir, *video_cache_name.split('/')) if video_cache_name else ''
+            is_cached = bool(cached_html and cached_video and os.path.isdir(cached_html) and os.path.isfile(cached_video))
             overlay_cached = bool(overlay_name) and os.path.isfile(os.path.join(video_dir, overlay_name))
+            cached_video_url = '/data/video/' + video_cache_name if video_cache_name else ''
 
-            logs[key] = {
-                'name': folder_name,
+            # A session can have multiple reports (e.g. separate MRR/SRR HTML
+            # folders) but one video. Keep each report as its own selectable row.
+            logs[row_key] = {
+                'name': folder_name or video_name or key,
                 'html_path': remote_html_path,
                 'video_path': remote_video_path,
-                'video_name': video_files[key],
+                'video_name': video_name,
+                'video_cache_name': video_cache_name,
+                'cached_video': is_cached and bool(cached_video_url),
+                'video_cache_name': video_cache_name,
+                'html_missing': not bool(folder_name),
+                'video_missing': not bool(video_name),
+                'scan_truncated': scan_budget['truncated'],
                 'overlay_path': remote_overlay_path,
                 'overlay_name': overlay_name,
                 'overlay_cached': overlay_cached,
@@ -2481,8 +2730,16 @@ def hyperlink_cluster_scan_logs():
                 'output_root': output_root,
             }
 
-        return jsonify({'success': True, 'logs': logs})
+        return jsonify({
+            'success': True,
+            'logs': logs,
+            'truncated': scan_budget['truncated'],
+            'unreadable_dirs': scan_budget.get('unreadable_dirs', 0),
+            'matched_roots': bool(html_path and video_path),
+        })
     except Exception as e:
+        if getattr(e, 'errno', None) == 13 or 'permission denied' in str(e).lower():
+            return jsonify({'success': False, 'error': 'Permission denied scanning a media folder. The results still include all readable folders.', 'errno': 13}), 403
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
@@ -2495,8 +2752,8 @@ def hyperlink_cluster_download_log():
     overlay_path = (data.get('overlay_path') or '').strip()
     output_path = (data.get('output_path') or '').strip()
 
-    if not key or not html_path or not video_path:
-        return jsonify({'success': False, 'error': 'Missing required fields'}), 400
+    if not key or not (html_path or video_path):
+        return jsonify({'success': False, 'error': 'A scan key and at least one media path are required'}), 400
 
     if output_path:
         session['hyperlink_output_root'] = _hyperlink_resolve_output_root(output_path)
@@ -2515,21 +2772,41 @@ def hyperlink_cluster_download_log():
 
     try:
         output_root, html_dir, video_dir = _hyperlink_get_user_dirs()
-        folder_name = os.path.basename(html_path.rstrip('/'))
-        local_html_folder = os.path.join(html_dir, folder_name)
-        local_video_file = os.path.join(video_dir, os.path.basename(video_path))
-        os.makedirs(os.path.dirname(local_video_file), exist_ok=True)
+        folder_name = _hyperlink_safe_component(html_path) if html_path else ''
+        local_html_folder = os.path.join(html_dir, folder_name) if folder_name else ''
+        video_cache_name = _hyperlink_safe_relative_path(data.get('video_cache_name') or os.path.basename(video_path)) if video_path else ''
+        if video_path and data.get('video_cache_name'):
+            video_cache_name = _hyperlink_safe_relative_path(data['video_cache_name'])
+        video_name = video_cache_name or (os.path.basename(video_path) if video_path else '')
+        local_video_file = os.path.join(video_dir, video_cache_name) if video_cache_name else ''
+        if local_video_file:
+            os.makedirs(os.path.dirname(local_video_file), exist_ok=True)
 
         # Progress (best-effort) - keyed by user_key
         _HYPERLINK_PROGRESS[user_key] = {'active': True, 'phase': 'downloading', 'message': 'Downloading...'}
 
-        _hyperlink_sftp_download_dir(sftp, html_path, local_html_folder)
-        sftp.get(video_path, local_video_file)
+        skipped_html = _hyperlink_sftp_download_dir(sftp, html_path, local_html_folder) if html_path else 0
+        if video_path:
+            if not _hyperlink_sftp_download_file(sftp, video_path, local_video_file):
+                return jsonify({
+                    'success': False,
+                    'error': 'Permission denied reading the selected video. The video folder is visible but this file is not readable by your cluster account.',
+                    'errno': 13,
+                }), 403
         overlay_name = os.path.basename(overlay_path) if overlay_path else ''
         if overlay_path:
             local_overlay_file = os.path.join(video_dir, overlay_name)
             os.makedirs(os.path.dirname(local_overlay_file), exist_ok=True)
-            sftp.get(overlay_path, local_overlay_file)
+            if not _hyperlink_sftp_download_file(sftp, overlay_path, local_overlay_file):
+                overlay_name = ''
+
+        if not html_path or not video_path:
+            _HYPERLINK_PROGRESS[user_key] = {'active': False, 'phase': 'complete', 'message': 'Downloaded available media'}
+            _HYPERLINK_MAPPING_CACHE.pop(_hyperlink_cache_user_key(), None)
+            message = 'Downloaded available media'
+            if skipped_html:
+                message += f'; skipped {skipped_html} unreadable HTML path(s) (permission denied)'
+            return jsonify({'success': True, 'message': message, 'skipped_html': skipped_html, 'output_root': output_root})
 
         _HYPERLINK_PROGRESS[user_key] = {'active': False, 'phase': 'complete', 'message': 'Done'}
         saved_pair = _hyperlink_upsert_saved_pair(
@@ -2538,14 +2815,20 @@ def hyperlink_cluster_download_log():
             video_path=video_path,
             overlay_path=overlay_path,
             output_root=output_root,
+            video_cache_name=video_cache_name,
         )
         _HYPERLINK_MAPPING_CACHE.pop(_hyperlink_cache_user_key(), None)
 
+        message = 'Added to stream'
+        if skipped_html:
+            message += f'; skipped {skipped_html} unreadable HTML path(s) (permission denied)'
+
         return jsonify({
             'success': True,
-            'message': 'Added to stream',
+            'message': message,
             'key': str(saved_pair.id),
             'saved_id': saved_pair.id,
+            'skipped_html': skipped_html,
             'overlay_name': overlay_name,
             'overlay_path': overlay_path,
             'output_root': output_root,
@@ -2553,6 +2836,12 @@ def hyperlink_cluster_download_log():
     except Exception as e:
         if user_key:
             _HYPERLINK_PROGRESS[user_key] = {'active': False, 'phase': 'error', 'message': str(e)}
+        if getattr(e, 'errno', None) == 13 or 'permission denied' in str(e).lower():
+            return jsonify({
+                'success': False,
+                'error': 'Permission denied while downloading this media. The project ACL blocks reading one or more files.',
+                'errno': 13,
+            }), 403
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
