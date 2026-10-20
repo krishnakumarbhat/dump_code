@@ -8,6 +8,7 @@ import platform
 import threading
 import webbrowser
 import json
+import re
 from typing import Any, Dict, List, Optional
 
 # Base directories - handle PyInstaller frozen mode
@@ -115,10 +116,25 @@ def normalized_video_base(name: str) -> str:
 
 
 def mapping_key_from_name(name: str) -> Optional[str]:
-    """Extract the two-part key used throughout the viewer pipeline."""
+    """Extract a shared session key from HTML report folders and video names."""
     base = normalized_video_base(name)
     parts = base.split("_")
-    return "_".join(parts[-2:]) if len(parts) >= 2 else None
+    match = re.search(r'(?i)(\d{8}_\d{6}_\d+)(?:_b\d{2}_hdf_report|_g\d{2}(?:_\d+)?)$', base)
+    if match:
+        return match.group(1).lower()
+    if len(parts) < 2:
+        return None
+    return '_'.join(parts[-2:]).lower()
+
+
+def video_session_key(relative_path: str) -> Optional[str]:
+    """Match the nearest session ancestor, independent of wrapper directory depth."""
+    parts = (relative_path or '').replace('\\', '/').split('/')
+    for part in reversed(parts):
+        match = re.search(r'(?i)(\d{8}_\d{6}_\d+)(?=_b\d+|_g\d+|\.|$)', part)
+        if match:
+            return match.group(1).lower()
+    return mapping_key_from_name(parts[-1]) if parts else None
 
 
 def is_supported_video_file(name: str) -> bool:
@@ -198,9 +214,9 @@ def find_overlay_video_name(log_name: str, primary_video_name: str, candidate_na
 class LogViewerApp:
     """Core log viewer application - scans and processes log data for online mode"""
     
-    def __init__(self, html_root: str, video_root: str, output_dir: str = None) -> None:
-        self.html_root = os.path.abspath(html_root)
-        self.video_root = os.path.abspath(video_root)
+    def __init__(self, html_root: str = '', video_root: str = '', output_dir: str = None) -> None:
+        self.html_root = os.path.abspath(html_root) if html_root else ''
+        self.video_root = os.path.abspath(video_root) if video_root else ''
         self.output_dir = os.path.abspath(output_dir) if output_dir else OUT_DIR
 
     @staticmethod
@@ -210,7 +226,7 @@ class LogViewerApp:
 
     def _scan_html(self) -> Dict[str, List[str]]:
         """Scan HTML folders"""
-        if not os.path.isdir(self.html_root):
+        if not self.html_root or not os.path.isdir(self.html_root):
             return {}
         m: Dict[str, List[str]] = {}
         for entry in os.scandir(self.html_root):
@@ -227,13 +243,15 @@ class LogViewerApp:
                         # URL path for Flask serving
                         rel = os.path.relpath(abs_path, self.html_root).replace("\\", "/")
                         files.append(f"/data/html/{rel}")
-            if files:
-                m[k] = sorted(files)
+            if files or os.path.isdir(entry.path):
+                # One video session may have multiple report folders (e.g. MRR
+                # and SRR). Keep each folder as its own mapping row.
+                m[f"{k}::{entry.name}"] = sorted(files)
         return m
 
     def _scan_images(self) -> Dict[str, Dict[str, Dict[str, str]]]:
         """Scan image files"""
-        if not os.path.isdir(self.html_root):
+        if not self.html_root or not os.path.isdir(self.html_root):
             return {}
         
         sensor_names = {"range", "velocity", "rangerate", "doppler", "azimuth", "elevation", "snr", "rcs"}
@@ -268,12 +286,14 @@ class LogViewerApp:
                     imgs[sensor_name][sensor_pos] = f"/data/html/{rel}"
             
             if imgs:
-                img_map[k] = imgs
+                img_map[f'{k}::{entry.name}'] = imgs
         
         return img_map
 
     def _scan_text(self) -> Dict[str, Dict[str, str]]:
         """Scan text files"""
+        if not self.video_root:
+            return {}
         text_dir = os.path.join(self.video_root, "log_txt")
         if not os.path.isdir(text_dir):
             return {}
@@ -298,32 +318,34 @@ class LogViewerApp:
 
     def _scan_video(self) -> tuple[Dict[str, Dict[str, str]], List[Dict[str, str]]]:
         """Scan primary videos and overlay candidates."""
-        if not os.path.isdir(self.video_root):
+        if not self.video_root or not os.path.isdir(self.video_root):
             return {}, []
         primary_map: Dict[str, Dict[str, str]] = {}
         overlay_candidates: List[Dict[str, str]] = []
-        for entry in os.scandir(self.video_root):
-            if not entry.is_file() or not is_supported_video_file(entry.name):
-                continue
-            rel = os.path.relpath(entry.path, self.video_root).replace("\\", "/")
-            item = {
-                "name": entry.name,
-                "url": f"/data/video/{rel}",
-            }
-            if is_overlay_video_name(entry.name):
-                overlay_candidates.append(item)
-                continue
+        for root, dirs, filenames in os.walk(self.video_root):
+            dirs[:] = sorted(d for d in dirs if not d.startswith('.') and d != '__pycache__')
+            filenames.sort()
+            for filename in filenames:
+                if filename.startswith('.') or '.tmp.' in filename or not is_supported_video_file(filename):
+                    continue
+                rel = os.path.relpath(os.path.join(root, filename), self.video_root).replace("\\", "/")
+                item = {"name": filename, "url": f"/data/video/{rel}"}
+                if is_overlay_video_name(filename):
+                    overlay_candidates.append(item)
+                    continue
 
-            k = self._key(entry.name)
-            if k:
-                primary_map[k] = item
+                key = video_session_key(rel)
+                if key:
+                    primary_map[key] = item
         overlay_candidates.sort(key=lambda item: item["name"].lower())
         return primary_map, overlay_candidates
 
     def _get_html_folder_name(self, key: str) -> str:
         """Get HTML folder name for a key"""
+        if not self.html_root or not os.path.isdir(self.html_root):
+            return key
         for entry in os.scandir(self.html_root):
-            if entry.is_dir() and self._key(entry.name) == key:
+            if entry.is_dir() and (self._key(entry.name) == key or self._key(entry.name) == key.split('::', 1)[0]):
                 return entry.name
         return key
 
@@ -336,47 +358,66 @@ class LogViewerApp:
         overlay_by_name = {item["name"]: item for item in overlay_candidates}
         overlay_names = list(overlay_by_name)
 
-        html_keys = set(html_map)
+        html_keys = {key.split('::', 1)[0] for key in html_map}
         video_keys = set(video_map)
-        matched = sorted(html_keys & video_keys)
+        # With one side omitted, expose every discovered item; when both roots
+        # are supplied, retain exact key matching and skip unmatched records.
+        matched = sorted(html_keys & video_keys) if html_map and video_map else sorted(html_keys | video_keys)
 
-        for k in sorted(html_keys - video_keys):
-            print(f"No video found for key: {k}")
-        for k in sorted(video_keys - html_keys):
-            print(f"No HTML folder found for key: {k}")
+        if html_map and video_map:
+            for k in sorted(html_keys - video_keys):
+                print(f"No video found for key: {k}")
+            for k in sorted(video_keys - html_keys):
+                print(f"No HTML folder found for key: {k}")
 
         mapping: Dict[str, Dict[str, Any]] = {}
         print("Matched keys:")
-        for k in matched:
-            video_info = video_map[k]
-            video_url = video_info["url"]
-            video_name = video_info["name"]
-            html_folder = self._get_html_folder_name(k)
-            overlay_name = find_overlay_video_name(html_folder, video_name, overlay_names)
+        rows = []
+        if html_map and video_map:
+            for row_key in sorted(html_map):
+                session_key, html_folder = row_key.split('::', 1)
+                if session_key in video_keys:
+                    rows.append((row_key, session_key, html_folder))
+        elif html_map:
+            rows.extend((row_key, row_key.split('::', 1)[0], row_key.split('::', 1)[1]) for row_key in sorted(html_map))
+        else:
+            rows.extend((key, key, '') for key in sorted(video_keys))
+
+        for row_key, k, html_folder in rows:
+            video_info = video_map.get(k, {})
+            video_url = video_info.get("url", "")
+            video_name = video_info.get("name", "")
+            overlay_name = find_overlay_video_name(html_folder, video_name, overlay_names) if video_name and html_folder else None
             overlay_info = overlay_by_name.get(overlay_name) if overlay_name else None
-            
+
             text_info = text_map.get(k)
             if text_info:
                 comment_path = text_info["path"]
                 comment_content = text_info["content"]
-            else:
+            elif video_name:
                 base_name = os.path.splitext(video_name)[0]
                 comment_path = f"/data/video/log_txt/{base_name}.txt"
                 comment_content = ""
+            else:
+                comment_path = ''
+                comment_content = ''
             
-            mapping[k] = {
+            mapping[row_key] = {
                 "video": video_url,
                 "video_name": video_name,
+                "video_relative_path": video_url.removeprefix('/data/video/') if video_url else '',
                 "overlay_video": overlay_info["url"] if overlay_info else "",
                 "overlay_video_name": overlay_info["name"] if overlay_info else "",
-                "html_files": html_map[k],
+                "html_files": html_map.get(row_key, []),
                 "html_folder": html_folder,
-                "images": img_map.get(k, {}),
+                "images": img_map.get(row_key, {}),
+                "html_missing": not bool(html_folder),
+                "video_missing": k not in video_map,
                 "comment_path": comment_path,
                 "comment_content": comment_content,
             }
             overlay_suffix = f", overlay: {overlay_info['name']}" if overlay_info else ""
-            print(f"  {k} -> {len(html_map[k])} HTML file(s), video: {video_url}{overlay_suffix}")
+            print(f"  {k} -> {len(html_map.get(row_key, []))} HTML file(s), video: {video_url}{overlay_suffix}")
 
         return mapping
 
@@ -1014,6 +1055,8 @@ def main() -> None:
     # Online mode (default)
     html_root = parsed.html_root
     video_root = parsed.video_root
+    if html_root and not video_root:
+        video_root, html_root = html_root, None
 
     # Pass through CLI flags via environment for main_online
     if parsed.host:
