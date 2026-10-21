@@ -1105,3 +1105,95 @@ class DataCalculations:
             yaxis_title="Number of objects",
         )
         return f"hist_fig_{signal_name}_object_count_line", fig
+
+    def plot_xy_correlation(
+        self,
+        signal_name,
+        x_vals,
+        y_vals,
+        color_vals=None,
+        x_label="X",
+        y_label="Y",
+        title=None,
+        unit_convert=None,
+        outlier_z=3.0,
+    ):
+        """Pure, stateless (X, Y) correlation plot.
+
+        Plots any two signals against each other (e.g. range vs Doppler,
+        azimuth vs range, kinematic error correlation) instead of the hardcoded
+        scan_index axis. Handles missing data, optional unit conversion, and
+        z-score outlier filtering without mutating any shared state.
+
+        Args:
+            signal_name: name used for figure id / title
+            x_vals: X-axis values
+            y_vals: Y-axis values
+            color_vals: optional per-point color dimension (e.g. SNR)
+            x_label: X axis label
+            y_label: Y axis label
+            title: custom plot title
+            unit_convert: optional callable applied to both x and y arrays
+            outlier_z: z-score threshold for outlier removal (0 disables)
+
+        Returns:
+            (fig_id, fig) tuple; fig is None when no usable paired data exists.
+        """
+        fig_id = f"xy_fig_{signal_name}"
+
+        if x_vals is None or y_vals is None:
+            logging.warning(f"Missing x/y data for xy correlation of {signal_name}")
+            return fig_id, None
+
+        x_arr = np.asarray(x_vals, dtype=float).ravel()
+        y_arr = np.asarray(y_vals, dtype=float).ravel()
+
+        eps = 1e-9
+        finite = np.isfinite(x_arr) & np.isfinite(y_arr)
+        if not np.any(finite):
+            logging.warning(f"No finite paired (x, y) points for {signal_name}")
+            return fig_id, None
+        x_arr = x_arr[finite]
+        y_arr = y_arr[finite]
+
+        # Optional unit conversion (applied identically to both axes).
+        if unit_convert is not None:
+            try:
+                x_arr = np.asarray(unit_convert(x_arr), dtype=float)
+                y_arr = np.asarray(unit_convert(y_arr), dtype=float)
+            except Exception as ex:  # pragma: no cover - defensive
+                logging.warning(f"Unit conversion failed for {signal_name}: {ex}")
+
+        # z-score outlier filtering (eps-guarded against zero variance).
+        if outlier_z and outlier_z > 0 and x_arr.size > 2:
+            x_mean, x_std = float(np.nanmean(x_arr)), float(np.nanstd(x_arr))
+            y_mean, y_std = float(np.nanmean(y_arr)), float(np.nanstd(y_arr))
+            x_ok = np.abs(x_arr - x_mean) <= outlier_z * max(x_std, eps)
+            y_ok = np.abs(y_arr - y_mean) <= outlier_z * max(y_std, eps)
+            keep = x_ok & y_ok
+            if not np.any(keep):
+                logging.warning(f"All points filtered as outliers for {signal_name}")
+                return fig_id, None
+            x_arr = x_arr[keep]
+            y_arr = y_arr[keep]
+            if color_vals is not None:
+                c_arr = np.asarray(color_vals, dtype=float).ravel()[finite][keep]
+            else:
+                c_arr = None
+        else:
+            c_arr = (
+                np.asarray(color_vals, dtype=float).ravel()[finite]
+                if color_vals is not None
+                else None
+            )
+
+        fig = PlotlyCharts.scatter_xy(
+            x_arr,
+            y_arr,
+            color_vals=c_arr,
+            signal_name=signal_name,
+            x_label=x_label,
+            y_label=y_label,
+            title=title,
+        )
+        return fig_id, fig

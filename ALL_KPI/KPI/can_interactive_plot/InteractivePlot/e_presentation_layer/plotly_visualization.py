@@ -2,6 +2,7 @@ import plotly.graph_objects as go
 import logging
 import gc
 import time
+import numpy as np
 import pandas as pd
 from typing import List
 
@@ -108,6 +109,89 @@ class PlotlyCharts:
         end_time_scatter = time.time()
         logging.debug(
             f"time taken by scatter api as whole of {end_time_scatter - start_time} in {signal_name}"
+        )
+        return fig
+
+    @staticmethod
+    def scatter_xy(
+        x_vals,
+        y_vals,
+        color_vals=None,
+        signal_name=None,
+        x_label="X",
+        y_label="Y",
+        title=None,
+        color_label="color",
+        optimize_performance=True,
+    ):
+        """Create an arbitrary (X, Y) scatter/heatmap-style correlation plot.
+
+        Unlike :meth:`scatter_plot` (hardcoded scan_index vs signal), this plots
+        any two signals against each other, e.g. range vs Doppler, azimuth vs
+        range, kinematic error correlation.
+
+        Args:
+            x_vals: X-axis values
+            y_vals: Y-axis values
+            color_vals: optional per-point color/marker values (e.g. SNR)
+            signal_name: signal/stream name for the title
+            x_label: X axis label
+            y_label: Y axis label
+            title: custom plot title
+            color_label: legend label for the color dimension
+            optimize_performance: kept for API parity with scatter_plot
+
+        Returns:
+            go.Figure: A plotly scatter figure
+        """
+        start_time = time.time()
+
+        if x_vals is None or y_vals is None:
+            logging.error(f"Missing required data for xy scatter of {signal_name}")
+            return go.Figure()
+
+        x_arr = np.asarray(x_vals, dtype=float).ravel()
+        y_arr = np.asarray(y_vals, dtype=float).ravel()
+
+        # Keep only finite, paired points (eps-guarded against empty input).
+        eps = 1e-9
+        finite = np.isfinite(x_arr) & np.isfinite(y_arr)
+        if not np.any(finite):
+            logging.warning("No finite paired (x, y) points for %s", signal_name)
+            return go.Figure()
+        x_arr = x_arr[finite]
+        y_arr = y_arr[finite]
+
+        fig = go.Figure()
+
+        marker_kwargs = dict(size=4, opacity=0.75, symbol="circle")
+        if color_vals is not None:
+            c_arr = np.asarray(color_vals, dtype=float).ravel()
+            c_arr = c_arr[finite][: x_arr.size]
+            marker_kwargs["color"] = c_arr
+            marker_kwargs["colorscale"] = "Turbo"
+            marker_kwargs["colorbar"] = dict(title=color_label)
+            marker_kwargs["showscale"] = True
+
+        fig.add_trace(
+            go.Scattergl(
+                x=x_arr,
+                y=y_arr,
+                mode="markers",
+                name=signal_name or "series",
+                marker=marker_kwargs,
+            )
+        )
+
+        fig.update_layout(
+            title=title or f"{signal_name} — {y_label} vs {x_label}",
+            xaxis_title=x_label,
+            yaxis_title=y_label,
+            legend_title=color_label,
+            hovermode="closest",
+        )
+        logging.debug(
+            f"time taken by xy scatter api as whole of {time.time() - start_time} in {signal_name}"
         )
         return fig
 

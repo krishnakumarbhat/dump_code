@@ -125,6 +125,39 @@ def get_stream_plot_config(stream_name: str) -> Dict:
     return {}
 
 
+def get_xy_plot_specs(stream_name: str, stream_config: Optional[Dict] = None) -> list:
+    """Return (X, Y) plot specifications declared for a stream.
+
+    A signal config opts into arbitrary axis pairing by declaring
+    ``x_signal``/``y_signal`` (each a ``{"stream":..., "name":...}`` dict or a
+    plain signal name) plus optional ``color_signal``, ``title``, ``x_label``,
+    ``y_label``. This is the schema for Task 2 generalizable (X, Y) plotting.
+
+    Returns a list of spec dicts, one per declared XY plot.
+    """
+    config = stream_config if stream_config is not None else get_stream_plot_config(stream_name)
+    if not config:
+        return []
+    specs = []
+    for signal_name, signal_config in config.items():
+        if not isinstance(signal_config, dict):
+            continue
+        if "x_signal" not in signal_config and "y_signal" not in signal_config:
+            continue
+        spec = {
+            "plot_id": signal_config.get("plot_id", signal_name),
+            "plot_type": signal_config.get("plot_type", "scatter_xy"),
+            "x_signal": signal_config.get("x_signal"),
+            "y_signal": signal_config.get("y_signal"),
+            "color_signal": signal_config.get("color_signal"),
+            "title": signal_config.get("title", signal_name),
+            "x_label": signal_config.get("x_label", "X"),
+            "y_label": signal_config.get("y_label", "Y"),
+        }
+        specs.append(spec)
+    return specs
+
+
 def resolve_signal_name(stream_name: str, item_name: str, stream_config: Optional[Dict] = None) -> Optional[str]:
     config = stream_config if stream_config is not None else get_stream_plot_config(stream_name)
     item_text = str(item_name or "")
