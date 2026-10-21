@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from InteractivePlot.e_presentation_layer.plotly_visualization import PlotlyCharts
 import logging
@@ -1106,7 +1107,236 @@ class DataCalculations:
         )
         return f"hist_fig_{signal_name}_object_count_line", fig
 
-    def plot_xy_correlation(
+    # ------------------------------------------------------------------
+    # Generalizable (X, Y) plotting.
+    #
+    # The framework calls plot functions as
+    #   fn(signal_name, data_dict, shared_data, lock)
+    # where data_dict['SI'/'I'/'O'] hold the scan index and the per-detection
+    # values of ONE signal, flattened across scans. Two signals can carry a
+    # different number of detections per scan, so (X, Y) pairs are matched
+    # INSIDE a scan rather than by raw index.
+    #
+    # The pairing is declared in the plot config on the signal:
+    #   "ran": {
+    #     "plot_types": ["plot_xy_correlation"],
+    #     "xy_plots": [
+    #       {"x_signal": {"name": "vel"},
+    #        "y_signal": {"name": "ran"},
+    #        "color_signal": {"name": "snr"},
+    #        "title": "Range vs Radial Velocity",
+    #        "x_label": "Radial Velocity (m/s)",
+    #        "y_label": "Distance (m)"}
+    #     ]
+    #   }
+    # data_prep stashes the spec and the X-signal bundle into shared_data, so
+    # the pairing works regardless of the order the signals are processed in.
+    # ------------------------------------------------------------------
+
+    def _xy_scan_groups(self, si, values):
+        """Group a flattened (scan_index, value) pair into {scan: values}."""
+        if si is None or values is None:
+            return {}
+        si_arr = np.asarray(si, dtype=float).ravel()
+        val_arr = np.asarray(values, dtype=float).ravel()
+        n = min(si_arr.size, val_arr.size)
+        if n == 0:
+            return {}
+        si_arr, val_arr = si_arr[:n], val_arr[:n]
+        finite = np.isfinite(si_arr) & np.isfinite(val_arr)
+        si_arr, val_arr = si_arr[finite], val_arr[finite]
+        if si_arr.size == 0:
+            return {}
+        order = np.argsort(si_arr, kind="stable")
+        si_s, val_s = si_arr[order], val_arr[order]
+        uniq, starts = np.unique(si_s, return_index=True)
+        bounds = list(starts) + [si_s.size]
+        groups = {}
+        for i, scan in enumerate(uniq):
+            groups[int(scan)] = val_s[bounds[i]:bounds[i + 1]]
+        return groups
+
+    def _xy_bundle(self, shared_data, name):
+        """Fetch a cached signal bundle (SI/I/O) by signal name."""
+        if shared_data is None or not name:
+            return None
+        key = f"_signal_bundle::{str(name).strip().lower()}"
+        try:
+            bundle = shared_data.get(key)
+        except Exception:
+            return None
+        return bundle if bundle else None
+
+    @staticmethod
+    def _xy_name(spec_entry):
+        """Read a signal reference (dict or plain name) out of a plot spec."""
+        if isinstance(spec_entry, dict):
+            return spec_entry.get("name") or spec_entry.get("signal")
+        return spec_entry
+
+    def _xy_signal_groups(self, name, signal_name, data_dict, shared_data, side):
+        """Per-scan groups of one signal on the 'I' (input) or 'O' (output) side."""
+        if not name:
+            return {}
+        if str(name).strip().lower() == str(signal_name).strip().lower():
+            return self._xy_scan_groups(data_dict.get("SI"), data_dict.get(side))
+        bundle = self._xy_bundle(shared_data, name)
+        if not bundle:
+            return {}
+        return self._xy_scan_groups(bundle.get("SI"), bundle.get(side))
+
+    def _xy_pair(self, groups_x, groups_y, groups_c=None):
+        """Pair two per-scan groups element-wise; optionally carry a colour group."""
+        xs, ys, cs = [], [], []
+        color_ok = bool(groups_c)
+        for scan in sorted(set(groups_x) | set(groups_y)):
+            xv = groups_x.get(scan)
+            yv = groups_y.get(scan)
+            if xv is None or yv is None:
+                continue
+            m = min(xv.size, yv.size)
+            if m == 0:
+                continue
+            xs.append(xv[:m])
+            ys.append(yv[:m])
+            if color_ok:
+                cv = groups_c.get(scan)
+                if cv is None or cv.size < m:
+                    color_ok = False
+                else:
+                    cs.append(cv[:m])
+        if not xs:
+            return None, None, None
+        cat = lambda parts: np.concatenate(parts) if parts else np.array([], dtype=float)
+        return cat(xs), cat(ys), (cat(cs) if (color_ok and cs) else None)
+
+    def plot_xy_correlation(self, signal_name, data_dict, shared_data, lock):
+        """Framework entry point: arbitrary (X, Y) input-vs-output correlation.
+
+        Produces one figure with the INPUT detections and the OUTPUT
+        detections overlaid in the (X, Y) plane, so a behaviour change in the
+        simulation shows up directly as a shift of the OUTPUT cloud.
+        """
+        try:
+            specs = None
+            if shared_data is not None:
+                try:
+                    specs = shared_data.get(
+                        f"_xy_spec::{str(signal_name).strip().lower()}")
+                except Exception:
+                    specs = None
+            _dbg = os.environ.get("INTERACTIVE_PLOT_XY_DEBUG")
+            if _dbg:
+                try:
+                    with open(_dbg, "a", encoding="utf-8") as _df:
+                        _df.write("xy_call signal=%r spec_found=%s\n"
+                                  % (signal_name, bool(specs)))
+                        try:
+                            for _k in [k for k in list(shared_data.keys())
+                                       if isinstance(k, str) and k.startswith("_signal_bundle::")]:
+                                _b = shared_data.get(_k) or {}
+                                _si = _b.get("SI")
+                                _i = _b.get("I")
+                                _df.write("    bundle %-34s SI=%s I=%s\n"
+                                          % (_k,
+                                             (len(_si) if hasattr(_si, "__len__") else "?"),
+                                             (len(_i) if hasattr(_i, "__len__") else "?")))
+                        except Exception as _e:
+                            _df.write("    bundle listing failed: %r\n" % (_e,))
+                        try:
+                            _dsi = data_dict.get("SI")
+                            _di = data_dict.get("I")
+                            _df.write("    data_dict SI=%s I=%s\n"
+                                      % (len(_dsi) if hasattr(_dsi, "__len__") else "?",
+                                         len(_di) if hasattr(_di, "__len__") else "?"))
+                        except Exception as _e:
+                            _df.write("    data_dict probe failed: %r\n" % (_e,))
+                except Exception:
+                    pass
+            if not specs:
+                return None, None
+            if isinstance(specs, dict):
+                specs = [specs]
+
+            rows = []
+            for spec in specs:
+                if not isinstance(spec, dict):
+                    continue
+                x_name = self._xy_name(spec.get("x_signal"))
+                y_name = self._xy_name(spec.get("y_signal"))
+                if not x_name or not y_name:
+                    continue
+                c_name = self._xy_name(spec.get("color_signal"))
+
+                gx_in = self._xy_signal_groups(x_name, signal_name, data_dict, shared_data, "I")
+                gy_in = self._xy_signal_groups(y_name, signal_name, data_dict, shared_data, "I")
+                gx_out = self._xy_signal_groups(x_name, signal_name, data_dict, shared_data, "O")
+                gy_out = self._xy_signal_groups(y_name, signal_name, data_dict, shared_data, "O")
+                gc_in = self._xy_signal_groups(c_name, signal_name, data_dict, shared_data, "I") if c_name else {}
+                gc_out = self._xy_signal_groups(c_name, signal_name, data_dict, shared_data, "O") if c_name else {}
+
+                xi, yi, ci = self._xy_pair(gx_in, gy_in, gc_in)
+                xo, yo, co = self._xy_pair(gx_out, gy_out, gc_out)
+                if xi is None and xo is None:
+                    continue
+                rows.append((spec, xi, yi, ci, xo, yo, co))
+
+            if not rows:
+                logging.warning("No usable (X, Y) pairs for %s", signal_name)
+                return None, None
+
+            n = len(rows)
+            ncols = 2 if n > 1 else 1
+            nrows = int(np.ceil(n / float(ncols)))
+            fig = make_subplots(
+                rows=nrows, cols=ncols,
+                subplot_titles=[str(sp.get("title", signal_name)) for sp, *_ in rows],
+            )
+
+            for idx, (spec, xi, yi, ci, xo, yo, co) in enumerate(rows):
+                r = idx // ncols + 1
+                c = idx % ncols + 1
+                x_label = spec.get("x_label", "X")
+                y_label = spec.get("y_label", "Y")
+
+                if xi is not None and xi.size:
+                    marker = dict(size=4, opacity=0.6)
+                    if ci is not None and ci.size == xi.size:
+                        marker.update(color=ci, colorscale="Turbo", showscale=True,
+                                      colorbar=dict(title="colour"))
+                    else:
+                        marker.update(color="#e67e22")
+                    fig.add_trace(
+                        go.Scattergl(x=xi, y=yi, mode="markers", name="INPUT",
+                                     marker=marker),
+                        row=r, col=c)
+                if xo is not None and xo.size:
+                    marker = dict(size=4, opacity=0.6)
+                    if co is not None and co.size == xo.size:
+                        marker.update(color=co, colorscale="Turbo", showscale=False)
+                    else:
+                        marker.update(color="#3498db")
+                    fig.add_trace(
+                        go.Scattergl(x=xo, y=yo, mode="markers", name="OUTPUT",
+                                     marker=marker),
+                        row=r, col=c)
+
+                if n > 1:
+                    fig.update_xaxes(title_text=x_label, row=r, col=c)
+                    fig.update_yaxes(title_text=y_label, row=r, col=c)
+
+            fig.update_layout(
+                title=f"{signal_name} - (X, Y) correlation: INPUT vs OUTPUT",
+                template="plotly_dark",
+                legend_title="series",
+            )
+            return f"xy_fig_{str(signal_name).replace(' ', '_')}", fig
+
+        except Exception as e:
+            logging.error(f"Error building (X, Y) correlation for {signal_name}: {e}")
+            return None, None
+
+    def xy_correlation_figure(
         self,
         signal_name,
         x_vals,
@@ -1118,26 +1348,11 @@ class DataCalculations:
         unit_convert=None,
         outlier_z=3.0,
     ):
-        """Pure, stateless (X, Y) correlation plot.
+        """Pure, stateless (X, Y) correlation figure from explicit arrays.
 
-        Plots any two signals against each other (e.g. range vs Doppler,
-        azimuth vs range, kinematic error correlation) instead of the hardcoded
-        scan_index axis. Handles missing data, optional unit conversion, and
-        z-score outlier filtering without mutating any shared state.
-
-        Args:
-            signal_name: name used for figure id / title
-            x_vals: X-axis values
-            y_vals: Y-axis values
-            color_vals: optional per-point color dimension (e.g. SNR)
-            x_label: X axis label
-            y_label: Y axis label
-            title: custom plot title
-            unit_convert: optional callable applied to both x and y arrays
-            outlier_z: z-score threshold for outlier removal (0 disables)
-
-        Returns:
-            (fig_id, fig) tuple; fig is None when no usable paired data exists.
+        Handles missing data, an optional unit conversion and z-score outlier
+        filtering. Returns (fig_id, fig); fig is None when no usable paired
+        data exists.
         """
         fig_id = f"xy_fig_{signal_name}"
 
@@ -1156,7 +1371,6 @@ class DataCalculations:
         x_arr = x_arr[finite]
         y_arr = y_arr[finite]
 
-        # Optional unit conversion (applied identically to both axes).
         if unit_convert is not None:
             try:
                 x_arr = np.asarray(unit_convert(x_arr), dtype=float)
@@ -1164,7 +1378,6 @@ class DataCalculations:
             except Exception as ex:  # pragma: no cover - defensive
                 logging.warning(f"Unit conversion failed for {signal_name}: {ex}")
 
-        # z-score outlier filtering (eps-guarded against zero variance).
         if outlier_z and outlier_z > 0 and x_arr.size > 2:
             x_mean, x_std = float(np.nanmean(x_arr)), float(np.nanstd(x_arr))
             y_mean, y_std = float(np.nanmean(y_arr)), float(np.nanstd(y_arr))

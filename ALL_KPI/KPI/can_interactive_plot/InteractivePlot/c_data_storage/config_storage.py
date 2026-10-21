@@ -163,6 +163,35 @@ Gen7V1_V2 = {
     },
 
     "DOWN_SELECTION_STREAM": {
+        "ran": {
+            "aliases": ["ran", "range", "detection_range", "det_range", "af_dets_ran"],
+            "call": ["Range"],
+            "plot_types": [
+                "histogram_scanindex_polar_dbscan",
+                "histogram_scanindex_density_contour",
+                "histogram_scanindex_density_contour_animated",
+                "histogram_scanindex_object_count_line",
+                "histogram_with_count",
+                "scatter_plot",
+                "scatter_with_mismatch",
+                "bar_mismatch_plots_all",
+                "plot_xy_correlation",
+            ],
+            "unit": "meters",
+            "range_to_be_accepted": [0, 500],
+        },
+        "vel": {
+            "aliases": ["vel", "velocity", "detectionvelocity", "range_velocity", "det_range_velocity", "af_dets_vel"],
+            "call": ["Rangerate"],
+            "plot_types": [
+                "histogram_with_count",
+                "scatter_plot",
+                "scatter_with_mismatch",
+                "bar_mismatch_plots_all",
+                "plot_xy_correlation",
+            ],
+            "unit": "m/s",
+        },
         "num_af_det": {
             "aliases": ["num_af_det", "af_det"],
             "call": ["num_af_det"],
