@@ -416,6 +416,39 @@ class DataPrep:
                 except Exception:
                     logging.debug("Failed caching signal bundle for %s", complete_signal_name)
 
+            # Generalizable (X, Y) plotting: stage the declared signal pairing
+            # and pre-resolve every referenced signal's bundle under its
+            # canonical name, so the pairing works no matter which order the
+            # signals are processed in.
+            xy_specs = signal_config.get("xy_plots")
+            if xy_specs:
+                try:
+                    for _key_name in {str(complete_signal_name), str(signal_name)}:
+                        shared_data[f"_xy_spec::{_key_name.strip().lower()}"] = xy_specs
+                    for _spec in xy_specs:
+                        if not isinstance(_spec, dict):
+                            continue
+                        for _role in ("x_signal", "y_signal", "color_signal"):
+                            _entry = _spec.get(_role)
+                            _name = (_entry.get("name") if isinstance(_entry, dict)
+                                     else _entry)
+                            if not _name:
+                                continue
+                            _bkey = f"_signal_bundle::{str(_name).strip().lower()}"
+                            try:
+                                if _bkey in shared_data:
+                                    continue
+                            except Exception:
+                                pass
+                            _d = self._get_data_cached(_name)
+                            if isinstance(_d, dict) and _d:
+                                shared_data[_bkey] = {
+                                    k: (v.tolist() if hasattr(v, "tolist") else v)
+                                    for k, v in _d.items() if k in ("SI", "I", "O")
+                                }
+                except Exception:
+                    logging.debug("Failed staging (X, Y) spec for %s", complete_signal_name)
+
             for plot_type in signal_config.get("plot_types", []):
                 func_name = plot_type
                 # Check if the function exists in data_cal.py
