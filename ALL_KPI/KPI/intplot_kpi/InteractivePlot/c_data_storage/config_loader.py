@@ -76,3 +76,46 @@ def get_plot_config() -> Dict:
 
 def get_plot_config_source() -> str:
     return _ACTIVE_PLOT_CONFIG_SOURCE
+
+
+def get_xy_plot_specs(stream_name: str, stream_config: Optional[Dict] = None) -> list:
+    """Return (X, Y) plot specifications declared for a stream.
+
+    A signal config opts into arbitrary axis pairing by declaring
+    ``x_signal``/``y_signal`` (each a ``{"stream":..., "name":...}`` dict or a
+    plain signal name) plus optional ``color_signal``, ``title``, ``x_label``,
+    ``y_label``. This is the schema for Task 2 generalizable (X, Y) plotting.
+
+    Returns a list of spec dicts, one per declared XY plot.
+    """
+    config = stream_config if stream_config is not None else get_plot_config()
+    if not config:
+        return []
+    stream = config.get(stream_name) if isinstance(config, dict) else None
+    if not isinstance(stream, dict):
+        upper = str(stream_name or "").upper()
+        for key, value in (config or {}).items():
+            if isinstance(value, dict) and str(key).upper() == upper:
+                stream = value
+                break
+    if not isinstance(stream, dict):
+        return []
+    specs = []
+    for signal_name, signal_config in stream.items():
+        if not isinstance(signal_config, dict):
+            continue
+        if "x_signal" not in signal_config and "y_signal" not in signal_config:
+            continue
+        specs.append(
+            {
+                "plot_id": signal_config.get("plot_id", signal_name),
+                "plot_type": signal_config.get("plot_type", "scatter_xy"),
+                "x_signal": signal_config.get("x_signal"),
+                "y_signal": signal_config.get("y_signal"),
+                "color_signal": signal_config.get("color_signal"),
+                "title": signal_config.get("title", signal_name),
+                "x_label": signal_config.get("x_label", "X"),
+                "y_label": signal_config.get("y_label", "Y"),
+            }
+        )
+    return specs
