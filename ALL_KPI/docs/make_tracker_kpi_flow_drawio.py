@@ -3,6 +3,10 @@
 Reuses the node/edge model from make_tracker_kpi_flow.py so the HTML and the
 Draw.io versions can never drift apart.
 
+NOTE: the default output name is distinct on purpose. A richer hand-made
+diagram already lives at ~/Desktop/Tracker_KPI_IO_Flow_Diagram.drawio and
+must not be overwritten; pass an explicit path to write elsewhere.
+
 Usage:  python make_tracker_kpi_flow_drawio.py [output.drawio]
 """
 from __future__ import annotations
@@ -16,7 +20,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from make_tracker_kpi_flow import EDGES, LANES, NODES  # noqa: E402
 
-DEFAULT_OUT = r"C:\Users\ouymc2\Desktop\Tracker_KPI_IO_Flow_Diagram.drawio"
+DEFAULT_OUT = (r"C:\Users\ouymc2\Desktop"
+               r"\Tracker_KPI_IO_Flow_Diagram_7lane.drawio")
 
 # Draw.io palette (dark-ish, prints fine on white too)
 LANE_STYLE = {
