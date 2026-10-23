@@ -1,5 +1,82 @@
 # edge_hdf end-to-end test — generalizable (X, Y) plots
 
+Two entry points:
+
+| Script | What it does |
+|---|---|
+| `run_edge_hdf_test.py` | Runs the real interactive-plot CLIs on selected fixtures and **verifies** the (X, Y) figures carry real data. |
+| `build_combined_report.py` | Runs **all four KPI paths over the whole edge_hdf corpus** and emits **ONE self-contained HTML** (plus a Desktop copy). |
+
+---
+
+## 1. `build_combined_report.py` — the single combined report
+
+```bash
+cd ALL_KPI/edge_hdf_test
+python build_combined_report.py                    # everything
+python build_combined_report.py --skip-plots       # KPI only (fast)
+python build_combined_report.py --max-points 2000  # smaller plots
+```
+
+Output: `combined/KPI_Combined_Report.html` and a copy at
+`~/Desktop/KPI_Combined_Report.html`.
+
+### What it runs
+
+| Path | Tool | Entry point |
+|---|---|---|
+| `can_kpi` | `can_interactive_plot` | `a_persistence_layer/hdf_parser.py` → `c_business_layer/kpi_business.py` → `d_presentation_layer/kpi_html_gen.py` |
+| `udp_kpi` | `UDP_KPI` | `a_persistence_layer/hdf_wrapper.py` → `c_business_layer/kpi_factory.py` |
+| `intplot_kpi` | `intplot_kpi` | `ResimHTMLReport.py` |
+| `can_interactive` | `can_interactive_plot` | `can_intplot_main.py` |
+
+The two KPI paths run **in a subprocess** (`_kpi_worker.py`) because
+`can_interactive_plot` and `UDP_KPI` expose the same top-level module names
+(`a_persistence_layer`, `b_data_storage`, ...) and would collide in one
+interpreter.
+
+### Pair discovery
+
+Every `.h5` in `edge_hdf/` is classified and paired by a normalised stem:
+the resim token (`_rR00100012`, `_r000801151`, …), the `_HDF` / `_input` /
+`_output` / `_formatted` / `_CDC` suffixes and browser download suffixes
+(`" (2)"`, `" 1"`) are stripped, and files under `<x>/input` and `<x>/output`
+share the bucket `<x>`. Files with no counterpart are still listed (as
+"no counterpart found") so nothing is silently dropped.
+
+Each file is then classified `can` (top groups `CEER_*` / `MCIP_*`) or `udp`
+(top groups `FL/FR/RL/RR/FC/SENSOR1`), which decides which KPI path applies.
+
+### The report layout
+
+1. **KPI summary** — one row per (file, sensor, KPI) with accuracy /
+   precision / recall / F1 / Jaccard / per-signal means.
+2. **Per-file results** — the KPI HTML detail blocks plus every (X, Y) plot
+   from that file's interactive-plot report, inlined (no iframes, no side
+   files).
+
+Plots are downsampled to `--max-points` (default 4000) per trace so the
+single file stays shareable.
+
+### Known coverage limits (measured, not assumed)
+
+* The **UDP KPI** only resolves the streams it knows
+  (`DETECTION_STREAM`, `RDD_STREAM`, `TRACKER_STREAM`,
+  `DYNAMIC_ALIGNMENT_STREAM`, `CDC_STREAM`, `VSE_STREAM`). The real
+  MUDP/ThunderMCIP files carry `DOWN_SELECTION_STREAM` instead, so the
+  UDP KPI reports "OD data not found" for them — the **intplot** path
+  handles those.
+* The UDP KPI's scan-index sanitizer drops values `<= 0` and rejects
+  candidates with fewer than 10 survivors, so the 10-scan 0-based
+  `kpi_dummy_pair*` fixtures are not KPI-processable. The interactive-plot
+  path handles them.
+* The CAN KPI skips sensors with no `HED_SCAN_INDEX` / detection arrays
+  (e.g. `CEER_FLR` in some files).
+
+---
+
+## 2. `run_edge_hdf_test.py` — (X, Y) plot verification
+
 Verifies the **generalizable (X, Y) plotting** feature against the real HDF5
 fixtures in `edge_hdf/`, by driving the real interactive-plot CLIs.
 
