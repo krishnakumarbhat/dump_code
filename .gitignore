@@ -78,3 +78,5 @@ edge_hdf/
 # Jupyter / OS noise
 .ipynb_checkpoints/
 Thumbs.db
+# bulky per-scan JSON exports (regenerate with hdf_track_accuracy.py)
+empirical_research_harness/benchmarks/hdf_track_out/json/
