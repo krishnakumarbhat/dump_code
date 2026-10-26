@@ -261,7 +261,8 @@ def table(head: Sequence[str], rows: Sequence[Sequence[str]],
             f"<thead><tr>{th}</tr></thead><tbody>{''.join(body)}</tbody></table></div>")
 
 
-def build(acc: Dict[str, Any], edge: Dict[str, Any]) -> str:
+def build(acc: Dict[str, Any], edge: Dict[str, Any],
+          selfcheck: Optional[Dict[str, Any]] = None) -> str:
     """Assemble the full standalone HTML document."""
     fc = acc["summary"]["FC"]["replay"]
     prod = acc["summary"]["FC"]["prod"]
@@ -407,6 +408,44 @@ def build(acc: Dict[str, Any], edge: Dict[str, Any]) -> str:
         '(<span class="mono">Tracker_Output → TRACKER_STREAM</span>) plus a field map for the '
         '60 depth-3 signals, not a deeper hard-coded constant.</div>')
 
+    # --- control experiment (input vs input) ------------------------------
+    control_table = ""
+    control_callout = ""
+    if selfcheck:
+        pool = selfcheck["pooled"]
+        def ctl(comp: str, gate: str, algo: str = "hungarian_normalized") -> Dict[str, Any]:
+            return pool.get(comp, {}).get(gate, {}).get(algo, {})
+        rows_ctl = []
+        for label, comp, gate, algo in (
+            ("input vs input (identical)", "self", "prod", "hungarian_normalized"),
+            ("input vs input (1.5 m gate)", "self", "replay", "hungarian_normalized"),
+            ("input vs input, shifted one scan", "self_plus_1", "replay", "hungarian_normalized"),
+            ("input vs a different scene (chance floor)", "cross", "replay", "hungarian_normalized"),
+            ("input vs replay output @ 1 cm gate", "replay", "prod", "hungarian_normalized"),
+            ("input vs replay output @ 1.5 m gate", "replay", "replay", "hungarian_normalized"),
+            ("input vs replay output — mahalanobis", "replay", "replay", "mahalanobis"),
+            ("input vs replay output — legacy trkID", "replay", "replay", "legacy_id"),
+        ):
+            m = ctl(comp, gate, algo)
+            if not m:
+                continue
+            rows_ctl.append([label, f"{m['f1_pct']:.2f}", f"{m['tp']:,}",
+                             f"{m['fp']:,}", f"{m['fn']:,}", f"{m['pos_mean_m']:.3f}"])
+        control_table = table(
+            ["Comparison", "F1 %", "TP", "FP", "FN", "pos mean m"], rows_ctl, table_id="ctl")
+        chance = ctl("cross", "replay")["f1_pct"]
+        replay_f1 = ctl("replay", "replay")["f1_pct"]
+        legacy_f1 = ctl("replay", "replay", "legacy_id")["f1_pct"]
+        control_callout = (
+            f'<div class="callout ok"><b>Control experiment resolves what the 91 % means.</b> '
+            f'Feeding the same log to both sides scores {ctl("self", "replay")["f1_pct"]:.2f}% — '
+            f'the matcher itself costs nothing, so the metric has no ceiling problem. '
+            f'Two unrelated scenes still reach {chance:.2f}% because both contain the same '
+            f'road and static clutter; that is the chance floor. The replay sits at '
+            f'{replay_f1:.2f}%, i.e. {replay_f1 - chance:.1f} pp above chance, while the legacy '
+            f'matcher ({legacy_f1:.2f}%) scores <i>below</i> the chance floor — it is worse than '
+            f'matching unrelated data.</div>')
+
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -483,6 +522,11 @@ carry 64 object slots per scan; the report logs carry 128.</p>
 replay tolerance (1.5 m / 0.5 m·s⁻¹, 160 m range gate). Legacy = exact
 <span class="mono">(scan, trkID)</span> match, exactly as v1 does it.</p>
 {pair_table}
+{control_callout}
+<h3>Control experiment — input against itself</h3>
+<p class="note">Same association backend, different comparison. Identical input must score
+100%, unrelated scenes give the chance floor, and the replay must land between them.</p>
+{control_table}
 {agg_table}
 <div class="callout bad"><b>The 1 cm gate is not a comparison tolerance.</b>
 Under the production thresholds the Euclidean backends keep only
@@ -541,7 +585,9 @@ def main() -> int:
     acc = load(DATA / "accuracy.json")
     edge_path = DATA / "edge_pairs.json"
     edge = load(edge_path) if edge_path.exists() else {"pairs": {}}
-    html = build(acc, edge)
+    self_path = DATA / "selfcheck.json"
+    selfcheck = load(self_path) if self_path.exists() else None
+    html = build(acc, edge, selfcheck)
     OUT.write_text(html, encoding="utf-8")
     assert "<html" in html and html.count("<table") >= 4, "report structure regressed"
     print(f"HTML  {OUT}  {len(html) / 1024:.1f} KB")
