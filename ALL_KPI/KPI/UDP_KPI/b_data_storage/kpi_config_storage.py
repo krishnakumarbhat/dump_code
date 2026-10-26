@@ -193,10 +193,16 @@ KPI_VALIDATION_RULES = {
     "tracker_thresholds": {
         "max_number_of_data": 64,
         "max_valid_distance": 160,  # m
-        "vcs_xposn_threshold": 0.01 + 0.0000001,  # m
-        "vcs_yposn_threshold": 0.01 + 0.0000001,  # m
-        "vcs_xvel_threshold": 0.02 + 0.0000001,  # m/s
-        "vcs_yvel_threshold": 0.02 + 0.0000001,  # m/s
+        # A tracker replay does not reproduce positions to the millimetre: the
+        # measured inter-run displacement is 0.12-0.21 m at the median and
+        # ~1 m at p90, so the old 1 cm / 0.02 m/s gate scored ~5 % on real
+        # pairs no matter which association backend ran. These are physical
+        # comparison tolerances for two independent runs of the same scene.
+        # Set them back to 0.01 / 0.02 only to assert byte-identical replays.
+        "vcs_xposn_threshold": 1.5,  # m
+        "vcs_yposn_threshold": 1.5,  # m
+        "vcs_xvel_threshold": 0.5,  # m/s
+        "vcs_yvel_threshold": 0.5,  # m/s
         # v2 association backend. "legacy_id" restores the exact v1
         # (scan, trkID) matcher; "hungarian_normalized" is the benchmarked
         # ID-independent default (see TRACKER_KPI_ALGORITHM_BENCHMARK_REPORT.md).

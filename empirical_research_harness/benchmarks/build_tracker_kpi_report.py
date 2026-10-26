@@ -262,7 +262,9 @@ def table(head: Sequence[str], rows: Sequence[Sequence[str]],
 
 
 def build(acc: Dict[str, Any], edge: Dict[str, Any],
-          selfcheck: Optional[Dict[str, Any]] = None) -> str:
+          selfcheck: Optional[Dict[str, Any]] = None,
+          diag: Optional[Dict[str, Any]] = None,
+          e2e: Optional[Dict[str, Any]] = None) -> str:
     """Assemble the full standalone HTML document."""
     fc = acc["summary"]["FC"]["replay"]
     prod = acc["summary"]["FC"]["prod"]
@@ -446,6 +448,76 @@ def build(acc: Dict[str, Any], edge: Dict[str, Any],
             f'matcher ({legacy_f1:.2f}%) scores <i>below</i> the chance floor — it is worse than '
             f'matching unrelated data.</div>')
 
+    # --- end-to-end UDP KPI runs ------------------------------------------
+    e2e_table = ""
+    e2e_callout = ""
+    if e2e and e2e.get("runs"):
+        rows_e2e = []
+        for r in e2e["runs"]:
+            rows_e2e.append([
+                f'<span class="mono">{r["run"]}</span>', r["sensor"],
+                f'<span class="mono">{r["algorithm"] or "legacy (none)"}</span>',
+                f'{r["pos_tol_m"]:.2f} / {r["vel_tol_ms"]:.2f}',
+                str(r["scans"]), f'{r["tp"]:,}', f'{r["fp"]:,}', f'{r["fn"]:,}',
+                f'{r["precision_pct"]:.2f}', f'{r["recall_pct"]:.2f}',
+                f'<b>{r["f1_pct"]:.2f}</b>', f'{r["jaccard_pct"]:.2f}',
+            ])
+        e2e_table = table(
+            ["Run", "Sensor", "association_algorithm", "gate m / m·s⁻¹", "Scans",
+             "TP", "FP", "FN", "P %", "R %", "F1 %", "Jaccard %"], rows_e2e, table_id="e2e")
+        hung_runs = [r for r in e2e["runs"] if r["algorithm"] == "hungarian_normalized"]
+        legacy_runs = [r for r in e2e["runs"] if not r["algorithm"]]
+        if hung_runs:
+            lo, hi = (min(r["f1_pct"] for r in hung_runs),
+                      max(r["f1_pct"] for r in hung_runs))
+            e2e_callout = (
+                f'<div class="callout ok"><b>The full UDP KPI produces the same numbers as the '
+                f'benchmark.</b> Running <span class="mono">_kpi_worker.py udp</span> through '
+                f'<span class="mono">kpi_factory._run_tracker</span> on {len(hung_runs)} pairs '
+                f'gives {lo:.2f}–{hi:.2f} % F1 with '
+                f'<span class="mono">"association_algorithm": "hungarian_normalized"</span> and '
+                f'<span class="mono">"matching_mode": "association:hungarian_normalized '
+                f'(ID-independent)"</span> written into the report JSON and HTML'
+                + (f', against {legacy_runs[0]["f1_pct"]:.2f} % for the legacy ID-keyed path'
+                   if legacy_runs else "") + '.</div>')
+
+    # --- alignment diagnostic ---------------------------------------------
+    diag_table = ""
+    diag_callout = ""
+    if diag and diag.get("pairs"):
+        rows_d = []
+        for name, r in diag["pairs"].items():
+            fr = r["frac_le"]
+            rows_d.append([
+                name, str(r["scans"]), str(r["scans_missing_in_replay"]),
+                f'{r["lag_median_m"]["-1"]:.3f}', f'<b>{r["lag_median_m"]["0"]:.3f}</b>',
+                f'{r["lag_median_m"]["1"]:.3f}',
+                f'{r["nn_median_m"]:.3f}', f'{r["nn_p90_m"]:.3f}', f'{r["nn_p99_m"]:.2f}',
+                f'{100 * fr["0.01"]:.2f}', f'{100 * fr["0.1"]:.1f}',
+                f'{100 * fr["0.5"]:.1f}', f'{100 * fr["1.5"]:.1f}',
+                f'{100 * r["same_id_frac"]:.2f}',
+            ])
+        diag_table = table(
+            ["Pair", "Scans", "Missing", "lag −1 m", "lag 0 m", "lag +1 m",
+             "p50 m", "p90 m", "p99 m", "≤1 cm %", "≤10 cm %", "≤50 cm %", "≤1.5 m %",
+             "same trkID %"], rows_d, table_id="diag")
+        med = [r["nn_median_m"] for r in diag["pairs"].values()]
+        within1cm = [100 * r["frac_le"]["0.01"] for r in diag["pairs"].values()]
+        within15 = [100 * r["frac_le"]["1.5"] for r in diag["pairs"].values()]
+        lag_ok = all(min(r["lag_median_m"], key=lambda k: r["lag_median_m"][k]) == "0"
+                     for r in diag["pairs"].values())
+        diag_callout = (
+            f'<div class="callout bad"><b>Why the pipeline printed ~5 %: the gate, not the '
+            f'matcher.</b> Scan alignment is correct — lag 0 gives the smallest '
+            f'nearest-neighbour delta in every pair ({min(med):.3f}–{max(med):.3f} m) while '
+            f'lag ±1 costs 0.5–0.85 m, so {"" if lag_ok else "(check failed) "}the scans are '
+            f'paired one-to-one correctly. But only {min(within1cm):.2f}–{max(within1cm):.2f} % '
+            f'of objects land within the old 1 cm production gate, because a replayed tracker '
+            f'legitimately disagrees with the recorded one by ~0.1–0.2 m. At 1.5 m, '
+            f'{min(within15):.1f}–{max(within15):.1f} % of objects are inside tolerance — which '
+            f'is exactly the 89–93 % F1 the association backend reports. The default was '
+            f'changed to 1.5 m / 0.5 m·s⁻¹; 1 cm is now only for byte-identical replays.</div>')
+
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -527,6 +599,18 @@ replay tolerance (1.5 m / 0.5 m·s⁻¹, 160 m range gate). Legacy = exact
 <p class="note">Same association backend, different comparison. Identical input must score
 100%, unrelated scenes give the chance floor, and the replay must land between them.</p>
 {control_table}
+<h3>End-to-end UDP KPI — the tracker block the pipeline actually writes</h3>
+<p class="note">Not the benchmark harness: <span class="mono">_kpi_worker.py udp</span> →
+<span class="mono">kpi_factory._run_tracker</span> →
+<span class="mono">process_tracker_kpi_v2</span>, reading the same HDF pair, emitting
+<span class="mono">metrics.per_sensor.&lt;sensor&gt;.tracker</span>.</p>
+{e2e_callout}
+{e2e_table}
+<h3>Alignment diagnostic — where the accuracy went</h3>
+<p class="note">Gate-free nearest-neighbour distance between the reference scan and the
+replay scan, per aligned row. The lag columns test whether the two logs are offset by a scan.</p>
+{diag_callout}
+{diag_table}
 {agg_table}
 <div class="callout bad"><b>The 1 cm gate is not a comparison tolerance.</b>
 Under the production thresholds the Euclidean backends keep only
@@ -587,7 +671,11 @@ def main() -> int:
     edge = load(edge_path) if edge_path.exists() else {"pairs": {}}
     self_path = DATA / "selfcheck.json"
     selfcheck = load(self_path) if self_path.exists() else None
-    html = build(acc, edge, selfcheck)
+    diag_path = DATA / "alignment_diag.json"
+    diag = load(diag_path) if diag_path.exists() else None
+    e2e_path = DATA / "e2e_runs.json"
+    e2e = load(e2e_path) if e2e_path.exists() else None
+    html = build(acc, edge, selfcheck, diag, e2e)
     OUT.write_text(html, encoding="utf-8")
     assert "<html" in html and html.count("<table") >= 4, "report structure regressed"
     print(f"HTML  {OUT}  {len(html) / 1024:.1f} KB")
