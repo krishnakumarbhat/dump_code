@@ -4,9 +4,11 @@ import logging
 import time
 from typing import List, Dict, Any
 from UDP_KPI.b_data_storage.kpi_data_model_storage import KPI_DataModelStorage
+from UDP_KPI.b_data_storage.kpi_config_storage import KPI_VALIDATION_RULES
 from UDP_KPI.c_business_layer.alignment_matching_kpi import process_alignment_kpi
 from UDP_KPI.c_business_layer.detection_matching_kpi import process_detection_kpi
 from UDP_KPI.c_business_layer.tracker_matching_kpi import process_tracker_kpi
+from UDP_KPI.c_business_layer.tracker_matching_kpi_v2 import process_tracker_kpi_v2
 import concurrent.futures
 
 
@@ -23,7 +25,13 @@ def _run_tracker(data: Dict[str, KPI_DataModelStorage], sensor: str) -> List[Dic
     if isinstance(data, dict) and 'TRACKER_STREAM' in data:
         models = data['TRACKER_STREAM']
         if isinstance(models, dict) and 'input' in models and 'output' in models:
-            results.append(process_tracker_kpi(models['input'], models['output'], sensor, 'TRACKER_STREAM'))
+            algorithm = str(
+                KPI_VALIDATION_RULES.get("tracker_thresholds", {}).get(
+                    "association_algorithm", "hungarian_normalized"
+                )
+            )
+            runner = process_tracker_kpi if algorithm == "legacy_id" else process_tracker_kpi_v2
+            results.append(runner(models['input'], models['output'], sensor, 'TRACKER_STREAM'))
     return results
 
 class KpiDataModel:
