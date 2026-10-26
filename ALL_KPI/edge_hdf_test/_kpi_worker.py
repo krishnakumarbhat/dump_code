@@ -78,8 +78,22 @@ def run_udp(in_path: str, out_path: str, outdir: str, label: str):
 
     import UDP_KPI.a_persistence_layer.hdf_wrapper as hw
     from UDP_KPI.c_business_layer.detection_matching_kpi import process_detection_kpi
-    from UDP_KPI.c_business_layer.tracker_matching_kpi import process_tracker_kpi
+    from UDP_KPI.c_business_layer.kpi_factory import _run_tracker  # v1/v2 dispatch
     from UDP_KPI.c_business_layer.alignment_matching_kpi import process_alignment_kpi
+
+    # End-to-end switch: the same CLI can emit the legacy or the association
+    # output, so the two JSONs are directly comparable.
+    algo = os.environ.get("KPI_ASSOCIATION_ALGORITHM")
+    gate = os.environ.get("KPI_TRACKER_GATE")  # "1.5,0.5" -> metres, m/s
+    if algo or gate:
+        from UDP_KPI.b_data_storage.kpi_config_storage import KPI_VALIDATION_RULES
+        tt = KPI_VALIDATION_RULES.setdefault("tracker_thresholds", {})
+        if algo:
+            tt["association_algorithm"] = algo
+        if gate:
+            pos, vel = (float(x) for x in gate.split(","))
+            tt.update(vcs_xposn_threshold=pos + 1e-7, vcs_yposn_threshold=pos + 1e-7,
+                      vcs_xvel_threshold=vel + 1e-7, vcs_yvel_threshold=vel + 1e-7)
 
     import h5py
 
@@ -134,8 +148,7 @@ def run_udp(in_path: str, out_path: str, outdir: str, label: str):
         try:
             trk_models = data.get("TRACKER_STREAM")
             if isinstance(trk_models, dict) and "input" in trk_models and "output" in trk_models:
-                res = process_tracker_kpi(trk_models["input"], trk_models["output"],
-                                          sensor, "TRACKER_STREAM")
+                res = (_run_tracker({"TRACKER_STREAM": trk_models}, sensor) or [{}])[0]
                 m["tracker"] = res.get("kpi_results", {})
                 if res.get("html_content"):
                     html_parts.append(f'<div class="kpi-block"><h4>{sensor} &mdash; tracker</h4>'
