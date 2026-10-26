@@ -3,6 +3,7 @@ import h5py
 import json
 import os
 import logging
+import numpy as np
 import time
 import functools
 from typing import Dict, Any, Optional, List
@@ -150,7 +151,10 @@ class KPIHDFWrapper:
         core index sat one group away. Returning all matches lets the sanity
         picker choose. Reads are bounded (skip datasets > max_elements).
         """
-        target_leafs = {"scan_index", "stream_hdr_scan_index", "hed_scan_index", "hed_look_index"}
+        target_leafs = {"scan_index", "stream_hdr_scan_index", "hed_scan_index", "hed_look_index",
+                        # F360_Log_Header carries a microsecond cycle stamp instead of a
+                        # scan counter (AshLey/ThunderMCIP object lists).
+                        "f360header_data_timstamp_us", "f360header_data_timestamp_us"}
         found = []
 
         def _visit(name, obj):
@@ -256,6 +260,11 @@ class KPIHDFWrapper:
             if arr is None:
                 continue
             vals, dropped = self._sanitize_scan_values(arr)
+            if not vals:
+                # A microsecond cycle stamp (F360_Log_Header, ~1e9) is a valid
+                # scan key. Retry without the 24-bit ceiling; the monotonic
+                # branch below is what decides whether it is trustworthy.
+                vals, dropped = self._sanitize_scan_values(arr, hard_max=1 << 62)
             total = len(vals) + dropped
             if not vals:
                 continue
@@ -270,6 +279,16 @@ class KPIHDFWrapper:
                 continue
             span = max(vals) - min(vals)
             if span > 1_000_000 and span > 100 * len(vals):
+                # A microsecond cycle stamp (F360_Log_Header) is a valid key even
+                # though its span is ~1e7: it must increase strictly, one value
+                # per row, and step by roughly the scan period.
+                steps = np.diff(vals)
+                if len(vals) > 10 and np.all(steps > 0) and float(np.median(steps)) < 1_000_000:
+                    logger.info(f"Scan_index candidate '{label}': microsecond cycle stamp, "
+                                f"n={len(vals)} step={float(np.median(steps)):.0f}us")
+                    if best is None or span < best_span:
+                        best, best_label, best_span = vals, label, span
+                    continue
                 logger.warning(
                     f"Rejecting scan_index candidate '{label}' "
                     f"(n={len(vals)} span={span} dropped={dropped}): implausible cycle"

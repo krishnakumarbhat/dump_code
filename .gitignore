@@ -80,3 +80,6 @@ edge_hdf/
 Thumbs.db
 # bulky per-scan JSON exports (regenerate with hdf_track_accuracy.py)
 empirical_research_harness/benchmarks/hdf_track_out/json/
+
+# end-to-end KPI run artifacts (regenerate with _kpi_worker.py)
+ALL_KPI/edge_hdf_test/out_e2e*/
