@@ -196,7 +196,14 @@ KPI_VALIDATION_RULES = {
         "vcs_xposn_threshold": 0.01 + 0.0000001,  # m
         "vcs_yposn_threshold": 0.01 + 0.0000001,  # m
         "vcs_xvel_threshold": 0.02 + 0.0000001,  # m/s
-        "vcs_yvel_threshold": 0.02 + 0.0000001   # m/s
+        "vcs_yvel_threshold": 0.02 + 0.0000001,  # m/s
+        # v2 association backend. "legacy_id" restores the exact v1
+        # (scan, trkID) matcher; "hungarian_normalized" is the benchmarked
+        # ID-independent default (see TRACKER_KPI_ALGORITHM_BENCHMARK_REPORT.md).
+        "association_algorithm": "hungarian_normalized",
+        "association_window": 3,  # multi_scan temporal window (scans)
+        "gospa_cutoff": 2.0,  # GOSPA c (m)
+        "auction_epsilon": 0.001  # obb_auction bid increment
     },
     # Alignment matching thresholds
     "alignment_thresholds": {
