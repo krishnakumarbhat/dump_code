@@ -1185,8 +1185,30 @@ class DataCalculations:
             return {}
         return self._xy_scan_groups(bundle.get("SI"), bundle.get(side))
 
+    # CAN/AUTOSAR "signal not available" padding for byte-wide coordinate and
+    # velocity fields: 0x80 -> -128.0 (and 0x8000 -> -32768.0 for 16-bit).
+    # Real ranges are < ~1 km and real radial velocities < ~100 m/s, so any
+    # component at or below this bound is an EMPTY TRACK SLOT, never a target.
+    _XY_SENTINEL_MAX = -100.0
+
+    @classmethod
+    def _xy_valid_mask(cls, xv, yv):
+        """Boolean mask of pairs that are finite AND not a CAN sentinel slot."""
+        x = np.asarray(xv, dtype=float).ravel()
+        y = np.asarray(yv, dtype=float).ravel()
+        return (
+            np.isfinite(x)
+            & np.isfinite(y)
+            & (x > cls._XY_SENTINEL_MAX)
+            & (y > cls._XY_SENTINEL_MAX)
+        )
+
     def _xy_pair(self, groups_x, groups_y, groups_c=None):
-        """Pair two per-scan groups element-wise; optionally carry a colour group."""
+        """Pair two per-scan groups element-wise; optionally carry a colour group.
+
+        Empty CAN slot padding (``-128.0`` / ``0x80``) is dropped here so it can
+        never reach the scatter traces and stretch the axis to -128 m.
+        """
         xs, ys, cs = [], [], []
         color_ok = bool(groups_c)
         for scan in sorted(set(groups_x) | set(groups_y)):
@@ -1197,14 +1219,19 @@ class DataCalculations:
             m = min(xv.size, yv.size)
             if m == 0:
                 continue
-            xs.append(xv[:m])
-            ys.append(yv[:m])
+            xv = xv[:m]
+            yv = yv[:m]
+            keep = self._xy_valid_mask(xv, yv)
+            if not np.any(keep):
+                continue
+            xs.append(xv[keep])
+            ys.append(yv[keep])
             if color_ok:
                 cv = groups_c.get(scan)
                 if cv is None or cv.size < m:
                     color_ok = False
                 else:
-                    cs.append(cv[:m])
+                    cs.append(cv[:m][keep])
         if not xs:
             return None, None, None
         cat = lambda parts: np.concatenate(parts) if parts else np.array([], dtype=float)
@@ -1364,7 +1391,8 @@ class DataCalculations:
         y_arr = np.asarray(y_vals, dtype=float).ravel()
 
         eps = 1e-9
-        finite = np.isfinite(x_arr) & np.isfinite(y_arr)
+        # finite AND not CAN empty-slot padding (0x80 -> -128.0)
+        finite = self._xy_valid_mask(x_arr, y_arr)
         if not np.any(finite):
             logging.warning(f"No finite paired (x, y) points for {signal_name}")
             return fig_id, None

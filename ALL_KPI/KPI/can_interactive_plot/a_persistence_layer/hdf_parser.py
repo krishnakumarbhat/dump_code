@@ -322,6 +322,9 @@ class KpiHdfParser:
     # timestamp_* payloads uninitialized (e.g. -1.4e91); such values must
     # never steer gating or calibration.
     TRIPLE_CAN_T_MAX_S = 1_000_000.0
+    # Last OUTPUT row corrections applied by _apply_out_row_offsets, as
+    # (first_scan, last_scan, offset) tuples. Empty when the logs are aligned.
+    out_row_offsets: List[tuple] = []
 
     @staticmethod
     def _sane_can_t(arr: np.ndarray) -> np.ndarray:
@@ -417,7 +420,170 @@ class KpiHdfParser:
         det_shifts = self._calibrate_det_shifts(
             input_storage, output_storage, in_a, out_a, window=window
         )
+        # A dropped frame leaves the surviving producer's payload one row
+        # behind its scan_index label for every later scan. The input-side
+        # det_shifts cannot express that, so correct the OUTPUT rows here.
+        out_a = self._apply_out_row_offsets(
+            input_storage, output_storage, common_a, in_a, out_a, det_shifts
+        )
         return common_a, in_a, out_a, det_shifts
+
+    # --- output-side row-offset calibration -------------------------------
+    OUT_OFF_MIN_SEG = 10      # pairs required before a segment is trusted
+    OUT_OFF_MIN_SCORE = 0.80  # absolute content agreement needed to act
+    OUT_OFF_MIN_GAIN = 0.25   # margin the winner must beat n=0 by
+    OUT_OFF_CLEAN = 0.95      # segment already aligned -> skip candidate search
+
+    def _apply_out_row_offsets(
+        self,
+        input_storage: KPI_DataModelStorage,
+        output_storage: KPI_DataModelStorage,
+        common: np.ndarray,
+        in_rows: np.ndarray,
+        out_rows: np.ndarray,
+        det_shifts: Optional[Dict[int, int]] = None,
+    ) -> np.ndarray:
+        """Correct OUTPUT rows per scan segment when payload lags its label.
+
+        The scan-index join pairs *header* rows, which is correct only while
+        both producers label rows consistently. When one stream drops a frame
+        the other keeps writing payloads one row behind its labels, so every
+        later scan is scored against the wrong neighbour: a pair that really
+        matches ~86% collapses to ~19% and stays there. ``det_shifts`` only
+        shift the INPUT side, so they cannot express this.
+
+        Segments are contiguous runs of consecutive scan indices - a scan gap
+        starts a new one. The offset is voted from the DET signal payloads
+        themselves (CAN timestamps quantise to ~1 ms, so adjacent scans tie and
+        cannot discriminate), and applied only when the winning offset clears
+        the n=0 baseline by a wide margin. Files that are already aligned keep
+        offset 0 and behave exactly as before. Applied segments are logged and
+        exposed on ``self.out_row_offsets`` for reporting.
+        """
+        self.out_row_offsets = []
+        det_shifts = det_shifts or {}
+        n_pairs = len(common)
+        if n_pairs == 0:
+            return out_rows
+
+        counts_in = input_storage.get_valid_detection_counts()
+        counts_out = output_storage.get_valid_detection_counts()
+        if len(counts_in) == 0 or len(counts_out) == 0:
+            return out_rows
+
+        det_cache_in: Dict[int, list] = {}
+        det_cache_out: Dict[int, list] = {}
+
+        def dets_in(k: int) -> list:
+            """Input detections for pair k, with the calibrated shift applied.
+
+            Read through ``get_scan_detections`` - the accessor
+            ``_compute_match_pct`` uses, which applies ``det_shifts`` itself.
+            Scoring through any other accessor offsets the answer by one row
+            and mis-votes the segment.
+            """
+            if k not in det_cache_in:
+                i = int(in_rows[k])
+                det_cache_in[k] = (
+                    input_storage.get_scan_detections(
+                        self._CAL_SIGNALS, i, int(counts_in[i]),
+                        det_idx_shifts=det_shifts,
+                    )
+                    if 0 <= i < len(counts_in)
+                    else []
+                )
+            return det_cache_in[k]
+
+        def dets_out(row: int) -> list:
+            if row not in det_cache_out:
+                det_cache_out[row] = (
+                    output_storage.get_scan_detections(
+                        self._CAL_SIGNALS, row, int(counts_out[row])
+                    )
+                    if 0 <= row < len(counts_out)
+                    else []
+                )
+            return det_cache_out[row]
+
+        def score(k: int, n: int) -> Optional[float]:
+            """Position-wise agreement for pair k at output-row offset n.
+
+            Detections are range-sorted on both sides, so an aligned payload
+            agrees element by element (measured ~0.99 at the right offset vs
+            ~0.02-0.10 at any other). CAN timestamps cannot do this: they
+            quantise to ~1 ms and adjacent scans tie.
+            """
+            din = dets_in(k)
+            dout = dets_out(int(out_rows[k]) + n)
+            denom = max(len(din), len(dout))
+            if denom == 0:
+                return None
+            agree = 0
+            for t in range(min(len(din), len(dout))):
+                a, b = din[t], dout[t]
+                ok = True
+                for sig in self._CAL_SIGNALS:
+                    va, vb = a.get(sig), b.get(sig)
+                    if (
+                        va is None
+                        or vb is None
+                        or abs(float(va) - float(vb)) > self._CAL_EPS[sig]
+                    ):
+                        ok = False
+                        break
+                if ok:
+                    agree += 1
+            return agree / float(denom)
+
+        seg_start = 0
+        segs = []
+        for k in range(1, n_pairs):
+            if int(common[k]) - int(common[k - 1]) != 1:
+                segs.append((seg_start, k))
+                seg_start = k
+        segs.append((seg_start, n_pairs))
+
+        offsets = np.zeros(n_pairs, dtype=np.int64)
+        cands = (-1, 1, -2, 2, -3, 3, -4, 4, -5, 5)
+
+        for s0, s1 in segs:
+            count = s1 - s0
+            if count < self.OUT_OFF_MIN_SEG:
+                continue
+
+            def mean_at(n: int) -> float:
+                vals = [v for v in (score(k, n) for k in range(s0, s1)) if v is not None]
+                return sum(vals) / float(len(vals)) if len(vals) else 0.0
+
+            base = mean_at(0)
+            if base >= self.OUT_OFF_CLEAN:
+                continue  # already aligned - nothing to correct, and stay fast
+            scores = {0: base}
+            for n in cands:
+                scores[n] = mean_at(n)
+            # prefer the highest score, then the smallest |offset|
+            best_n = max(scores, key=lambda c: (scores[c], -abs(c)))
+            best = scores[best_n]
+            if best_n == 0:
+                continue
+            if best < self.OUT_OFF_MIN_SCORE:
+                continue
+            if (best - base) < self.OUT_OFF_MIN_GAIN:
+                continue
+            offsets[s0:s1] = best_n
+            logger.warning(
+                "OUTPUT row offset %+d applied to scans %d..%d "
+                "(%d pairs, content agreement %.2f vs %.2f at offset 0) "
+                "- dropped-frame desync",
+                best_n, int(common[s0]), int(common[s1 - 1]), count, best, base,
+            )
+            self.out_row_offsets.append(
+                (int(common[s0]), int(common[s1 - 1]), int(best_n))
+            )
+
+        if not np.any(offsets):
+            return out_rows
+        return (out_rows + offsets).astype(out_rows.dtype)
 
     def _calibrate_det_shifts(
         self,

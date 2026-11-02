@@ -65,11 +65,14 @@ def _classify(path: Path, dsets: list[str]) -> str:
 
 
 def _find_key(group: h5py.Group, *names: str) -> h5py.Dataset | None:
-    """Locate the first child dataset whose basename matches any name."""
-    for n in names:
-        for k in group:
-            if k.lower() == n.lower() and isinstance(group[k], h5py.Dataset):
-                return group[k]
+    """Locate the first child dataset matching any name, walking up to the root."""
+    g: h5py.Group | None = group
+    while g is not None:
+        for n in names:
+            for k in g:
+                if k.lower() == n.lower() and isinstance(g[k], h5py.Dataset):
+                    return g[k]
+        g = g.parent
     return None
 
 
@@ -84,6 +87,7 @@ def scan_file(path: Path) -> dict[str, Any]:
         dsets: list[tuple[str, h5py.Dataset]] = []
         f.visititems(lambda n, o: dsets.append((n, o)) if isinstance(o, h5py.Dataset) else None)
         out["n_datasets"] = len(dsets)
+        hdr_cache: dict[str, h5py.Dataset | None] = {}
         out["max_depth"] = max((_depth(n) for n, _ in dsets), default=0)
 
         for name, ds in dsets:
@@ -102,11 +106,18 @@ def scan_file(path: Path) -> dict[str, Any]:
                         entry["first3"] = [_num(x) for x in arr.ravel()[:3]]
                         if arr.ndim == 2 and arr.shape[0] > 50:
                             entry["n_nonzero_rows"] = int(np.count_nonzero(np.any(arr != 0, axis=1)))
-                            hdr = _find_key(f, "timestamp", "timestep", "scan_index", "tracker_index", "index")
+                            pkey = ds.parent.name
+                            if pkey not in hdr_cache:
+                                hdr_cache[pkey] = _find_key(ds.parent, "timestamp", "timestep",
+                                                           "scan_index", "tracker_index", "index",
+                                                           "tracker_start_timestamp",
+                                                           "rot_object_list_timestamp",
+                                                           "data_timstamp_us")
+                            hdr = hdr_cache[pkey]
                             if hdr is not None and hdr.size >= 2:
-                                d = np.diff(np.asarray(hdr).ravel())
+                                d = np.diff(np.asarray(hdr).ravel().astype("int64"))
                                 entry["row_stride"] = _num(np.median(d))
-                                entry["row_stride_source"] = "/" + hdr.name.lstrip("/")
+                                entry["row_stride_source"] = hdr.name
                             else:
                                 # timestamp headers often sit in the owning group; report absence explicitly
                                 entry["row_stride"] = None
@@ -171,7 +182,7 @@ def main() -> dict[str, Any]:
             "row_stride is median diff of the nearest timestamp/index dataset found at file root.",
         ],
     }
-    OUT.write_text(json.dumps(cat, indent=2), encoding="utf-8")
+    OUT.write_text(json.dumps(cat, separators=(",", ":")), encoding="utf-8")
 
     print(f"{'file':58} {'d3trk':>6} {'streams':>8} {'pairs':>6}")
     paired = {Path(pr["input"]).resolve() for pr in pairs} | {Path(pr["output"]).resolve() for pr in pairs}
