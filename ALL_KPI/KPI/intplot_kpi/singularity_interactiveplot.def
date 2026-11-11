@@ -14,6 +14,7 @@ From: python:3.11-slim
     
     # Copy main application
     KPI/intplot_kpi/ResimHTMLReport.py /app/ResimHTMLReport.py
+    KPI/intplot_kpi/big_script_report.py /app/big_script_report.py
     
     # Copy configuration files
     KPI/intplot_kpi/ConfigInteractivePlots.xml /app/ConfigInteractivePlots.xml

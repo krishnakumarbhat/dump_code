@@ -52,7 +52,7 @@ From: docker.io/python:3.10-slim
     pip install --upgrade pip setuptools wheel
 
     # Install Python dependencies (minimal, no version pins for speed)
-    pip install --no-cache-dir numpy pandas h5py plotly lxml pyzmq protobuf
+    pip install --no-cache-dir numpy pandas scipy h5py plotly lxml pyzmq protobuf
 
     # Create required directories
     mkdir -p /app/tools /app/output /app/html_db /app/simg/html_db

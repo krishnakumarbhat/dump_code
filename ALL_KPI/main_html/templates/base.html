@@ -33,7 +33,7 @@
                     <li class="nav-item"><a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link {% if request.endpoint == 'tool_kpi' %}active{% endif %}" href="{{ url_for('tool_kpi') }}">KPI</a></li>
                     <li class="nav-item"><a class="nav-link {% if request.endpoint in ['tool_hyperlink', 'hyperlink_viewer_app', 'hyperlink_viewer'] %}active{% endif %}" href="{{ url_for('tool_hyperlink') }}">Hyperlink</a></li>
-                    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'runtime_map' %}active{% endif %}" href="{{ url_for('runtime_map') }}">Runtime Map</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'runtime_map' %}active{% endif %}" href="{{ url_for('runtime_map') }}">HPCC Pipeline Run</a></li>
                     <li class="nav-item"><a class="nav-link {% if request.endpoint == 'job_history' %}active{% endif %}" href="{{ url_for('job_history') }}">Runtime Console</a></li>
                 </ul>
                 <ul class="navbar-nav align-items-center gap-2">

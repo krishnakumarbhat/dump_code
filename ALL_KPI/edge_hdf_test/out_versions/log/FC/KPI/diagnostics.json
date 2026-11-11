@@ -1,0 +1,79 @@
+{
+  "sensor": "FC",
+  "base_name": "log",
+  "generated_at": "2026-10-26 15:52:11",
+  "streams_in": [
+    "FUNCTIONAL_SAFETY_FAULTS_STREAM",
+    "HOST_CALIBS_STREAM",
+    "HOST_PROPS_STREAM",
+    "OBJECT_LIST_STREAM",
+    "PROCESSED_DETECTION_STREAM",
+    "SENSOR_CALIB_STREAM",
+    "STATIC_ENV_POLY_STREAM",
+    "SYNC_INFO_STREAM",
+    "TIMING_INFO_STREAM",
+    "TRACKER_INFO_STREAM",
+    "TRAILER_DETECTOR_STREAM",
+    "VEHICLE_INFO_STREAM"
+  ],
+  "streams_out": [
+    "FUNCTIONAL_SAFETY_FAULTS_STREAM",
+    "HOST_CALIBS_STREAM",
+    "HOST_PROPS_STREAM",
+    "OBJECT_LIST_STREAM",
+    "PROCESSED_DETECTION_STREAM",
+    "SENSOR_CALIB_STREAM",
+    "STATIC_ENV_POLY_STREAM",
+    "SYNC_INFO_STREAM",
+    "TIMING_INFO_STREAM",
+    "TRACKER_INFO_STREAM",
+    "TRAILER_DETECTOR_STREAM",
+    "VEHICLE_INFO_STREAM"
+  ],
+  "resolution": {
+    "DYNAMIC_ALIGNMENT_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "DETECTION_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "RDD_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "CDC_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "VSE_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "TRACKER_STREAM": {
+      "input": "OBJECT_LIST_STREAM",
+      "output": "OBJECT_LIST_STREAM"
+    }
+  },
+  "kpis": {
+    "detection": {
+      "status": "failed",
+      "headline": "failed",
+      "detail": "",
+      "file": "log_detection_kpi.html"
+    },
+    "alignment": {
+      "status": "failed",
+      "headline": "failed",
+      "detail": "",
+      "file": "log_alignment_kpi.html"
+    },
+    "tracker": {
+      "status": "ok",
+      "headline": "92.82%",
+      "detail": "22216/23935 matched",
+      "file": "log_tracker_kpi.html"
+    }
+  }
+}

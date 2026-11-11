@@ -50,7 +50,7 @@ if [[ -f "$COMBINED_IMAGE" ]]; then
     USE_COMBINED=1
 fi
 
-bundle_require_tmux
+(( WAIT_FOR_COMPLETION )) || bundle_require_tmux
 RUN_DIR="$(bundle_user_run_dir can_interactive)"
 SESSION_NAME="$(id -un 2>/dev/null || printf '%s' user)_can_intplot_$(bundle_timestamp)"
 MAIN_EXIT="$RUN_DIR/can_intplot.exit"
@@ -65,6 +65,17 @@ exec > >(tee -a "$MAIN_LOG") 2>&1
 # shellcheck source=/dev/null
 source "$BUNDLE_ROOT/bundle_common.sh"
 echo '[inplot_can] combined CAN KPI + Interactive Plot run'
+# The plot app is only a ZMQ client; the CAN KPI server must run beside it.
+port=\$(( 20000 + (\$\$ % 20000) ))
+bundle_set_container_env CAN_KPI_SERVER_HOST 127.0.0.1
+bundle_set_container_env CAN_KPI_SERVER_PORT "\$port"
+bundle_run_image --app server "$COMBINED_IMAGE" "\$port" > "$RUN_DIR/can_kpi_server.log" 2>&1 &
+server_pid=\$!
+trap 'kill "\$server_pid" >/dev/null 2>&1 || true' EXIT
+if ! bundle_wait_for_port 127.0.0.1 "\$port" 90 1; then
+  echo "[inplot_can] CAN KPI server failed on port \$port"; cat "$RUN_DIR/can_kpi_server.log"
+  printf '1' > "$MAIN_EXIT"; exit 1
+fi
 bundle_run_image --app plot "$COMBINED_IMAGE" "$CONFIG_XML" "$INPUT_JSON" "$OUTPUT_DIR"${PLOT_CONFIG:+ "$PLOT_CONFIG"}
 status=\$?
 printf '%s' "\$status" > "$MAIN_EXIT"
@@ -90,6 +101,11 @@ fi
 
 chmod +x "$MAIN_SCRIPT"
 rm -f "$MAIN_EXIT"
+# Slurm jobs pass --wait and compute nodes often lack tmux: run in the foreground.
+if (( WAIT_FOR_COMPLETION )); then
+    bash "$MAIN_SCRIPT"
+    exit "$(cat "$MAIN_EXIT" 2>/dev/null || echo 1)"
+fi
 tmux kill-session -t "$SESSION_NAME" >/dev/null 2>&1 || true
 tmux new-session -d -s "$SESSION_NAME" -n main "bash '$MAIN_SCRIPT'"
 

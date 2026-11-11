@@ -4,6 +4,18 @@
 
 {% block content %}
 <div class="container-fluid px-4 pb-5">
+    {% if viewer_active %}
+    <div class="card runtime-card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center gap-3">
+            <div class="min-w-0">
+                <span class="section-label">Integrated viewer</span>
+                <small class="d-block text-muted text-break">{{ html_root }}</small>
+            </div>
+            <a class="btn btn-sm btn-outline-dark" href="{{ url_for('hyperlink_viewer_app') }}" target="_blank" rel="noopener">Open full screen</a>
+        </div>
+        <iframe src="{{ url_for('hyperlink_viewer_app') }}" title="Hyperlink viewer" loading="lazy" style="width:100%;height:calc(100vh - 190px);min-height:560px;border:0;display:block"></iframe>
+    </div>
+    {% endif %}
     <div class="row g-4">
         <div class="col-xl-8">
             <div class="card runtime-card">
@@ -41,7 +53,7 @@
                                 <div class="form-check form-switch border rounded-3 px-3 py-3 bg-light">
                                     <input class="form-check-input" type="checkbox" role="switch" id="hyperlink_ai_enabled" name="hyperlink_ai_enabled" {% if hyperlink_ai_enabled %}checked{% endif %}>
                                     <label class="form-check-label fw-semibold" for="hyperlink_ai_enabled">Enable AI video description</label>
-                                    <div class="small text-muted mt-1">When enabled, Hyperlink uses the offline local model path configured for this HPCC stack. When disabled, the viewer keeps manual comments only and blocks AI summary generation.</div>
+                                    <div class="small text-muted mt-1">Ready for later use: needs the offline model configured on this stack. Leave off to keep manual comments only.</div>
                                 </div>
                             </div>
                         </div>
@@ -52,8 +64,7 @@
                         </div>
 
                         <div class="d-flex flex-wrap gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">Open integrated viewer</button>
-                            <a href="{{ url_for('hyperlink_viewer_app') }}" class="btn btn-outline-dark btn-lg">Open current session</a>
+                            <button type="submit" class="btn btn-primary btn-lg">Load into viewer</button>
                             <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-lg">Back</a>
                         </div>
                     </form>

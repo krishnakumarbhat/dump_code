@@ -33,7 +33,7 @@
                     <h1 class="mb-0">{{ tool_name }}</h1>
                 </div>
                 <div class="card-body">
-                    <p class="lead-copy">Choose CAN KPI or UDP KPI as the primary runtime. Interactive Plot can stay disabled, run alongside the selected KPI target, or switch into a standalone Interactive Plot only run.</p>
+                    <p class="lead-copy">How to run: choose CAN or UDP, select JSON batch or an HDF pair, enter the input/output paths, then queue the job. Turn on Interactive Plot only when you also need plots. Saved configuration files below are private to your NetID.</p>
 
                     <form method="POST" id="kpiRuntimeForm">
                         <input type="hidden" name="interactive_plot_mode" id="interactive_plot_mode" value="disabled">
@@ -93,7 +93,12 @@
                                 <label class="btn btn-outline-dark" for="mode_json">JSON batch</label>
                                 <input type="radio" class="btn-check" name="input_mode" id="mode_hdf" value="hdf">
                                 <label class="btn btn-outline-dark" for="mode_hdf">HDF pair</label>
+                                <input type="radio" class="btn-check" name="input_mode" id="mode_mf4_json" value="mf4_json">
+                                <label class="btn btn-outline-dark" for="mode_mf4_json">MF4 JSON</label>
+                                <input type="radio" class="btn-check" name="input_mode" id="mode_mf4" value="mf4">
+                                <label class="btn btn-outline-dark" for="mode_mf4">MF4 pair</label>
                             </div>
+                            <small class="text-muted d-block mt-1" id="mf4ModeHelp">MF4 modes convert the logs to HDF inside the job, then KPI runs directly on the result.</small>
                         </div>
 
                         <div class="row g-3">
@@ -112,17 +117,17 @@
                                 </div>
                             </div>
                             <div class="col-md-6 hdf-only d-none">
-                                <label class="form-label">Input HDF</label>
+                                <label class="form-label pair-label">Input HDF</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="input_hdf" name="input_hdf" placeholder="/path/to/input.h5">
-                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('input_hdf', ['h5', 'hdf5'])">Browse</button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('input_hdf', ['h5', 'hdf5', 'mf4', 'MF4'])">Browse</button>
                                 </div>
                             </div>
                             <div class="col-md-6 hdf-only d-none">
-                                <label class="form-label">Output HDF</label>
+                                <label class="form-label pair-label">Output HDF</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="output_hdf" name="output_hdf" placeholder="/path/to/output.h5">
-                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('output_hdf', ['h5', 'hdf5'])">Browse</button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('output_hdf', ['h5', 'hdf5', 'mf4', 'MF4'])">Browse</button>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -221,7 +226,7 @@
 
                         <div class="d-flex flex-wrap gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">Queue through broker</button>
-                            <a class="btn btn-outline-dark btn-lg" href="{{ url_for('runtime_map') }}">Edit runtime map</a>
+                            <a class="btn btn-outline-dark btn-lg" href="{{ url_for('runtime_map') }}">HPCC Pipeline Run</a>
                             <a class="btn btn-outline-secondary btn-lg" href="{{ url_for('dashboard') }}">Back</a>
                         </div>
                     </form>
@@ -257,7 +262,7 @@
                     <div>
                         <span class="section-label">Configuration files</span>
                         <h3 class="mb-1">Edit, validate, and use</h3>
-                        <p class="text-muted small mb-0">Changes are validated before saving and the previous file is backed up automatically.</p>
+                        <p class="text-muted small mb-0">Each NetID has its own files under <code>~/.hpcc_kpi_configs/&lt;netid&gt;/</code>. Changes are validated and backed up; other users' settings are not changed.</p>
                     </div>
                     <span class="runtime-kind">{{ detected_cluster|title }}</span>
                 </div>
@@ -600,8 +605,26 @@ function setCustomerAccount(value) {
 
 function updateRuntimeForm() {
     const target = selectedExecutionTarget();
-    const mode = selectedInputMode();
-    const interactivePlotMode = selectedInteractivePlotMode();
+    let mode = selectedInputMode();
+    let interactivePlotMode = selectedInteractivePlotMode();
+    const mf4Options = document.querySelectorAll('#mode_mf4, #mode_mf4_json');
+    const mf4Help = document.getElementById('mf4ModeHelp');
+    const canTarget = target === 'can_kpi';
+    mf4Options.forEach((radio) => {
+        const label = document.querySelector(`label[for="${radio.id}"]`);
+        radio.disabled = canTarget;
+        if (label) label.classList.toggle('d-none', canTarget);
+    });
+    if (mf4Help) mf4Help.classList.toggle('d-none', canTarget);
+    if (canTarget && mode.startsWith('mf4')) {
+        mode = 'json';
+        document.getElementById('mode_json').checked = true;
+    }
+    if (canTarget && interactivePlotMode === 'enabled') {
+        interactivePlotMode = 'disabled';
+        interactivePlotModeInput.value = 'disabled';
+        if (interactivePlotToggle) interactivePlotToggle.checked = false;
+    }
     const canInteractiveEnabled = canInteractivePlotModeInput && canInteractivePlotModeInput.value === 'enabled';
     const interactiveEnabled = target === 'can_kpi' ? canInteractiveEnabled : interactivePlotMode === 'enabled';
     const interactiveOnly = interactivePlotMode === 'only';
@@ -609,16 +632,21 @@ function updateRuntimeForm() {
     const resourceProfile = requiresXml ? 'interactive_plot' : target;
 
     xmlFields.forEach((item) => item.classList.toggle('d-none', !requiresXml));
-    jsonFields.forEach((item) => item.classList.toggle('d-none', mode !== 'json'));
-    hdfFields.forEach((item) => item.classList.toggle('d-none', mode !== 'hdf'));
+    const isMf4 = mode.startsWith('mf4');
+    // CAN needs its own MF4 converter (not configured): only HDF/JSON for CAN targets.
+    jsonFields.forEach((item) => item.classList.toggle('d-none', mode !== 'json' && mode !== 'mf4_json'));
+    hdfFields.forEach((item) => item.classList.toggle('d-none', mode !== 'hdf' && mode !== 'mf4'));
+    document.querySelectorAll('.pair-label').forEach((label, index) => { label.textContent = `${index ? 'Output' : 'Input'} ${isMf4 ? 'MF4' : 'HDF'}`; });
+    document.getElementById('input_hdf').placeholder = isMf4 ? '/path/to/input_b05.MF4' : '/path/to/input.h5';
+    document.getElementById('output_hdf').placeholder = isMf4 ? '/path/to/output_r001.MF4' : '/path/to/output.h5';
 
     if (jsonInputLabel && jsonInputField) {
         if (requiresXml) {
             jsonInputLabel.textContent = 'Inputs JSON';
             jsonInputField.placeholder = '/path/to/InputsInteractivePlot.json';
         } else {
-            jsonInputLabel.textContent = 'JSON input';
-            jsonInputField.placeholder = '/path/to/kpi.json';
+            jsonInputLabel.textContent = mode === 'mf4_json' ? 'MF4 pairs JSON' : 'JSON input';
+            jsonInputField.placeholder = mode === 'mf4_json' ? '/path/to/mf4_pairs.json (INPUT_MF4 / OUTPUT_MF4)' : '/path/to/kpi.json';
         }
     }
 

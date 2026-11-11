@@ -25,7 +25,7 @@ SIMGG_SRC = {
     'kpi/can_intplot/canintplot_kpi.simg': [ROOT / 'KPI' / 'can_interactive_plot' / 'singularity_canintplot.def', ROOT / 'KPI' / 'can_interactive_plot', ROOT / 'KPI' / 'intplot_kpi' / 'ConfigInteractivePlots_bordnet.xml'],
 }
 
-SCRIPTS = ['bundle_common.sh', 'cleanup_memory.sh', 'kpi_runtime_launcher.sh', 'hpcc_runtime_5006.env', 'hpcc_runtime_5007.env', 'run_hpcc_5007.sh']
+SCRIPTS = ['bundle_common.sh', 'cleanup_memory.sh', 'kpi_runtime_launcher.sh', 'hpcc_runtime.env', 'hpcc_runtime_5006.env', 'hpcc_runtime_5007.env', 'run_hpcc_5007.sh']
 BUNDLE_DIRS = ['main_html', 'Hyperlink_tool', 'KPI']
 
 
@@ -447,6 +447,7 @@ _CRITICAL_BUNDLE_FILES = [
     'bundle_src/main_html/app.py',
     'bundle_src/KPI',
     'run_hpcc.sh',
+    'hpcc_runtime.env',
     'run_hpcc_5007.sh',
     'hpcc_runtime_5007.env',
     'hpcc_main.pyz',
@@ -661,7 +662,8 @@ def _load_env():
 
 def _deployment_targets(env):
     """Resolve only the explicitly configured runtime deployment roots."""
-    runtime_path = ROOT / 'hpcc_runtime_5007.env'
+    # .env krakow_path/southfield_path are the source of truth; runtime env is only a fallback.
+    runtime_path = ROOT / 'hpcc_runtime.env'
     runtime = {}
     if runtime_path.exists():
         for line in runtime_path.read_text(encoding='utf-8').splitlines():
@@ -670,8 +672,8 @@ def _deployment_targets(env):
                 key, value = line.split('=', 1)
                 runtime[key.strip()] = value.strip().strip('"').strip("'")
     configured = [
-        ('krakow', env.get('krakow_host') or env.get('KRAKOW_HOST') or '10.214.45.45', runtime.get('HPCC_KRAKOW_DEPLOY_ROOT') or env.get('krakow_path', '')),
-        ('southfield', env.get('southfield_host') or env.get('SOUTHFIELD_HOST') or '10.192.224.131', runtime.get('HPCC_SOUTHFIELD_DEPLOY_ROOT') or env.get('southfield_path', '')),
+        ('krakow', env.get('krakow_host') or env.get('KRAKOW_HOST') or '10.214.45.45', env.get('krakow_path') or runtime.get('HPCC_KRAKOW_DEPLOY_ROOT', '')),
+        ('southfield', env.get('southfield_host') or env.get('SOUTHFIELD_HOST') or '10.192.224.131', env.get('southfield_path') or runtime.get('HPCC_SOUTHFIELD_DEPLOY_ROOT', '')),
     ]
     return [(name, host, str(PurePosixPath(path))) for name, host, path in configured if path]
 
@@ -1051,8 +1053,8 @@ def upload():
                     "master=$(ps -u \"$USER\" -o pid=,args= | "
                     "awk '/gunicorn.*main_html/ && !/awk/ {print $1; exit}'); "
                     "if [ -n \"$master\" ]; then kill -HUP \"$master\"; "
-                    "echo \"reloaded 5007 UI master $master\"; else "
-                    "echo 'no matching Gunicorn master; restart the 5007 launcher'; exit 1; fi"
+                    "echo \"reloaded UI master $master\"; else "
+                    "echo 'no matching Gunicorn master; restart the UI launcher'; exit 1; fi"
                 )
                 stdin, stdout, stderr = transport.open_session(), None, None
                 stdin.exec_command(f"cd {shlex.quote(remote_root)} && {command}")
@@ -1060,8 +1062,8 @@ def upload():
                 stderr = stdin.makefile_stderr('rb', -1)
                 result = stdout.read().decode('utf-8', 'replace').strip()
                 error = stderr.read().decode('utf-8', 'replace').strip()
-                if error or 'reloaded 5007 UI master' not in result:
-                    raise RuntimeError(error or result or '5007 Gunicorn reload failed')
+                if error or 'reloaded UI master' not in result:
+                    raise RuntimeError(error or result or 'Gunicorn reload failed')
                 print(f'[{target_name}] {result}', flush=True)
         except Exception as exc:
             msg = f'[{target_name}] FAIL stage=jira_secret remote_root={remote_root} error={exc}'
@@ -1176,7 +1178,8 @@ def main():
             if no_rag:
                 wsl_args.append('--no-rag')
             print('  Running generate in WSL (apptainer)...')
-            _run_in_wsl(wsl_args)
+            if not _run_in_wsl(wsl_args):
+                raise RuntimeError('WSL is unavailable; refusing to upload an unbuilt/stale bundle.')
             print('  Checking GGUF files...')
             _gguf_deploy_check()
             print('  Running upload from Windows (paramiko)...')

@@ -16,6 +16,7 @@ From: python:3.11-slim
     KPI/can_interactive_plot/d_presentation_layer /app/can_interactive_plot/d_presentation_layer
     KPI/can_interactive_plot/InteractivePlot /app/can_interactive_plot/InteractivePlot
     KPI/can_interactive_plot/can_intplot_main.py /app/can_interactive_plot/can_intplot_main.py
+    KPI/can_interactive_plot/big_script_report.py /app/can_interactive_plot/big_script_report.py
     KPI/can_interactive_plot/can_kpi_main.py /app/can_interactive_plot/can_kpi_main.py
     KPI/can_interactive_plot/can_kpi_server.py /app/can_interactive_plot/can_kpi_server.py
     KPI/can_interactive_plot/hdf_batch.py /app/can_interactive_plot/hdf_batch.py
