@@ -735,7 +735,7 @@ def tool_kpi():
                          runtime_tools=[tool for tool in runtime_store.list_tools() if tool['tool_key'] in {'can_kpi', 'udp_kpi', 'interactive_plot'}],
                          defaults=RUNTIME_TOOL_DEFAULTS,
                          customer_accounts=_runtime_customer_accounts(),
-                         configuration_files=list_configurations(),
+                          configuration_files=list_configurations(current_user.net_id),
                          detected_cluster=_request_cluster_target(),
                          krakow_runtime_profiles=KRAKOW_RUNTIME_PROFILES,
                          allow_local_scheduler=_allow_local_kpi_scheduler())
@@ -744,7 +744,7 @@ def tool_kpi():
 @app.route('/api/kpi/configurations')
 @login_required
 def api_kpi_configurations():
-    return jsonify({'ok': True, 'configurations': list_configurations()})
+    return jsonify({'ok': True, 'configurations': list_configurations(current_user.net_id)})
 
 
 @app.route('/api/kpi/configurations/<config_id>', methods=['GET', 'PUT'])
@@ -752,10 +752,10 @@ def api_kpi_configurations():
 def api_kpi_configuration(config_id):
     try:
         if request.method == 'GET':
-            metadata, content = get_configuration(config_id)
+            metadata, content = get_configuration(config_id, current_user.net_id)
             return jsonify({'ok': True, 'configuration': metadata, 'content': content})
         payload = request.get_json(silent=True) or {}
-        result = validate_configuration(config_id, payload.get('content', ''))
+        result = validate_configuration(config_id, payload.get('content', ''), current_user.net_id)
         return jsonify({'ok': True, 'validation': result})
     except (KeyError, FileNotFoundError, ValueError) as exc:
         return jsonify({'ok': False, 'error': str(exc)}), 400
@@ -766,7 +766,7 @@ def api_kpi_configuration(config_id):
 def api_save_kpi_configuration(config_id):
     try:
         payload = request.get_json(silent=True) or {}
-        result = save_configuration(config_id, payload.get('content', ''))
+        result = save_configuration(config_id, payload.get('content', ''), current_user.net_id)
         return jsonify({'ok': True, 'message': f"Saved {result['filename']}.", 'configuration': result})
     except (KeyError, FileNotFoundError, ValueError, OSError) as exc:
         return jsonify({'ok': False, 'error': str(exc)}), 400
@@ -779,7 +779,7 @@ def api_upload_kpi_configuration(config_id):
     if uploaded is None:
         return jsonify({'ok': False, 'error': 'Choose a configuration file to upload.'}), 400
     try:
-        result = save_uploaded_configuration(config_id, uploaded.read())
+        result = save_uploaded_configuration(config_id, uploaded.read(), current_user.net_id)
         return jsonify({'ok': True, 'message': f"Uploaded {result['filename']}.", 'configuration': result})
     except (KeyError, FileNotFoundError, ValueError, OSError) as exc:
         return jsonify({'ok': False, 'error': str(exc)}), 400
@@ -789,7 +789,7 @@ def api_upload_kpi_configuration(config_id):
 @login_required
 def download_kpi_configuration(config_id):
     try:
-        metadata, content = get_configuration(config_id)
+        metadata, content = get_configuration(config_id, current_user.net_id)
     except (KeyError, FileNotFoundError, ValueError) as exc:
         return jsonify({'ok': False, 'error': str(exc)}), 404
     response = Response(content, mimetype='application/xml' if metadata['format'] == 'xml' else 'application/json')
@@ -848,9 +848,9 @@ def _run_kpi_deploy_background(job_id: int, log_path: str):
 @login_required
 def api_kpi_deploy():
     try:
-        for item in list_configurations():
-            _, content = get_configuration(item['id'])
-            validate_configuration(item['id'], content)
+        for item in list_configurations(current_user.net_id):
+            _, content = get_configuration(item['id'], current_user.net_id)
+            validate_configuration(item['id'], content, current_user.net_id)
     except (KeyError, FileNotFoundError, ValueError) as exc:
         return jsonify({'ok': False, 'error': f'Managed configuration validation failed: {exc}'}), 400
 
@@ -1023,12 +1023,14 @@ def tool_hyperlink():
         )
         db.session.add(job)
         db.session.commit()
-        return redirect(url_for('hyperlink_viewer_app'))
+        return redirect(url_for('tool_hyperlink'))
     
     recent_jobs = get_user_tool_jobs('hyperlink_tool')
     return render_template('tools/hyperlink_tool.html',
                          tool_name='Hyperlink Tool',
                          recent_jobs=recent_jobs,
+                         viewer_active=bool(session.get('hyperlink_html_root')),
+                         html_root=session.get('hyperlink_html_root', ''),
                          hyperlink_ai_enabled=_hyperlink_ai_enabled())
 
 
@@ -3092,6 +3094,24 @@ def _validate_hdf_inputs(input_hdf: str, output_hdf: str) -> None:
             raise ValueError(f'Cannot read {label.lower()} {path}: {exc}') from exc
 
 
+def _validate_mf4_inputs(input_mf4: str, output_mf4: str) -> None:
+    """Validate MF4 names locally; cluster paths are checked by the Slurm launcher."""
+    for label, path in (('Input MF4', input_mf4), ('Output MF4', output_mf4)):
+        if not path.lower().endswith('.mf4'):
+            raise ValueError(f'{label} must be a .mf4 file: {path}')
+        # /net and /mnt belong to the selected cluster. The Flask process may
+        # run on Windows or the other cluster, so checking here gives a false
+        # ENOENT even when Slurm can read the path.
+        if path.startswith(('/net/', '/mnt/')):
+            continue
+        try:
+            with open(path, 'rb') as handle:
+                if not handle.read(8).startswith(b'MDF'):
+                    raise ValueError(f'{label} is not a valid MDF/MF4 file: {path}')
+        except OSError as exc:
+            raise ValueError(f'Cannot read {label.lower()} {path}: {exc}') from exc
+
+
 def _build_runtime_kpi_submission(form_source) -> dict:
     primary_target = (form_source.get('execution_target') or 'udp_kpi').strip()
     if primary_target not in {'can_kpi', 'udp_kpi'}:
@@ -3110,6 +3130,8 @@ def _build_runtime_kpi_submission(form_source) -> dict:
     execution_target = 'interactive_plot' if interactive_plot_only else primary_target
 
     input_mode = (form_source.get('input_mode') or 'json').strip().lower()
+    if input_mode not in {'json', 'hdf', 'mf4', 'mf4_json'}:
+        raise ValueError('Unknown input mode.')
     resource_target = 'interactive_plot' if interactive_plot_mode != 'disabled' else execution_target
     default_resources = _default_runtime_resources(resource_target)
     requested_scheduler = (form_source.get('scheduler') or default_resources.get('scheduler') or 'slurm').strip().lower()
@@ -3145,17 +3167,19 @@ def _build_runtime_kpi_submission(form_source) -> dict:
         'interactive_source_target': primary_target,
     }
     default_xml_id = 'can_config_xml' if primary_target == 'can_kpi' else 'udp_config_xml'
-    config_xml = _normalize_submitted_path(form_source.get('config_xml')) or configuration_path(default_xml_id)
+    config_xml = _normalize_submitted_path(form_source.get('config_xml')) or configuration_path(default_xml_id, current_user.net_id)
     json_path = _normalize_submitted_path(form_source.get('kpi_json'))
     input_hdf = _normalize_submitted_path(form_source.get('input_hdf'))
     output_hdf = _normalize_submitted_path(form_source.get('output_hdf'))
 
-    if input_mode == 'json' and not json_path:
+    if input_mode in {'json', 'mf4_json'} and not json_path:
         raise ValueError('JSON path is required for the selected KPI submission mode.')
-    if input_mode == 'hdf' and (not input_hdf or not output_hdf):
-        raise ValueError('Input and output HDF paths are required for HDF mode.')
+    if input_mode in {'hdf', 'mf4'} and (not input_hdf or not output_hdf):
+        raise ValueError('Input and output paths are required for pair mode.')
     if input_mode == 'hdf':
         _validate_hdf_inputs(input_hdf, output_hdf)
+    if input_mode == 'mf4':
+        _validate_mf4_inputs(input_hdf, output_hdf)
 
     paths.update(
         {

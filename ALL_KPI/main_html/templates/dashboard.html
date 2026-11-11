@@ -13,7 +13,7 @@
         <div class="hero-actions">
             <a class="btn btn-primary btn-lg" href="{{ url_for('tool_kpi') }}">Open KPI</a>
             <a class="btn btn-outline-light btn-lg" href="{{ url_for('tool_hyperlink') }}">Open Hyperlink</a>
-            <a class="btn btn-outline-dark btn-lg hero-outline" href="{{ url_for('runtime_map') }}">Runtime Map</a>
+            <a class="btn btn-outline-dark btn-lg hero-outline" href="{{ url_for('runtime_map') }}">HPCC Pipeline Run</a>
         </div>
     </section>
 
@@ -198,7 +198,7 @@
                         <span class="runtime-kind">{{ tool.category }}</span>
                     </div>
                     {% endfor %}
-                    <a class="btn btn-outline-dark" href="{{ url_for('runtime_map') }}">Open editable map</a>
+                    <a class="btn btn-outline-dark" href="{{ url_for('runtime_map') }}">Open HPCC Pipeline Run</a>
                 </div>
             </div>
         </div>
@@ -279,7 +279,7 @@ chatForm.addEventListener('submit', async (event) => {
         addMessage(data.response || 'No response returned.', 'assistant');
     } catch (error) {
         removeTypingIndicator(typingId);
-        addMessage('KPI Guide failed. Check the RAG service entry in Runtime Map and make sure rag.simg is reachable.', 'assistant');
+        addMessage('KPI Guide failed. Check the RAG service entry in HPCC Pipeline Run and make sure rag.simg is reachable.', 'assistant');
     }
 });
 

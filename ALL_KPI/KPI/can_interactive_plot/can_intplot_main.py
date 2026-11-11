@@ -207,3 +207,9 @@ if __name__ == "__main__":
     # Run with asyncio for better performance
     asyncio.run(processor.run_async())
     processor.logger_setup.log_to_both("\nReport Generation Completed")
+    # Big Script story reports (HDF -> Plotly). Never blocks the main plot run.
+    try:
+        from big_script_report import write_reports
+        write_reports(input_plot_json_file, processor.output_dir)
+    except ImportError as exc:
+        print(f"[big_script] unavailable: {exc}")

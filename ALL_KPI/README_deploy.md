@@ -91,10 +91,10 @@ deploy_root/
 ```
 
 ## Usage
-1. `python generate_upload.py deploy` on machine with apptainer
-2. Copy `generate_upload/` to cluster
-3. `cd generate_upload && bash run_hpcc.sh`
-4. Open `http://<cluster-ip>:5005/html`
+1. Set `krakow_path` / `southfield_path` in `.env`, then run `python generate_upload.py deploy --no-rag`.
+2. On the cluster, `cd` into that deploy root and run `bash run_hpcc.sh` (port comes from `hpcc_runtime.env` `PORT`).
+3. Open `http://<cluster-ip>:<PORT>/html/kpi`.
+4. KPI configurations are private per user at `~/.hpcc_kpi_configs/<netid>/`.
 
 ## Resource Allocation
 Edit `resources.py` to change partitions, accounts.

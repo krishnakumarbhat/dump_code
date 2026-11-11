@@ -23,6 +23,63 @@ class _FakeStore:
         return None
 
 
+def test_job_control_root_rejects_node_local_storage(monkeypatch, tmp_path):
+    monkeypatch.setenv('HPCC_RUNTIME_WORK_ROOT', '/local/hpcc_runtime/old')
+    monkeypatch.setattr(hpcc_main, '_runtime_root', lambda _: tmp_path)
+    assert hpcc_main._runtime_work_root(tmp_path) == tmp_path / 'runtime_state' / 'hpcc_runtime'
+
+
+def test_kpi_support_stages_converter_configuration(monkeypatch, tmp_path):
+    (tmp_path / 'hpcc_runtime.env').write_text('MUDP_SIMG=/net/tools/mudp.simg\n')
+    monkeypatch.setattr(hpcc_main, '_runtime_root', lambda _: tmp_path)
+    staged = []
+    monkeypatch.setattr(hpcc_main, '_stage_bundle_file_for_user_job', lambda _, p: staged.append(p))
+    monkeypatch.setattr(hpcc_main, '_runtime_bundle_cache_root', lambda _: tmp_path / 'cache')
+    hpcc_main._stage_kpi_bundle_support(tmp_path, 'udp_kpi')
+    assert tmp_path / 'hpcc_runtime.env' in staged
+
+
+def test_conversion_error_is_not_hidden_by_old_slurm_attempt(tmp_path):
+    launcher = tmp_path / 'launcher.log'
+    launcher.write_text('srun: error: Unable to allocate resources: Requested nodes are busy\n')
+    console = tmp_path / 'runtime.log'
+    console.write_text('[MAIN] MF4 conversion produced no paired HDF files\n')
+    assert hpcc_main.RuntimeBroker._failure_message({
+        'launcher_log_path': str(launcher), 'log_path': str(console),
+    }, 1) == 'MF4 conversion produced no paired HDF files'
+
+
+def test_udp_interactive_json_uses_checked_launcher_not_direct_image(tmp_path):
+    for relative in (
+        'kpi/udp/udp_kpi.simg', 'kpi/udp/run_udp.sh',
+        'kpi/int_plot/intplot_kpi.simg', 'kpi/int_plot/run_intplot.sh',
+        'kpi/inplot_udp.sh', 'bundle_common.sh', 'kpi_runtime_launcher.sh',
+        'ConfigInteractivePlots.xml', 'ConfigInteractivePlots_bordnet.xml',
+    ):
+        target = tmp_path / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text('stub', encoding='utf-8')
+    inputs = tmp_path / 'pairs.json'
+    inputs.write_text('{}', encoding='utf-8')
+    broker = hpcc_main.RuntimeBroker(tmp_path, _FakeStore())
+    spec = broker._tool_command(
+        'udp_kpi',
+        {'tool_key': 'udp_kpi', 'image_path': 'kpi/udp/udp_kpi.simg'},
+        {
+            'input_mode': 'json', 'interactive_plot_mode': 'enabled',
+            'interactive_source_target': 'udp_kpi', 'json_path': str(inputs),
+            'output_dir': str(tmp_path / 'out'),
+            'config_xml': str(tmp_path / 'ConfigInteractivePlots.xml'),
+        },
+        str(tmp_path / 'out'),
+    )
+    command = ' '.join(spec['command'])
+    assert spec['kind'] == 'single'
+    assert 'kpi_runtime_launcher.sh' in command
+    assert '--interactive-mode enabled' in command
+    assert 'singularity run' not in command
+
+
 def test_valid_partitions_rejects_sinfo_help_text(monkeypatch):
     result = type('Result', (), {
         'returncode': 0,

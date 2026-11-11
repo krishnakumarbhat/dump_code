@@ -12,7 +12,7 @@ usage() {
 Usage: kpi_runtime_launcher.sh --target <can_kpi|udp_kpi|interactive_plot> \
   [--source-target <can_kpi|udp_kpi>] \
   [--interactive-mode <disabled|enabled|only>] \
-  [--input-mode <json|hdf>] \
+  [--input-mode <json|hdf|mf4|mf4_json>] \
   [--json-path <file.json>] \
   [--input-hdf <input.h5> --output-hdf <output.h5>] \
   [--config-xml <ConfigInteractivePlots.xml>] \
@@ -112,9 +112,7 @@ fi
 if [[ "$TARGET" == 'interactive_plot' ]]; then
     INTERACTIVE_MODE='only'
 fi
-if [[ "$INPUT_MODE" != 'hdf' ]]; then
-    INPUT_MODE='json'
-fi
+case "$INPUT_MODE" in hdf|mf4|mf4_json) ;; *) INPUT_MODE='json' ;; esac
 
 if [[ -z "$OUTPUT_DIR" ]]; then
     OUTPUT_DIR="$(bundle_default_output_dir "$BUNDLE_ROOT" "$TARGET")"
@@ -129,6 +127,153 @@ if [[ -n "$OPTIONAL_CONFIG" ]]; then
     else
         bundle_ensure_file "$OPTIONAL_CONFIG"
     fi
+fi
+
+# MF4 -> HDF with the same MUDP container call as the MUDP pipeline, then KPI runs on HDF.
+convert_mf4_inputs() {
+    local kpi_socket_port="$PORT"
+    export HPCC_BUNDLE_ROOT="${HPCC_BUNDLE_ROOT:-$BUNDLE_ROOT}"
+    if [[ -f "$BUNDLE_ROOT/hpcc_runtime.env" ]]; then
+        # shellcheck disable=SC1091
+        source "$BUNDLE_ROOT/hpcc_runtime.env"
+    fi
+    # The runtime file's PORT is the web UI port, not the KPI ZMQ socket.
+    PORT="$kpi_socket_port"
+    echo "[mf4] KPI socket port=$PORT (separate from web UI)"
+    # CAN MF4 needs its own converter; the UDP MUDP container cannot read CAN logs.
+    if [[ "$TARGET" == 'can_kpi' || ( "$TARGET" == 'interactive_plot' && "$SOURCE_TARGET" == 'can_kpi' ) ]]; then
+        if [[ -z "${CAN_MF4_CONVERT_CMD:-}" ]]; then
+            echo "CAN MF4 converter is not configured: set CAN_MF4_CONVERT_CMD in hpcc_runtime.env, or use HDF pairs for CAN KPI." >&2
+            exit 1
+        fi
+    else
+        local pipeline_config="${MUDP_PIPELINE_CONFIG:-}"
+        if [[ -z "$pipeline_config" ]]; then
+            if [[ "$BUNDLE_ROOT" == /mnt/* ]]; then
+                pipeline_config="${HPCC_MUDP_SOUTHFIELD_CONFIG:-}"
+            else
+                pipeline_config="${HPCC_MUDP_KRAKOW_CONFIG:-}"
+            fi
+        fi
+        if [[ -n "$pipeline_config" && -f "$pipeline_config" ]]; then
+            local key value
+            while IFS=: read -r key value || [[ -n "$key" ]]; do
+                value="${value//$'\r'/}"
+                value="${value#"${value%%[![:space:]]*}"}"
+                value="${value%"${value##*[![:space:]]}"}"
+                case "$key" in
+                    mudp_simg) MUDP_SIMG="${MUDP_SIMG:-$value}" ;;
+                    mudp_config) MUDP_CONFIG="${MUDP_CONFIG:-$value}" ;;
+                esac
+            done < "$pipeline_config"
+        fi
+        if [[ -z "${MUDP_SIMG:-}" || -z "${MUDP_CONFIG:-}" ]]; then
+            echo "UDP MF4 conversion is not configured: set MUDP_SIMG (converter image) and MUDP_CONFIG (extraction XML) in hpcc_runtime.env. HDF input does not require conversion." >&2
+            exit 1
+        fi
+        bundle_ensure_file "$MUDP_SIMG"
+        bundle_ensure_file "$MUDP_CONFIG"
+    fi
+    local work="$OUTPUT_DIR/converted_hdf" py runtime_bin side
+    py="$(bundle_python)"
+    runtime_bin="$(bundle_runtime_bin)"
+    local -a mudp_binds=(--bind "$OUTPUT_DIR:$OUTPUT_DIR")
+    local mount_root
+    for mount_root in /net /mnt /scratch; do
+        [[ ! -d "$mount_root" ]] || mudp_binds+=(--bind "$mount_root:$mount_root")
+    done
+    mkdir -p "$work/input" "$work/output"
+    if [[ "$TARGET" != 'can_kpi' && "$SOURCE_TARGET" != 'can_kpi' ]]; then
+        # Site presets may be CSV-only. Change a job-owned XML, never the shared preset.
+        "$py" - "$MUDP_CONFIG" "$work/extract_hdf.xml" <<'PY'
+import sys, xml.etree.ElementTree as ET
+source, target = sys.argv[1:]
+tree = ET.parse(source)
+root = tree.getroot()
+mode = root.find('Data_Extraction_Mode')
+if mode is None:
+    sys.exit('MUDP XML has no Data_Extraction_Mode section')
+for tag, value in [('HDF_MODE', '1'), ('CSV_MODE', '0'), ('CSV_DUMP_EXTRACTION', '0')]:
+    node = mode.find(tag)
+    if node is None:
+        node = ET.SubElement(mode, tag)
+    node.text = value
+option = root.find('Output_Path_Options')
+if option is None:
+    option = ET.SubElement(root, 'Output_Path_Options')
+option.text = 'SAME_AS_OUTPUT'
+tree.write(target, encoding='utf-8', xml_declaration=True)
+print('[mf4] Using job-local extraction XML with HDF_MODE=1, CSV_MODE=0')
+PY
+        MUDP_CONFIG="$work/extract_hdf.xml"
+    fi
+    "$py" - "$INPUT_MODE" "$JSON_PATH" "$INPUT_HDF" "$OUTPUT_HDF" "$work" <<'PY'
+import json, sys
+mode, json_path, in_mf4, out_mf4, work = sys.argv[1:]
+if mode == 'mf4':
+    pairs = ([in_mf4], [out_mf4])
+else:
+    data = json.load(open(json_path, encoding='utf-8'))
+    if isinstance(data, list):
+        pairs = ([d['input_path'] for d in data], [d['output_path'] for d in data])
+    else:
+        pairs = (data.get('INPUT_MF4') or data.get('INPUT_HDF') or [], data.get('OUTPUT_MF4') or data.get('OUTPUT_HDF') or [])
+if not pairs[0] or len(pairs[0]) != len(pairs[1]):
+    sys.exit('MF4 JSON needs equal-length INPUT_MF4 / OUTPUT_MF4 lists')
+for side, files in zip(('input', 'output'), pairs):
+    open(f'{work}/{side}.txt', 'w').write('\n'.join(files) + '\n')
+PY
+    for side in input output; do
+        while IFS= read -r mf4_path; do
+            [[ -n "$mf4_path" ]] || continue
+            [[ "${mf4_path,,}" == *.mf4 ]] || { echo "Expected an MF4 path, got: $mf4_path" >&2; exit 1; }
+            bundle_ensure_file "$mf4_path"
+        done < "$work/$side.txt"
+    done
+    for side in input output; do
+        echo "[mf4] converting $side MF4 -> HDF"
+        if [[ "$TARGET" == 'can_kpi' || ( "$TARGET" == 'interactive_plot' && "$SOURCE_TARGET" == 'can_kpi' ) ]]; then
+            # CAN_MF4_CONVERT_CMD template: {list} = file with one MF4 per line, {out} = output dir
+            cmd="${CAN_MF4_CONVERT_CMD//\{list\}/$work/$side.txt}"
+            cmd="${cmd//\{out\}/$work/$side}"
+            mkdir -p "$work/$side"
+            bash -c "$cmd" || { echo "CAN MF4 converter failed on $side" >&2; exit 1; }
+        else
+            "$runtime_bin" exec "${mudp_binds[@]}" "$MUDP_SIMG" /RUN_MUDP.sh "$MUDP_CONFIG" "$work/$side.txt" "$work/$side/"
+        fi
+    done
+    JSON_PATH="$work/pairs.json"
+    "$py" - "$work" "$JSON_PATH" <<'PY'
+import glob, json, os, re, sys
+work, out = sys.argv[1:]
+# Remove only the replay version, not sensor/stream suffixes. Otherwise multiple
+# sensor HDF files collapse to one dictionary entry and silently lose data.
+def stem(p):
+    name = os.path.splitext(os.path.basename(p))[0].lower()
+    name = re.sub(r'_r[0-9a-z]{6,}(?=_|$)', '', name)
+    return name.replace('_orcas', '_b05')
+def index(side):
+    result = {}
+    for p in sorted(glob.glob(f'{work}/{side}/**/*', recursive=True)):
+        if os.path.splitext(p)[1].lower() not in ('.h5', '.hdf5', '.hdf'):
+            continue
+        key = stem(p)
+        if key in result:
+            sys.exit(f'Ambiguous converted HDF pair: {result[key]} and {p}')
+        result[key] = p
+    return result
+ins, outs = index('input'), index('output')
+keys = sorted(set(ins) & set(outs))
+if not keys:
+    sys.exit('MF4 conversion produced no paired HDF files')
+json.dump({'INPUT_HDF': [ins[k] for k in keys], 'OUTPUT_HDF': [outs[k] for k in keys]}, open(out, 'w'), indent=2)
+print(f'[mf4] {len(keys)} HDF pair(s) ready: {out}')
+PY
+    INPUT_MODE='json'
+}
+
+if [[ "$INPUT_MODE" == 'mf4' || "$INPUT_MODE" == 'mf4_json' ]]; then
+    convert_mf4_inputs
 fi
 
 if [[ "$INPUT_MODE" == 'json' ]]; then

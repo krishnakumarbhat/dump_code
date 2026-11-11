@@ -253,36 +253,36 @@ def test_jira_create_payload_uses_hzp_defect_story_points(monkeypatch):
     assert 'customfield_10016' not in fields
 
 
-def test_deployment_uploader_targets_configured_5007_env_paths(monkeypatch, tmp_path):
+def test_deployment_uploader_targets_configured_env_paths(monkeypatch, tmp_path):
     deployer = _load_deployer()
     monkeypatch.setattr(deployer, 'ROOT', tmp_path)
     (tmp_path / '.env').write_text(
-        'krakow_path=/cluster/krakow/all_services_7\n'
-        'southfield_path=/cluster/southfield/all_services_7\n',
+        'krakow_path=/cluster/krakow/all_services_8\n'
+        'southfield_path=/cluster/southfield/all_services_8\n',
         encoding='utf-8',
     )
     assert deployer._deployment_targets(deployer._load_env()) == [
-        ('krakow', '10.214.45.45', '/cluster/krakow/all_services_7'),
-        ('southfield', '10.192.224.131', '/cluster/southfield/all_services_7'),
+        ('krakow', '10.214.45.45', '/cluster/krakow/all_services_8'),
+        ('southfield', '10.192.224.131', '/cluster/southfield/all_services_8'),
     ]
 
 
-def test_deployment_uploader_prefers_5007_runtime_roots(monkeypatch, tmp_path):
+def test_deployment_uploader_falls_back_to_runtime_roots(monkeypatch, tmp_path):
     deployer = _load_deployer()
     monkeypatch.setattr(deployer, 'ROOT', tmp_path)
-    (tmp_path / '.env').write_text('krakow_path=/stale/krakow\nsouthfield_path=/stale/southfield\n', encoding='utf-8')
-    (tmp_path / 'hpcc_runtime_5007.env').write_text(
-        'HPCC_KRAKOW_DEPLOY_ROOT="/active/krakow/all_services_7"\n'
-        'HPCC_SOUTHFIELD_DEPLOY_ROOT="/active/southfield/all_services_7"\n', encoding='utf-8')
+    (tmp_path / '.env').write_text('', encoding='utf-8')
+    (tmp_path / 'hpcc_runtime.env').write_text(
+        'HPCC_KRAKOW_DEPLOY_ROOT="/active/krakow/all_services_8"\n'
+        'HPCC_SOUTHFIELD_DEPLOY_ROOT="/active/southfield/all_services_8"\n', encoding='utf-8')
 
     assert deployer._deployment_targets(deployer._load_env()) == [
-        ('krakow', '10.214.45.45', '/active/krakow/all_services_7'),
-        ('southfield', '10.192.224.131', '/active/southfield/all_services_7'),
+        ('krakow', '10.214.45.45', '/active/krakow/all_services_8'),
+        ('southfield', '10.192.224.131', '/active/southfield/all_services_8'),
     ]
 
 
 def test_project_runtime_paths_are_loaded_for_both_clusters():
     settings = _load_deployer()._load_env()
 
-    assert settings['krakow_path'].endswith('/RNA-SDV-SRR7/4-Checkout/all_services_7')
-    assert settings['southfield_path'] == '/mnt/usmidet/projects/RADARCORE/2-Sim/all_services_7'
+    assert settings['krakow_path'].endswith('/RNA-SDV-SRR7/4-Checkout/all_services_8')
+    assert settings['southfield_path'] == '/mnt/usmidet/projects/RADARCORE/2-Sim/all_services_8'

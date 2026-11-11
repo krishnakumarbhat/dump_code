@@ -479,14 +479,11 @@ def _preferred_local_runtime_root() -> Path:
 
 
 def _runtime_work_root(project_root: Path) -> Path:
+    """Keep job scripts, input queues and exit files visible on compute nodes."""
     override = (os.environ.get('HPCC_RUNTIME_WORK_ROOT') or '').strip()
-    if override:
+    if override and not override.startswith(('/local/', '/tmp/', '/var/tmp/')):
         return Path(override).resolve()
-
-    if os.name != 'nt':
-        return (_preferred_local_runtime_root() / 'hpcc_runtime').resolve()
-
-    return (_runtime_root(project_root) / 'runs').resolve()
+    return (_runtime_root(project_root) / 'runtime_state' / 'hpcc_runtime').resolve()
 
 
 def _output_runtime_log_dir(output_path: str, job_dir_name: str) -> Optional[Path]:
@@ -667,6 +664,7 @@ def _stage_kpi_bundle_support(workspace_root: Path, target: str, interactive_mod
     required_files: List[Path] = [
         runtime_root / 'bundle_common.sh',
         runtime_root / 'kpi_runtime_launcher.sh',
+        runtime_root / 'hpcc_runtime.env',
     ]
 
     if target == 'udp_kpi':
@@ -1181,7 +1179,11 @@ class RuntimeBroker:
                     text_parts.append(handle.read().decode('utf-8', errors='replace'))
             except OSError:
                 continue
-        return RuntimeStore.classify_failure_text('\n'.join(text_parts), return_code)
+        combined = '\n'.join(text_parts)
+        conversion_failure = re.search(r'(MF4 conversion produced[^\r\n]+|UDP MF4 conversion is not configured[^\r\n]+|CAN MF4 converter[^\r\n]+)', combined)
+        if conversion_failure:
+            return conversion_failure.group(1)
+        return RuntimeStore.classify_failure_text(combined, return_code)
 
     def _watch_service_host(self, runtime_job_id: int, tool_key: str, host_file: str, port: int) -> None:
         deadline = time.time() + 180
@@ -1348,74 +1350,39 @@ class RuntimeBroker:
         if tool_key != 'hyperlink' and image_path is None:
             raise ValueError(f'Container image is not available for {tool_key}')
 
-        if tool_key == 'udp_kpi' and interactive_plot_mode == 'enabled' and input_mode == 'json':
-            json_path = _stage_bundle_path_for_user_job(self.workspace_root, _sanitize_runtime_path(paths.get('json_path', '').strip()))
-            if not json_path:
-                raise ValueError('json_path is required for JSON mode')
-
-            interactive_image = _resolve_image_path(self.workspace_root, 'interactive_plot', '')
-            if interactive_image is None:
-                raise ValueError('Container image is not available for interactive_plot')
-            interactive_image = _stage_bundle_file_for_user_job(self.workspace_root, interactive_image)
-
-            if optional_config:
-                launcher_path = _stage_kpi_bundle_support(self.workspace_root, tool_key, interactive_plot_mode) / 'kpi_runtime_launcher.sh'
-                launcher_args = [
-                    '--target', tool_key,
-                    '--source-target', interactive_source_target,
-                    '--interactive-mode', interactive_plot_mode,
-                    '--input-mode', input_mode,
-                    '--output-dir', runtime_output_path,
-                    '--json-path', json_path,
-                ]
-                if config_xml:
-                    launcher_args.extend(['--config-xml', config_xml])
-                launcher_args.extend(['--optional-config', optional_config])
-                return {
-                    'kind': 'single',
-                    'command': _script_command(launcher_path, launcher_args),
-                    'mode': input_mode,
-                    'input_path': json_path,
-                }
-
-            effective_config_xml = config_xml
-            if not effective_config_xml:
-                effective_config_xml = _stage_bundle_path_for_user_job(
-                    self.workspace_root,
-                    _sanitize_runtime_path(
-                    str(_default_interactive_config_path(self.workspace_root, interactive_source_target))
-                    ),
-                )
-
-            zmq_port = str(paths.get('port') or os.environ.get('KPI_SERVER_PORT', '5560')).strip() or '5560'
+        if input_mode in {'mf4', 'mf4_json'} and tool_key in {'can_kpi', 'udp_kpi', 'interactive_plot'}:
+            # MF4 is converted to HDF inside the Slurm job, then the normal KPI flow runs.
+            mode_for_launcher = 'only' if tool_key == 'interactive_plot' else interactive_plot_mode
+            launcher_path = _stage_kpi_bundle_support(self.workspace_root, tool_key, mode_for_launcher) / 'kpi_runtime_launcher.sh'
             launcher_args = [
                 '--target', tool_key,
                 '--source-target', interactive_source_target,
-                '--interactive-mode', interactive_plot_mode,
+                '--interactive-mode', mode_for_launcher,
                 '--input-mode', input_mode,
                 '--output-dir', runtime_output_path,
-                '--json-path', json_path,
-                '--config-xml', effective_config_xml,
-                '--port', zmq_port,
             ]
-            fallback_command = _script_command(launcher_path, launcher_args)
+            if config_xml:
+                launcher_args.extend(['--config-xml', config_xml])
+            if optional_config:
+                launcher_args.extend(['--optional-config', optional_config])
+            if input_mode == 'mf4':
+                input_mf4 = _sanitize_runtime_path(paths.get('input_hdf', '').strip())
+                output_mf4 = _sanitize_runtime_path(paths.get('output_hdf', '').strip())
+                if not input_mf4 or not output_mf4:
+                    raise ValueError('input and output MF4 paths are required for MF4 mode')
+                launcher_args.extend(['--input-hdf', input_mf4, '--output-hdf', output_mf4])
+                primary_input = input_mf4
+            else:
+                primary_input = _sanitize_runtime_path(paths.get('json_path', '').strip())
+                if not primary_input:
+                    raise ValueError('json_path is required for MF4 JSON mode')
+                launcher_args.extend(['--json-path', primary_input])
             return {
-                'kind': 'udp_interactive_dual',
-                'command': fallback_command,
+                'kind': 'single',
+                'command': _script_command(launcher_path, launcher_args),
                 'mode': input_mode,
-                'input_path': json_path,
-                'primary_command': _container_run_command(image_path, ['zmq', zmq_port]),
-                'secondary_command': _container_run_command(
-                    interactive_image,
-                    [effective_config_xml, json_path, runtime_output_path],
-                    {
-                        'KPI_SERVER_HOST': '127.0.0.1',
-                        'KPI_SERVER_PORT': zmq_port,
-                    },
-                ),
-                'secondary_port': zmq_port,
+                'input_path': primary_input,
             }
-
         if tool_key in {'can_kpi', 'udp_kpi'} and interactive_plot_mode == 'enabled':
             launcher_path = _stage_kpi_bundle_support(self.workspace_root, tool_key, interactive_plot_mode) / 'kpi_runtime_launcher.sh'
             if not launcher_path.exists():
