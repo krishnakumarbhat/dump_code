@@ -1,0 +1,135 @@
+@Library('YGGDRASIL_Libs@88a041d7f91607b4306baa042b4506a202ad31c0') _
+def jfrog = new Main.Jfrog()
+
+def artifactory_upload_path = ""
+def fetch_refspec = ""
+def sw_version = ""
+
+pipeline {
+  options {
+    ansiColor('xterm')
+  }
+
+  agent {
+    kubernetes {
+      yaml '''
+        apiVersion: v1
+        kind: Pod
+        spec:
+          containers:
+          - name: "git"
+            image: "jfrog.asux.aptiv.com/core_radar-aptiv-00000000-docker-local/alpine-git:v2.30.1"
+            tty: true
+            command: ["/bin/sh"]
+            workingDir: /opt/jenkins
+          imagePullSecrets:
+          - name: aptiv-jfrog-docker
+        '''
+    }
+  }
+
+  environment {
+    VARIANTS                        = "flr8,srr8p"
+    OUTPUT_PATH                     = "${WORKSPACE}/bazel-bin/outputs"
+    ARTIFACTORY_BASE_REPO           = "core_radar-aptiv-00000000-gen8_ind13400-local"
+    JFROG_URL                       = "https://jfrog.asux.aptiv.com"
+    SHORT_COMMIT_HASH               = GIT_COMMIT.substring(0,7)
+    ARTIFACTORY_BASELINE_DOWNLOAD   = ""
+  }
+
+  stages {
+    stage ('Setup') {
+      steps {
+        script {
+          def parent_hash = ""
+          def parent_hash_short = ""
+
+          artifactory_upload_path = "${ARTIFACTORY_BASE_REPO}/nightly/${SHORT_COMMIT_HASH}"
+          fetch_refspec = "+refs/heads/dev:refs/remotes/origin/dev"
+
+          echo "fetch_refspec = ${fetch_refspec}"
+          echo "artifactory_upload_path = ${artifactory_upload_path}"
+
+          // Get Parent Commit Hash
+          if ("${GIT_BRANCH}" == "dev"){
+            // Get last dev commit from this dev commit
+            parent_hash = sh (script: "git rev-parse ${GIT_COMMIT}^", returnStdout: true).trim()
+          }
+          else {
+            // Get last dev commit that this branch was formed from or merged with
+            withCredentials([gitUsernamePassword(credentialsId: 'SID_Gerrit_API_Key',
+            gitToolName: 'git-tool')]) {
+                sh 'git fetch --no-tags --force --no-recurse-submodules -- origin +refs/heads/dev:refs/remotes/origin/dev'
+            }
+            parent_hash = sh (script: "git merge-base ${GIT_COMMIT} origin/dev", returnStdout: true).trim()
+          }
+
+          parent_hash_short = parent_hash.substring(0,7)
+          ARTIFACTORY_BASELINE_DOWNLOAD = "${ARTIFACTORY_BASE_REPO}/dev/${parent_hash_short}/coverity/baseline"
+          echo "---- Envionment variables for Verified job ----"
+          echo sh(script: 'env|sort', returnStdout: true)
+        }
+      }
+    }
+    stage ('Trigger Jobs') {
+      parallel{
+        // stage('Build & Test') {
+        //   stages{
+        //     stage('Build') {
+        //       steps {
+        //         script {
+        //           def build_cmd = "bazelisk build //:gen8 --color=yes --jobs=auto"
+
+        //           // Trigger the Build Job
+        //           build job: "iND13400/Build-Job",
+        //           parameters: [
+        //               string(name: 'VARIANTS', value: "${VARIANTS}"),
+        //               string(name: 'COMMIT_HASH', value: "${GIT_COMMIT}"),
+        //               string(name: 'BRANCH_NAME', value: "${GIT_BRANCH}"),
+        //               string(name: 'BUILD_CMD', value: "${build_cmd}"),
+        //               string(name: 'ARTIFACTORY_UPLOAD_PATH', value: "${artifactory_upload_path}/buildFiles/"),
+        //               string(name: 'OUTPUT_PATH', value: "bazel-bin/outputs"),
+        //               string(name: 'FETCH_REFSPEC', value: "${fetch_refspec}"),
+        //               string(name: 'GERRIT_CHANGE_NUMBER', value: env.GERRIT_CHANGE_NUMBER),
+        //               string(name: 'GERRIT_CHANGE_URL', value: env.GERRIT_CHANGE_URL),
+        //               string(name: 'GERRIT_PATCHSET_NUMBER', value: env.GERRIT_PATCHSET_NUMBER),
+        //               string(name: 'GERRIT_CHANGE_ID', value: env.GERRIT_CHANGE_ID),
+        //               string(name: 'GERRIT_CREDENTIALS_ID', value: env.GERRIT_CREDENTIALS_ID),
+        //               string(name: 'GERRIT_BRANCH', value: env.GERRIT_BRANCH),
+        //           ],
+        //           wait: true,
+        //           propagate: true
+        //         }
+        //       }
+        //     }
+        //     // stage ('Smoke-Test'){
+        //     //   steps {
+        //     //     script {
+        //     //       // Trigger the Integration Test Job
+        //     //       build job: "iND13400/Smoke-Test-Job",
+        //     //       parameters: [
+        //     //           string(name: 'VARIANTS', value: "${VARIANTS}"),
+        //     //           string(name: 'COMMIT_HASH', value: "${GIT_COMMIT}"),
+        //     //           string(name: 'BRANCH_NAME', value: "${GIT_BRANCH}"),
+        //     //           string(name: 'ARTIFACTORY_DOWNLOAD_PATH', value: "${artifactory_upload_path}/buildFiles/"),
+        //     //           string(name: 'ARTIFACTORY_UPLOAD_PATH',   value: "${artifactory_upload_path}/smokeTests/"),
+        //     //           string(name: 'FETCH_REFSPEC', value: "${fetch_refspec}"),
+        //     //           string(name: 'SW_VERSION', value: "${sw_version}"),
+        //     //           string(name: 'GERRIT_CHANGE_NUMBER', value: env.GERRIT_CHANGE_NUMBER),
+        //     //           string(name: 'GERRIT_CHANGE_URL', value: env.GERRIT_CHANGE_URL),
+        //     //           string(name: 'GERRIT_PATCHSET_NUMBER', value: env.GERRIT_PATCHSET_NUMBER),
+        //     //           string(name: 'GERRIT_CHANGE_ID', value: env.GERRIT_CHANGE_ID),
+        //     //           string(name: 'GERRIT_CREDENTIALS_ID', value: env.GERRIT_CREDENTIALS_ID),
+        //     //           string(name: 'GERRIT_BRANCH', value: env.GERRIT_BRANCH),
+        //     //       ],
+        //     //       wait: true,
+        //     //       propagate: true
+        //     //     }
+        //     //   }
+        //     // }
+        //   }
+        // }
+      }
+    }
+  }
+}
