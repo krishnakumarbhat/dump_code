@@ -1,0 +1,27 @@
+.vscode/settings.json
+*__pycache__
+*.pyc
+
+.vscode
+.vs/
+*.code-workspace
+
+# Coverity ignores
+covdir
+
+# Bazel ignores
+/bazel-*
+/**/bazel-*
+user.bazelrc
+tools/python/runBuildifier/buildifier
+tools/python/runBuildifier/buildifier.exe
+
+# Word Document temp files
+~$*.docx
+
+# Bazel files
+user.bazelrc
+
+# fmu output
+fmu/*/LogicalModel/
+fmu/*/Model2Id*/

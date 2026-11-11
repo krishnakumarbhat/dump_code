@@ -1,0 +1,39 @@
+build --flag_alias=rc_fi=@rcbb//module/capability/RC_fault_injection:enable_rc_fault_injection
+#Flags for embedded library builds
+# build --@spbb//common:use_bbe_cstub_simulator=True
+build:emblib --@afbb//module/_common:sil_config_enable=True
+build:emblib --@rm//:use_bbe_cstub_simulator=False
+build:emblib --@Gen8_iND13400//software/bbe32/src:enable_cdc=True
+build:emblib --@appl_inclusion_dep//:enable_psp_sil=True
+build:emblib --@emb_tracker_wrapper//:enable_pc_resim_tracker=True
+build:emblib --@calib_cfg//:calibration_default_init_values=True
+
+build:emblib --extra_toolchains=//sil/emb_lib/toolchains/mingw:mingw_windows_toolchain
+build:emblib --extra_toolchains=//sil/emb_lib/toolchains/gcc:gcc_glibc_toolchain
+
+# TODO(Grzegorz Lukasik): Passing PATH so that MinGW is able to find libmcfgthread-1.dll.
+# This should be handed by toolchain itself. For repo rules don't modify PATH variable so that
+# patching using python works - otherwise python binary cannot be found.
+#build:windows --action_env=PATH=external\\mingw\\bin
+build:windows --action_env=PATH=external\\_main~_repo_rules~mingw\\bin
+build:windows --repo_env=PATH
+
+# C++ standard and warning options
+build:emblib --cxxopt="-std=c++20"
+# build --cxxopt="-Wnrvo"
+build:emblib --cxxopt="-Wno-cast-user-defined"
+build:emblib --cxxopt="-Wno-deprecated-enum-enum-conversion"
+# For XTRK logging
+build:emblib --copt="-D_DEBUG"
+
+# --config=debug
+build:emblib_debug --copt="-g"
+build:emblib_debug --compilation_mode=dbg
+# --config=release
+build:emblib_release --copt="-O2"
+build:emblib_release --linkopt="-Wl,--strip-all"
+build:emblib_release --compilation_mode=opt
+
+# Keep the below lines and Only enable in Linux release build when build failed because of "-g" errors.
+# build:emblib_release --copt="-g"
+# build:emblib_release --strip=never

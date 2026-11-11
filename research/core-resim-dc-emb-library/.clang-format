@@ -1,0 +1,17 @@
+BasedOnStyle: Microsoft
+AlignConsecutiveMacros: 'true'
+AlignConsecutiveAssignments: 'true'
+SortIncludes: false
+IncludeBlocks: Preserve
+BraceWrapping:
+  AfterFunction: false
+  AfterControlStatement: false
+  AfterClass: false
+  AfterEnum: false
+  AfterStruct: false
+  AfterUnion: false
+  BeforeCatch: false
+  BeforeElse: false
+  IndentBraces: false
+IndentWidth: 3
+ColumnLimit: 0

@@ -1,0 +1,4 @@
+BAZELISK_BASE_URL=https://jfrog.asux.aptiv.com/artifactory/bazel_tools_external-generic-local/bazel_version
+USE_BAZEL_VERSION=7.5.0
+BAZELISK_HOME_WINDOWS=C:/bazel
+BAZELISK_HOME_LINUX=~/bazel
