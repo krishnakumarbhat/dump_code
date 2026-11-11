@@ -1,0 +1,65 @@
+
+# Generic Ignores
+*.bak
+*.elf
+*.tmp
+*.log
+
+# Python Ignores
+*__pycache__
+*.pyc
+
+# VS Code Ignores
+.vscode
+*.code-workspace
+
+# Bazel ignores
+/bazel-*
+user.bazelrc
+user.bazelrc.win_backup
+
+# WSL encodes "C:" as "C꞉" (unicode colon) on NTFS
+/[A-Z][^a-zA-Z0-9_.-]/
+
+# Coverity ignores
+covdir
+
+# Lauterbach ignores
+tools/lauterbach/last_flash_session.ini
+tools/lauterbach/scripts/last_flash_session.ini
+
+# AUTOSAR ignores
+software/r52/autosar/config/Appl/GenData/mak*
+software/r52/autosar/config/Appl/GenData/RteAnalyzer
+software/r52/autosar/config/Appl/GenData/RteCache
+software/r52/autosar/config/Appl/GenData/Make/*
+software/r52/autosar/config/Gen8_iND13400.*.silent.dcusr
+software/r52/autosar/config/Gen8_iND13400.~lock
+software/r52/autosar/config/Log/*
+
+# Matlab ignores
+*.asv
+
+# Other Tool ignores
+*_misses.txt
+
+ ITF ignores
+tools/ITF/Integrated_Testing/ResimAutoFrameWork/*.mat
+tools/ITF/Integrated_Testing/ResimAutoFrameWork/*/
+tools/ITF/Integrated_Testing/ResimAutoFrameWork/*.c
+tools/ITF/Integrated_Testing/ResimAutoFrameWork/*.ptp
+tools/ITF/Integrated_Testing/ResimAutoFrameWork/*.obj
+tools/ITF/Integrated_Testing/ResimAutoFrameWork/breakStatus.txt
+tools/ITF/Integrated_Testing/ResimAutoFrameWork/var_address.txt
+tools/ITF/Integrated_Testing/ResimAutoFrameWork/Update_smc_usc_params.m
+!tools/ITF/Integrated_Testing/ResimAutoFrameWork/utilities/
+tools/ITF/Integrated_Testing/data/
+tools/ITF/Mex_Executable_Specs/temp/
+tools/ITF/Mex_Executable_Specs/workbook/
+
+# RDD SIL ignores
+
+sil/rsp_sil/data_bin/*/*.txt
+
+# A-PRISM host-test binaries (rebuilt by aprism_host_tests/run_host_tests.bat)
+aprism_host_tests/*.exe

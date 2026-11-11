@@ -1,0 +1,5 @@
+DC_SIL/build
+DC_SIL/sil_executables/output
+.vscode
+Application/F360Tracker/F360TrackerLib/build_off/
+Application/F360Tracker/F360TrackerLib/build_on/

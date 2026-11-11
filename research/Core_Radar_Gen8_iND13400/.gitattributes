@@ -1,0 +1,2 @@
+/software/r52/autosar/config/Appl/GenData/Configurator5SystemInfo_Gen8_iND13400.json filter=lfs diff=lfs merge=lfs -text
+/software/r52/autosar/config/Config/System/SystemExtract.arxml filter=lfs diff=lfs merge=lfs -text

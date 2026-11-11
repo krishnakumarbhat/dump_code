@@ -1,0 +1,3 @@
+per-file MODULE.bazel,.bazelrc,.bazeliskrc=file:Core_Radar_Permissions:dev:/CI_OWNERS
+per-file .gitignore,.gitmodules,.gitattributes,.clang-format,.pre-commit-config.yaml=file:Core_Radar_Permissions:dev:/CI_OWNERS
+per-file bazelisk,bazelisk.exe,repo_init.py=file:Core_Radar_Permissions:dev:/CI_OWNERS
