@@ -1,0 +1,928 @@
+#include "ENET_decoded_types.h"
+#include "ENET_encoded_types.h"
+#include "macros.h"
+// NOTE : Comented bswap function since no defination available.
+void encode_DETECTIONS_RECORD(ENET_Encoded_Types_T *encoded_data, ENET_Decoded_Types_T *decoded_data)
+{
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_DET_RANGE_MAX =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_DET_RANGE_MAX /
+                             FACTOR_for_SIGNAL_HED_DET_RANGE_MAX_in_STRUCTURE_HED_SENSOR_COVERAGE) +
+                            OFFSET_for_SIGNAL_HED_DET_RANGE_MAX_in_STRUCTURE_HED_SENSOR_COVERAGE);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_DET_RANGE_MIN =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_DET_RANGE_MIN /
+                             FACTOR_for_SIGNAL_HED_DET_RANGE_MIN_in_STRUCTURE_HED_SENSOR_COVERAGE) +
+                            OFFSET_for_SIGNAL_HED_DET_RANGE_MIN_in_STRUCTURE_HED_SENSOR_COVERAGE);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_DET_SPEED_RANGE_MAX =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_DET_SPEED_RANGE_MAX /
+                             FACTOR_for_SIGNAL_HED_DET_SPEED_RANGE_MAX_in_STRUCTURE_HED_SENSOR_COVERAGE) +
+                            OFFSET_for_SIGNAL_HED_DET_SPEED_RANGE_MAX_in_STRUCTURE_HED_SENSOR_COVERAGE);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_DET_SPEED_RANGE_MIN =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_DET_SPEED_RANGE_MIN /
+                             FACTOR_for_SIGNAL_HED_DET_SPEED_RANGE_MIN_in_STRUCTURE_HED_SENSOR_COVERAGE) +
+                            OFFSET_for_SIGNAL_HED_DET_SPEED_RANGE_MIN_in_STRUCTURE_HED_SENSOR_COVERAGE);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_FOV_HOR_MAX =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_FOV_HOR_MAX /
+                             FACTOR_for_SIGNAL_HED_FOV_HOR_MAX_in_STRUCTURE_HED_SENSOR_COVERAGE) +
+                            OFFSET_for_SIGNAL_HED_FOV_HOR_MAX_in_STRUCTURE_HED_SENSOR_COVERAGE);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_FOV_HOR_MIN =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_FOV_HOR_MIN /
+                             FACTOR_for_SIGNAL_HED_FOV_HOR_MIN_in_STRUCTURE_HED_SENSOR_COVERAGE) +
+                            OFFSET_for_SIGNAL_HED_FOV_HOR_MIN_in_STRUCTURE_HED_SENSOR_COVERAGE);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_FOV_VER_MAX =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_FOV_VER_MAX /
+                             FACTOR_for_SIGNAL_HED_FOV_VER_MAX_in_STRUCTURE_HED_SENSOR_COVERAGE) +
+                            OFFSET_for_SIGNAL_HED_FOV_VER_MAX_in_STRUCTURE_HED_SENSOR_COVERAGE);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_FOV_VER_MIN =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_SENSOR_COVERAGE.HED_FOV_VER_MIN /
+                             FACTOR_for_SIGNAL_HED_FOV_VER_MIN_in_STRUCTURE_HED_SENSOR_COVERAGE) +
+                            OFFSET_for_SIGNAL_HED_FOV_VER_MIN_in_STRUCTURE_HED_SENSOR_COVERAGE);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_RADAR_STATE.HED_DATA_QUALIFIER =
+      ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_RADAR_STATE.HED_DATA_QUALIFIER /
+        FACTOR_for_SIGNAL_HED_DATA_QUALIFIER_in_STRUCTURE_HED_RADAR_STATE) +
+       OFFSET_for_SIGNAL_HED_DATA_QUALIFIER_in_STRUCTURE_HED_RADAR_STATE);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_RADAR_STATE.HED_LOOK_ID =
+      ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_RADAR_STATE.HED_LOOK_ID /
+        FACTOR_for_SIGNAL_HED_LOOK_ID_in_STRUCTURE_HED_RADAR_STATE) +
+       OFFSET_for_SIGNAL_HED_LOOK_ID_in_STRUCTURE_HED_RADAR_STATE);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_RADAR_STATE.HED_LOOK_INDEX =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_RADAR_STATE.HED_LOOK_INDEX /
+                             FACTOR_for_SIGNAL_HED_LOOK_INDEX_in_STRUCTURE_HED_RADAR_STATE) +
+                            OFFSET_for_SIGNAL_HED_LOOK_INDEX_in_STRUCTURE_HED_RADAR_STATE);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_RADAR_STATE.HED_NUM_OF_VALID_DETECTIONS =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_RADAR_STATE.HED_NUM_OF_VALID_DETECTIONS /
+                             FACTOR_for_SIGNAL_HED_NUM_OF_VALID_DETECTIONS_in_STRUCTURE_HED_RADAR_STATE) +
+                            OFFSET_for_SIGNAL_HED_NUM_OF_VALID_DETECTIONS_in_STRUCTURE_HED_RADAR_STATE);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_RADAR_STATE.HED_SCAN_INDEX =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_RADAR_STATE.HED_SCAN_INDEX /
+                             FACTOR_for_SIGNAL_HED_SCAN_INDEX_in_STRUCTURE_HED_RADAR_STATE) +
+                            OFFSET_for_SIGNAL_HED_SCAN_INDEX_in_STRUCTURE_HED_RADAR_STATE);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_ALIGNMENT.HED_ALIGN_HOR_QF =
+      ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_ALIGNMENT.HED_ALIGN_HOR_QF /
+        FACTOR_for_SIGNAL_HED_ALIGN_HOR_QF_in_STRUCTURE_HED_ALIGNMENT) +
+       OFFSET_for_SIGNAL_HED_ALIGN_HOR_QF_in_STRUCTURE_HED_ALIGNMENT);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_ALIGNMENT.HED_ALIGN_HOR_REF =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_ALIGNMENT.HED_ALIGN_HOR_REF /
+                             FACTOR_for_SIGNAL_HED_ALIGN_HOR_REF_in_STRUCTURE_HED_ALIGNMENT) +
+                            OFFSET_for_SIGNAL_HED_ALIGN_HOR_REF_in_STRUCTURE_HED_ALIGNMENT);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_ALIGNMENT.HED_ALIGN_VER_QF =
+      ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_ALIGNMENT.HED_ALIGN_VER_QF /
+        FACTOR_for_SIGNAL_HED_ALIGN_VER_QF_in_STRUCTURE_HED_ALIGNMENT) +
+       OFFSET_for_SIGNAL_HED_ALIGN_VER_QF_in_STRUCTURE_HED_ALIGNMENT);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_ALIGNMENT.HED_ALIGN_VER_REF =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_ALIGNMENT.HED_ALIGN_VER_REF /
+                             FACTOR_for_SIGNAL_HED_ALIGN_VER_REF_in_STRUCTURE_HED_ALIGNMENT) +
+                            OFFSET_for_SIGNAL_HED_ALIGN_VER_REF_in_STRUCTURE_HED_ALIGNMENT);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_AF_TIME_INST =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_AF_TIME_INST /
+                             FACTOR_for_SIGNAL_HED_AF_TIME_INST_in_STRUCTURE_HED_TIMING_PROFILES) +
+                            OFFSET_for_SIGNAL_HED_AF_TIME_INST_in_STRUCTURE_HED_TIMING_PROFILES);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_AF_TIME_PEAK =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_AF_TIME_PEAK /
+                             FACTOR_for_SIGNAL_HED_AF_TIME_PEAK_in_STRUCTURE_HED_TIMING_PROFILES) +
+                            OFFSET_for_SIGNAL_HED_AF_TIME_PEAK_in_STRUCTURE_HED_TIMING_PROFILES);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_MAIN_CORE_TIME_INST =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_MAIN_CORE_TIME_INST /
+                             FACTOR_for_SIGNAL_HED_MAIN_CORE_TIME_INST_in_STRUCTURE_HED_TIMING_PROFILES) +
+                            OFFSET_for_SIGNAL_HED_MAIN_CORE_TIME_INST_in_STRUCTURE_HED_TIMING_PROFILES);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_MAIN_CORE_TIME_PEAK =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_MAIN_CORE_TIME_PEAK /
+                             FACTOR_for_SIGNAL_HED_MAIN_CORE_TIME_PEAK_in_STRUCTURE_HED_TIMING_PROFILES) +
+                            OFFSET_for_SIGNAL_HED_MAIN_CORE_TIME_PEAK_in_STRUCTURE_HED_TIMING_PROFILES);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_RDD_CORE_TIME_INST =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_RDD_CORE_TIME_INST /
+                             FACTOR_for_SIGNAL_HED_RDD_CORE_TIME_INST_in_STRUCTURE_HED_TIMING_PROFILES) +
+                            OFFSET_for_SIGNAL_HED_RDD_CORE_TIME_INST_in_STRUCTURE_HED_TIMING_PROFILES);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_RDD_CORE_TIME_PEAK =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_RDD_CORE_TIME_PEAK /
+                             FACTOR_for_SIGNAL_HED_RDD_CORE_TIME_PEAK_in_STRUCTURE_HED_TIMING_PROFILES) +
+                            OFFSET_for_SIGNAL_HED_RDD_CORE_TIME_PEAK_in_STRUCTURE_HED_TIMING_PROFILES);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_SP_CORE_TIME_INST =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_SP_CORE_TIME_INST /
+                             FACTOR_for_SIGNAL_HED_SP_CORE_TIME_INST_in_STRUCTURE_HED_TIMING_PROFILES) +
+                            OFFSET_for_SIGNAL_HED_SP_CORE_TIME_INST_in_STRUCTURE_HED_TIMING_PROFILES);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_SP_CORE_TIME_PEAK =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMING_PROFILES.HED_SP_CORE_TIME_PEAK /
+                             FACTOR_for_SIGNAL_HED_SP_CORE_TIME_PEAK_in_STRUCTURE_HED_TIMING_PROFILES) +
+                            OFFSET_for_SIGNAL_HED_SP_CORE_TIME_PEAK_in_STRUCTURE_HED_TIMING_PROFILES);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMESTAMP.HED_SENSOR_TIME_STAMP_NS =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMESTAMP.HED_SENSOR_TIME_STAMP_NS /
+                             FACTOR_for_SIGNAL_HED_SENSOR_TIME_STAMP_NS_in_STRUCTURE_HED_TIMESTAMP) +
+                            OFFSET_for_SIGNAL_HED_SENSOR_TIME_STAMP_NS_in_STRUCTURE_HED_TIMESTAMP);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMESTAMP.HED_SENSOR_TIME_STAMP_SEC =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMESTAMP.HED_SENSOR_TIME_STAMP_SEC /
+                             FACTOR_for_SIGNAL_HED_SENSOR_TIME_STAMP_SEC_in_STRUCTURE_HED_TIMESTAMP) +
+                            OFFSET_for_SIGNAL_HED_SENSOR_TIME_STAMP_SEC_in_STRUCTURE_HED_TIMESTAMP);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMESTAMP.HED_TIME_SYNC_SRC_MASTER =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMESTAMP.HED_TIME_SYNC_SRC_MASTER /
+                             FACTOR_for_SIGNAL_HED_TIME_SYNC_SRC_MASTER_in_STRUCTURE_HED_TIMESTAMP) +
+                            OFFSET_for_SIGNAL_HED_TIME_SYNC_SRC_MASTER_in_STRUCTURE_HED_TIMESTAMP);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMESTAMP.HED_TIME_SYNC_VALIDITY_FLAG =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMESTAMP.HED_TIME_SYNC_VALIDITY_FLAG /
+                             FACTOR_for_SIGNAL_HED_TIME_SYNC_VALIDITY_FLAG_in_STRUCTURE_HED_TIMESTAMP) +
+                            OFFSET_for_SIGNAL_HED_TIME_SYNC_VALIDITY_FLAG_in_STRUCTURE_HED_TIMESTAMP);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMESTAMP.HED_TRIGGER_TIME =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_TIMESTAMP.HED_TRIGGER_TIME /
+                             FACTOR_for_SIGNAL_HED_TRIGGER_TIME_in_STRUCTURE_HED_TIMESTAMP) +
+                            OFFSET_for_SIGNAL_HED_TRIGGER_TIME_in_STRUCTURE_HED_TIMESTAMP);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_DET_BI_STATIC_COUNT =
+      ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_DET_BI_STATIC_COUNT /
+        FACTOR_for_SIGNAL_HED_DET_BI_STATIC_COUNT_in_STRUCTURE_HED_DETECTION_INFO) +
+       OFFSET_for_SIGNAL_HED_DET_BI_STATIC_COUNT_in_STRUCTURE_HED_DETECTION_INFO);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_DET_NUM_OF_1PASS =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_DET_NUM_OF_1PASS /
+                             FACTOR_for_SIGNAL_HED_DET_NUM_OF_1PASS_in_STRUCTURE_HED_DETECTION_INFO) +
+                            OFFSET_for_SIGNAL_HED_DET_NUM_OF_1PASS_in_STRUCTURE_HED_DETECTION_INFO);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_DET_NUM_OF_2PASS =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_DET_NUM_OF_2PASS /
+                             FACTOR_for_SIGNAL_HED_DET_NUM_OF_2PASS_in_STRUCTURE_HED_DETECTION_INFO) +
+                            OFFSET_for_SIGNAL_HED_DET_NUM_OF_2PASS_in_STRUCTURE_HED_DETECTION_INFO);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_MAX_NUM_OF_DETECTIONS =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_MAX_NUM_OF_DETECTIONS /
+                             FACTOR_for_SIGNAL_HED_MAX_NUM_OF_DETECTIONS_in_STRUCTURE_HED_DETECTION_INFO) +
+                            OFFSET_for_SIGNAL_HED_MAX_NUM_OF_DETECTIONS_in_STRUCTURE_HED_DETECTION_INFO);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_NUM_OF_RESTBINS_USED =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_NUM_OF_RESTBINS_USED /
+                             FACTOR_for_SIGNAL_HED_NUM_OF_RESTBINS_USED_in_STRUCTURE_HED_DETECTION_INFO) +
+                            OFFSET_for_SIGNAL_HED_NUM_OF_RESTBINS_USED_in_STRUCTURE_HED_DETECTION_INFO);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_OPERATION_MODE =
+      ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_OPERATION_MODE /
+        FACTOR_for_SIGNAL_HED_OPERATION_MODE_in_STRUCTURE_HED_DETECTION_INFO) +
+       OFFSET_for_SIGNAL_HED_OPERATION_MODE_in_STRUCTURE_HED_DETECTION_INFO);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_PROCESSED_RANGE =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_PROCESSED_RANGE /
+                             FACTOR_for_SIGNAL_HED_PROCESSED_RANGE_in_STRUCTURE_HED_DETECTION_INFO) +
+                            OFFSET_for_SIGNAL_HED_PROCESSED_RANGE_in_STRUCTURE_HED_DETECTION_INFO);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_SLOPE_CORR_EXECUTIONFLAG =
+      ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_DETECTION_INFO.HED_SLOPE_CORR_EXECUTIONFLAG /
+        FACTOR_for_SIGNAL_HED_SLOPE_CORR_EXECUTIONFLAG_in_STRUCTURE_HED_DETECTION_INFO) +
+       OFFSET_for_SIGNAL_HED_SLOPE_CORR_EXECUTIONFLAG_in_STRUCTURE_HED_DETECTION_INFO);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_INTERFACE_VERSION.HED_INTRFC_VERSION_ID_MAJOR =
+      ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_INTERFACE_VERSION.HED_INTRFC_VERSION_ID_MAJOR /
+        FACTOR_for_SIGNAL_HED_INTRFC_VERSION_ID_MAJOR_in_STRUCTURE_HED_INTERFACE_VERSION) +
+       OFFSET_for_SIGNAL_HED_INTRFC_VERSION_ID_MAJOR_in_STRUCTURE_HED_INTERFACE_VERSION);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_INTERFACE_VERSION.HED_INTRFC_VERSION_ID_MINOR =
+      ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_INTERFACE_VERSION.HED_INTRFC_VERSION_ID_MINOR /
+        FACTOR_for_SIGNAL_HED_INTRFC_VERSION_ID_MINOR_in_STRUCTURE_HED_INTERFACE_VERSION) +
+       OFFSET_for_SIGNAL_HED_INTRFC_VERSION_ID_MINOR_in_STRUCTURE_HED_INTERFACE_VERSION);
+   encoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_INTERFACE_VERSION.HED_INTRFC_VERSION_ID_PATCH =
+      ((decoded_data->DETECTIONS_RECORD.DET_HEADER_STRUCT.HED_INTERFACE_VERSION.HED_INTRFC_VERSION_ID_PATCH /
+        FACTOR_for_SIGNAL_HED_INTRFC_VERSION_ID_PATCH_in_STRUCTURE_HED_INTERFACE_VERSION) +
+       OFFSET_for_SIGNAL_HED_INTRFC_VERSION_ID_PATCH_in_STRUCTURE_HED_INTERFACE_VERSION);
+   encoded_data->DETECTIONS_RECORD.DET_EtoE_HDR.CRC =
+      /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DET_EtoE_HDR.CRC / FACTOR_for_SIGNAL_CRC_in_STRUCTURE_DET_EtoE_HDR) +
+                            OFFSET_for_SIGNAL_CRC_in_STRUCTURE_DET_EtoE_HDR);
+   encoded_data->DETECTIONS_RECORD.DET_EtoE_HDR.COUNTER = /*bswap<float32_t>*/ (
+      (decoded_data->DETECTIONS_RECORD.DET_EtoE_HDR.COUNTER / FACTOR_for_SIGNAL_COUNTER_in_STRUCTURE_DET_EtoE_HDR) +
+      OFFSET_for_SIGNAL_COUNTER_in_STRUCTURE_DET_EtoE_HDR);
+   encoded_data->DETECTIONS_RECORD.DET_EtoE_HDR.DATA_ID = /*bswap<float32_t>*/ (
+      (decoded_data->DETECTIONS_RECORD.DET_EtoE_HDR.DATA_ID / FACTOR_for_SIGNAL_DATA_ID_in_STRUCTURE_DET_EtoE_HDR) +
+      OFFSET_for_SIGNAL_DATA_ID_in_STRUCTURE_DET_EtoE_HDR);
+   encoded_data->DETECTIONS_RECORD.DET_EtoE_HDR.LENGTH = /*bswap<float32_t>*/ (
+      (decoded_data->DETECTIONS_RECORD.DET_EtoE_HDR.LENGTH / FACTOR_for_SIGNAL_LENGTH_in_STRUCTURE_DET_EtoE_HDR) +
+      OFFSET_for_SIGNAL_LENGTH_in_STRUCTURE_DET_EtoE_HDR);
+
+   for (int i = 0; i < EN_ARRAY_SIZE_Dimension; i++)
+   {
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_AZIMUTH =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_AZIMUTH /
+                                FACTOR_for_SIGNAL_DET_AZIMUTH_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_AZIMUTH_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_AZIMUTH_ERR =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_AZIMUTH_ERR /
+                                FACTOR_for_SIGNAL_DET_AZIMUTH_ERR_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_AZIMUTH_ERR_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_BI_STATIC_FLAG =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_BI_STATIC_FLAG /
+                                FACTOR_for_SIGNAL_DET_BI_STATIC_FLAG_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_BI_STATIC_FLAG_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_CONFD_AZIMUTH =
+         ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_CONFD_AZIMUTH /
+           FACTOR_for_SIGNAL_DET_CONFD_AZIMUTH_in_STRUCTURE_Dimension) +
+          OFFSET_for_SIGNAL_DET_CONFD_AZIMUTH_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_CONFD_ELEVATION =
+         ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_CONFD_ELEVATION /
+           FACTOR_for_SIGNAL_DET_CONFD_ELEVATION_in_STRUCTURE_Dimension) +
+          OFFSET_for_SIGNAL_DET_CONFD_ELEVATION_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_ELEVATION =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_ELEVATION /
+                                FACTOR_for_SIGNAL_DET_ELEVATION_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_ELEVATION_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_ELEVATION_ERR =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_ELEVATION_ERR /
+                                FACTOR_for_SIGNAL_DET_ELEVATION_ERR_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_ELEVATION_ERR_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_EXISTENCE_PROB =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_EXISTENCE_PROB /
+                                FACTOR_for_SIGNAL_DET_EXISTENCE_PROB_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_EXISTENCE_PROB_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_HVC_FLAG =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_HVC_FLAG /
+                                FACTOR_for_SIGNAL_DET_HVC_FLAG_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_HVC_FLAG_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_OUTSIDE_SECTOR =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_OUTSIDE_SECTOR /
+                                FACTOR_for_SIGNAL_DET_OUTSIDE_SECTOR_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_OUTSIDE_SECTOR_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_POINT_TARGET_PROB =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_POINT_TARGET_PROB /
+                                FACTOR_for_SIGNAL_DET_POINT_TARGET_PROB_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_POINT_TARGET_PROB_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_RANGE =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_RANGE /
+                                FACTOR_for_SIGNAL_DET_RANGE_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_RANGE_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_RANGE_ERR =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_RANGE_ERR /
+                                FACTOR_for_SIGNAL_DET_RANGE_ERR_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_RANGE_ERR_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_RANGE_VELOCITY =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_RANGE_VELOCITY /
+                                FACTOR_for_SIGNAL_DET_RANGE_VELOCITY_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_RANGE_VELOCITY_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_RANGE_VELOCITY_ERR =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_RANGE_VELOCITY_ERR /
+                                FACTOR_for_SIGNAL_DET_RANGE_VELOCITY_ERR_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_RANGE_VELOCITY_ERR_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_RCS =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_RCS /
+                                FACTOR_for_SIGNAL_DET_RCS_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_RCS_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_SNR =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_SNR /
+                                FACTOR_for_SIGNAL_DET_SNR_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_SNR_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_SUPER_RES_TARGET =
+         ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_SUPER_RES_TARGET /
+           FACTOR_for_SIGNAL_DET_SUPER_RES_TARGET_in_STRUCTURE_Dimension) +
+          OFFSET_for_SIGNAL_DET_SUPER_RES_TARGET_in_STRUCTURE_Dimension);
+      encoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_VALID_FLAG =
+         /*bswap<float32_t>*/ ((decoded_data->DETECTIONS_RECORD.DETECTIONS_ARRAY.Dimension[i].DET_VALID_FLAG /
+                                FACTOR_for_SIGNAL_DET_VALID_FLAG_in_STRUCTURE_Dimension) +
+                               OFFSET_for_SIGNAL_DET_VALID_FLAG_in_STRUCTURE_Dimension);
+   }
+}
+
+void encode_RADAR_STATUS_RECORD(ENET_Encoded_Types_T *encoded_data, ENET_Decoded_Types_T *decoded_data)
+{
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_AlignmentAzimuth =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_AlignmentAzimuth /
+                             FACTOR_for_SIGNAL_STS_AlignmentAzimuth_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+                            OFFSET_for_SIGNAL_STS_AlignmentAzimuth_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_AlignmentElevation =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_AlignmentElevation /
+                             FACTOR_for_SIGNAL_STS_AlignmentElevation_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+                            OFFSET_for_SIGNAL_STS_AlignmentElevation_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_AlignmentError =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_AlignmentError /
+        FACTOR_for_SIGNAL_STS_AlignmentError_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+       OFFSET_for_SIGNAL_STS_AlignmentError_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_AlignmentModeIn =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_AlignmentModeIn /
+        FACTOR_for_SIGNAL_STS_AlignmentModeIn_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+       OFFSET_for_SIGNAL_STS_AlignmentModeIn_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_AlignmentModeOut =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_AlignmentModeOut /
+        FACTOR_for_SIGNAL_STS_AlignmentModeOut_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+       OFFSET_for_SIGNAL_STS_AlignmentModeOut_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_AzimuthStd =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_AzimuthStd /
+                             FACTOR_for_SIGNAL_STS_AzimuthStd_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+                            OFFSET_for_SIGNAL_STS_AzimuthStd_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_CalDisplay =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_CalDisplay /
+                             FACTOR_for_SIGNAL_STS_CalDisplay_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+                            OFFSET_for_SIGNAL_STS_CalDisplay_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_CalTime =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_CalTime /
+                             FACTOR_for_SIGNAL_STS_CalTime_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+                            OFFSET_for_SIGNAL_STS_CalTime_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_CoordinateSystemInput =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_CoordinateSystemInput /
+        FACTOR_for_SIGNAL_STS_CoordinateSystemInput_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+       OFFSET_for_SIGNAL_STS_CoordinateSystemInput_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_ElevationStd =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_ElevationStd /
+                             FACTOR_for_SIGNAL_STS_ElevationStd_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+                            OFFSET_for_SIGNAL_STS_ElevationStd_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_InitAlignmentResultAzimuth =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_InitAlignmentResultAzimuth /
+                             FACTOR_for_SIGNAL_STS_InitAlignmentResultAzimuth_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+                            OFFSET_for_SIGNAL_STS_InitAlignmentResultAzimuth_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_InitAlignmentResultElevation =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_InitAlignmentResultElevation /
+                             FACTOR_for_SIGNAL_STS_InitAlignmentResultElevation_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+                            OFFSET_for_SIGNAL_STS_InitAlignmentResultElevation_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_InitAlignResultAzimuthUpdate =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_InitAlignResultAzimuthUpdate /
+                             FACTOR_for_SIGNAL_STS_InitAlignResultAzimuthUpdate_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+                            OFFSET_for_SIGNAL_STS_InitAlignResultAzimuthUpdate_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_InitAlignRsltElevationUpdate =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_InitAlignRsltElevationUpdate /
+                             FACTOR_for_SIGNAL_STS_InitAlignRsltElevationUpdate_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+                            OFFSET_for_SIGNAL_STS_InitAlignRsltElevationUpdate_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_InitAlignRsltHostSpdCompFac =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_InitAlignRsltHostSpdCompFac /
+                             FACTOR_for_SIGNAL_STS_InitAlignRsltHostSpdCompFac_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+                            OFFSET_for_SIGNAL_STS_InitAlignRsltHostSpdCompFac_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_InitLastSuccessfulAlignMode =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_InitLastSuccessfulAlignMode /
+        FACTOR_for_SIGNAL_STS_InitLastSuccessfulAlignMode_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+       OFFSET_for_SIGNAL_STS_InitLastSuccessfulAlignMode_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_ProgressPercent =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_ProgressPercent /
+                             FACTOR_for_SIGNAL_STS_ProgressPercent_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+                            OFFSET_for_SIGNAL_STS_ProgressPercent_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_RadarTypeInput =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_HANDLER.STS_RadarTypeInput /
+        FACTOR_for_SIGNAL_STS_RadarTypeInput_in_STRUCTURE_STS_ALIGNMENT_HANDLER) +
+       OFFSET_for_SIGNAL_STS_RadarTypeInput_in_STRUCTURE_STS_ALIGNMENT_HANDLER);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AAAzimuthStd =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AAAzimuthStd /
+        FACTOR_for_SIGNAL_STS_AAAzimuthStd_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+       OFFSET_for_SIGNAL_STS_AAAzimuthStd_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AACurrentAzimuth =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AACurrentAzimuth /
+                             FACTOR_for_SIGNAL_STS_AACurrentAzimuth_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+                            OFFSET_for_SIGNAL_STS_AACurrentAzimuth_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AACurrentElevation =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AACurrentElevation /
+                             FACTOR_for_SIGNAL_STS_AACurrentElevation_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+                            OFFSET_for_SIGNAL_STS_AACurrentElevation_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AAElevationStd =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AAElevationStd /
+        FACTOR_for_SIGNAL_STS_AAElevationStd_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+       OFFSET_for_SIGNAL_STS_AAElevationStd_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AlignmentAutoStatus =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AlignmentAutoStatus /
+        FACTOR_for_SIGNAL_STS_AlignmentAutoStatus_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+       OFFSET_for_SIGNAL_STS_AlignmentAutoStatus_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AutoAlignmentFailRootCause =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AutoAlignmentFailRootCause /
+        FACTOR_for_SIGNAL_STS_AutoAlignmentFailRootCause_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+       OFFSET_for_SIGNAL_STS_AutoAlignmentFailRootCause_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AzimuthErrorNegative =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AzimuthErrorNegative /
+                             FACTOR_for_SIGNAL_STS_AzimuthErrorNegative_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+                            OFFSET_for_SIGNAL_STS_AzimuthErrorNegative_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AzimuthErrorPositive =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AzimuthErrorPositive /
+                             FACTOR_for_SIGNAL_STS_AzimuthErrorPositive_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+                            OFFSET_for_SIGNAL_STS_AzimuthErrorPositive_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AzimuthUpdates =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_AzimuthUpdates /
+                             FACTOR_for_SIGNAL_STS_AzimuthUpdates_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+                            OFFSET_for_SIGNAL_STS_AzimuthUpdates_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_ElevationErrorNegative =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_ElevationErrorNegative /
+        FACTOR_for_SIGNAL_STS_ElevationErrorNegative_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+       OFFSET_for_SIGNAL_STS_ElevationErrorNegative_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_ElevationErrorPositive =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_ElevationErrorPositive /
+        FACTOR_for_SIGNAL_STS_ElevationErrorPositive_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+       OFFSET_for_SIGNAL_STS_ElevationErrorPositive_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_ElevationUpdates =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_ElevationUpdates /
+                             FACTOR_for_SIGNAL_STS_ElevationUpdates_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+                            OFFSET_for_SIGNAL_STS_ElevationUpdates_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_HostSpdCompensationFactorQF =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_HostSpdCompensationFactorQF /
+        FACTOR_for_SIGNAL_STS_HostSpdCompensationFactorQF_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+       OFFSET_for_SIGNAL_STS_HostSpdCompensationFactorQF_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_HostSpeedCompensationFactor =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_HostSpeedCompensationFactor /
+        FACTOR_for_SIGNAL_STS_HostSpeedCompensationFactor_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+       OFFSET_for_SIGNAL_STS_HostSpeedCompensationFactor_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_RollErrorPositive =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_RollErrorPositive /
+                             FACTOR_for_SIGNAL_STS_RollErrorPositive_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+                            OFFSET_for_SIGNAL_STS_RollErrorPositive_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_StartAzimuth =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_StartAzimuth /
+                             FACTOR_for_SIGNAL_STS_StartAzimuth_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+                            OFFSET_for_SIGNAL_STS_StartAzimuth_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_StartElevation =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_AUTO.STS_StartElevation /
+                             FACTOR_for_SIGNAL_STS_StartElevation_in_STRUCTURE_STS_ALIGNMENT_AUTO) +
+                            OFFSET_for_SIGNAL_STS_StartElevation_in_STRUCTURE_STS_ALIGNMENT_AUTO);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_AlignmentStaticStatus =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_AlignmentStaticStatus /
+        FACTOR_for_SIGNAL_STS_AlignmentStaticStatus_in_STRUCTURE_STS_ALIGNMENT_STATIC) +
+       OFFSET_for_SIGNAL_STS_AlignmentStaticStatus_in_STRUCTURE_STS_ALIGNMENT_STATIC);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_ImpactByInterference =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_ImpactByInterference /
+                             FACTOR_for_SIGNAL_STS_ImpactByInterference_in_STRUCTURE_STS_ALIGNMENT_STATIC) +
+                            OFFSET_for_SIGNAL_STS_ImpactByInterference_in_STRUCTURE_STS_ALIGNMENT_STATIC);
+   // encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_Measured_Range =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_Measured_Range /
+   // FACTOR_for_SIGNAL_STS_Measured_Range_in_STRUCTURE_STS_ALIGNMENT_STATIC) +
+   // OFFSET_for_SIGNAL_STS_Measured_Range_in_STRUCTURE_STS_ALIGNMENT_STATIC);
+   // encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_MeasuredRangeRate =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_MeasuredRangeRate /
+   // FACTOR_for_SIGNAL_STS_MeasuredRangeRate_in_STRUCTURE_STS_ALIGNMENT_STATIC) +
+   // OFFSET_for_SIGNAL_STS_MeasuredRangeRate_in_STRUCTURE_STS_ALIGNMENT_STATIC);
+   // encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_MeasuredRangeRateStd =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_MeasuredRangeRateStd /
+   // FACTOR_for_SIGNAL_STS_MeasuredRangeRateStd_in_STRUCTURE_STS_ALIGNMENT_STATIC) +
+   // OFFSET_for_SIGNAL_STS_MeasuredRangeRateStd_in_STRUCTURE_STS_ALIGNMENT_STATIC);
+   // encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_MeasuredRangeStd =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_MeasuredRangeStd /
+   // FACTOR_for_SIGNAL_STS_MeasuredRangeStd_in_STRUCTURE_STS_ALIGNMENT_STATIC) +
+   // OFFSET_for_SIGNAL_STS_MeasuredRangeStd_in_STRUCTURE_STS_ALIGNMENT_STATIC);
+   // encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_MeasuredRCS =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_MeasuredRCS /
+   // FACTOR_for_SIGNAL_STS_MeasuredRCS_in_STRUCTURE_STS_ALIGNMENT_STATIC) +
+   // OFFSET_for_SIGNAL_STS_MeasuredRCS_in_STRUCTURE_STS_ALIGNMENT_STATIC);
+   // encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_MeasuredRCSStd =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_STATIC.STS_MeasuredRCSStd /
+   // FACTOR_for_SIGNAL_STS_MeasuredRCSStd_in_STRUCTURE_STS_ALIGNMENT_STATIC) +
+   // OFFSET_for_SIGNAL_STS_MeasuredRCSStd_in_STRUCTURE_STS_ALIGNMENT_STATIC);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_AlignmentServiceStatus =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_AlignmentServiceStatus /
+        FACTOR_for_SIGNAL_STS_AlignmentServiceStatus_in_STRUCTURE_STS_ALIGNMENT_SERVICE) +
+       OFFSET_for_SIGNAL_STS_AlignmentServiceStatus_in_STRUCTURE_STS_ALIGNMENT_SERVICE);
+   // encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_AverageNumberOfDetections =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_AverageNumberOfDetections /
+   // FACTOR_for_SIGNAL_STS_AverageNumberOfDetections_in_STRUCTURE_STS_ALIGNMENT_SERVICE) +
+   // OFFSET_for_SIGNAL_STS_AverageNumberOfDetections_in_STRUCTURE_STS_ALIGNMENT_SERVICE);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_AverageSpeed =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_AverageSpeed /
+                             FACTOR_for_SIGNAL_STS_AverageSpeed_in_STRUCTURE_STS_ALIGNMENT_SERVICE) +
+                            OFFSET_for_SIGNAL_STS_AverageSpeed_in_STRUCTURE_STS_ALIGNMENT_SERVICE);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_DistanceAbsolute =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_DistanceAbsolute /
+                             FACTOR_for_SIGNAL_STS_DistanceAbsolute_in_STRUCTURE_STS_ALIGNMENT_SERVICE) +
+                            OFFSET_for_SIGNAL_STS_DistanceAbsolute_in_STRUCTURE_STS_ALIGNMENT_SERVICE);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_DistanceEffective =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_DistanceEffective /
+                             FACTOR_for_SIGNAL_STS_DistanceEffective_in_STRUCTURE_STS_ALIGNMENT_SERVICE) +
+                            OFFSET_for_SIGNAL_STS_DistanceEffective_in_STRUCTURE_STS_ALIGNMENT_SERVICE);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_DurationAbsolute =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_DurationAbsolute /
+                             FACTOR_for_SIGNAL_STS_DurationAbsolute_in_STRUCTURE_STS_ALIGNMENT_SERVICE) +
+                            OFFSET_for_SIGNAL_STS_DurationAbsolute_in_STRUCTURE_STS_ALIGNMENT_SERVICE);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_DurationEffective =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_DurationEffective /
+                             FACTOR_for_SIGNAL_STS_DurationEffective_in_STRUCTURE_STS_ALIGNMENT_SERVICE) +
+                            OFFSET_for_SIGNAL_STS_DurationEffective_in_STRUCTURE_STS_ALIGNMENT_SERVICE);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_VehicleCondition =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGNMENT_SERVICE.STS_VehicleCondition /
+        FACTOR_for_SIGNAL_STS_VehicleCondition_in_STRUCTURE_STS_ALIGNMENT_SERVICE) +
+       OFFSET_for_SIGNAL_STS_VehicleCondition_in_STRUCTURE_STS_ALIGNMENT_SERVICE);
+   encoded_data->RADAR_STATUS_RECORD.STS_ALIGN_SHORT_TRACK.STS_AlignmentShortTrackStatus =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_ALIGN_SHORT_TRACK.STS_AlignmentShortTrackStatus /
+        FACTOR_for_SIGNAL_STS_AlignmentShortTrackStatus_in_STRUCTURE_STS_ALIGN_SHORT_TRACK) +
+       OFFSET_for_SIGNAL_STS_AlignmentShortTrackStatus_in_STRUCTURE_STS_ALIGN_SHORT_TRACK);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_BlockageActive =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_BlockageActive /
+                             FACTOR_for_SIGNAL_CAP_BlockageActive_in_STRUCTURE_STS_CAPAB_RDR_PERF) +
+                            OFFSET_for_SIGNAL_CAP_BlockageActive_in_STRUCTURE_STS_CAPAB_RDR_PERF);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_BlockageProbability =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_BlockageProbability /
+        FACTOR_for_SIGNAL_CAP_BlockageProbability_in_STRUCTURE_STS_CAPAB_RDR_PERF) +
+       OFFSET_for_SIGNAL_CAP_BlockageProbability_in_STRUCTURE_STS_CAPAB_RDR_PERF);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_BlockageSensitivity =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_BlockageSensitivity /
+        FACTOR_for_SIGNAL_CAP_BlockageSensitivity_in_STRUCTURE_STS_CAPAB_RDR_PERF) +
+       OFFSET_for_SIGNAL_CAP_BlockageSensitivity_in_STRUCTURE_STS_CAPAB_RDR_PERF);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_BlockageStatus =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_BlockageStatus /
+        FACTOR_for_SIGNAL_CAP_BlockageStatus_in_STRUCTURE_STS_CAPAB_RDR_PERF) +
+       OFFSET_for_SIGNAL_CAP_BlockageStatus_in_STRUCTURE_STS_CAPAB_RDR_PERF);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_BlockageValue =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_BlockageValue /
+        FACTOR_for_SIGNAL_CAP_BlockageValue_in_STRUCTURE_STS_CAPAB_RDR_PERF) +
+       OFFSET_for_SIGNAL_CAP_BlockageValue_in_STRUCTURE_STS_CAPAB_RDR_PERF);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_FreeSightCheckActive =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_FreeSightCheckActive /
+        FACTOR_for_SIGNAL_CAP_FreeSightCheckActive_in_STRUCTURE_STS_CAPAB_RDR_PERF) +
+       OFFSET_for_SIGNAL_CAP_FreeSightCheckActive_in_STRUCTURE_STS_CAPAB_RDR_PERF);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_FreeSightCheckStatus =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_FreeSightCheckStatus /
+        FACTOR_for_SIGNAL_CAP_FreeSightCheckStatus_in_STRUCTURE_STS_CAPAB_RDR_PERF) +
+       OFFSET_for_SIGNAL_CAP_FreeSightCheckStatus_in_STRUCTURE_STS_CAPAB_RDR_PERF);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_SLBlockageFilterValue =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_SLBlockageFilterValue /
+        FACTOR_for_SIGNAL_CAP_SLBlockageFilterValue_in_STRUCTURE_STS_CAPAB_RDR_PERF) +
+       OFFSET_for_SIGNAL_CAP_SLBlockageFilterValue_in_STRUCTURE_STS_CAPAB_RDR_PERF);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_SLBlockageFlag =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RDR_PERF.CAP_SLBlockageFlag /
+                             FACTOR_for_SIGNAL_CAP_SLBlockageFlag_in_STRUCTURE_STS_CAPAB_RDR_PERF) +
+                            OFFSET_for_SIGNAL_CAP_SLBlockageFlag_in_STRUCTURE_STS_CAPAB_RDR_PERF);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_DAMPING.CAP_DampingActive =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_DAMPING.CAP_DampingActive /
+                             FACTOR_for_SIGNAL_CAP_DampingActive_in_STRUCTURE_STS_CAPAB_DAMPING) +
+                            OFFSET_for_SIGNAL_CAP_DampingActive_in_STRUCTURE_STS_CAPAB_DAMPING);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_DAMPING.CAP_DampingCurrent =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_DAMPING.CAP_DampingCurrent /
+                             FACTOR_for_SIGNAL_CAP_DampingCurrent_in_STRUCTURE_STS_CAPAB_DAMPING) +
+                            OFFSET_for_SIGNAL_CAP_DampingCurrent_in_STRUCTURE_STS_CAPAB_DAMPING);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_DAMPING.CAP_DampingStandardDeviation =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_DAMPING.CAP_DampingStandardDeviation /
+        FACTOR_for_SIGNAL_CAP_DampingStandardDeviation_in_STRUCTURE_STS_CAPAB_DAMPING) +
+       OFFSET_for_SIGNAL_CAP_DampingStandardDeviation_in_STRUCTURE_STS_CAPAB_DAMPING);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_DAMPING.CAP_DampingStatus =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_DAMPING.CAP_DampingStatus /
+        FACTOR_for_SIGNAL_CAP_DampingStatus_in_STRUCTURE_STS_CAPAB_DAMPING) +
+       OFFSET_for_SIGNAL_CAP_DampingStatus_in_STRUCTURE_STS_CAPAB_DAMPING);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RANGE_DET.CAP_AngleAzimuthRangeEnd =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RANGE_DET.CAP_AngleAzimuthRangeEnd /
+                             FACTOR_for_SIGNAL_CAP_AngleAzimuthRangeEnd_in_STRUCTURE_STS_CAPAB_RANGE_DET) +
+                            OFFSET_for_SIGNAL_CAP_AngleAzimuthRangeEnd_in_STRUCTURE_STS_CAPAB_RANGE_DET);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RANGE_DET.CAP_AngleAzimuthRangeStart =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RANGE_DET.CAP_AngleAzimuthRangeStart /
+                             FACTOR_for_SIGNAL_CAP_AngleAzimuthRangeStart_in_STRUCTURE_STS_CAPAB_RANGE_DET) +
+                            OFFSET_for_SIGNAL_CAP_AngleAzimuthRangeStart_in_STRUCTURE_STS_CAPAB_RANGE_DET);
+   // encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RANGE_DET.CAP_MaxDetectionRangeCar.Element =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RANGE_DET.CAP_MaxDetectionRangeCar.Element /
+   // FACTOR_for_SIGNAL_Element_in_STRUCTURE_CAP_MaxDetectionRangeCar) +
+   // OFFSET_for_SIGNAL_Element_in_STRUCTURE_CAP_MaxDetectionRangeCar);
+   // encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RANGE_DET.CAP_MaxDetRangeMotorbike.Element =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RANGE_DET.CAP_MaxDetRangeMotorbike.Element /
+   // FACTOR_for_SIGNAL_Element_in_STRUCTURE_CAP_MaxDetRangeMotorbike) +
+   // OFFSET_for_SIGNAL_Element_in_STRUCTURE_CAP_MaxDetRangeMotorbike);
+   // encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RANGE_DET.CAP_MaxDetRangePedestrian.Element =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RANGE_DET.CAP_MaxDetRangePedestrian.Element /
+   // FACTOR_for_SIGNAL_Element_in_STRUCTURE_CAP_MaxDetRangePedestrian) +
+   // OFFSET_for_SIGNAL_Element_in_STRUCTURE_CAP_MaxDetRangePedestrian);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RANGE_DET.CAP_RangeEstimationActive =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RANGE_DET.CAP_RangeEstimationActive /
+                             FACTOR_for_SIGNAL_CAP_RangeEstimationActive_in_STRUCTURE_STS_CAPAB_RANGE_DET) +
+                            OFFSET_for_SIGNAL_CAP_RangeEstimationActive_in_STRUCTURE_STS_CAPAB_RANGE_DET);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RANGE_DET.CAP_RangeEstimationStatus =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_RANGE_DET.CAP_RangeEstimationStatus /
+        FACTOR_for_SIGNAL_CAP_RangeEstimationStatus_in_STRUCTURE_STS_CAPAB_RANGE_DET) +
+       OFFSET_for_SIGNAL_CAP_RangeEstimationStatus_in_STRUCTURE_STS_CAPAB_RANGE_DET);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_SLL_MONITOR.CAP_SideLobeLevelBeamformer =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_SLL_MONITOR.CAP_SideLobeLevelBeamformer /
+        FACTOR_for_SIGNAL_CAP_SideLobeLevelBeamformer_in_STRUCTURE_STS_CAPAB_SLL_MONITOR) +
+       OFFSET_for_SIGNAL_CAP_SideLobeLevelBeamformer_in_STRUCTURE_STS_CAPAB_SLL_MONITOR);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_SLL_MONITOR.CAP_SLLMonitoringActive =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_SLL_MONITOR.CAP_SLLMonitoringActive /
+                             FACTOR_for_SIGNAL_CAP_SLLMonitoringActive_in_STRUCTURE_STS_CAPAB_SLL_MONITOR) +
+                            OFFSET_for_SIGNAL_CAP_SLLMonitoringActive_in_STRUCTURE_STS_CAPAB_SLL_MONITOR);
+   encoded_data->RADAR_STATUS_RECORD.STS_CAPAB_SLL_MONITOR.CAP_SLLMonitoringStatus =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_CAPAB_SLL_MONITOR.CAP_SLLMonitoringStatus /
+        FACTOR_for_SIGNAL_CAP_SLLMonitoringStatus_in_STRUCTURE_STS_CAPAB_SLL_MONITOR) +
+       OFFSET_for_SIGNAL_CAP_SLLMonitoringStatus_in_STRUCTURE_STS_CAPAB_SLL_MONITOR);
+   encoded_data->RADAR_STATUS_RECORD.STS_TIMESYNC_STATUS.STS_NO_TSYN_ERROR =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_TIMESYNC_STATUS.STS_NO_TSYN_ERROR /
+                             FACTOR_for_SIGNAL_STS_NO_TSYN_ERROR_in_STRUCTURE_STS_TIMESYNC_STATUS) +
+                            OFFSET_for_SIGNAL_STS_NO_TSYN_ERROR_in_STRUCTURE_STS_TIMESYNC_STATUS);
+   // encoded_data->RADAR_STATUS_RECORD.STS_TIMESYNC_STATUS.STS_POINT_OF_TRIGGER =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_TIMESYNC_STATUS.STS_POINT_OF_TRIGGER /
+   // FACTOR_for_SIGNAL_STS_POINT_OF_TRIGGER_in_STRUCTURE_STS_TIMESYNC_STATUS) +
+   // OFFSET_for_SIGNAL_STS_POINT_OF_TRIGGER_in_STRUCTURE_STS_TIMESYNC_STATUS);
+   encoded_data->RADAR_STATUS_RECORD.STS_TIMESYNC_STATUS.STS_TIME_SYNC_OFFSET =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_TIMESYNC_STATUS.STS_TIME_SYNC_OFFSET /
+                             FACTOR_for_SIGNAL_STS_TIME_SYNC_OFFSET_in_STRUCTURE_STS_TIMESYNC_STATUS) +
+                            OFFSET_for_SIGNAL_STS_TIME_SYNC_OFFSET_in_STRUCTURE_STS_TIMESYNC_STATUS);
+   encoded_data->RADAR_STATUS_RECORD.STS_SENSOR_PERF.STS_BRR_STATUS =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_SENSOR_PERF.STS_BRR_STATUS /
+        FACTOR_for_SIGNAL_STS_BRR_STATUS_in_STRUCTURE_STS_SENSOR_PERF) +
+       OFFSET_for_SIGNAL_STS_BRR_STATUS_in_STRUCTURE_STS_SENSOR_PERF);
+   encoded_data->RADAR_STATUS_RECORD.STS_TEMPERATURE.STS_MCU_TEMP =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_TEMPERATURE.STS_MCU_TEMP /
+                             FACTOR_for_SIGNAL_STS_MCU_TEMP_in_STRUCTURE_STS_TEMPERATURE) +
+                            OFFSET_for_SIGNAL_STS_MCU_TEMP_in_STRUCTURE_STS_TEMPERATURE);
+   encoded_data->RADAR_STATUS_RECORD.STS_TEMPERATURE.STS_MMIC_TEMP_RX =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_TEMPERATURE.STS_MMIC_TEMP_RX /
+                             FACTOR_for_SIGNAL_STS_MMIC_TEMP_RX_in_STRUCTURE_STS_TEMPERATURE) +
+                            OFFSET_for_SIGNAL_STS_MMIC_TEMP_RX_in_STRUCTURE_STS_TEMPERATURE);
+   encoded_data->RADAR_STATUS_RECORD.STS_TEMPERATURE.STS_MMIC_TEMP_TX0 =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_TEMPERATURE.STS_MMIC_TEMP_TX0 /
+                             FACTOR_for_SIGNAL_STS_MMIC_TEMP_TX0_in_STRUCTURE_STS_TEMPERATURE) +
+                            OFFSET_for_SIGNAL_STS_MMIC_TEMP_TX0_in_STRUCTURE_STS_TEMPERATURE);
+   encoded_data->RADAR_STATUS_RECORD.STS_TEMPERATURE.STS_MMIC_TEMP_TX1_2 =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_TEMPERATURE.STS_MMIC_TEMP_TX1_2 /
+                             FACTOR_for_SIGNAL_STS_MMIC_TEMP_TX1_2_in_STRUCTURE_STS_TEMPERATURE) +
+                            OFFSET_for_SIGNAL_STS_MMIC_TEMP_TX1_2_in_STRUCTURE_STS_TEMPERATURE);
+   encoded_data->RADAR_STATUS_RECORD.STS_TEMPERATURE.STS_MMIC_TEMP_TX3_4 =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_TEMPERATURE.STS_MMIC_TEMP_TX3_4 /
+                             FACTOR_for_SIGNAL_STS_MMIC_TEMP_TX3_4_in_STRUCTURE_STS_TEMPERATURE) +
+                            OFFSET_for_SIGNAL_STS_MMIC_TEMP_TX3_4_in_STRUCTURE_STS_TEMPERATURE);
+   encoded_data->RADAR_STATUS_RECORD.STS_FAULTS.STS_CORE_ACTIVE_FAULTS =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_FAULTS.STS_CORE_ACTIVE_FAULTS /
+                             FACTOR_for_SIGNAL_STS_CORE_ACTIVE_FAULTS_in_STRUCTURE_STS_FAULTS) +
+                            OFFSET_for_SIGNAL_STS_CORE_ACTIVE_FAULTS_in_STRUCTURE_STS_FAULTS);
+   // encoded_data->RADAR_STATUS_RECORD.STS_RADAR_PROFILE.STS_AF_CORE_THROUGHPUT =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_RADAR_PROFILE.STS_AF_CORE_THROUGHPUT /
+   // FACTOR_for_SIGNAL_STS_AF_CORE_THROUGHPUT_in_STRUCTURE_STS_RADAR_PROFILE) +
+   // OFFSET_for_SIGNAL_STS_AF_CORE_THROUGHPUT_in_STRUCTURE_STS_RADAR_PROFILE);
+   encoded_data->RADAR_STATUS_RECORD.STS_RADAR_PROFILE.STS_MMIC_RE_INIT_COUNT =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_RADAR_PROFILE.STS_MMIC_RE_INIT_COUNT /
+        FACTOR_for_SIGNAL_STS_MMIC_RE_INIT_COUNT_in_STRUCTURE_STS_RADAR_PROFILE) +
+       OFFSET_for_SIGNAL_STS_MMIC_RE_INIT_COUNT_in_STRUCTURE_STS_RADAR_PROFILE);
+   // encoded_data->RADAR_STATUS_RECORD.STS_RADAR_PROFILE.STS_RDD_CORE_THROUGHPUT =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_RADAR_PROFILE.STS_RDD_CORE_THROUGHPUT /
+   // FACTOR_for_SIGNAL_STS_RDD_CORE_THROUGHPUT_in_STRUCTURE_STS_RADAR_PROFILE) +
+   // OFFSET_for_SIGNAL_STS_RDD_CORE_THROUGHPUT_in_STRUCTURE_STS_RADAR_PROFILE);
+   encoded_data->RADAR_STATUS_RECORD.STS_RADAR_PROFILE.STS_SCAN_TYPE =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_RADAR_PROFILE.STS_SCAN_TYPE /
+                             FACTOR_for_SIGNAL_STS_SCAN_TYPE_in_STRUCTURE_STS_RADAR_PROFILE) +
+                            OFFSET_for_SIGNAL_STS_SCAN_TYPE_in_STRUCTURE_STS_RADAR_PROFILE);
+   encoded_data->RADAR_STATUS_RECORD.STS_RADAR_PROFILE.STS_XCVR_OPERATIONAL =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_RADAR_PROFILE.STS_XCVR_OPERATIONAL /
+                             FACTOR_for_SIGNAL_STS_XCVR_OPERATIONAL_in_STRUCTURE_STS_RADAR_PROFILE) +
+                            OFFSET_for_SIGNAL_STS_XCVR_OPERATIONAL_in_STRUCTURE_STS_RADAR_PROFILE);
+   // encoded_data->RADAR_STATUS_RECORD.STS_VEHICLE.STS_STEERING_ANGLE =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_VEHICLE.STS_STEERING_ANGLE /
+   // FACTOR_for_SIGNAL_STS_STEERING_ANGLE_in_STRUCTURE_STS_VEHICLE) +
+   // OFFSET_for_SIGNAL_STS_STEERING_ANGLE_in_STRUCTURE_STS_VEHICLE);
+   encoded_data->RADAR_STATUS_RECORD.STS_VEHICLE.STS_STEERING_ANGLE_SIGN =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_VEHICLE.STS_STEERING_ANGLE_SIGN /
+                             FACTOR_for_SIGNAL_STS_STEERING_ANGLE_SIGN_in_STRUCTURE_STS_VEHICLE) +
+                            OFFSET_for_SIGNAL_STS_STEERING_ANGLE_SIGN_in_STRUCTURE_STS_VEHICLE);
+   encoded_data->RADAR_STATUS_RECORD.STS_VEHICLE.STS_VEH_SPEED_DIRECTION =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_STATUS_RECORD.STS_VEHICLE.STS_VEH_SPEED_DIRECTION /
+                             FACTOR_for_SIGNAL_STS_VEH_SPEED_DIRECTION_in_STRUCTURE_STS_VEHICLE) +
+                            OFFSET_for_SIGNAL_STS_VEH_SPEED_DIRECTION_in_STRUCTURE_STS_VEHICLE);
+   // encoded_data->RADAR_STATUS_RECORD.STS_VEHICLE.STS_VEHICLE_SPEED_CALC =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_VEHICLE.STS_VEHICLE_SPEED_CALC /
+   // FACTOR_for_SIGNAL_STS_VEHICLE_SPEED_CALC_in_STRUCTURE_STS_VEHICLE) +
+   // OFFSET_for_SIGNAL_STS_VEHICLE_SPEED_CALC_in_STRUCTURE_STS_VEHICLE);
+   encoded_data->RADAR_STATUS_RECORD.STS_VEHICLE.STS_VEHICLE_SUPPLY_VOLTAGE =
+      ((decoded_data->RADAR_STATUS_RECORD.STS_VEHICLE.STS_VEHICLE_SUPPLY_VOLTAGE /
+        FACTOR_for_SIGNAL_STS_VEHICLE_SUPPLY_VOLTAGE_in_STRUCTURE_STS_VEHICLE) +
+       OFFSET_for_SIGNAL_STS_VEHICLE_SUPPLY_VOLTAGE_in_STRUCTURE_STS_VEHICLE);
+   // encoded_data->RADAR_STATUS_RECORD.STS_VEHICLE.STS_YAW_RATE_BIAS =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_STATUS_RECORD.STS_VEHICLE.STS_YAW_RATE_BIAS /
+   // FACTOR_for_SIGNAL_STS_YAW_RATE_BIAS_in_STRUCTURE_STS_VEHICLE) +
+   // OFFSET_for_SIGNAL_STS_YAW_RATE_BIAS_in_STRUCTURE_STS_VEHICLE);
+   encoded_data->RADAR_STATUS_RECORD.STS_EtoE_HDR.CRC =
+      /*bswap<float32_t>*/ (
+         (decoded_data->RADAR_STATUS_RECORD.STS_EtoE_HDR.CRC / FACTOR_for_SIGNAL_CRC_in_STRUCTURE_STS_EtoE_HDR) +
+         OFFSET_for_SIGNAL_CRC_in_STRUCTURE_STS_EtoE_HDR);
+   encoded_data->RADAR_STATUS_RECORD.STS_EtoE_HDR.COUNTER = /*bswap<float32_t>*/ (
+      (decoded_data->RADAR_STATUS_RECORD.STS_EtoE_HDR.COUNTER / FACTOR_for_SIGNAL_COUNTER_in_STRUCTURE_STS_EtoE_HDR) +
+      OFFSET_for_SIGNAL_COUNTER_in_STRUCTURE_STS_EtoE_HDR);
+   encoded_data->RADAR_STATUS_RECORD.STS_EtoE_HDR.DATA_ID = /*bswap<float32_t>*/ (
+      (decoded_data->RADAR_STATUS_RECORD.STS_EtoE_HDR.DATA_ID / FACTOR_for_SIGNAL_DATA_ID_in_STRUCTURE_STS_EtoE_HDR) +
+      OFFSET_for_SIGNAL_DATA_ID_in_STRUCTURE_STS_EtoE_HDR);
+   encoded_data->RADAR_STATUS_RECORD.STS_EtoE_HDR.LENGTH = /*bswap<float32_t>*/ (
+      (decoded_data->RADAR_STATUS_RECORD.STS_EtoE_HDR.LENGTH / FACTOR_for_SIGNAL_LENGTH_in_STRUCTURE_STS_EtoE_HDR) +
+      OFFSET_for_SIGNAL_LENGTH_in_STRUCTURE_STS_EtoE_HDR);
+}
+
+void encode_RADAR_SW_INFO_RECORD(ENET_Encoded_Types_T *encoded_data, ENET_Decoded_Types_T *decoded_data)
+{
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_CALIBRATION_VERSION.STS_SMC_CAL_VER_MAJOR =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_SW_INFO_RECORD.INFO_CALIBRATION_VERSION.STS_SMC_CAL_VER_MAJOR /
+                             FACTOR_for_SIGNAL_STS_SMC_CAL_VER_MAJOR_in_STRUCTURE_INFO_CALIBRATION_VERSION) +
+                            OFFSET_for_SIGNAL_STS_SMC_CAL_VER_MAJOR_in_STRUCTURE_INFO_CALIBRATION_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_CALIBRATION_VERSION.STS_SMC_CAL_VER_MINOR =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_SW_INFO_RECORD.INFO_CALIBRATION_VERSION.STS_SMC_CAL_VER_MINOR /
+                             FACTOR_for_SIGNAL_STS_SMC_CAL_VER_MINOR_in_STRUCTURE_INFO_CALIBRATION_VERSION) +
+                            OFFSET_for_SIGNAL_STS_SMC_CAL_VER_MINOR_in_STRUCTURE_INFO_CALIBRATION_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_CALIBRATION_VERSION.STS_SMC_PLATFROM_VERSION =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_CALIBRATION_VERSION.STS_SMC_PLATFROM_VERSION /
+        FACTOR_for_SIGNAL_STS_SMC_PLATFROM_VERSION_in_STRUCTURE_INFO_CALIBRATION_VERSION) +
+       OFFSET_for_SIGNAL_STS_SMC_PLATFROM_VERSION_in_STRUCTURE_INFO_CALIBRATION_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_CALIBRATION_VERSION.STS_SMC_SECTION_COMPTBLITY =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_SW_INFO_RECORD.INFO_CALIBRATION_VERSION.STS_SMC_SECTION_COMPTBLITY /
+                             FACTOR_for_SIGNAL_STS_SMC_SECTION_COMPTBLITY_in_STRUCTURE_INFO_CALIBRATION_VERSION) +
+                            OFFSET_for_SIGNAL_STS_SMC_SECTION_COMPTBLITY_in_STRUCTURE_INFO_CALIBRATION_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_CALIBRATION_VERSION.STS_USC_CAL_VER_MAJOR =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_SW_INFO_RECORD.INFO_CALIBRATION_VERSION.STS_USC_CAL_VER_MAJOR /
+                             FACTOR_for_SIGNAL_STS_USC_CAL_VER_MAJOR_in_STRUCTURE_INFO_CALIBRATION_VERSION) +
+                            OFFSET_for_SIGNAL_STS_USC_CAL_VER_MAJOR_in_STRUCTURE_INFO_CALIBRATION_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_CALIBRATION_VERSION.STS_USC_CAL_VER_MINOR =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_SW_INFO_RECORD.INFO_CALIBRATION_VERSION.STS_USC_CAL_VER_MINOR /
+                             FACTOR_for_SIGNAL_STS_USC_CAL_VER_MINOR_in_STRUCTURE_INFO_CALIBRATION_VERSION) +
+                            OFFSET_for_SIGNAL_STS_USC_CAL_VER_MINOR_in_STRUCTURE_INFO_CALIBRATION_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_CALIBRATION_VERSION.STS_USC_SECTION_COMPTBLITY =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_SW_INFO_RECORD.INFO_CALIBRATION_VERSION.STS_USC_SECTION_COMPTBLITY /
+                             FACTOR_for_SIGNAL_STS_USC_SECTION_COMPTBLITY_in_STRUCTURE_INFO_CALIBRATION_VERSION) +
+                            OFFSET_for_SIGNAL_STS_USC_SECTION_COMPTBLITY_in_STRUCTURE_INFO_CALIBRATION_VERSION);
+   // encoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_HEIGHT =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_HEIGHT /
+   // FACTOR_for_SIGNAL_STS_SENSOR_HEIGHT_in_STRUCTURE_INFO_MOUNTING_POS) +
+   // OFFSET_for_SIGNAL_STS_SENSOR_HEIGHT_in_STRUCTURE_INFO_MOUNTING_POS);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_MOUNT_LOCATION =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_MOUNT_LOCATION /
+        FACTOR_for_SIGNAL_STS_SENSOR_MOUNT_LOCATION_in_STRUCTURE_INFO_MOUNTING_POS) +
+       OFFSET_for_SIGNAL_STS_SENSOR_MOUNT_LOCATION_in_STRUCTURE_INFO_MOUNTING_POS);
+   // encoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_MOUNT_ORNT_PITCH =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_MOUNT_ORNT_PITCH /
+   // FACTOR_for_SIGNAL_STS_SENSOR_MOUNT_ORNT_PITCH_in_STRUCTURE_INFO_MOUNTING_POS) +
+   // OFFSET_for_SIGNAL_STS_SENSOR_MOUNT_ORNT_PITCH_in_STRUCTURE_INFO_MOUNTING_POS);
+   // encoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_MOUNT_ORNT_ROLL =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_MOUNT_ORNT_ROLL /
+   // FACTOR_for_SIGNAL_STS_SENSOR_MOUNT_ORNT_ROLL_in_STRUCTURE_INFO_MOUNTING_POS) +
+   // OFFSET_for_SIGNAL_STS_SENSOR_MOUNT_ORNT_ROLL_in_STRUCTURE_INFO_MOUNTING_POS);
+   // encoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_MOUNT_ORNT_YAW =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_MOUNT_ORNT_YAW /
+   // FACTOR_for_SIGNAL_STS_SENSOR_MOUNT_ORNT_YAW_in_STRUCTURE_INFO_MOUNTING_POS) +
+   // OFFSET_for_SIGNAL_STS_SENSOR_MOUNT_ORNT_YAW_in_STRUCTURE_INFO_MOUNTING_POS);
+   // encoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_MOUNT_POS_X =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_MOUNT_POS_X /
+   // FACTOR_for_SIGNAL_STS_SENSOR_MOUNT_POS_X_in_STRUCTURE_INFO_MOUNTING_POS) +
+   // OFFSET_for_SIGNAL_STS_SENSOR_MOUNT_POS_X_in_STRUCTURE_INFO_MOUNTING_POS);
+   // encoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_MOUNT_POS_Y =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_MOUNT_POS_Y /
+   // FACTOR_for_SIGNAL_STS_SENSOR_MOUNT_POS_Y_in_STRUCTURE_INFO_MOUNTING_POS) +
+   // OFFSET_for_SIGNAL_STS_SENSOR_MOUNT_POS_Y_in_STRUCTURE_INFO_MOUNTING_POS);
+   // encoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_MOUNT_POS_Z =
+   // /*bswap<float32_t>*/((decoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_MOUNT_POS_Z /
+   // FACTOR_for_SIGNAL_STS_SENSOR_MOUNT_POS_Z_in_STRUCTURE_INFO_MOUNTING_POS) +
+   // OFFSET_for_SIGNAL_STS_SENSOR_MOUNT_POS_Z_in_STRUCTURE_INFO_MOUNTING_POS);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_POSITION =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_MOUNTING_POS.STS_SENSOR_POSITION /
+        FACTOR_for_SIGNAL_STS_SENSOR_POSITION_in_STRUCTURE_INFO_MOUNTING_POS) +
+       OFFSET_for_SIGNAL_STS_SENSOR_POSITION_in_STRUCTURE_INFO_MOUNTING_POS);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_PBL_VERSION_FIELD1 =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_PBL_VERSION_FIELD1 /
+        FACTOR_for_SIGNAL_STS_PBL_VERSION_FIELD1_in_STRUCTURE_INFO_SW_VERSION) +
+       OFFSET_for_SIGNAL_STS_PBL_VERSION_FIELD1_in_STRUCTURE_INFO_SW_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_PBL_VERSION_FIELD2 =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_PBL_VERSION_FIELD2 /
+        FACTOR_for_SIGNAL_STS_PBL_VERSION_FIELD2_in_STRUCTURE_INFO_SW_VERSION) +
+       OFFSET_for_SIGNAL_STS_PBL_VERSION_FIELD2_in_STRUCTURE_INFO_SW_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_PBL_VERSION_FIELD3 =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_PBL_VERSION_FIELD3 /
+        FACTOR_for_SIGNAL_STS_PBL_VERSION_FIELD3_in_STRUCTURE_INFO_SW_VERSION) +
+       OFFSET_for_SIGNAL_STS_PBL_VERSION_FIELD3_in_STRUCTURE_INFO_SW_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_PBL_VERSION_FIELD4 =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_PBL_VERSION_FIELD4 /
+        FACTOR_for_SIGNAL_STS_PBL_VERSION_FIELD4_in_STRUCTURE_INFO_SW_VERSION) +
+       OFFSET_for_SIGNAL_STS_PBL_VERSION_FIELD4_in_STRUCTURE_INFO_SW_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_SW_VERSION_FIELD1 =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_SW_VERSION_FIELD1 /
+        FACTOR_for_SIGNAL_STS_SW_VERSION_FIELD1_in_STRUCTURE_INFO_SW_VERSION) +
+       OFFSET_for_SIGNAL_STS_SW_VERSION_FIELD1_in_STRUCTURE_INFO_SW_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_SW_VERSION_FIELD2 =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_SW_VERSION_FIELD2 /
+        FACTOR_for_SIGNAL_STS_SW_VERSION_FIELD2_in_STRUCTURE_INFO_SW_VERSION) +
+       OFFSET_for_SIGNAL_STS_SW_VERSION_FIELD2_in_STRUCTURE_INFO_SW_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_SW_VERSION_FIELD3 =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_SW_VERSION_FIELD3 /
+        FACTOR_for_SIGNAL_STS_SW_VERSION_FIELD3_in_STRUCTURE_INFO_SW_VERSION) +
+       OFFSET_for_SIGNAL_STS_SW_VERSION_FIELD3_in_STRUCTURE_INFO_SW_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_SW_VERSION_FIELD4 =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_SW_VERSION.STS_SW_VERSION_FIELD4 /
+        FACTOR_for_SIGNAL_STS_SW_VERSION_FIELD4_in_STRUCTURE_INFO_SW_VERSION) +
+       OFFSET_for_SIGNAL_STS_SW_VERSION_FIELD4_in_STRUCTURE_INFO_SW_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_DET_DBC_BASE_VER_MAJOR =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_DET_DBC_BASE_VER_MAJOR /
+        FACTOR_for_SIGNAL_STS_DET_DBC_BASE_VER_MAJOR_in_STRUCTURE_INFO_HW_CAN_VERSION) +
+       OFFSET_for_SIGNAL_STS_DET_DBC_BASE_VER_MAJOR_in_STRUCTURE_INFO_HW_CAN_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_DET_DBC_BASE_VER_MINOR =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_DET_DBC_BASE_VER_MINOR /
+        FACTOR_for_SIGNAL_STS_DET_DBC_BASE_VER_MINOR_in_STRUCTURE_INFO_HW_CAN_VERSION) +
+       OFFSET_for_SIGNAL_STS_DET_DBC_BASE_VER_MINOR_in_STRUCTURE_INFO_HW_CAN_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_HARDWARE_VERSION =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_HARDWARE_VERSION /
+        FACTOR_for_SIGNAL_STS_HARDWARE_VERSION_in_STRUCTURE_INFO_HW_CAN_VERSION) +
+       OFFSET_for_SIGNAL_STS_HARDWARE_VERSION_in_STRUCTURE_INFO_HW_CAN_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_PCAN_PROTOCOL_VER_MAJOR =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_PCAN_PROTOCOL_VER_MAJOR /
+        FACTOR_for_SIGNAL_STS_PCAN_PROTOCOL_VER_MAJOR_in_STRUCTURE_INFO_HW_CAN_VERSION) +
+       OFFSET_for_SIGNAL_STS_PCAN_PROTOCOL_VER_MAJOR_in_STRUCTURE_INFO_HW_CAN_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_PCAN_PROTOCOL_VER_MINOR =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_PCAN_PROTOCOL_VER_MINOR /
+        FACTOR_for_SIGNAL_STS_PCAN_PROTOCOL_VER_MINOR_in_STRUCTURE_INFO_HW_CAN_VERSION) +
+       OFFSET_for_SIGNAL_STS_PCAN_PROTOCOL_VER_MINOR_in_STRUCTURE_INFO_HW_CAN_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_PLATFORM_VARIANT =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_PLATFORM_VARIANT /
+        FACTOR_for_SIGNAL_STS_PLATFORM_VARIANT_in_STRUCTURE_INFO_HW_CAN_VERSION) +
+       OFFSET_for_SIGNAL_STS_PLATFORM_VARIANT_in_STRUCTURE_INFO_HW_CAN_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_SERIAL_NUM_JULIAN_DAY =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_SERIAL_NUM_JULIAN_DAY /
+                             FACTOR_for_SIGNAL_STS_SERIAL_NUM_JULIAN_DAY_in_STRUCTURE_INFO_HW_CAN_VERSION) +
+                            OFFSET_for_SIGNAL_STS_SERIAL_NUM_JULIAN_DAY_in_STRUCTURE_INFO_HW_CAN_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_SERIAL_NUM_JULIAN_YEAR =
+      ((decoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_SERIAL_NUM_JULIAN_YEAR /
+        FACTOR_for_SIGNAL_STS_SERIAL_NUM_JULIAN_YEAR_in_STRUCTURE_INFO_HW_CAN_VERSION) +
+       OFFSET_for_SIGNAL_STS_SERIAL_NUM_JULIAN_YEAR_in_STRUCTURE_INFO_HW_CAN_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_SERIAL_NUMBER_SEQUENCE =
+      /*bswap<float32_t>*/ ((decoded_data->RADAR_SW_INFO_RECORD.INFO_HW_CAN_VERSION.STS_SERIAL_NUMBER_SEQUENCE /
+                             FACTOR_for_SIGNAL_STS_SERIAL_NUMBER_SEQUENCE_in_STRUCTURE_INFO_HW_CAN_VERSION) +
+                            OFFSET_for_SIGNAL_STS_SERIAL_NUMBER_SEQUENCE_in_STRUCTURE_INFO_HW_CAN_VERSION);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_EtoE_HDR.CRC = /*bswap<float32_t>*/ (
+      (decoded_data->RADAR_SW_INFO_RECORD.INFO_EtoE_HDR.CRC / FACTOR_for_SIGNAL_CRC_in_STRUCTURE_INFO_EtoE_HDR) +
+      OFFSET_for_SIGNAL_CRC_in_STRUCTURE_INFO_EtoE_HDR);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_EtoE_HDR.COUNTER = /*bswap<float32_t>*/ (
+      (decoded_data->RADAR_SW_INFO_RECORD.INFO_EtoE_HDR.COUNTER / FACTOR_for_SIGNAL_COUNTER_in_STRUCTURE_INFO_EtoE_HDR) +
+      OFFSET_for_SIGNAL_COUNTER_in_STRUCTURE_INFO_EtoE_HDR);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_EtoE_HDR.DATA_ID = /*bswap<float32_t>*/ (
+      (decoded_data->RADAR_SW_INFO_RECORD.INFO_EtoE_HDR.DATA_ID / FACTOR_for_SIGNAL_DATA_ID_in_STRUCTURE_INFO_EtoE_HDR) +
+      OFFSET_for_SIGNAL_DATA_ID_in_STRUCTURE_INFO_EtoE_HDR);
+   encoded_data->RADAR_SW_INFO_RECORD.INFO_EtoE_HDR.LENGTH = /*bswap<float32_t>*/ (
+      (decoded_data->RADAR_SW_INFO_RECORD.INFO_EtoE_HDR.LENGTH / FACTOR_for_SIGNAL_LENGTH_in_STRUCTURE_INFO_EtoE_HDR) +
+      OFFSET_for_SIGNAL_LENGTH_in_STRUCTURE_INFO_EtoE_HDR);
+}
+
+void encode_VEHICLE_STATUS_RECORD(ENET_Encoded_Types_T *encoded_data, ENET_Decoded_Types_T *decoded_data)
+{
+   // encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_STEERING_ANGLE =
+   // /*bswap<float32_t>*/((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_STEERING_ANGLE /
+   // FACTOR_for_SIGNAL_SSTS_STEERING_ANGLE_in_STRUCTURE_System_Status_Vehicle) +
+   // OFFSET_for_SIGNAL_SSTS_STEERING_ANGLE_in_STRUCTURE_System_Status_Vehicle);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_STEERING_ANGLE_SIGN =
+      /*bswap<float32_t>*/ ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_STEERING_ANGLE_SIGN /
+                             FACTOR_for_SIGNAL_SSTS_STEERING_ANGLE_SIGN_in_STRUCTURE_System_Status_Vehicle) +
+                            OFFSET_for_SIGNAL_SSTS_STEERING_ANGLE_SIGN_in_STRUCTURE_System_Status_Vehicle);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_VEH_ODOMETER =
+      /*bswap<float32_t>*/ ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_VEH_ODOMETER /
+                             FACTOR_for_SIGNAL_SSTS_VEH_ODOMETER_in_STRUCTURE_System_Status_Vehicle) +
+                            OFFSET_for_SIGNAL_SSTS_VEH_ODOMETER_in_STRUCTURE_System_Status_Vehicle);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_VEH_POWER_MODE_STATUS =
+      ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_VEH_POWER_MODE_STATUS /
+        FACTOR_for_SIGNAL_SSTS_VEH_POWER_MODE_STATUS_in_STRUCTURE_System_Status_Vehicle) +
+       OFFSET_for_SIGNAL_SSTS_VEH_POWER_MODE_STATUS_in_STRUCTURE_System_Status_Vehicle);
+   // encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_VEH_SPD_COMP_FACTOR =
+   // /*bswap<float32_t>*/((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_VEH_SPD_COMP_FACTOR /
+   // FACTOR_for_SIGNAL_SSTS_VEH_SPD_COMP_FACTOR_in_STRUCTURE_System_Status_Vehicle) +
+   // OFFSET_for_SIGNAL_SSTS_VEH_SPD_COMP_FACTOR_in_STRUCTURE_System_Status_Vehicle);
+   // encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_VEH_SYSTEM_VOLTAGE =
+   // /*bswap<float32_t>*/((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_VEH_SYSTEM_VOLTAGE /
+   // FACTOR_for_SIGNAL_SSTS_VEH_SYSTEM_VOLTAGE_in_STRUCTURE_System_Status_Vehicle) +
+   // OFFSET_for_SIGNAL_SSTS_VEH_SYSTEM_VOLTAGE_in_STRUCTURE_System_Status_Vehicle);
+   // encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_VEHICLE_SPEED_CALC =
+   // /*bswap<float32_t>*/((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_VEHICLE_SPEED_CALC /
+   // FACTOR_for_SIGNAL_SSTS_VEHICLE_SPEED_CALC_in_STRUCTURE_System_Status_Vehicle) +
+   // OFFSET_for_SIGNAL_SSTS_VEHICLE_SPEED_CALC_in_STRUCTURE_System_Status_Vehicle);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_VEHICLE_SPEED_CALC_QF =
+      ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_VEHICLE_SPEED_CALC_QF /
+        FACTOR_for_SIGNAL_SSTS_VEHICLE_SPEED_CALC_QF_in_STRUCTURE_System_Status_Vehicle) +
+       OFFSET_for_SIGNAL_SSTS_VEHICLE_SPEED_CALC_QF_in_STRUCTURE_System_Status_Vehicle);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_VEHICLE_STATE =
+      ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_VEHICLE_STATE /
+        FACTOR_for_SIGNAL_SSTS_VEHICLE_STATE_in_STRUCTURE_System_Status_Vehicle) +
+       OFFSET_for_SIGNAL_SSTS_VEHICLE_STATE_in_STRUCTURE_System_Status_Vehicle);
+   // encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_YAW_RATE_BIAS =
+   // /*bswap<float32_t>*/((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_YAW_RATE_BIAS /
+   // FACTOR_for_SIGNAL_SSTS_YAW_RATE_BIAS_in_STRUCTURE_System_Status_Vehicle) +
+   // OFFSET_for_SIGNAL_SSTS_YAW_RATE_BIAS_in_STRUCTURE_System_Status_Vehicle);
+   // encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_YAW_RATE_CALC =
+   // /*bswap<float32_t>*/((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_YAW_RATE_CALC /
+   // FACTOR_for_SIGNAL_SSTS_YAW_RATE_CALC_in_STRUCTURE_System_Status_Vehicle) +
+   // OFFSET_for_SIGNAL_SSTS_YAW_RATE_CALC_in_STRUCTURE_System_Status_Vehicle);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_YAW_RATE_CALC_QF =
+      ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle.SSTS_YAW_RATE_CALC_QF /
+        FACTOR_for_SIGNAL_SSTS_YAW_RATE_CALC_QF_in_STRUCTURE_System_Status_Vehicle) +
+       OFFSET_for_SIGNAL_SSTS_YAW_RATE_CALC_QF_in_STRUCTURE_System_Status_Vehicle);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle_State.SSTS_DRIVE_DIR =
+      ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle_State.SSTS_DRIVE_DIR /
+        FACTOR_for_SIGNAL_SSTS_DRIVE_DIR_in_STRUCTURE_System_Status_Vehicle_State) +
+       OFFSET_for_SIGNAL_SSTS_DRIVE_DIR_in_STRUCTURE_System_Status_Vehicle_State);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle_State.SSTS_DRIVE_REVERSE =
+      /*bswap<float32_t>*/ ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle_State.SSTS_DRIVE_REVERSE /
+                             FACTOR_for_SIGNAL_SSTS_DRIVE_REVERSE_in_STRUCTURE_System_Status_Vehicle_State) +
+                            OFFSET_for_SIGNAL_SSTS_DRIVE_REVERSE_in_STRUCTURE_System_Status_Vehicle_State);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle_State.SSTS_GEAR_POSITION =
+      ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle_State.SSTS_GEAR_POSITION /
+        FACTOR_for_SIGNAL_SSTS_GEAR_POSITION_in_STRUCTURE_System_Status_Vehicle_State) +
+       OFFSET_for_SIGNAL_SSTS_GEAR_POSITION_in_STRUCTURE_System_Status_Vehicle_State);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle_State.SSTS_IGN_STATUS =
+      ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle_State.SSTS_IGN_STATUS /
+        FACTOR_for_SIGNAL_SSTS_IGN_STATUS_in_STRUCTURE_System_Status_Vehicle_State) +
+       OFFSET_for_SIGNAL_SSTS_IGN_STATUS_in_STRUCTURE_System_Status_Vehicle_State);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle_State.SSTS_LROS_DRIVE_DIR =
+      ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle_State.SSTS_LROS_DRIVE_DIR /
+        FACTOR_for_SIGNAL_SSTS_LROS_DRIVE_DIR_in_STRUCTURE_System_Status_Vehicle_State) +
+       OFFSET_for_SIGNAL_SSTS_LROS_DRIVE_DIR_in_STRUCTURE_System_Status_Vehicle_State);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle_State.SSTS_LROS_DRIVE_REVERSE =
+      /*bswap<float32_t>*/ ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Vehicle_State.SSTS_LROS_DRIVE_REVERSE /
+                             FACTOR_for_SIGNAL_SSTS_LROS_DRIVE_REVERSE_in_STRUCTURE_System_Status_Vehicle_State) +
+                            OFFSET_for_SIGNAL_SSTS_LROS_DRIVE_REVERSE_in_STRUCTURE_System_Status_Vehicle_State);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_ADAS_Version =
+      /*bswap<float32_t>*/ ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_ADAS_Version /
+                             FACTOR_for_SIGNAL_System_Status_ADAS_Version_in_STRUCTURE_VEHICLE_STATUS_RECORD) +
+                            OFFSET_for_SIGNAL_System_Status_ADAS_Version_in_STRUCTURE_VEHICLE_STATUS_RECORD);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Absolute_Time.SSTS_VEH_AbsoluteTime_Day =
+      ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Absolute_Time.SSTS_VEH_AbsoluteTime_Day /
+        FACTOR_for_SIGNAL_SSTS_VEH_AbsoluteTime_Day_in_STRUCTURE_System_Status_Absolute_Time) +
+       OFFSET_for_SIGNAL_SSTS_VEH_AbsoluteTime_Day_in_STRUCTURE_System_Status_Absolute_Time);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Absolute_Time.SSTS_VEH_AbsoluteTime_Hour =
+      ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Absolute_Time.SSTS_VEH_AbsoluteTime_Hour /
+        FACTOR_for_SIGNAL_SSTS_VEH_AbsoluteTime_Hour_in_STRUCTURE_System_Status_Absolute_Time) +
+       OFFSET_for_SIGNAL_SSTS_VEH_AbsoluteTime_Hour_in_STRUCTURE_System_Status_Absolute_Time);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Absolute_Time.SSTS_VEH_AbsoluteTime_Minute =
+      ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Absolute_Time.SSTS_VEH_AbsoluteTime_Minute /
+        FACTOR_for_SIGNAL_SSTS_VEH_AbsoluteTime_Minute_in_STRUCTURE_System_Status_Absolute_Time) +
+       OFFSET_for_SIGNAL_SSTS_VEH_AbsoluteTime_Minute_in_STRUCTURE_System_Status_Absolute_Time);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Absolute_Time.SSTS_VEH_AbsoluteTime_Month =
+      ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Absolute_Time.SSTS_VEH_AbsoluteTime_Month /
+        FACTOR_for_SIGNAL_SSTS_VEH_AbsoluteTime_Month_in_STRUCTURE_System_Status_Absolute_Time) +
+       OFFSET_for_SIGNAL_SSTS_VEH_AbsoluteTime_Month_in_STRUCTURE_System_Status_Absolute_Time);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Absolute_Time.SSTS_VEH_AbsoluteTime_Second =
+      ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Absolute_Time.SSTS_VEH_AbsoluteTime_Second /
+        FACTOR_for_SIGNAL_SSTS_VEH_AbsoluteTime_Second_in_STRUCTURE_System_Status_Absolute_Time) +
+       OFFSET_for_SIGNAL_SSTS_VEH_AbsoluteTime_Second_in_STRUCTURE_System_Status_Absolute_Time);
+   encoded_data->VEHICLE_STATUS_RECORD.System_Status_Absolute_Time.SSTS_VEH_AbsoluteTime_Year =
+      ((decoded_data->VEHICLE_STATUS_RECORD.System_Status_Absolute_Time.SSTS_VEH_AbsoluteTime_Year /
+        FACTOR_for_SIGNAL_SSTS_VEH_AbsoluteTime_Year_in_STRUCTURE_System_Status_Absolute_Time) +
+       OFFSET_for_SIGNAL_SSTS_VEH_AbsoluteTime_Year_in_STRUCTURE_System_Status_Absolute_Time);
+   encoded_data->VEHICLE_STATUS_RECORD.SSTS_EtoE_HDR.CRC = /*bswap<float32_t>*/ (
+      (decoded_data->VEHICLE_STATUS_RECORD.SSTS_EtoE_HDR.CRC / FACTOR_for_SIGNAL_CRC_in_STRUCTURE_SSTS_EtoE_HDR) +
+      OFFSET_for_SIGNAL_CRC_in_STRUCTURE_SSTS_EtoE_HDR);
+   encoded_data->VEHICLE_STATUS_RECORD.SSTS_EtoE_HDR.COUNTER = /*bswap<float32_t>*/ (
+      (decoded_data->VEHICLE_STATUS_RECORD.SSTS_EtoE_HDR.COUNTER / FACTOR_for_SIGNAL_COUNTER_in_STRUCTURE_SSTS_EtoE_HDR) +
+      OFFSET_for_SIGNAL_COUNTER_in_STRUCTURE_SSTS_EtoE_HDR);
+   encoded_data->VEHICLE_STATUS_RECORD.SSTS_EtoE_HDR.DATA_ID = /*bswap<float32_t>*/ (
+      (decoded_data->VEHICLE_STATUS_RECORD.SSTS_EtoE_HDR.DATA_ID / FACTOR_for_SIGNAL_DATA_ID_in_STRUCTURE_SSTS_EtoE_HDR) +
+      OFFSET_for_SIGNAL_DATA_ID_in_STRUCTURE_SSTS_EtoE_HDR);
+   encoded_data->VEHICLE_STATUS_RECORD.SSTS_EtoE_HDR.LENGTH = /*bswap<float32_t>*/ (
+      (decoded_data->VEHICLE_STATUS_RECORD.SSTS_EtoE_HDR.LENGTH / FACTOR_for_SIGNAL_LENGTH_in_STRUCTURE_SSTS_EtoE_HDR) +
+      OFFSET_for_SIGNAL_LENGTH_in_STRUCTURE_SSTS_EtoE_HDR);
+}
