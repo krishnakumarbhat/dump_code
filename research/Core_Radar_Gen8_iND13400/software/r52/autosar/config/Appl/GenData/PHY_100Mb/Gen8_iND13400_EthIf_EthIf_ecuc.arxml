@@ -1,0 +1,731 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00053.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE>
+      <SHORT-NAME>ActiveEcuC</SHORT-NAME>
+      <ELEMENTS>
+        <ECUC-MODULE-CONFIGURATION-VALUES UUID="c979eb74-a8e5-4ed0-bd36-d38336bc299c">
+          <SHORT-NAME>EthIf</SHORT-NAME>
+          <ADMIN-DATA>
+            <SDGS>
+              <SDG GID="DV:CfgPostBuild">
+                <SD GID="DV:postBuildVariantSupport">false</SD>
+              </SDG>
+            </SDGS>
+          </ADMIN-DATA>
+          <DEFINITION-REF DEST="ECUC-MODULE-DEF">/MICROSAR/EthIf</DEFINITION-REF>
+          <IMPLEMENTATION-CONFIG-VARIANT>VARIANT-POST-BUILD-SELECTABLE</IMPLEMENTATION-CONFIG-VARIANT>
+          <MODULE-DESCRIPTION-REF DEST="BSW-IMPLEMENTATION">/MICROSAR/EthIf_Impl</MODULE-DESCRIPTION-REF>
+          <CONTAINERS>
+            <ECUC-CONTAINER-VALUE UUID="abca7ca6-52f9-49b5-bebc-8078b534e37d">
+              <SHORT-NAME>EthIfConfigSet</SHORT-NAME>
+              <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet</DEFINITION-REF>
+              <SUB-CONTAINERS>
+                <ECUC-CONTAINER-VALUE UUID="c773ebb1-8c7f-4cfc-9cc5-71ab6573ab2e">
+                  <SHORT-NAME>TcpIp_ARP</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfFrameOwnerConfig</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfFrameOwnerConfig/EthIfFrameType</DEFINITION-REF>
+                      <VALUE>2054</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfFrameOwnerConfig/EthIfOwner</DEFINITION-REF>
+                      <VALUE>1</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                  <REFERENCE-VALUES>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-FOREIGN-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfFrameOwnerConfig/EthIfBswModuleRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-MODULE-CONFIGURATION-VALUES">/ActiveEcuC/TcpIp</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                  </REFERENCE-VALUES>
+                </ECUC-CONTAINER-VALUE>
+                <ECUC-CONTAINER-VALUE UUID="e9fa0d89-b07c-45ac-b0a4-e63572d201dd">
+                  <SHORT-NAME>TcpIp_IPv4</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfFrameOwnerConfig</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfFrameOwnerConfig/EthIfFrameType</DEFINITION-REF>
+                      <VALUE>2048</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfFrameOwnerConfig/EthIfOwner</DEFINITION-REF>
+                      <VALUE>0</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                  <REFERENCE-VALUES>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-FOREIGN-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfFrameOwnerConfig/EthIfBswModuleRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-MODULE-CONFIGURATION-VALUES">/ActiveEcuC/TcpIp</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                  </REFERENCE-VALUES>
+                </ECUC-CONTAINER-VALUE>
+                <ECUC-CONTAINER-VALUE UUID="bce288af-26b4-4157-adaa-b520f37469e0">
+                  <SHORT-NAME>TcpIp_ARP_RxIndication</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfRxIndicationConfig</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-TEXTUAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-FUNCTION-NAME-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfRxIndicationConfig/EthIfRxIndicationFunction</DEFINITION-REF>
+                      <VALUE>IpV4_Arp_RxIndication</VALUE>
+                    </ECUC-TEXTUAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                  <REFERENCE-VALUES>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfRxIndicationConfig/EthIfFrameOwnerConfigRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/TcpIp_ARP</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfRxIndicationConfig/EthIfControllerRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/cnctr_RDR_RdrNet_5172a59b</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                  </REFERENCE-VALUES>
+                </ECUC-CONTAINER-VALUE>
+                <ECUC-CONTAINER-VALUE UUID="40e47aaf-8b01-43b0-99df-07056f18030d">
+                  <SHORT-NAME>TcpIp_IPv4_TxConfirmation</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTxConfirmationConfig</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-TEXTUAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-FUNCTION-NAME-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTxConfirmationConfig/EthIfTxConfirmationFunction</DEFINITION-REF>
+                      <VALUE>IpV4_Ip_TxConfirmation</VALUE>
+                    </ECUC-TEXTUAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                  <REFERENCE-VALUES>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTxConfirmationConfig/EthIfFrameOwnerConfigRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/TcpIp_IPv4</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTxConfirmationConfig/EthIfControllerRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/cnctr_RDR_RdrNet_5172a59b</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                  </REFERENCE-VALUES>
+                </ECUC-CONTAINER-VALUE>
+                <ECUC-CONTAINER-VALUE UUID="0e8c4c49-9910-4375-8ce4-ca6fa50c6906">
+                  <SHORT-NAME>TcpIp_IPv4_RxIndication</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfRxIndicationConfig</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-TEXTUAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-FUNCTION-NAME-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfRxIndicationConfig/EthIfRxIndicationFunction</DEFINITION-REF>
+                      <VALUE>IpV4_Ip_RxIndication</VALUE>
+                    </ECUC-TEXTUAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                  <REFERENCE-VALUES>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfRxIndicationConfig/EthIfFrameOwnerConfigRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/TcpIp_IPv4</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfRxIndicationConfig/EthIfControllerRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/cnctr_RDR_RdrNet_5172a59b</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                  </REFERENCE-VALUES>
+                </ECUC-CONTAINER-VALUE>
+                <ECUC-CONTAINER-VALUE UUID="1fe57f14-2424-4363-8d6c-2bc1cbec8783">
+                  <SHORT-NAME>EthIfTrcvLinkStateChgConfig</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTrcvLinkStateChgConfig</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-TEXTUAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-FUNCTION-NAME-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTrcvLinkStateChgConfig/EthIfTrcvLinkStateChgFunction</DEFINITION-REF>
+                      <VALUE>EthSM_TrcvLinkStateChg</VALUE>
+                    </ECUC-TEXTUAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                </ECUC-CONTAINER-VALUE>
+                <ECUC-CONTAINER-VALUE UUID="e408a708-f0e3-4771-b70c-954a51a7c697">
+                  <SHORT-NAME>EthIf_RADAR_EthConnector1_Controller_bbe781c0</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfPhysController</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfPhysController/EthIfPhysControllerIdx</DEFINITION-REF>
+                      <VALUE>0</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfPhysController/EthIfEnableVPhcCorrection</DEFINITION-REF>
+                      <VALUE>false</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                  <REFERENCE-VALUES>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfPhysController/EthIfEthCtrlRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/Eth_Indie/EthConfigSet/RADAR_EthConnector1_Controller_bbe781c0</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfPhysController/EthIfEthWrapperCtrlRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/Eth/EthConfigSet/RDR_1_Eth_Controller_1_6addc1bb</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                  </REFERENCE-VALUES>
+                </ECUC-CONTAINER-VALUE>
+                <ECUC-CONTAINER-VALUE UUID="e7424106-7914-4721-9561-ab5b3acc5fc4">
+                  <SHORT-NAME>EthTSyn_PTP</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfFrameOwnerConfig</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfFrameOwnerConfig/EthIfFrameType</DEFINITION-REF>
+                      <VALUE>35063</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfFrameOwnerConfig/EthIfOwner</DEFINITION-REF>
+                      <VALUE>2</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                  <REFERENCE-VALUES>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-FOREIGN-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfFrameOwnerConfig/EthIfBswModuleRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-MODULE-CONFIGURATION-VALUES">/ActiveEcuC/EthTSyn</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                  </REFERENCE-VALUES>
+                </ECUC-CONTAINER-VALUE>
+                <ECUC-CONTAINER-VALUE UUID="596c7f72-4859-45e7-b5dc-ba031378ec8d">
+                  <SHORT-NAME>EthTSyn_TrcvLinkStateChg_EthTSyn</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTrcvLinkStateChgConfig</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-TEXTUAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-FUNCTION-NAME-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTrcvLinkStateChgConfig/EthIfTrcvLinkStateChgFunction</DEFINITION-REF>
+                      <VALUE>EthTSyn_TrcvLinkStateChg</VALUE>
+                    </ECUC-TEXTUAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                  <REFERENCE-VALUES>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTrcvLinkStateChgConfig/EthIfFrameOwnerConfigRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/EthTSyn_PTP</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                  </REFERENCE-VALUES>
+                </ECUC-CONTAINER-VALUE>
+                <ECUC-CONTAINER-VALUE UUID="6d239ac8-dc35-4f83-a919-936e8c43c075">
+                  <SHORT-NAME>EthTSyn_TxConfirmation_EthTSyn</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTxConfirmationConfig</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-TEXTUAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-FUNCTION-NAME-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTxConfirmationConfig/EthIfTxConfirmationFunction</DEFINITION-REF>
+                      <VALUE>EthTSyn_TxConfirmation</VALUE>
+                    </ECUC-TEXTUAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                  <REFERENCE-VALUES>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTxConfirmationConfig/EthIfFrameOwnerConfigRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/EthTSyn_PTP</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTxConfirmationConfig/EthIfControllerRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/cnctr_RDR_RdrNet_5172a59b</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                  </REFERENCE-VALUES>
+                </ECUC-CONTAINER-VALUE>
+                <ECUC-CONTAINER-VALUE UUID="c7dc70e1-00f4-48c5-872f-c14e9d160759">
+                  <SHORT-NAME>EthTSyn_RxIndication_EthTSyn</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfRxIndicationConfig</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-TEXTUAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-FUNCTION-NAME-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfRxIndicationConfig/EthIfRxIndicationFunction</DEFINITION-REF>
+                      <VALUE>EthTSyn_RxIndication</VALUE>
+                    </ECUC-TEXTUAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                  <REFERENCE-VALUES>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfRxIndicationConfig/EthIfFrameOwnerConfigRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/EthTSyn_PTP</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfRxIndicationConfig/EthIfControllerRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/cnctr_RDR_RdrNet_5172a59b</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                  </REFERENCE-VALUES>
+                </ECUC-CONTAINER-VALUE>
+                <ECUC-CONTAINER-VALUE UUID="1b655cd1-7eb2-41cb-8b93-3f730ca38c7c">
+                  <SHORT-NAME>CDD_EthIfTrcvLinkStateChgConfig</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTrcvLinkStateChgConfig</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-TEXTUAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-FUNCTION-NAME-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTrcvLinkStateChgConfig/EthIfTrcvLinkStateChgFunction</DEFINITION-REF>
+                      <VALUE>CDD_Cbk_TrcvLinkStateChg</VALUE>
+                    </ECUC-TEXTUAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                </ECUC-CONTAINER-VALUE>
+                <ECUC-CONTAINER-VALUE UUID="e43bea91-4973-3611-b6ff-a2f4513dacdd">
+                  <SHORT-NAME>cnctr_RDR_RdrNet_5172a59b</SHORT-NAME>
+                  <LONG-NAME>
+                    <L-4 L="FOR-ALL">cnctr_RDR_RdrNet</L-4>
+                  </LONG-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfCtrlIdx</DEFINITION-REF>
+                      <VALUE>0</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfCtrlMtu</DEFINITION-REF>
+                      <VALUE>1500</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfEnableVLAN</DEFINITION-REF>
+                      <VALUE>false</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfVlanId</DEFINITION-REF>
+                      <VALUE>0</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                  <REFERENCE-VALUES>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-SYMBOLIC-NAME-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfPhysControllerRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/Eth/EthConfigSet/RDR_1_Eth_Controller_1_6addc1bb</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfPhysCtrlRef</DEFINITION-REF>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/EthIf_RADAR_EthConnector1_Controller_bbe781c0</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-SYMBOLIC-NAME-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfTransceiverRef</DEFINITION-REF>
+                      <ANNOTATIONS>
+                        <ANNOTATION>
+                          <ANNOTATION-ORIGIN>DV:UserDefined</ANNOTATION-ORIGIN>
+                        </ANNOTATION>
+                      </ANNOTATIONS>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>0</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthTrcv_RTL/EthTrcvConfigSet/EthTrcvConfig_9010BSA</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfEthTrcvRef</DEFINITION-REF>
+                      <ANNOTATIONS>
+                        <ANNOTATION>
+                          <ANNOTATION-ORIGIN>DV:UserDefined</ANNOTATION-ORIGIN>
+                        </ANNOTATION>
+                      </ANNOTATIONS>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>0</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/EthIf_EthTrcvConfig_9010BSA</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-SYMBOLIC-NAME-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfTransceiverRef</DEFINITION-REF>
+                      <ANNOTATIONS>
+                        <ANNOTATION>
+                          <ANNOTATION-ORIGIN>DV:UserDefined</ANNOTATION-ORIGIN>
+                        </ANNOTATION>
+                      </ANNOTATIONS>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>1</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthTrcv_RTL/EthTrcvConfigSet/EthTrcvConfig_9010BSA_100Mb</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-SYMBOLIC-NAME-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfTransceiverRef</DEFINITION-REF>
+                      <ANNOTATIONS>
+                        <ANNOTATION>
+                          <ANNOTATION-ORIGIN>DV:UserDefined</ANNOTATION-ORIGIN>
+                        </ANNOTATION>
+                      </ANNOTATIONS>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>2</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthTrcv_NXP/EthTrcvConfigSet/EthTrcvConfig_TJA1103B</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-SYMBOLIC-NAME-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfTransceiverRef</DEFINITION-REF>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>3</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthTrcv_RTL/EthTrcvConfigSet/EthTrcvConfig_9010BSA_100Mb</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-SYMBOLIC-NAME-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfTransceiverRef</DEFINITION-REF>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>4</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthTrcv_RTL/EthTrcvConfigSet/EthTrcvConfig_9010BSA_100Mb</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-SYMBOLIC-NAME-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfTransceiverRef</DEFINITION-REF>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>5</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthTrcv_RTL/EthTrcvConfigSet/EthTrcvConfig_9010BSA_100Mb</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-SYMBOLIC-NAME-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfTransceiverRef</DEFINITION-REF>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>6</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthTrcv_RTL/EthTrcvConfigSet/EthTrcvConfig_9010BSA_100Mb</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-SYMBOLIC-NAME-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfTransceiverRef</DEFINITION-REF>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>7</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthTrcv_RTL/EthTrcvConfigSet/EthTrcvConfig_9010BSA_100Mb</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfEthTrcvRef</DEFINITION-REF>
+                      <ANNOTATIONS>
+                        <ANNOTATION>
+                          <ANNOTATION-ORIGIN>DV:UserDefined</ANNOTATION-ORIGIN>
+                        </ANNOTATION>
+                      </ANNOTATIONS>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>1</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/EthIf_EthTrcvConfig_9010BSA_100Mb</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfEthTrcvRef</DEFINITION-REF>
+                      <ANNOTATIONS>
+                        <ANNOTATION>
+                          <ANNOTATION-ORIGIN>DV:UserDefined</ANNOTATION-ORIGIN>
+                        </ANNOTATION>
+                      </ANNOTATIONS>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>2</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/EthIf_EthTrcvConfig_TJA_1103B</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfEthTrcvRef</DEFINITION-REF>
+                      <ANNOTATIONS>
+                        <ANNOTATION>
+                          <ANNOTATION-ORIGIN>DV:UserDefined</ANNOTATION-ORIGIN>
+                        </ANNOTATION>
+                      </ANNOTATIONS>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>3</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/EthIf_EthTrcvConfig_9010BSA_100Mb</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfEthTrcvRef</DEFINITION-REF>
+                      <ANNOTATIONS>
+                        <ANNOTATION>
+                          <ANNOTATION-ORIGIN>DV:UserDefined</ANNOTATION-ORIGIN>
+                        </ANNOTATION>
+                      </ANNOTATIONS>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>4</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/EthIf_EthTrcvConfig_9010BSA_100Mb</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfEthTrcvRef</DEFINITION-REF>
+                      <ANNOTATIONS>
+                        <ANNOTATION>
+                          <ANNOTATION-ORIGIN>DV:UserDefined</ANNOTATION-ORIGIN>
+                        </ANNOTATION>
+                      </ANNOTATIONS>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>5</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/EthIf_EthTrcvConfig_9010BSA_100Mb</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfEthTrcvRef</DEFINITION-REF>
+                      <ANNOTATIONS>
+                        <ANNOTATION>
+                          <ANNOTATION-ORIGIN>DV:UserDefined</ANNOTATION-ORIGIN>
+                        </ANNOTATION>
+                      </ANNOTATIONS>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>6</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/EthIf_EthTrcvConfig_9010BSA_100Mb</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfController/EthIfEthTrcvRef</DEFINITION-REF>
+                      <ANNOTATIONS>
+                        <ANNOTATION>
+                          <ANNOTATION-ORIGIN>DV:UserDefined</ANNOTATION-ORIGIN>
+                        </ANNOTATION>
+                      </ANNOTATIONS>
+                      <VARIATION-POINT>
+                        <POST-BUILD-VARIANT-CONDITIONS>
+                          <POST-BUILD-VARIANT-CONDITION>
+                            <MATCHING-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</MATCHING-CRITERION-REF>
+                            <VALUE>7</VALUE>
+                          </POST-BUILD-VARIANT-CONDITION>
+                        </POST-BUILD-VARIANT-CONDITIONS>
+                      </VARIATION-POINT>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthIf/EthIfConfigSet/EthIf_EthTrcvConfig_9010BSA_100Mb</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                  </REFERENCE-VALUES>
+                </ECUC-CONTAINER-VALUE>
+                <ECUC-CONTAINER-VALUE UUID="15b840db-50aa-48e0-9f15-c1461fd1d90b">
+                  <SHORT-NAME>EthIf_EthTrcvConfig_9010BSA</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTransceiver</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTransceiver/EthIfTransceiverIdx</DEFINITION-REF>
+                      <VALUE>0</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                  <REFERENCE-VALUES>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTransceiver/EthIfEthTrcvRef</DEFINITION-REF>
+                      <ANNOTATIONS>
+                        <ANNOTATION>
+                          <ANNOTATION-ORIGIN>DV:UserDefined</ANNOTATION-ORIGIN>
+                        </ANNOTATION>
+                      </ANNOTATIONS>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthTrcv_RTL/EthTrcvConfigSet/EthTrcvConfig_9010BSA</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                  </REFERENCE-VALUES>
+                </ECUC-CONTAINER-VALUE>
+                <ECUC-CONTAINER-VALUE UUID="a6405b5a-ca92-45ec-bf1b-0b2704a7665b">
+                  <SHORT-NAME>EthIf_EthTrcvConfig_9010BSA_100Mb</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTransceiver</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTransceiver/EthIfTransceiverIdx</DEFINITION-REF>
+                      <VALUE>1</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                  <REFERENCE-VALUES>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTransceiver/EthIfEthTrcvRef</DEFINITION-REF>
+                      <ANNOTATIONS>
+                        <ANNOTATION>
+                          <ANNOTATION-ORIGIN>DV:UserDefined</ANNOTATION-ORIGIN>
+                        </ANNOTATION>
+                      </ANNOTATIONS>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthTrcv_RTL/EthTrcvConfigSet/EthTrcvConfig_9010BSA_100Mb</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                  </REFERENCE-VALUES>
+                </ECUC-CONTAINER-VALUE>
+                <ECUC-CONTAINER-VALUE UUID="91bdf993-f857-4007-bc63-3448a0982a41">
+                  <SHORT-NAME>EthIf_EthTrcvConfig_TJA_1103B</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTransceiver</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTransceiver/EthIfTransceiverIdx</DEFINITION-REF>
+                      <ANNOTATIONS>
+                        <ANNOTATION>
+                          <ANNOTATION-ORIGIN>DV:UserDefined</ANNOTATION-ORIGIN>
+                        </ANNOTATION>
+                      </ANNOTATIONS>
+                      <VALUE>2</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                  <REFERENCE-VALUES>
+                    <ECUC-REFERENCE-VALUE>
+                      <DEFINITION-REF DEST="ECUC-REFERENCE-DEF">/MICROSAR/EthIf/EthIfConfigSet/EthIfTransceiver/EthIfEthTrcvRef</DEFINITION-REF>
+                      <ANNOTATIONS>
+                        <ANNOTATION>
+                          <ANNOTATION-ORIGIN>DV:UserDefined</ANNOTATION-ORIGIN>
+                        </ANNOTATION>
+                      </ANNOTATIONS>
+                      <VALUE-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/EthTrcv_NXP/EthTrcvConfigSet/EthTrcvConfig_TJA1103B</VALUE-REF>
+                    </ECUC-REFERENCE-VALUE>
+                  </REFERENCE-VALUES>
+                </ECUC-CONTAINER-VALUE>
+              </SUB-CONTAINERS>
+            </ECUC-CONTAINER-VALUE>
+            <ECUC-CONTAINER-VALUE UUID="e4a97841-2b20-4898-9eed-aa99d29193b7">
+              <SHORT-NAME>EthIfGeneral</SHORT-NAME>
+              <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/MICROSAR/EthIf/EthIfGeneral</DEFINITION-REF>
+              <PARAMETER-VALUES>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfDevErrorDetect</DEFINITION-REF>
+                  <VALUE>true</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfEnableRxInterrupt</DEFINITION-REF>
+                  <VALUE>true</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfEnableTxInterrupt</DEFINITION-REF>
+                  <VALUE>true</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfMaxTrcvsTotal</DEFINITION-REF>
+                  <VALUE>3</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfMaxTxBufsTotal</DEFINITION-REF>
+                  <VALUE>100</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfTrcvLinkStateChgMainReload</DEFINITION-REF>
+                  <VALUE>2</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfVersionInfoApi</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-FLOAT-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfMainFunctionPeriod</DEFINITION-REF>
+                  <VALUE>0.005</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-FLOAT-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfMainFunctionRxTimeout</DEFINITION-REF>
+                  <VALUE>0.005</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfRxIndicationIterations</DEFINITION-REF>
+                  <VALUE>5</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfUpdatePhysAddrFilter</DEFINITION-REF>
+                  <VALUE>true</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfGlobalTimeSupport</DEFINITION-REF>
+                  <VALUE>true</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfEnableHeaderAccessApi</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfWakeupSupport</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfSwitchManagementSupport</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfSafeBswChecks</DEFINITION-REF>
+                  <VALUE>true</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfEnableSignalQualityApi</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfGetAndResetMeasurementDataApi</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfEnableSecurityEventReporting</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-FLOAT-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfPortStartupActiveTime</DEFINITION-REF>
+                  <VALUE>0.5</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfPhcSupport</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-TEXTUAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfAutosarCallbackSignatureVersion</DEFINITION-REF>
+                  <VALUE>AR_4_3_0</VALUE>
+                </ECUC-TEXTUAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-FLOAT-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfSwitchOffPortTimeDelay</DEFINITION-REF>
+                  <VALUE>0.5</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfModeRequestRetryCount</DEFINITION-REF>
+                  <VALUE>5</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-FLOAT-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfModeRequestRetryPeriod</DEFINITION-REF>
+                  <VALUE>0.02</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfEthSMSleepIndicationSupport</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfLegacyWakeupSupport</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfEnableZeroCopyExtensions</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfMaxExtTxBufsTotal</DEFINITION-REF>
+                  <VALUE>0</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-TEXTUAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-STRING-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfPublicCddHeaderFile</DEFINITION-REF>
+                  <VALUE>EthIf_User_Cbk.h</VALUE>
+                </ECUC-TEXTUAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/MICROSAR/EthIf/EthIfGeneral/EthIfSetControllerModeTimeout</DEFINITION-REF>
+                  <VALUE>1000</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+              </PARAMETER-VALUES>
+            </ECUC-CONTAINER-VALUE>
+          </CONTAINERS>
+        </ECUC-MODULE-CONFIGURATION-VALUES>
+      </ELEMENTS>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

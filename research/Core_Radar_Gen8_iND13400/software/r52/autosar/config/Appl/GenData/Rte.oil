@@ -1,0 +1,724 @@
+/**********************************************************************************************************************
+ *  COPYRIGHT
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  \verbatim
+ *
+ *                This software is copyright protected and proprietary to Vector Informatik GmbH.
+ *                Vector Informatik GmbH grants to you only those rights as set out in the license conditions.
+ *                All other rights remain with Vector Informatik GmbH.
+ *  \endverbatim
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  FILE DESCRIPTION
+ *  -------------------------------------------------------------------------------------------------------------------
+ *             File:  Rte.oil
+ *           Config:  Gen8_iND13400.dpa
+ *      ECU-Project:  Gen8_iND13400
+ *
+ *        Generator:  MICROSAR RTE Generator Version 4.40.00
+ *                    RTE Core Version 4.40.00
+ *          License:  PAI19494
+ *
+ *      Description:  OIL-File containing project specific OS definitions for the MICROSAR RTE
+ *********************************************************************************************************************/
+
+/**********************************************************************************************************************
+ *                                              P L E A S E   N O T E
+ *
+ * The attributes in this file must not be changed. Missing mandatory attributes must be set in the including file.
+ * They are presented as a comment in the corresponding object definition containing a list of all legal values.
+ *********************************************************************************************************************/
+
+   TASK Appl_BackgroundTask {
+      ACTIVATION = 1:"@RO@";
+      PRIORITY = 1:"@RO@";
+      SCHEDULE = FULL:"@RO@";
+// TIMING_PROTECTION = FALSE|TRUE; (AUTOSAR OS only)
+      AUTOSTART = FALSE:"@RO@";
+      EVENT = Rte_Ev_Cyclic2_Appl_BackgroundTask_0_5ms:"@RO@";
+      ACCESSING_APPLICATION = OsCore_Qm;
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE2_Appl_BackgroundTask_0_5ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_BackgroundTask;
+         EVENT = Rte_Ev_Cyclic2_Appl_BackgroundTask_0_5ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   TASK Appl_IPC_Task {
+      ACTIVATION = 1:"@RO@";
+      PRIORITY = 130:"@RO@";
+      SCHEDULE = FULL:"@RO@";
+// TIMING_PROTECTION = FALSE|TRUE; (AUTOSAR OS only)
+      AUTOSTART = FALSE:"@RO@";
+      EVENT = Rte_Ev_Cyclic_Appl_IPC_Task_0_50ms:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_CDD_IPC_Dsp_sp_post_processing_complete:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_CDD_IPC_RE_IPC_VSE_Handler_10ms:"@RO@";
+      ACCESSING_APPLICATION = OsCore_Qm;
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_Appl_IPC_Task_0_50ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_IPC_Task;
+         EVENT = Rte_Ev_Cyclic_Appl_IPC_Task_0_50ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_SWC_CDD_IPC_RE_IPC_VSE_Handler_10ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_IPC_Task;
+         EVENT = Rte_Ev_Run_SWC_CDD_IPC_RE_IPC_VSE_Handler_10ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   TASK Appl_Init {
+      ACTIVATION = 1:"@RO@";
+      PRIORITY = 190:"@RO@";
+      SCHEDULE = NON:"@RO@";
+// TIMING_PROTECTION = FALSE|TRUE; (AUTOSAR OS only)
+      AUTOSTART = FALSE:"@RO@";
+      ACCESSING_APPLICATION = OsCore_Qm;
+   }:"@RO@@NR@";
+
+   TASK Appl_Task {
+      ACTIVATION = 1:"@RO@";
+      PRIORITY = 40:"@RO@";
+      SCHEDULE = FULL:"@RO@";
+// TIMING_PROTECTION = FALSE|TRUE; (AUTOSAR OS only)
+      AUTOSTART = FALSE:"@RO@";
+      EVENT = Rte_Ev_Cyclic_Appl_Task_0_10ms:"@RO@";
+      EVENT = Rte_Ev_Cyclic_Appl_Task_0_50ms:"@RO@";
+      EVENT = Rte_Ev_Cyclic_Appl_Task_0_5ms:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_Appl_IntWDG_RE_PLT_WDG_INTERNAL_WDG_PLT_Appl_Task:"@RO@";
+      ACCESSING_APPLICATION = OsCore_Qm;
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_Appl_Task_0_10ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task;
+         EVENT = Rte_Ev_Cyclic_Appl_Task_0_10ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_Appl_Task_0_50ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task;
+         EVENT = Rte_Ev_Cyclic_Appl_Task_0_50ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_Appl_Task_0_5ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task;
+         EVENT = Rte_Ev_Cyclic_Appl_Task_0_5ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_SWC_PLT_Appl_IntWDG_RE_PLT_WDG_INTERNAL_WDG_PLT_Appl_Task {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task;
+         EVENT = Rte_Ev_Run_SWC_PLT_Appl_IntWDG_RE_PLT_WDG_INTERNAL_WDG_PLT_Appl_Task;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   TASK Appl_Task_Communication {
+      ACTIVATION = 1:"@RO@";
+      PRIORITY = 80:"@RO@";
+      SCHEDULE = FULL:"@RO@";
+// TIMING_PROTECTION = FALSE|TRUE; (AUTOSAR OS only)
+      AUTOSTART = FALSE:"@RO@";
+      EVENT = Rte_Ev_Cyclic2_Appl_Task_Communication_0_10ms:"@RO@";
+      EVENT = Rte_Ev_Cyclic_Appl_Task_Communication_0_25ms:"@RO@";
+      EVENT = Rte_Ev_Run_Com_Com_MainFunctionTx_ComMainFunctionTx_Periodic:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_Appl_Communication_PostRadarProcessing_CAN_Tx_RE_Communication_Tx:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_Appl_Communication_RE_Communication_Tx_50ms:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PRJ_Appl_FaultMgr_RE_PCAN_Timeout_Faults_Event:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PRJ_Appl_FaultMgr_RE_VCAN_Timeout_Faults_100ms_1000ms_Event:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PRJ_Appl_FaultMgr_RE_VCAN_Timeout_Faults_10ms_20ms_50ms_Event:"@RO@";
+      ACCESSING_APPLICATION = OsCore_Qm;
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE2_Appl_Task_Communication_0_10ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task_Communication;
+         EVENT = Rte_Ev_Cyclic2_Appl_Task_Communication_0_10ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_Appl_Task_Communication_0_25ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task_Communication;
+         EVENT = Rte_Ev_Cyclic_Appl_Task_Communication_0_25ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_Com_Com_MainFunctionTx_ComMainFunctionTx_Periodic {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task_Communication;
+         EVENT = Rte_Ev_Run_Com_Com_MainFunctionTx_ComMainFunctionTx_Periodic;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_SWC_PLT_Appl_Communication_RE_Communication_Tx_50ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task_Communication;
+         EVENT = Rte_Ev_Run_SWC_PLT_Appl_Communication_RE_Communication_Tx_50ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   TASK Appl_Task_Fast {
+      ACTIVATION = 1:"@RO@";
+      PRIORITY = 50:"@RO@";
+      SCHEDULE = FULL:"@RO@";
+// TIMING_PROTECTION = FALSE|TRUE; (AUTOSAR OS only)
+      AUTOSTART = FALSE:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_RDD_Populate_RDD_Stream:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_RE_Logging_10ms:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_RE_Logging_2ms:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_RE_Logging_50ms:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_RE_Logging_5ms:"@RO@";
+      ACCESSING_APPLICATION = OsCore0_ASIL;
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_SWC_PLT_CDD_Logging_RE_Logging_10ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task_Fast;
+         EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_RE_Logging_10ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+      ACCESSING_APPLICATION = OsCore0_ASIL;
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_SWC_PLT_CDD_Logging_RE_Logging_2ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task_Fast;
+         EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_RE_Logging_2ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+      ACCESSING_APPLICATION = OsCore0_ASIL;
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_SWC_PLT_CDD_Logging_RE_Logging_50ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task_Fast;
+         EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_RE_Logging_50ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+      ACCESSING_APPLICATION = OsCore0_ASIL;
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_SWC_PLT_CDD_Logging_RE_Logging_5ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task_Fast;
+         EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_RE_Logging_5ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+      ACCESSING_APPLICATION = OsCore0_ASIL;
+   }:"@RO@@NR@";
+
+   TASK Appl_Task_High_Prio {
+      ACTIVATION = 1:"@RO@";
+      PRIORITY = 150:"@RO@";
+      SCHEDULE = FULL:"@RO@";
+// TIMING_PROTECTION = FALSE|TRUE; (AUTOSAR OS only)
+      AUTOSTART = FALSE:"@RO@";
+      EVENT = Rte_Ev_Cyclic2_Appl_Task_High_Prio_0_10ms:"@RO@";
+      EVENT = Rte_Ev_Cyclic2_Appl_Task_High_Prio_0_5ms:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_Appl_Diag_RE_PLT_Diag_PlatformTime_50ms:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_Appl_IntWDG_RE_PLT_WDG_Main_5ms:"@RO@";
+      EVENT = Rte_Ev_WP_Appl_Task_High_Prio:"@RO@";
+      ACCESSING_APPLICATION = OsCore_Qm;
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE2_Appl_Task_High_Prio_0_10ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task_High_Prio;
+         EVENT = Rte_Ev_Cyclic2_Appl_Task_High_Prio_0_10ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE2_Appl_Task_High_Prio_0_5ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task_High_Prio;
+         EVENT = Rte_Ev_Cyclic2_Appl_Task_High_Prio_0_5ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_SWC_PLT_Appl_Diag_RE_PLT_Diag_PlatformTime_50ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task_High_Prio;
+         EVENT = Rte_Ev_Run_SWC_PLT_Appl_Diag_RE_PLT_Diag_PlatformTime_50ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_SWC_PLT_Appl_IntWDG_RE_PLT_WDG_Main_5ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task_High_Prio;
+         EVENT = Rte_Ev_Run_SWC_PLT_Appl_IntWDG_RE_PLT_WDG_Main_5ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   TASK Appl_Task_Logging {
+      ACTIVATION = 1:"@RO@";
+      PRIORITY = 90:"@RO@";
+      SCHEDULE = FULL:"@RO@";
+// TIMING_PROTECTION = FALSE|TRUE; (AUTOSAR OS only)
+      AUTOSTART = FALSE:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_CMP_PRJ_UDSHandler_RE_SWC_CMP_PRJ_UDSHandler_Main_50ms:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_HIL_RE_HIL_Periodic_Handler_Rp_HIL_Periodic_Handler_Trigger:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_ADC_Populate_ADC_Stream:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_Debug_Populate_Debug_Stream:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_Detection_Populate_Detection_Stream:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_Header_Populate_Header_Stream:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_MMIC_Populate_MMIC_Stream:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_Radar_Capability_Populate_Radar_Capability_Stream:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_Status_Populate_Status_Stream:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Logging_StbM_MeasurementNotification_StbMSynchronizedTimeBase_TimeRecordBlock_Callback:"@RO@";
+      ACCESSING_APPLICATION = OsCore0_ASIL;
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_SWC_CMP_PRJ_UDSHandler_RE_SWC_CMP_PRJ_UDSHandler_Main_50ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Appl_Task_Logging;
+         EVENT = Rte_Ev_Run_SWC_CMP_PRJ_UDSHandler_RE_SWC_CMP_PRJ_UDSHandler_Main_50ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+      ACCESSING_APPLICATION = OsCore0_ASIL;
+   }:"@RO@@NR@";
+
+   TASK BSW_Task {
+      ACTIVATION = 1:"@RO@";
+      PRIORITY = 50:"@RO@";
+      SCHEDULE = FULL:"@RO@";
+// TIMING_PROTECTION = FALSE|TRUE; (AUTOSAR OS only)
+      AUTOSTART = FALSE:"@RO@";
+      EVENT = Rte_Ev_Cyclic2_BSW_Task_0_10ms:"@RO@";
+      EVENT = Rte_Ev_Cyclic2_BSW_Task_0_20ms:"@RO@";
+      EVENT = Rte_Ev_Cyclic2_BSW_Task_0_5ms:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_Appl_IntWDG_RE_PLT_WDG_INTERNAL_WDG_BSW_Task:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_Appl_NvMHandler_RE_PLT_Appl_NvMHandler_5ms:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_TimeSync_DRE_StatusNotification_Callback:"@RO@";
+      ACCESSING_APPLICATION = OsCore_Qm;
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE2_BSW_Task_0_10ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = BSW_Task;
+         EVENT = Rte_Ev_Cyclic2_BSW_Task_0_10ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE2_BSW_Task_0_20ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = BSW_Task;
+         EVENT = Rte_Ev_Cyclic2_BSW_Task_0_20ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE2_BSW_Task_0_5ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = BSW_Task;
+         EVENT = Rte_Ev_Cyclic2_BSW_Task_0_5ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_SWC_PLT_Appl_IntWDG_RE_PLT_WDG_INTERNAL_WDG_BSW_Task {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = BSW_Task;
+         EVENT = Rte_Ev_Run_SWC_PLT_Appl_IntWDG_RE_PLT_WDG_INTERNAL_WDG_BSW_Task;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_SWC_PLT_Appl_NvMHandler_RE_PLT_Appl_NvMHandler_5ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = BSW_Task;
+         EVENT = Rte_Ev_Run_SWC_PLT_Appl_NvMHandler_RE_PLT_Appl_NvMHandler_5ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   TASK Init_Task_Qm {
+      ACTIVATION = 1:"@RO@";
+      PRIORITY = 210:"@RO@";
+      SCHEDULE = FULL:"@RO@";
+// TIMING_PROTECTION = FALSE|TRUE; (AUTOSAR OS only)
+      AUTOSTART = FALSE:"@RO@";
+      ACCESSING_APPLICATION = OsCore0_ASIL;
+   }:"@RO@@NR@";
+
+   TASK Radar_Ctrl_Task {
+      ACTIVATION = 1:"@RO@";
+      PRIORITY = 100:"@RO@";
+      SCHEDULE = FULL:"@RO@";
+// TIMING_PROTECTION = FALSE|TRUE; (AUTOSAR OS only)
+      AUTOSTART = FALSE:"@RO@";
+      EVENT = Rte_Ev_Cyclic_Radar_Ctrl_Task_0_50ms:"@RO@";
+      EVENT = Rte_Ev_Run_Rtm_Rtm_MainFunction:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Radar_Control_RE_Radar_Control_10ms:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Radar_Control_RE_Radar_Ctl_Look_Complete_Post_RFBIST:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Radar_Control_RE_Radar_Ctl_Look_Complete_Rp_Radar_Ctl_Look_Complete_Trigger:"@RO@";
+      EVENT = Rte_Ev_Run_SWC_PLT_CDD_Radar_Control_RE_Radar_Ctl_Look_Trigger:"@RO@";
+      ACCESSING_APPLICATION = OsCore_Qm;
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_Radar_Ctrl_Task_0_50ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Radar_Ctrl_Task;
+         EVENT = Rte_Ev_Cyclic_Radar_Ctrl_Task_0_50ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_Rtm_Rtm_MainFunction {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Radar_Ctrl_Task;
+         EVENT = Rte_Ev_Run_Rtm_Rtm_MainFunction;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_SWC_PLT_CDD_Radar_Control_RE_Radar_Control_10ms {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Radar_Ctrl_Task;
+         EVENT = Rte_Ev_Run_SWC_PLT_CDD_Radar_Control_RE_Radar_Control_10ms;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   ALARM Rte_Al_TE_SWC_PLT_CDD_Radar_Control_RE_Radar_Ctl_Look_Complete_Post_RFBIST {
+      COUNTER = OsCounter;
+      ACTION = SETEVENT
+      {
+         TASK = Radar_Ctrl_Task;
+         EVENT = Rte_Ev_Run_SWC_PLT_CDD_Radar_Control_RE_Radar_Ctl_Look_Complete_Post_RFBIST;
+      }:"@ROC@";
+      AUTOSTART = FALSE:"@RO@";
+   }:"@RO@@NR@";
+
+   EVENT Rte_Ev_Cyclic2_Appl_BackgroundTask_0_5ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Cyclic2_Appl_Task_Communication_0_10ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Cyclic2_Appl_Task_High_Prio_0_10ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Cyclic2_Appl_Task_High_Prio_0_5ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Cyclic2_BSW_Task_0_10ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Cyclic2_BSW_Task_0_20ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Cyclic2_BSW_Task_0_5ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Cyclic_Appl_IPC_Task_0_50ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Cyclic_Appl_Task_0_10ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Cyclic_Appl_Task_0_50ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Cyclic_Appl_Task_0_5ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Cyclic_Appl_Task_Communication_0_25ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Cyclic_Radar_Ctrl_Task_0_50ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_Com_Com_MainFunctionTx_ComMainFunctionTx_Periodic {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_Rtm_Rtm_MainFunction {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_CDD_IPC_Dsp_sp_post_processing_complete {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_CDD_IPC_RE_IPC_VSE_Handler_10ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_CMP_PRJ_UDSHandler_RE_SWC_CMP_PRJ_UDSHandler_Main_50ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_Appl_Communication_PostRadarProcessing_CAN_Tx_RE_Communication_Tx {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_Appl_Communication_RE_Communication_Tx_50ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_Appl_Diag_RE_PLT_Diag_PlatformTime_50ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_Appl_IntWDG_RE_PLT_WDG_INTERNAL_WDG_BSW_Task {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_Appl_IntWDG_RE_PLT_WDG_INTERNAL_WDG_PLT_Appl_Task {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_Appl_IntWDG_RE_PLT_WDG_Main_5ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_Appl_NvMHandler_RE_PLT_Appl_NvMHandler_5ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_HIL_RE_HIL_Periodic_Handler_Rp_HIL_Periodic_Handler_Trigger {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_ADC_Populate_ADC_Stream {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_Debug_Populate_Debug_Stream {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_Detection_Populate_Detection_Stream {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_Header_Populate_Header_Stream {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_MMIC_Populate_MMIC_Stream {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_RDD_Populate_RDD_Stream {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_Radar_Capability_Populate_Radar_Capability_Stream {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Logging_PostRadarProcessing_Status_Populate_Status_Stream {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Logging_RE_Logging_10ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Logging_RE_Logging_2ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Logging_RE_Logging_50ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Logging_RE_Logging_5ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Logging_StbM_MeasurementNotification_StbMSynchronizedTimeBase_TimeRecordBlock_Callback {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Radar_Control_RE_Radar_Control_10ms {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Radar_Control_RE_Radar_Ctl_Look_Complete_Post_RFBIST {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Radar_Control_RE_Radar_Ctl_Look_Complete_Rp_Radar_Ctl_Look_Complete_Trigger {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_Radar_Control_RE_Radar_Ctl_Look_Trigger {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PLT_CDD_TimeSync_DRE_StatusNotification_Callback {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PRJ_Appl_FaultMgr_RE_PCAN_Timeout_Faults_Event {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PRJ_Appl_FaultMgr_RE_VCAN_Timeout_Faults_100ms_1000ms_Event {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_Run_SWC_PRJ_Appl_FaultMgr_RE_VCAN_Timeout_Faults_10ms_20ms_50ms_Event {
+      MASK = AUTO;
+   }:"@ROC@@NR@";
+
+   EVENT Rte_Ev_WP_Appl_Task_High_Prio {
+      MASK = 0x02;
+   }:"@ROC@@NR@";
+
+
+   APPLICATION OsCore0_ASIL {
+      TRUSTED = TRUE;
+// Add the following four attributes according to your needs.
+// Note: They do not have a default value and are therefore necessary in the configuration.
+//      STARTUPHOOK = FALSE;
+//      SHUTDOWNHOOK = FALSE;
+//      ERRORHOOK = FALSE;
+//      HAS_RESTARTTASK = FALSE;
+      TASK = Appl_BackgroundTask;
+      ALARM = Rte_Al_TE2_Appl_BackgroundTask_0_5ms;
+      TASK = Appl_IPC_Task;
+      ALARM = Rte_Al_TE_Appl_IPC_Task_0_50ms;
+      ALARM = Rte_Al_TE_SWC_CDD_IPC_RE_IPC_VSE_Handler_10ms;
+      TASK = Appl_Init;
+      TASK = Appl_Task;
+      ALARM = Rte_Al_TE_Appl_Task_0_10ms;
+      ALARM = Rte_Al_TE_Appl_Task_0_50ms;
+      ALARM = Rte_Al_TE_Appl_Task_0_5ms;
+      ALARM = Rte_Al_TE_SWC_PLT_Appl_IntWDG_RE_PLT_WDG_INTERNAL_WDG_PLT_Appl_Task;
+      TASK = Appl_Task_Communication;
+      ALARM = Rte_Al_TE2_Appl_Task_Communication_0_10ms;
+      ALARM = Rte_Al_TE_Appl_Task_Communication_0_25ms;
+      ALARM = Rte_Al_TE_Com_Com_MainFunctionTx_ComMainFunctionTx_Periodic;
+      ALARM = Rte_Al_TE_SWC_PLT_Appl_Communication_RE_Communication_Tx_50ms;
+      TASK = Appl_Task_High_Prio;
+      ALARM = Rte_Al_TE2_Appl_Task_High_Prio_0_10ms;
+      ALARM = Rte_Al_TE2_Appl_Task_High_Prio_0_5ms;
+      ALARM = Rte_Al_TE_SWC_PLT_Appl_Diag_RE_PLT_Diag_PlatformTime_50ms;
+      ALARM = Rte_Al_TE_SWC_PLT_Appl_IntWDG_RE_PLT_WDG_Main_5ms;
+      TASK = BSW_Task;
+      ALARM = Rte_Al_TE2_BSW_Task_0_10ms;
+      ALARM = Rte_Al_TE2_BSW_Task_0_20ms;
+      ALARM = Rte_Al_TE2_BSW_Task_0_5ms;
+      ALARM = Rte_Al_TE_SWC_PLT_Appl_IntWDG_RE_PLT_WDG_INTERNAL_WDG_BSW_Task;
+      ALARM = Rte_Al_TE_SWC_PLT_Appl_NvMHandler_RE_PLT_Appl_NvMHandler_5ms;
+      TASK = Radar_Ctrl_Task;
+      ALARM = Rte_Al_TE_Radar_Ctrl_Task_0_50ms;
+      ALARM = Rte_Al_TE_Rtm_Rtm_MainFunction;
+      ALARM = Rte_Al_TE_SWC_PLT_CDD_Radar_Control_RE_Radar_Control_10ms;
+      ALARM = Rte_Al_TE_SWC_PLT_CDD_Radar_Control_RE_Radar_Ctl_Look_Complete_Post_RFBIST;
+  };
+
+   APPLICATION OsCore_Qm {
+      TRUSTED = TRUE;
+// Add the following four attributes according to your needs.
+// Note: They do not have a default value and are therefore necessary in the configuration.
+//      STARTUPHOOK = FALSE;
+//      SHUTDOWNHOOK = FALSE;
+//      ERRORHOOK = FALSE;
+//      HAS_RESTARTTASK = FALSE;
+      TASK = Appl_Task_Fast;
+      ALARM = Rte_Al_TE_SWC_PLT_CDD_Logging_RE_Logging_10ms;
+      ALARM = Rte_Al_TE_SWC_PLT_CDD_Logging_RE_Logging_2ms;
+      ALARM = Rte_Al_TE_SWC_PLT_CDD_Logging_RE_Logging_50ms;
+      ALARM = Rte_Al_TE_SWC_PLT_CDD_Logging_RE_Logging_5ms;
+      TASK = Appl_Task_Logging;
+      ALARM = Rte_Al_TE_SWC_CMP_PRJ_UDSHandler_RE_SWC_CMP_PRJ_UDSHandler_Main_50ms;
+      TASK = Init_Task_Qm;
+  };
