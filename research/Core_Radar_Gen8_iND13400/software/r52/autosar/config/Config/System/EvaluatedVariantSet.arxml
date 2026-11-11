@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00053.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="4EB928B2-FBB8-4EF0-B6E8-DB2D85EDEA9E">
+      <SHORT-NAME>VariantDefinition</SHORT-NAME>
+      <ELEMENTS>
+        <EVALUATED-VARIANT-SET>
+          <SHORT-NAME>EvaluatedVariantSet</SHORT-NAME>
+          <APPROVAL-STATUS>APPROVED</APPROVAL-STATUS>
+          <EVALUATED-VARIANT-REFS>
+            <EVALUATED-VARIANT-REF DEST="PREDEFINED-VARIANT">/VariantDefinition/Variant/RDR_01</EVALUATED-VARIANT-REF>
+            <EVALUATED-VARIANT-REF DEST="PREDEFINED-VARIANT">/VariantDefinition/Variant/RDR_02</EVALUATED-VARIANT-REF>
+            <EVALUATED-VARIANT-REF DEST="PREDEFINED-VARIANT">/VariantDefinition/Variant/RDR_03</EVALUATED-VARIANT-REF>
+            <EVALUATED-VARIANT-REF DEST="PREDEFINED-VARIANT">/VariantDefinition/Variant/RDR_04</EVALUATED-VARIANT-REF>
+            <EVALUATED-VARIANT-REF DEST="PREDEFINED-VARIANT">/VariantDefinition/Variant/RDR_05</EVALUATED-VARIANT-REF>
+            <EVALUATED-VARIANT-REF DEST="PREDEFINED-VARIANT">/VariantDefinition/Variant/RDR_06</EVALUATED-VARIANT-REF>
+            <EVALUATED-VARIANT-REF DEST="PREDEFINED-VARIANT">/VariantDefinition/Variant/RDR_07</EVALUATED-VARIANT-REF>
+            <EVALUATED-VARIANT-REF DEST="PREDEFINED-VARIANT">/VariantDefinition/Variant/RDR_08</EVALUATED-VARIANT-REF>
+          </EVALUATED-VARIANT-REFS>
+        </EVALUATED-VARIANT-SET>
+      </ELEMENTS>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="E0F43489-105C-41C7-84DF-7D28EDBDEEBF">
+          <SHORT-NAME>Variant</SHORT-NAME>
+          <ELEMENTS>
+            <PREDEFINED-VARIANT>
+              <SHORT-NAME>RDR_01</SHORT-NAME>
+              <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF DEST="POST-BUILD-VARIANT-CRITERION-VALUE-SET">/VariantDefinition/Variant/CriterionValueSet/RDR_01</POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF>
+              </POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+            </PREDEFINED-VARIANT>
+            <PREDEFINED-VARIANT>
+              <SHORT-NAME>RDR_02</SHORT-NAME>
+              <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF DEST="POST-BUILD-VARIANT-CRITERION-VALUE-SET">/VariantDefinition/Variant/CriterionValueSet/RDR_02</POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF>
+              </POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+            </PREDEFINED-VARIANT>
+            <PREDEFINED-VARIANT>
+              <SHORT-NAME>RDR_03</SHORT-NAME>
+              <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF DEST="POST-BUILD-VARIANT-CRITERION-VALUE-SET">/VariantDefinition/Variant/CriterionValueSet/RDR_03</POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF>
+              </POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+            </PREDEFINED-VARIANT>
+            <PREDEFINED-VARIANT>
+              <SHORT-NAME>RDR_04</SHORT-NAME>
+              <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF DEST="POST-BUILD-VARIANT-CRITERION-VALUE-SET">/VariantDefinition/Variant/CriterionValueSet/RDR_04</POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF>
+              </POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+            </PREDEFINED-VARIANT>
+            <PREDEFINED-VARIANT>
+              <SHORT-NAME>RDR_05</SHORT-NAME>
+              <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF DEST="POST-BUILD-VARIANT-CRITERION-VALUE-SET">/VariantDefinition/Variant/CriterionValueSet/RDR_05</POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF>
+              </POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+            </PREDEFINED-VARIANT>
+            <PREDEFINED-VARIANT>
+              <SHORT-NAME>RDR_06</SHORT-NAME>
+              <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF DEST="POST-BUILD-VARIANT-CRITERION-VALUE-SET">/VariantDefinition/Variant/CriterionValueSet/RDR_06</POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF>
+              </POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+            </PREDEFINED-VARIANT>
+            <PREDEFINED-VARIANT>
+              <SHORT-NAME>RDR_07</SHORT-NAME>
+              <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF DEST="POST-BUILD-VARIANT-CRITERION-VALUE-SET">/VariantDefinition/Variant/CriterionValueSet/RDR_07</POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF>
+              </POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+            </PREDEFINED-VARIANT>
+            <PREDEFINED-VARIANT>
+              <SHORT-NAME>RDR_08</SHORT-NAME>
+              <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF DEST="POST-BUILD-VARIANT-CRITERION-VALUE-SET">/VariantDefinition/Variant/CriterionValueSet/RDR_08</POST-BUILD-VARIANT-CRITERION-VALUE-SET-REF>
+              </POST-BUILD-VARIANT-CRITERION-VALUE-SET-REFS>
+            </PREDEFINED-VARIANT>
+          </ELEMENTS>
+          <AR-PACKAGES>
+            <AR-PACKAGE UUID="46C1BE09-2E92-48DA-B09E-3A42FDED4C61">
+              <SHORT-NAME>CriterionValueSet</SHORT-NAME>
+              <ELEMENTS>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+                  <SHORT-NAME>RDR_01</SHORT-NAME>
+                  <POST-BUILD-VARIANT-CRITERION-VALUES>
+                    <POST-BUILD-VARIANT-CRITERION-VALUE>
+                      <VARIANT-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</VARIANT-CRITERION-REF>
+                      <VALUE>0</VALUE>
+                    </POST-BUILD-VARIANT-CRITERION-VALUE>
+                  </POST-BUILD-VARIANT-CRITERION-VALUES>
+                </POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+                  <SHORT-NAME>RDR_02</SHORT-NAME>
+                  <POST-BUILD-VARIANT-CRITERION-VALUES>
+                    <POST-BUILD-VARIANT-CRITERION-VALUE>
+                      <VARIANT-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</VARIANT-CRITERION-REF>
+                      <VALUE>1</VALUE>
+                    </POST-BUILD-VARIANT-CRITERION-VALUE>
+                  </POST-BUILD-VARIANT-CRITERION-VALUES>
+                </POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+                  <SHORT-NAME>RDR_03</SHORT-NAME>
+                  <POST-BUILD-VARIANT-CRITERION-VALUES>
+                    <POST-BUILD-VARIANT-CRITERION-VALUE>
+                      <VARIANT-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</VARIANT-CRITERION-REF>
+                      <VALUE>2</VALUE>
+                    </POST-BUILD-VARIANT-CRITERION-VALUE>
+                  </POST-BUILD-VARIANT-CRITERION-VALUES>
+                </POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+                  <SHORT-NAME>RDR_04</SHORT-NAME>
+                  <POST-BUILD-VARIANT-CRITERION-VALUES>
+                    <POST-BUILD-VARIANT-CRITERION-VALUE>
+                      <VARIANT-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</VARIANT-CRITERION-REF>
+                      <VALUE>3</VALUE>
+                    </POST-BUILD-VARIANT-CRITERION-VALUE>
+                  </POST-BUILD-VARIANT-CRITERION-VALUES>
+                </POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+                  <SHORT-NAME>RDR_05</SHORT-NAME>
+                  <POST-BUILD-VARIANT-CRITERION-VALUES>
+                    <POST-BUILD-VARIANT-CRITERION-VALUE>
+                      <VARIANT-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</VARIANT-CRITERION-REF>
+                      <VALUE>4</VALUE>
+                    </POST-BUILD-VARIANT-CRITERION-VALUE>
+                  </POST-BUILD-VARIANT-CRITERION-VALUES>
+                </POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+                  <SHORT-NAME>RDR_06</SHORT-NAME>
+                  <POST-BUILD-VARIANT-CRITERION-VALUES>
+                    <POST-BUILD-VARIANT-CRITERION-VALUE>
+                      <VARIANT-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</VARIANT-CRITERION-REF>
+                      <VALUE>5</VALUE>
+                    </POST-BUILD-VARIANT-CRITERION-VALUE>
+                  </POST-BUILD-VARIANT-CRITERION-VALUES>
+                </POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+                  <SHORT-NAME>RDR_07</SHORT-NAME>
+                  <POST-BUILD-VARIANT-CRITERION-VALUES>
+                    <POST-BUILD-VARIANT-CRITERION-VALUE>
+                      <VARIANT-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</VARIANT-CRITERION-REF>
+                      <VALUE>6</VALUE>
+                    </POST-BUILD-VARIANT-CRITERION-VALUE>
+                  </POST-BUILD-VARIANT-CRITERION-VALUES>
+                </POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+                <POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+                  <SHORT-NAME>RDR_08</SHORT-NAME>
+                  <POST-BUILD-VARIANT-CRITERION-VALUES>
+                    <POST-BUILD-VARIANT-CRITERION-VALUE>
+                      <VARIANT-CRITERION-REF DEST="POST-BUILD-VARIANT-CRITERION">/VariantDefinition/Criterion/RDR_POS</VARIANT-CRITERION-REF>
+                      <VALUE>7</VALUE>
+                    </POST-BUILD-VARIANT-CRITERION-VALUE>
+                  </POST-BUILD-VARIANT-CRITERION-VALUES>
+                </POST-BUILD-VARIANT-CRITERION-VALUE-SET>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+        <AR-PACKAGE UUID="545FE7BF-E957-476E-86E6-7DB367BC5A8D">
+          <SHORT-NAME>Criterion</SHORT-NAME>
+          <ELEMENTS>
+            <POST-BUILD-VARIANT-CRITERION>
+              <SHORT-NAME>RDR_POS</SHORT-NAME>
+              <COMPU-METHOD-REF DEST="COMPU-METHOD">/VariantDefinition/Criterion/Value/RDR_POS</COMPU-METHOD-REF>
+            </POST-BUILD-VARIANT-CRITERION>
+          </ELEMENTS>
+          <AR-PACKAGES>
+            <AR-PACKAGE UUID="4E28EAA9-343C-4292-96C2-D1D5789214D4">
+              <SHORT-NAME>Value</SHORT-NAME>
+              <ELEMENTS>
+                <COMPU-METHOD>
+                  <SHORT-NAME>RDR_POS</SHORT-NAME>
+                  <CATEGORY>TEXTTABLE</CATEGORY>
+                  <COMPU-INTERNAL-TO-PHYS>
+                    <COMPU-SCALES>
+                      <COMPU-SCALE>
+                        <LOWER-LIMIT INTERVAL-TYPE="CLOSED">0</LOWER-LIMIT>
+                        <UPPER-LIMIT INTERVAL-TYPE="CLOSED">0</UPPER-LIMIT>
+                        <COMPU-CONST>
+                          <VT>RDR_01</VT>
+                        </COMPU-CONST>
+                      </COMPU-SCALE>
+                      <COMPU-SCALE>
+                        <LOWER-LIMIT INTERVAL-TYPE="CLOSED">1</LOWER-LIMIT>
+                        <UPPER-LIMIT INTERVAL-TYPE="CLOSED">1</UPPER-LIMIT>
+                        <COMPU-CONST>
+                          <VT>RDR_02</VT>
+                        </COMPU-CONST>
+                      </COMPU-SCALE>
+                      <COMPU-SCALE>
+                        <LOWER-LIMIT INTERVAL-TYPE="CLOSED">2</LOWER-LIMIT>
+                        <UPPER-LIMIT INTERVAL-TYPE="CLOSED">2</UPPER-LIMIT>
+                        <COMPU-CONST>
+                          <VT>RDR_03</VT>
+                        </COMPU-CONST>
+                      </COMPU-SCALE>
+                      <COMPU-SCALE>
+                        <LOWER-LIMIT INTERVAL-TYPE="CLOSED">3</LOWER-LIMIT>
+                        <UPPER-LIMIT INTERVAL-TYPE="CLOSED">3</UPPER-LIMIT>
+                        <COMPU-CONST>
+                          <VT>RDR_04</VT>
+                        </COMPU-CONST>
+                      </COMPU-SCALE>
+                      <COMPU-SCALE>
+                        <LOWER-LIMIT INTERVAL-TYPE="CLOSED">4</LOWER-LIMIT>
+                        <UPPER-LIMIT INTERVAL-TYPE="CLOSED">4</UPPER-LIMIT>
+                        <COMPU-CONST>
+                          <VT>RDR_05</VT>
+                        </COMPU-CONST>
+                      </COMPU-SCALE>
+                      <COMPU-SCALE>
+                        <LOWER-LIMIT INTERVAL-TYPE="CLOSED">5</LOWER-LIMIT>
+                        <UPPER-LIMIT INTERVAL-TYPE="CLOSED">5</UPPER-LIMIT>
+                        <COMPU-CONST>
+                          <VT>RDR_06</VT>
+                        </COMPU-CONST>
+                      </COMPU-SCALE>
+                      <COMPU-SCALE>
+                        <LOWER-LIMIT INTERVAL-TYPE="CLOSED">6</LOWER-LIMIT>
+                        <UPPER-LIMIT INTERVAL-TYPE="CLOSED">6</UPPER-LIMIT>
+                        <COMPU-CONST>
+                          <VT>RDR_07</VT>
+                        </COMPU-CONST>
+                      </COMPU-SCALE>
+                      <COMPU-SCALE>
+                        <LOWER-LIMIT INTERVAL-TYPE="CLOSED">7</LOWER-LIMIT>
+                        <UPPER-LIMIT INTERVAL-TYPE="CLOSED">7</UPPER-LIMIT>
+                        <COMPU-CONST>
+                          <VT>RDR_08</VT>
+                        </COMPU-CONST>
+                      </COMPU-SCALE>
+                    </COMPU-SCALES>
+                  </COMPU-INTERNAL-TO-PHYS>
+                </COMPU-METHOD>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>
