@@ -1,0 +1,175 @@
+
+# Use half of available workers by default. This helps keep the PC usable during builds.
+build --jobs="HOST_CPUS*.5"
+
+# Use the new dependency handler: bzlmod
+common --enable_bzlmod
+common --lockfile_mode=off  # We will probably want to switch this to 'refresh', but not until we have a stable working solution.
+
+# If true, Bazel picks up host-OS-specific config lines from bazelrc files.
+common --enable_platform_specific_config
+
+# Flag Aliases - MUST document additions in the README.md file at the root of the repo!
+build --flag_alias=variant=@build_config//:variant
+common --flag_alias=chandra_hw_rev=//software/r52:boardVersion
+common --flag_alias=mars_hw_rev=//:mars_hw_revision
+common --flag_alias=bbe_asic_fpga=@build_config//:asic_fpga
+build --flag_alias=enable_chirp_profiling=//software/bbe32/src:enable_chirp_timing
+build --flag_alias=enable_cdc=//software/bbe32/src:enable_cdc
+build --flag_alias=alignment_nvm_test=@appl_inclusion_dep//:alignment_nvm_test
+build --flag_alias=disable_stack_monitor_r52=//software/r52/r52_stack:disable_stack_monitor_r52
+build --flag_alias=disable_pfm=//software/r52/program_flow_monitor:disable_pfm
+build --flag_alias=enable_adc_logging=@spbb//modules/range_process:enable_adc_logging
+build --flag_alias=enable_transpose_cfar=@bb_cfg//:enable_transpose_cfar_flag
+build --flag_alias=enable_bench_testing=@appl_inclusion_dep//:enable_bench_testing
+build --flag_alias=enable_id_testing=@appl_inclusion_dep//:enable_id_testing
+common --flag_alias=psp_sil_config=@appl_inclusion_dep//:enable_psp_sil
+build --flag_alias=enable_sqt_testcases=//:SQT_Test_Cases
+build --flag_alias=enable_sit_testcases=//:SIT_Test_Cases
+build --flag_alias=enable_debug=//:DEBUG_Enable
+build --flag_alias=enable_sqt_artiemem_fault=//:SQT_ARTIEMEM_FAULT
+build --flag_alias=enable_features=//:Feature_functions
+common --flag_alias=Integration_Testing=//:Integration_Testing
+common --flag_alias=Anglefinding_IT=//:Anglefinding_IT
+common --flag_alias=AF_IT=//:Anglefinding_IT
+common --flag_alias=Radar_capability_IT=//:Radar_capability_IT
+common --flag_alias=RC_IT=//:Radar_capability_IT
+common --flag_alias=FirstPass_IT=//:FirstPass_IT
+common --flag_alias=FP_IT=//:FirstPass_IT
+build --flag_alias=enable_XCP_FAULT_INJECTION_testcases=//:XCP_FAULT_INJECTION_Test_Cases
+build --flag_alias=disable_int_wdg=//:Disable_int_Wdg
+common --flag_alias=tracker_variant=@emb_tracker_wrapper//:tracker_variant
+common --flag_alias=enable_pc_resim_tracker=@emb_tracker_wrapper//:enable_pc_resim_tracker
+common --flag_alias=stub_tracker=@emb_tracker_wrapper//:stub_tracker
+common --flag_alias=Aptiv_Official_Release=//:Aptiv_Official_Release
+build --flag_alias=veh_com=//software/r52/autosar/swc/PLT_SWC/SWC_PLT_Appl_Communication:veh_com
+build --flag_alias=enable_stream_generation=//:stream_generation_enabled
+build --flag_alias=enable_uart=//:enable_uart
+build --flag_alias=enable_phy_100Mb=//:enable_phy_100Mb
+build --flag_alias=enable_mcal_test=//:enable_mcal_test
+build --flag_alias=disable_all_logging_streams_tx=//software/r52/autosar/swc/PLT_SWC/SWC_PLT_CDD_Logging:disable_all_logging_streams_tx
+build --flag_alias=disable_udp_logging_streams_tx=//software/r52/autosar/swc/PLT_SWC/SWC_PLT_CDD_Logging:disable_udp_logging_streams_tx
+build --flag_alias=enable_stream_rx=@sh_module_cfg//:enable_stream_rx
+
+# Structure byte-order macro
+# This macro is required by several stream-headers and SMC/USC.
+# Use --conlyopt/--cxxopt (not --copt) to avoid passing -D to ASM compile actions.
+build --conlyopt=-DLITTLE_ENDIAN_STRUCTURE
+build --cxxopt=-DLITTLE_ENDIAN_STRUCTURE
+# For custom Starlark preprocessing rules (e.g. tools/python/arxmlParser/cc_preprocess.bzl)
+# that do not automatically inherit --copt/--host_copt, also expose the macro via --define.
+build --define=LITTLE_ENDIAN_STRUCTURE=
+
+# If you use @bazel_platform//tools/gcovr/... rules, you must specify this flag.
+# Why: when there's a testonly=1 rule (named A) that depends on cc_test rule (named B)
+# and we try to build A and B simultaneously (bazel build ...), we get error
+# similar to https://github.com/bazelbuild/bazel/issues/14294
+# Use this flag to fix the error.
+build --experimental_retain_test_configuration_across_testonly
+
+build --experimental_cc_implementation_deps
+
+build --spawn_strategy=local
+# discard the PATH from the environment for windows platform.
+# In order to ensure hermetic builds, we discard the PATH so that Bazel can't
+# pick up any tools from the local installation.
+# TODO: Once fixed, remove the semicolon. This is a workaround for a Bazel bug,
+# see https://github.com/bazelbuild/bazel/issues/15364.
+build:windows --action_env=PATH=;
+# We have to hard code the PATH on linux so remote caches are shared.
+# Bazel needs gcc to opperate, so we cannot make it blank.
+# Linux tools should reside in one of the below directories, if they're needed from the system,
+# but this should be avoided at all reasonable costs.
+build:linux --action_env=PATH="/bin:/usr/bin"
+
+# enable platform-based toolchain resolution
+# This disables some legacy code which we want to avoid using.
+build --incompatible_enable_cc_toolchain_resolution
+
+# disable implicit export of files
+# https://github.com/bazelbuild/bazel/issues/10225
+build --incompatible_no_implicit_file_export
+# Use the default Bazel C++ toolchain to build the tools used during the
+# build.
+build --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
+
+# causes output dir name to use a non-default platform name instead of the CPU.
+build --experimental_platform_in_output_dir
+
+# Configure Java Development Kit
+# This fixes an error when a target executes another target with coverage and
+# maybe some other cases. The error you get is "Auto-Configuration Error: Cannot
+# find Java binary bin/java.exe in ...".
+# TODO: It's unclear whether this is a proper fix or just a workaround depending
+# on non-hermetic builds.
+build --java_runtime_version=remotejdk_11
+
+# Keep rules_python config aligned with tools/python/requirements.txt lockfile.
+common --@rules_python//python/config_settings:python_version=3.10.13
+
+# --toolchain_resolution_debug should be uncommented if you need to debug why a specific toolchain is used
+# It will print debugging info on how Bazel selects its toolchain
+# build --toolchain_resolution_debug=.*
+
+build --stamp # Always stamp the builds
+build:windows --workspace_status_command=software/common/versions/linkstamp/gen_workspace_status.bat
+build:linux --workspace_status_command=software/common/versions/linkstamp/gen_workspace_status.sh
+
+# Enable adc logging
+build --enable_adc_logging=True
+
+# disable default C++ toolchains. we always provide our own!
+common:windows --repo_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+
+# Configurations
+build:flr8    --variant=flr8
+build:srr8p   --variant=srr8p
+
+# Import the remote cache configuration from this file
+import %workspace%/tools/bazel/config/arb_cache.bazelrc
+
+# Custom build configurations
+build:use_test_pattern_gen --copt="-DMIPI_HELPERS_DEBUG_ENABLE"
+build:enable_mars_adc_test --@spbb//modules/range_process:enable_adc_logging=True
+build:configure_MARS_test_pattern --copt="-DMARS_TEST_PATTERN_ENABLE"
+
+#configuration for RESI mode where data injection happens
+build:configure_RESI_MODE --copt="-DRESI_MODE_ENABLE"
+
+#configuration for MARS sample revision version: Default is B0 revision
+build:mars_a_sample --//:mars_hw_revision=A0
+build:mars_b_sample --//:mars_hw_revision=B0
+# Configuration for tests
+test --copt="-fno-exceptions"
+# Set compiler optimization to 'None' (-O0).  Setting to 'debug' (-Og) would be better, but that breaks some UTs.
+test --copt="-O0"
+# Set this flag to allow tracker UT's to pass, can be overridden locally
+test --tracker_variant=AL
+# for unit test purposes, force radar math to use bbe32 cstub variant
+test --@rm//:variant=bbe32 --@rm//:use_bbe_cstub_simulator=True
+
+# We always want to use gcovr for UT:
+build --@bazel_platform//quality/ut:coverage_mode=gcovr
+# Windows runs into long path issues for coverage reports, so set temp dir to C:/tmp
+test:windows --@bazel_platform//quality/ut:tmp_dir=C:/tmp
+
+# Look at our custom registry instead of the Bazel Central Registry
+common --registry=https://jfrog.asux.aptiv.com/artifactory/bazel_platform-bcr-fork
+common --registry=https://raw.aptv.ghe.com/GPO/core-radar-bazel-registry/dev/
+common --registry=https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Bazel_Registry/
+# Also add the rapid build registry to pull bazel_platform (soon to be re-named rapid_build_platform)
+common --registry=https://jfrog.asux.aptiv.com/artifactory/rapid_build_platform_registry
+
+# Import settings for Coverity testing
+import %workspace%/tools/bazel/config/coverity.bazelrc
+
+# Import embedded library bazelrc
+import %workspace%/sil/emb_lib/.bazelrc
+
+# Import a user bazel config file, if available.
+# Flags from user.bazelrc will override the ones in this file
+try-import %workspace%/user.bazelrc
+
+# Suppress style warnings in external SIP code that do not affect functionality
+# -Wparentheses-equality: redundant parentheses in if conditions (e.g., if( (x == 0u) ))
+build --copt="-Wno-parentheses-equality"
