@@ -1,0 +1,829 @@
+/*@!Encoding:1252*/
+includes
+{
+
+}
+
+variables
+{
+  const char FALSE=0;
+  const char TRUE=1;
+
+  Dword gSocket;
+  word Port_Num_Source = 65000; //Added by Areef
+  word Port_Num_Destination = 5557;//Added by Areef
+  /*Minumum lenth of Ethernt frame is 60 bytes,
+  Therefore XCP frame is of 18 bytes*/
+  byte XCP_Req[12]; /*XCP Request Frame(Header + Payload) */
+  byte XCP_Expected_Response[12];
+  byte RxBuffer[1500];
+
+
+   dword page;
+  /*usc_smc_ variables */
+  /* Download file names */
+  char Download_Filename[80]="smc_cal.ptp";
+  /* Static Vars for reading ptp file */
+  dword File_Handle;
+  dword dupl_Remaining_bytes;
+  dword no_of_times_992=0;
+  dword Remaining_bytes;
+  char PTP_Line[256];
+  Dword BufferCount;
+  dword Download_Block_Index=0;
+  Dword dex, idx, rate;
+  dword Buffer_Index;
+  dword x=0;
+  long ptp_addr = 0x3D0000,ptp_start_addr = 0;
+  const dword MAX_PTP_BLOCK_SIZE = 0x3F0000;
+  byte Download_Block_Buffer[MAX_PTP_BLOCK_SIZE];
+  byte Ptp_Char_Index;
+  dword total_no_of_remaining_bytes;
+  dword byte_of_992_chunk;
+
+  /*ethernet Packet*/
+  ethernetPacket pkt;
+  dword GlobalDataIndex=0;
+  byte usc_smc_add_3;
+  byte usc_smc_add_2;
+  byte usc_smc_add_1;
+  byte usc_smc_add_0;
+  byte usc_smc_len_3;
+  byte usc_smc_len_2;
+  byte usc_smc_len_1;
+  byte usc_smc_len_0;
+  byte sector_no =0;
+  enum NextCommand
+    {
+      XCP_CONNECT =0,
+      XCP_PCAN_DISABLE =1,
+      XCP_GET_SECTOR_START_ADDRESS =2,
+      XCP_GET_SECTOR_LENGTH_INFO =3,
+      XCP_SET_MTA_TO_CLEAR =4,
+      XCP_PROGRAM_START =5,
+      XCP_PROGRAM_CLEAR_USC_AREA =6,
+      XCP_PROGRAM =7,
+      XCP_PROGRAMNEXT =8,
+      XCP_RESET_ECU =9,
+      XCP_DISSCONNECT = 10
+    };
+    byte next_cmd=XCP_CONNECT;
+    msTimer myTimer;
+}
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Download_PTP_File                                                                          */
+/*  description: downloads the ptp into the big buffer array                                              */
+/*--------------------------------------------------------------------------------------------------------*/
+void Download_PTP_File(void)
+{
+
+    long ret_val;
+   dword ind =0;
+
+    /* Open file in ASCII mode(0) */
+    long ret_val;
+    char absPath[256]; // Buffer to hold the absolute path
+    GetUserFilePath(Download_Filename, absPath, elcount(absPath));
+    // Print the retrieved path to the Write window
+    write("The current configuration file location is in the path(Ensure the usc/smc files are located here): %s", absPath);
+
+     File_Handle = openFileRead(Download_Filename,0);
+     if (File_Handle == 0)
+     {
+        write("Error opening file %s", Download_Filename);
+        stop();
+     }
+     else
+     {
+        write ("PTP file %s opened and reading the data",Download_Filename);
+         /* Read the first line of the PTP file */
+         fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+
+	      /* Keep reading lines of ptp file */
+        Get_PTP_Block();
+
+	     /* reset index to read bytes from download_block_buffer */
+	     Download_Block_Index = 0;
+
+       BufferCount =     (Buffer_Index);
+
+      /* if(Upload_Flag == TRUE)*/
+      rate = 0;
+
+      Remaining_bytes = Buffer_Index ;
+      x=0;
+
+      write("remaining bytes = %d",Remaining_bytes);
+
+       //snprintf(Download_Block_Buffer, elcount(Download_Block_Buffer), "%.2X ", response[0]);  // byte to HEX convert
+      //write("remaining bytes = %d",Remaining_bytes);
+
+      /* below is the condition check for the CAN frame*/
+       Intialise_Download_Variable(Remaining_bytes);
+
+      /* below is the condition check for the CAN frame*/
+      dupl_Remaining_bytes = Remaining_bytes;
+     /* y=(Remaining_bytes/6);
+        if((Remaining_bytes%6)!=0)
+         {
+           y=y+1;
+         }*/
+     no_of_times_992 = (Remaining_bytes/255);
+        if((Remaining_bytes%248)!=0)
+         {
+            no_of_times_992= no_of_times_992+1;
+         }
+
+        write("no_of_times_992 = %d",no_of_times_992);
+        //connect_cmd();
+      // Send_XCP_PCAN_Disable_Request();
+       // setTimer(abhishek,30000);
+
+     // setTimer(program_clear,28000);
+      //setTimer(program_start,27000);
+        //setTimer(abhishek1,26000);
+         ethernet_config();
+         XCP_Connect();
+
+     }
+}
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Get_PTP_Block                                                                              */
+/*  description: fills the value to be sent on the CAN for Get_PTP_Block request                          */
+/*--------------------------------------------------------------------------------------------------------*/
+void Get_PTP_Block(void)
+{
+   byte Count, End_of_File,New_Block_Detected;
+   byte First_Loop;
+   dword Address;
+   dword Eexpected_Address, Start_Address;
+   word i, No_Of_Data_Bytes_On_Line;
+   First_Loop = TRUE;
+   Count = 0;
+   New_Block_Detected = FALSE;
+   End_of_File = FALSE;
+   Buffer_Index = 0;
+
+   while(!End_of_File)
+   {
+    // write("\n Inside ptp block");
+      if( (PTP_Line[0]=='S') && (PTP_Line[1]=='3') )
+	    {
+          /* Read line length.  To get # of data bytes, */
+		      /* subtract 5 bytes (4 for address and 1 for checksum) */
+		       No_Of_Data_Bytes_On_Line = char_to_digit(PTP_Line[3]) + 16 * char_to_digit(PTP_Line[2]) - 5;
+          /* Check if number of bytes matches length of line. */
+			   /* Subtract 15 = record (2 chars) + Num_Bytes (2 chars) + checksum (2 chars) + address (8 chars) + new line char */
+          if( ((strlen(PTP_Line) - 15)/2) != No_Of_Data_Bytes_On_Line )
+		      {
+		           write ("Error:  ptp line length mismatch.");
+			         write("%d %d",strlen(PTP_Line), No_Of_Data_Bytes_On_Line);
+               End_of_File = TRUE;
+
+          }
+		      else
+          {
+
+			        Address = char_to_digit(PTP_Line[4]);
+			        Address = 16*Address + char_to_digit(PTP_Line[5]);
+			        Address = 16*Address + char_to_digit(PTP_Line[6]);
+			        Address = 16*Address + char_to_digit(PTP_Line[7]);
+			        Address = 16*Address + char_to_digit(PTP_Line[8]);
+			        Address = 16*Address + char_to_digit(PTP_Line[9]);
+              Address = 16*Address + char_to_digit(PTP_Line[10]);
+			        Address = 16*Address + char_to_digit(PTP_Line[11]);
+			        if( First_Loop)
+              {
+			           First_Loop = FALSE;
+			           Start_Address = Address;
+                       ptp_start_addr = Address;
+                       ptp_addr = ptp_start_addr;
+			           Eexpected_Address = Address;
+                       //write("start_ptp_addr %x ptp_addr %x",ptp_addr,ptp_start_addr);
+               }
+               if(Eexpected_Address != Address)
+               {
+                 New_Block_Detected = TRUE;
+               }
+              else
+              {
+
+                  //write (" Ptp Length matched.");
+                  /* Read pairs of ASCII chars into binary bytes and store to buffer */
+                  /* For S3 record, data starts at byte 12 */
+                  Ptp_Char_Index = 12;
+				          for( i = 0; i < No_Of_Data_Bytes_On_Line; i++ )
+		              {
+                      Download_Block_Buffer[Buffer_Index++] = 16*char_to_digit(PTP_Line[Ptp_Char_Index++]) + char_to_digit(PTP_Line[Ptp_Char_Index++]);
+		              }
+
+				          Eexpected_Address = Eexpected_Address + No_Of_Data_Bytes_On_Line;
+				          End_of_File = !fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+
+
+              }
+          }
+      }
+
+
+
+      else if( (PTP_Line[0]=='S') && (PTP_Line[1]=='2') )
+	    {
+          /* Read line length.  To get # of data bytes, */
+		      /* subtract 4 bytes (3 for address and 1 for checksum) */
+		       No_Of_Data_Bytes_On_Line = char_to_digit(PTP_Line[3]) + 16 * char_to_digit(PTP_Line[2]) - 4;
+          /* Check if number of bytes matches length of line. */
+			   /* Subtract 13 = record (2 chars) + Num_Bytes (2 chars) + checksum (2 chars) + address (6 chars) + new line char */
+          if( ((strlen(PTP_Line) - 13)/2) != No_Of_Data_Bytes_On_Line )
+		      {
+
+			         write("%d %d",strlen(PTP_Line), No_Of_Data_Bytes_On_Line);
+               End_of_File = TRUE;
+          }
+		      else
+          {
+     //         write (" Inside S2 Block.Ptp Length matched.");
+			        Address = char_to_digit(PTP_Line[4]);
+			        Address = 16*Address + char_to_digit(PTP_Line[5]);
+			        Address = 16*Address + char_to_digit(PTP_Line[6]);
+			        Address = 16*Address + char_to_digit(PTP_Line[7]);
+			        Address = 16*Address + char_to_digit(PTP_Line[8]);
+			        Address = 16*Address + char_to_digit(PTP_Line[9]);
+       //       write ("Address = %x ",Address );
+
+			        if( First_Loop)
+                   {
+			           First_Loop = FALSE;
+			           Start_Address = Address;
+                       ptp_start_addr = Address;
+                       ptp_addr = ptp_start_addr;
+			           Eexpected_Address = Address;
+                       // write ("I am in first loop.");
+                  }
+          //      write ("Address = %x ",Address );
+          //      write ("expected address = %x",Eexpected_Address );
+               if(Eexpected_Address != Address)
+               {
+                 New_Block_Detected = TRUE;
+            //     write ("New block detected ");
+               }
+              else
+              {
+
+                  /* Read pairs of ASCII chars into binary bytes and store to buffer */
+                  /* For S2 record, data starts at byte 10 */
+                  Ptp_Char_Index = 10;
+				          for( i = 0; i < No_Of_Data_Bytes_On_Line; i++ )
+		              {
+                      Download_Block_Buffer[Buffer_Index++] = 16*char_to_digit(PTP_Line[Ptp_Char_Index++]) + char_to_digit(PTP_Line[Ptp_Char_Index++]);
+		              }
+
+				          Eexpected_Address = Eexpected_Address + No_Of_Data_Bytes_On_Line;
+				          End_of_File = !fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+         //         write("End_of_File = %d", End_of_File);
+
+
+
+              }
+
+          }
+      }
+      else if( (PTP_Line[0]=='S') && (PTP_Line[1]=='1') )
+	    {
+          /* Read line length.  To get # of data bytes, */
+		      /* subtract 3 bytes (2 for address and 1 for checksum) */
+		       No_Of_Data_Bytes_On_Line = char_to_digit(PTP_Line[3]) + 16 * char_to_digit(PTP_Line[2]) - 3;
+          /* Check if number of bytes matches length of line. */
+			   /* Subtract 11 = record (2 chars) + Num_Bytes (2 chars) + checksum (2 chars) + address (4 chars) + new line char */
+          if( ((strlen(PTP_Line) - 11)/2) != No_Of_Data_Bytes_On_Line )
+		      {
+		           write ("Error:  ptp line length mismatch.");
+			         write("%d %d",strlen(PTP_Line), No_Of_Data_Bytes_On_Line);
+               End_of_File = TRUE;
+          }
+		      else
+          {
+			        Address = char_to_digit(PTP_Line[4]);
+			        Address = 16*Address + char_to_digit(PTP_Line[5]);
+			        Address = 16*Address + char_to_digit(PTP_Line[6]);
+			        Address = 16*Address + char_to_digit(PTP_Line[7]);
+			        if( First_Loop)
+                   {
+			           First_Loop = FALSE;
+			           Start_Address = Address;
+                       ptp_start_addr = Address;
+                       ptp_addr = ptp_start_addr;
+			           Eexpected_Address = Address;
+                    }
+               if(Eexpected_Address == Start_Address)
+               {
+
+                  /* Read pairs of ASCII chars into binary bytes and store to buffer */
+                  /* For S2 record, data starts at byte 8 */
+                  Ptp_Char_Index = 8;
+				          for( i = 0; i < No_Of_Data_Bytes_On_Line; i++ )
+		              {
+                      Download_Block_Buffer[Buffer_Index++] = 16*char_to_digit(PTP_Line[Ptp_Char_Index++]) + char_to_digit(PTP_Line[Ptp_Char_Index++]);
+		              }
+
+				          Eexpected_Address = Eexpected_Address + No_Of_Data_Bytes_On_Line;
+				          End_of_File = !fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+
+               }
+
+
+              else
+              {
+                   New_Block_Detected = TRUE;
+              }
+          }
+      }
+      else if( (PTP_Line[0]=='S') && (PTP_Line[1]=='0'))
+      {
+   //      write(" I am here in S0");
+        /* Skip S0 recod, Go to next line */
+        End_of_File = !fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+       }
+      else if( (PTP_Line[0]=='S') && (PTP_Line[1]=='8'))
+      {
+        /* Skip S8 recod, Go to next line */
+        End_of_File = !fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+   //     write("End of file in s8 = %d",End_of_File);
+    //    write(" I am here in S8");
+       }
+      else if( (PTP_Line[0]=='S') && (PTP_Line[1]=='7'))
+      {
+        /* Skip S7 recod, Go to next line */
+        End_of_File = !fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+       }
+      else
+      {
+          write ("Warning:  Unknown PTP Record type %c %c",PTP_Line[0], PTP_Line[1]);
+			    write ("Skipping line");
+		    	End_of_File = !fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+      }
+
+	  }
+   write("PTP read is completed and total read bytes are %d", Buffer_Index);
+}
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Intialise_Download_Variable                                                                */
+/*  description: initialises the variables used for fast programing                                       */
+/*--------------------------------------------------------------------------------------------------------*/
+void Intialise_Download_Variable(long remaining_byte)
+{
+  total_no_of_remaining_bytes = remaining_byte;
+
+  if(total_no_of_remaining_bytes != 0)
+  {
+        if(total_no_of_remaining_bytes < 194)
+        {
+          byte_of_992_chunk = total_no_of_remaining_bytes;
+        }
+        else
+        {
+          byte_of_992_chunk = 194;
+        }
+  }
+}
+
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  char_to_digit                                                                              */
+/*  description: converts data from char type to decimal type                                             */
+/*--------------------------------------------------------------------------------------------------------*/
+
+int char_to_digit(char ch)
+{
+   int  digit;
+   digit = 0;
+
+   if ( ch >= '0' && ch <= '9')
+   {
+      digit = ch - '0';
+   }
+   if ( ch >= 'a' && ch <= 'f')
+   {
+      digit = (ch - 'a') + 10;
+   }
+   if ( ch >= 'A' && ch <= 'F')
+   {
+      digit = (ch - 'A') + 10;
+   }
+   return digit;
+}
+
+void ethernet_config()
+{
+  pkt.udp.init();
+  pkt.source=ethGetMacAddressAsNumber("02:16:81:31:03:00");               // Source MAC
+  pkt.destination=ethGetMacAddressAsNumber("28:63:BD:23:BB:4A");  // Destination MAC
+  pkt.ipv4.source.ParseAddress("192.168.1.40");
+  pkt.ipv4.destination.ParseAddress("192.168.1.74");            //Destination IP
+  pkt.udp.source=65000;                                     //Source port
+  pkt.udp.destination=5557;                        //destination port
+
+}
+
+void XCP_Connect()
+{
+
+  int i=0;
+  int Index;
+  long table=0;
+  byte XCP_Request[12]={0x08,0x00,0x00,0x00,0xFF,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+  next_cmd = XCP_GET_SECTOR_START_ADDRESS;
+  pkt.udp.SetData( 0, XCP_Request, elcount(XCP_Request) );
+  pkt.CompletePacket();
+  output(pkt);   //// Output packet from ETH ->LIN
+  write("Connect\n"  );
+
+}
+
+void XCP_Get_Sector_info_starting_address()
+{
+
+  int i=0;
+  int Index;
+  long table=0;
+  byte XCP_Request[7]={0x08,0x00,0x00,0x00,0xCD,0x00,0x00};
+  next_cmd = XCP_GET_SECTOR_LENGTH_INFO;
+  XCP_Request[6] = sector_no;
+  pkt.udp.SetData( 0, XCP_Request, elcount(XCP_Request) );
+  pkt.CompletePacket();
+  output(pkt);   //// Output packet from ETH ->LIN
+
+}
+
+void XCP_Get_Sector_info_length()
+{
+
+  int i=0;
+  int Index;
+  long table=0;
+  byte XCP_Request[7]={0x08,0x00,0x00,0x00,0xCD,0x01,0x00};
+  next_cmd = XCP_SET_MTA_TO_CLEAR;
+  XCP_Request[6] = sector_no;
+  pkt.udp.SetData( 0, XCP_Request, elcount(XCP_Request) );
+  pkt.CompletePacket();
+  output(pkt);   //// Output packet from ETH ->LIN
+
+}
+
+void XCP_SET_MTA_Address()
+{
+
+  int i=0;
+  int Index;
+  long table=0;
+  byte XCP_Request[12]={0x08,0x00,0x00,0x00,0xF6,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+  next_cmd = XCP_PROGRAM_START;
+  XCP_Request[8] = usc_smc_add_3;
+  XCP_Request[9] = usc_smc_add_2;
+  XCP_Request[10] = usc_smc_add_1;
+  XCP_Request[11] = usc_smc_add_0;
+  pkt.udp.SetData( 0, XCP_Request, elcount(XCP_Request) );
+  pkt.CompletePacket();
+  output(pkt);   //// Output packet from ETH ->LIN
+
+}
+
+void XCP_ProgramStart()
+{
+
+  int i=0;
+  int Index;
+  long table=0;
+  byte XCP_Request[5]={0x08,0x00,0x00,0x00,0xD2};
+  next_cmd = XCP_PROGRAM_CLEAR_USC_AREA;
+  pkt.udp.SetData( 0, XCP_Request, 5 );
+  pkt.CompletePacket();
+  output(pkt);   //// Output packet from ETH ->LIN
+
+}
+
+void XCP_Program_Clear()
+{
+
+  int i=0;
+  int Index;
+  long table=0;
+  byte XCP_Request[12]={0x08,0x00,0x00,0x00,0xD1,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+  next_cmd = XCP_PROGRAM;
+  XCP_Request[8] = usc_smc_len_3;
+  XCP_Request[9] = usc_smc_len_2;
+  XCP_Request[10] = usc_smc_len_1;
+  XCP_Request[11] = usc_smc_len_0;
+  pkt.udp.SetData( 0, XCP_Request, elcount(XCP_Request) );
+  pkt.CompletePacket();
+  output(pkt);   //// Output packet from ETH ->LIN
+
+}
+
+void XCP_Program()
+{
+
+  int i=0;
+  int Index;
+  long table=0;
+  byte index = 0;
+  byte XCP_Request[260];//={0x08,0x00,0x00,0x00,0xD1,0x00,0x00,0x00,0x00,0x00,0x02,0x00};
+  next_cmd = XCP_PROGRAMNEXT;
+  XCP_Request[0] = 0x08;
+  XCP_Request[1] = 0x00;
+  XCP_Request[2] = 0x00;
+  XCP_Request[3] = 0x00;
+  XCP_Request[4] = 0xD0;
+  XCP_Request[5] = 0xFF;
+  for(index =0; index < 0xFD; index++)
+  {
+    XCP_Request[6+index] = Download_Block_Buffer[GlobalDataIndex];
+    GlobalDataIndex++;
+  }
+  pkt.udp.SetData( 0, XCP_Request, elcount(XCP_Request) );
+  pkt.CompletePacket();
+  output(pkt);   //// Output packet from ETH ->LIN
+
+}
+
+void XCP_Programnext()
+{
+
+  int i=0;
+  int Index;
+  long table=0;
+  byte index = 0;
+  byte XCP_Request[260];//={0x08,0x00,0x00,0x00,0xD1,0x00,0x00,0x00,0x00,0x00,0x02,0x00};
+  next_cmd = XCP_RESET_ECU;
+  XCP_Request[0] = 0x08;
+  XCP_Request[1] = 0x00;
+  XCP_Request[2] = 0x00;
+  XCP_Request[3] = 0x00;
+  XCP_Request[4] = 0xCA;
+  XCP_Request[5] = 0x02;
+  for(index =0; index < 0x03; index++)
+  {
+    XCP_Request[6+index] = Download_Block_Buffer[GlobalDataIndex];
+    GlobalDataIndex++;
+  }
+  pkt.udp.SetData( 0, XCP_Request, elcount(XCP_Request) );
+  pkt.CompletePacket();
+  output(pkt);   //// Output packet from ETH ->LIN
+
+
+  if(GlobalDataIndex>=Remaining_bytes)
+  {
+    next_cmd = XCP_RESET_ECU;
+    write("Bytes to be Flashed %d",Remaining_bytes);
+    write("Bytes Flashed %d",GlobalDataIndex);
+    write("Flashing Completed Sucessfully");
+  }
+  else{
+    next_cmd = XCP_PROGRAM;
+  }
+
+
+}
+void XCP_Program_Reset()
+{
+
+  int i=0;
+  int Index;
+  long table=0;
+  byte XCP_Request[12]={0x08,0x00,0x00,0x00,0xCF,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+  next_cmd = XCP_DISSCONNECT;
+  pkt.udp.SetData( 0, XCP_Request, elcount(XCP_Request) );
+  pkt.CompletePacket();
+  output(pkt);   //// Output packet from ETH ->LIN
+  GlobalDataIndex = 0;
+
+}
+
+on ethernetPacket*
+{
+  word i=0,j=0,k=0;
+  byte Arra[1500];
+  word Ethernet_Type_XCP = 0x0800;
+  word XCP_Response_Received_Length = 0;
+  byte positive = 0;
+  dword delay = 2000000;
+
+
+  if(this.type == Ethernet_Type_XCP && this.byte(20)== 0X15 && this.byte(21)== 0XB5 && this.byte(22)== 0XFD && this.byte(23)== 0XE8 && (this.dir == rx))
+  {
+
+    //this.
+    /*if(this.ipv4.IsAvailable())
+    {
+    positive = this.PDUCount();
+      write("this.PDUCount %d\n" , positive );
+    }
+    */
+
+    //IP_Addr= this.byte(19)<<24 | this.byte(18) <<16 | this.byte(17) <<8 | this.byte(16);
+    //Length = this.byte(25);
+    XCP_Response_Received_Length = this.udp.byteLength;
+
+    this.udp.GetData(0, Arra, 1000);
+     j = this.udp.byteLength;
+     k = this.xcp.byteLength;
+    write("v = %d" , this.byte(25));
+    //write("v = %d" , j);
+    //write("v = %d" , k);
+
+    /*for(i=0;i<(j-4);i++)
+    {
+      write(" %X", Arra[i+4]);
+    }
+    positive = this.PDUCount();
+      write("this.PDUCount %d\n" , positive );
+  */
+
+
+    //positive = Arra[4];
+    if(Arra[4] == 0xFF && (this.PDUCount() == 0))
+    {
+      positive = this.PDUCount();
+     // write("this.PDUCount %d\n" , positive );
+      switch(next_cmd)
+      {
+        case  XCP_GET_SECTOR_START_ADDRESS:
+        {
+          //XCP_Get_Sector_info_starting_address();
+          setTimer(myTimer, 1);
+          Arra[4] = 0x00;
+          break;
+        }
+        case  XCP_GET_SECTOR_LENGTH_INFO:
+        {
+          usc_smc_add_3 = Arra[8];
+          usc_smc_add_2 = Arra[9];
+          usc_smc_add_1 = Arra[10];
+          usc_smc_add_0 = Arra[11];
+          //XCP_Get_Sector_info_length();
+          setTimer(myTimer, 1);
+          Arra[4] = 0x00;
+          break;
+        }
+        case  XCP_SET_MTA_TO_CLEAR:
+        {
+          //XCP_SET_MTA_Address();
+          usc_smc_len_3 = Arra[8];
+          usc_smc_len_2 = Arra[9];
+          usc_smc_len_1 = Arra[10];
+          usc_smc_len_0 = Arra[11];
+          setTimer(myTimer, 1);
+          break;
+        }
+        case  XCP_PROGRAM_START:
+        {
+          setTimer(myTimer, 1);
+          //XCP_ProgramStart();
+          break;
+        }
+        case  XCP_PROGRAM_CLEAR_USC_AREA:
+        {
+          setTimer(myTimer, 1);
+          //XCP_Program_Clear();
+          break;
+        }
+        case XCP_PROGRAM:
+        {
+          setTimer(myTimer, 1);
+         // XCP_Program();
+          break;
+        }
+        case XCP_PROGRAMNEXT:
+        {
+          setTimer(myTimer, 1);
+         // XCP_Programnext();
+          break;
+        }
+        case XCP_RESET_ECU:
+        {
+          setTimer(myTimer, 1);
+         // XCP_Programnext();
+          break;
+        }
+        default :
+        {
+          break;
+        }
+      }
+
+    }
+
+  }
+}
+
+on timer myTimer
+{
+  switch(next_cmd)
+  {
+    case XCP_GET_SECTOR_START_ADDRESS:
+    {
+      XCP_Get_Sector_info_starting_address();
+      break;
+    }
+    case  XCP_GET_SECTOR_LENGTH_INFO:
+    {
+      XCP_Get_Sector_info_length();
+      break;
+    }
+    case XCP_SET_MTA_TO_CLEAR:
+    {
+      XCP_SET_MTA_Address();
+      break;
+    }
+    case  XCP_PROGRAM_START:
+    {
+      XCP_ProgramStart();
+      break;
+    }
+   case  XCP_PROGRAM_CLEAR_USC_AREA:
+    {
+      XCP_Program_Clear();
+      break;
+    }
+    case XCP_PROGRAM:
+    {
+      XCP_Program();
+      setTimer(myTimer, 10);
+      break;
+    }
+    case XCP_PROGRAMNEXT:
+    {
+
+      XCP_Programnext();
+      break;
+    }
+    case XCP_RESET_ECU:
+        {
+          XCP_Program_Reset();
+           break;
+        }
+  }
+
+
+}
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Send_XCP_Connect_Request                                                                   */
+/*  description: fills the value to be sent on the CAN for connect request                                */
+/*--------------------------------------------------------------------------------------------------------*/
+on key 'S'
+{
+ writeLineEx(page,0,"Gen8 USC_SMC Programming");
+  write("\n\n");
+  sector_no =0x00;
+  snprintf(Download_Filename,80,"smc_cal.ptp");
+  //XCP_Connect();
+  setTimer(myTimer, 100);
+  Download_PTP_File();
+}
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Send_XCP_Connect_Request                                                                   */
+/*  description: fills the value to be sent on the CAN for connect request                                */
+/*--------------------------------------------------------------------------------------------------------*/
+on key 'U'
+{
+ writeLineEx(page,0,"GEN8 USC_SMC Programming");
+  write("\n\n");
+  sector_no =0x01;
+  snprintf(Download_Filename,80,"usc_cal.ptp");
+  //XCP_Connect();
+  setTimer(myTimer, 100);
+  Download_PTP_File();
+}
+
+
+
+
+
+on start
+{
+  page =1;
+  writeClear(page);
+  writeTextColor(page,255,0,0);
+  writeLineEx(page,2,"Please keep the proper USC/SMC in the config folder");
+  writeLineEx(page,2,"Please keep the name as usc_cal.ptp/smc_cal.ptp");
+  writeTextColor(page,1,1,1);
+  writeLineEx(page,0,"=================================================");
+  writeLineEx(page,0,"         programing select(USC or SMC)           ");
+  writeLineEx(page,0,"=================================================");
+  writeLineEx(page,1,"Press 'U' for USC");
+  writeLineEx(page,1,"Press 'S' for SMC");
+  writeLineEx(page,0,"=================================================");
+  writeLineEx(page,0,"         programing method(USC or SMC)           ");
+  writeLineEx(page,0,"=================================================");
+  writeLineEx(page,0,"=================================================");
+  writeLineEx(page,0,"           GEN8 Hardware                         ");
+  writeLineEx(page,0,"=================================================");
+  writeLineEx(page,0,"=================================================");
+  writeLineEx(page,0,"=================================================");
+  write("\n\n");
+}

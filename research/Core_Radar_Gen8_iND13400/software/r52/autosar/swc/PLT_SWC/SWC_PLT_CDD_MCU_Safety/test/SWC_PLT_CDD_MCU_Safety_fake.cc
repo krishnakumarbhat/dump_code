@@ -1,0 +1,6 @@
+#include "SWC_PLT_CDD_MCU_Safety_fake.h"
+
+DEFINE_FFF_GLOBALS;
+DEFINE_FAKE_VOID_FUNC(Mcu_Reset, Mcu_reset_T);
+DEFINE_FAKE_VOID_FUNC(MCU_Safety_Init);
+DEFINE_FAKE_VOID_FUNC(MCU_Safety_50ms);

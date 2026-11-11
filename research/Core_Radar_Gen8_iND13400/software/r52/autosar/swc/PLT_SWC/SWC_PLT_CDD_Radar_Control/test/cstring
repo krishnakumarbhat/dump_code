@@ -1,0 +1,7 @@
+/* Stub header for cstring */
+#ifndef _CSTRING_STUB_H
+#define _CSTRING_STUB_H
+
+#include <string.h>
+
+#endif

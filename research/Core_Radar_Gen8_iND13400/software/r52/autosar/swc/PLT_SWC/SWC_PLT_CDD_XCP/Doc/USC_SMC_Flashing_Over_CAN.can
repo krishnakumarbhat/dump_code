@@ -1,0 +1,1191 @@
+/*@!Encoding:1252*/
+variables
+{
+
+    mstimer stopforerasetocomplete;
+    const char FALSE=0;
+    const char TRUE=1;
+
+    message 0x88  XCP_Command = {dlc=8};
+    byte nextflag = 0;
+    char absPath[100], absPathLen =100;
+    Dword dex, idx, rate;
+    Dword BufferCount;
+    dword Remaining_bytes;
+    byte User_Commnad;
+    byte Upload_Flag =0;
+    byte CMD_IDLE=0, CMD_XCP_CONNECT=1, CMD_SET_MIA=2, CMD_DOWNLOAD_USC_CAL=3, CMD_VALIDATE_DOWNLOAD =4;
+    byte CMD_PROGRAM_START = 5,CMD_PROGRAM_CLEAR = 6,CMD_PROGRAM = 7;
+    byte Set_MTA_Next_Cmd = 0;
+    word node_id = 0x362 ;
+    dword x=0;
+    dword y=0;
+    dword no_of_times_992=0;
+    dword temp_remaining_byte =1600;
+    dword ytemp = 0;
+    byte initialise_ytemp = 1;
+    byte flash_count=0;
+    dword dupl_Remaining_bytes;
+    byte asize;
+    byte test;
+    dword MTA_address = 0;//0x4015313c;
+    byte addarray[4];
+    /* Download file names */
+    char Download_Filename[80];
+    char Upload_Filename[80]="upload_usc.txt";
+    byte startup_flag = 1,ptp_upload_complete = FALSE;
+    /* Static Vars for reading ptp file */
+    dword File_Handle;
+    dword logfile_handle;
+    const dword MAX_PTP_BLOCK_SIZE = 0x3F0000;
+    byte Download_Block_Buffer[MAX_PTP_BLOCK_SIZE];
+    byte array[6];
+    dword Download_Block_Index=0;                 /* index into download_block_buffer */
+    dword Upload_Block_index = 0;
+    char PTP_Line[256];
+    byte Ptp_Char_Index;
+    dword Buffer_Index;
+    dword Config_Req_Can_Id = 0x360,Config_Resp_Can_Id = 0x364;
+    byte ptp_upload_remaining_bytes = 0,ptp_program_remaining_bytes = 0;
+    long ptp_addr = 0x3D0000,ptp_start_addr = 0;
+    byte set_mta_flag = 0,ptp_mismatch_flag = FALSE;
+    byte XCP_Resp_Buffer[8];
+    byte some_flag = 0;
+    const byte UPLOAD_MSG_SIZE = 7;
+    const byte PROGRAM_MSG_SIZE = 5;
+    byte XCP_connect_command= 0;
+    byte Flash_start =0;
+    dword page;
+    byte   erase_cmd=0;
+    byte sector_no =0;
+    byte   program_cmd = 0;
+    byte set_mode = 0;
+    byte fast_program =0;
+    dword byte_of_992_chunk;
+    dword byte_of_512_chunk;
+    byte CAN_Byte[8];
+    long no_of_byte_in_CAN_frame=0;
+    long Canid = 0x500;
+    long Canid_resp = 0x540;
+    byte offset =0;
+    word size=0;
+
+    byte can_frame=0;
+    byte XCP_can_frame_sent =0;
+    dword index=0;
+    dword PCAN_burst =0;
+    dword checksum =0;
+    dword total_no_of_remaining_bytes;
+    byte program_count=0;
+    dword cmdID;
+    byte download_size=0xff;//255
+    byte block_size_LSB=0xE0;
+    byte block_size_MSB=0x03;
+
+    byte BlocksSent=0;
+    enum NextCommand
+    {
+      XCP_CONNECT =0,
+      XCP_PCAN_DISABLE =1,
+      XCP_GET_SECTOR_START_ADDRESS =2,
+      XCP_GET_SECTOR_LENGTH_INFO =3,
+      XCP_SET_MTA_TO_CLEAR =4,
+      XCP_PROGRAM_START =5,
+      XCP_PROGRAM_CLEAR_USC_AREA =6,
+      PROGRAM =7,
+      PROGRAMNEXT =8,
+      XCP_RESET_ECU =9,
+      XCP_DISSCONNECT = 10
+    };
+
+    byte next_cmd=XCP_PCAN_DISABLE;
+
+
+    dword MTAAddress;
+    dword Usclength;
+    word GlobalChecksumIndex=0;
+    dword GlobalDataIndex=0;
+    byte ProgramCounter=0;
+    byte No_of_Frames;
+    byte No_of_CAN_Frame_Bytes=0;
+    byte can_ch = 1;
+    byte xcp_VCAN_f=0;
+    dword delay_x;
+    byte usc_smc_add_3;
+    byte usc_smc_add_2;
+    byte usc_smc_add_1;
+    byte usc_smc_add_0;
+    byte usc_smc_len_3;
+    byte usc_smc_len_2;
+    byte usc_smc_len_1;
+    byte usc_smc_len_0;
+    msTimer delay;
+}
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Send_XCP_PCAN_Disable_Request                                                              */
+/*  description: disable the PCAN transmission                                                            */
+/*--------------------------------------------------------------------------------------------------------*/
+void Send_XCP_PCAN_Disable_Request(void)
+{
+    next_cmd = XCP_GET_SECTOR_START_ADDRESS;
+    XCP_Command.CAN = can_ch;
+    XCP_Command.ID = cmdID;
+    XCP_Command.byte(0)= 0xF1 ;
+    XCP_Command.byte(1)= 0x03 ;
+    XCP_Command.byte(2)= 0x02 ;
+    XCP_Command.byte(3)= 0x01 ;
+    XCP_Command.byte(4)= 0x00 ;
+    XCP_Command.byte(5)= 0x00 ;
+    XCP_Command.byte(6)= 0x00 ;
+    XCP_Command.byte(7)= 0x00 ;
+    output(XCP_Command);
+}
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Send_XCP_Get_Sector_Start_Address                                                              */
+/*  description: disable the PCAN transmission                                                            */
+/*--------------------------------------------------------------------------------------------------------*/
+void Send_XCP_Get_Sector_Start_Address(void)
+{
+    next_cmd = XCP_GET_SECTOR_LENGTH_INFO;
+    XCP_Command.CAN = can_ch;
+    XCP_Command.ID = cmdID;
+    XCP_Command.byte(0)= 0xCD ;
+    XCP_Command.byte(1)= 0x00 ; //0-start address of sector,1-length of the sector
+    XCP_Command.byte(2)= sector_no ; //sector no
+    XCP_Command.byte(3)= 0x00 ;
+    XCP_Command.byte(4)= 0x00 ;
+    XCP_Command.byte(5)= 0x00 ;
+    XCP_Command.byte(6)= 0x00 ;
+    XCP_Command.byte(7)= 0x00 ;
+    output(XCP_Command);
+}
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Send_XCP_Get_Sector_Length_Info                                                              */
+/*  description: sector length                                                            */
+/*--------------------------------------------------------------------------------------------------------*/
+void Send_XCP_Get_Sector_Length_Info(void)
+{
+    next_cmd = XCP_SET_MTA_TO_CLEAR;
+    XCP_Command.CAN = can_ch;
+    XCP_Command.ID = cmdID;
+    XCP_Command.byte(0)= 0xCD ;
+    XCP_Command.byte(1)= 0x01 ; //0-start address of sector,1-length of the sector
+    XCP_Command.byte(2)= sector_no ; //sector no
+    XCP_Command.byte(3)= 0x00 ;
+    XCP_Command.byte(4)= 0x00 ;
+    XCP_Command.byte(5)= 0x00 ;
+    XCP_Command.byte(6)= 0x00 ;
+    XCP_Command.byte(7)= 0x00 ;
+    output(XCP_Command);
+}
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Send_XCP_Program_Clear_USC_Area                                                            */
+/*  description: request the ECU to clear the USC area                                                    */
+/*--------------------------------------------------------------------------------------------------------*/
+void Send_XCP_Program_Clear_USC_Area(void)
+{
+ // Usclength = ((usc_len_3 << 24) & 0xFF000000) |  ((usc_len_2 << 16) & 0x00FF0000) | ((usc_len_1 << 8) & 0x0000FF00) | ((usc_len_0) & 0x000000FF);
+
+    next_cmd = PROGRAM;
+    XCP_Command.CAN = can_ch;
+    XCP_Command.ID = cmdID;
+    XCP_Command.byte(0)= 0xD1 ;
+    XCP_Command.byte(1)= 0x00 ; //0-absolute access
+    XCP_Command.byte(2)= 0x00 ;
+    XCP_Command.byte(3)= 0x00 ; //clear rane
+    XCP_Command.byte(4)= usc_smc_len_3;
+    XCP_Command.byte(5)= usc_smc_len_2;
+    XCP_Command.byte(6)= usc_smc_len_1;
+    XCP_Command.byte(7)= usc_smc_len_0;
+    output(XCP_Command);
+
+}
+
+void Send_XCP_Program_Start_Request(void)
+{
+    next_cmd = XCP_PROGRAM_CLEAR_USC_AREA;
+    XCP_Command.CAN = can_ch;
+    XCP_Command.ID = cmdID;
+    XCP_Command.byte(0)= 0xD2 ;
+    XCP_Command.byte(1)= 0x00 ;
+    XCP_Command.byte(2)= 0x00 ;
+    XCP_Command.byte(3)= 0x00 ;
+    XCP_Command.byte(4)= 0x00 ;
+    XCP_Command.byte(5)= 0x00 ;
+    XCP_Command.byte(6)= 0x00 ;
+    XCP_Command.byte(7)= 0x00 ;
+    output(XCP_Command);
+
+}
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Send_XCP_USC_Program_Request                                                               */
+/*  description: Request the ECU to program the data downloaded                                           */
+/*--------------------------------------------------------------------------------------------------------*/
+void Send_XCP_USC_Program_Request(byte counter)
+{
+  if(Remaining_bytes > 0)
+  {
+   // next_cmd= XCP_SEND_BLOCK_DATA;
+  }
+  else
+  {
+    next_cmd = XCP_RESET_ECU;
+  }
+
+  XCP_Command.CAN = can_ch;
+  XCP_Command.ID = cmdID;
+
+  XCP_Command.byte(0)= 0xD0 ;
+  XCP_Command.byte(1)= 0xFF ;
+  XCP_Command.byte(2)= 0x00 ;
+  XCP_Command.byte(3)= counter ;
+  XCP_Command.byte(4)= 0x00 ;
+  XCP_Command.byte(5)= 0x00 ;
+  XCP_Command.byte(6)= 0x00 ;
+  XCP_Command.byte(7)= 0x00 ;
+  output(XCP_Command);
+}
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Send_XCP_Reset_ECU                                                                         */
+/*  description: Request ECU to reset itself after program sequence                                       */
+/*--------------------------------------------------------------------------------------------------------*/
+void Send_XCP_Reset_ECU(void)
+{
+    next_cmd = XCP_DISSCONNECT;
+    XCP_Command.CAN = can_ch;
+    XCP_Command.ID = cmdID;
+    XCP_Command.byte(0)= 0xCF ;
+    XCP_Command.byte(1)= 0x00 ;
+    XCP_Command.byte(2)= 0x00 ;
+    XCP_Command.byte(3)= 0x00 ;
+    XCP_Command.byte(4)= 0x00 ;
+    XCP_Command.byte(5)= 0x00 ;
+    XCP_Command.byte(6)= 0x00 ;
+    XCP_Command.byte(7)= 0x00 ;
+    output(XCP_Command);
+}
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  XCP_Command                                                                                */
+/*  description: fills the value and sends menssage on the CAN                                            */
+/*--------------------------------------------------------------------------------------------------------*/
+XCP_Command (byte byte0,byte byte1,byte byte2,byte byte3,byte byte4,byte byte5,byte byte6,byte byte7)
+{
+    //XCP_Command_Msg.ID = XCP_CMD_MSG_BASE_V + ECU_CONFIG_V;
+    //XCP_Command_Msg.ID = XCP_CMD_MSG_BASE_V + 1;
+    XCP_Command.CAN = can_ch;
+    XCP_Command.byte(0)= byte0 ;
+    XCP_Command.byte(1)= byte1 ;
+    XCP_Command.byte(2)= byte2 ;
+    XCP_Command.byte(3)= byte3 ;
+    XCP_Command.byte(4)= byte4 ;
+    XCP_Command.byte(5)= byte5 ;
+    XCP_Command.byte(6)= byte6 ;
+    XCP_Command.byte(7)= byte7 ;
+
+    output(XCP_Command);
+}
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Download_PTP_File                                                                          */
+/*  description: downloads the ptp into the big buffer array                                              */
+/*--------------------------------------------------------------------------------------------------------*/
+void Download_PTP_File(void)
+{
+
+    long ret_val;
+
+    /* Open file in ASCII mode(0) */
+    /* Open file in ASCII mode(0) */
+    long ret_val;
+    char absPath[256]; // Buffer to hold the absolute path
+    GetUserFilePath(Download_Filename, absPath, elcount(absPath));
+    // Print the retrieved path to the Write window
+    write("The current configuration file location is in the path(Ensure the usc/smc files are located here): %s", absPath);
+
+     File_Handle = openFileRead(Download_Filename,0);
+     if (File_Handle == 0)
+     {
+        write("Error opening file %s", Download_Filename);
+        stop();
+     }
+     else
+     {
+        write ("PTP file %s opened and reading the data",Download_Filename);
+         /* Read the first line of the PTP file */
+         fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+
+	      /* Keep reading lines of ptp file */
+        Get_PTP_Block();
+
+	     /* reset index to read bytes from download_block_buffer */
+	     Download_Block_Index = 0;
+
+       BufferCount =     (Buffer_Index);
+
+      /* if(Upload_Flag == TRUE)*/
+      rate = 0;
+
+      Remaining_bytes = Buffer_Index ;
+      x=0;
+
+      write("remaining bytes = %d",Remaining_bytes);
+      //write("remaining bytes = %d",Remaining_bytes);
+
+      /* below is the condition check for the CAN frame*/
+       Intialise_Download_Variable(Remaining_bytes);
+
+      /* below is the condition check for the CAN frame*/
+      dupl_Remaining_bytes = Remaining_bytes;
+     /* y=(Remaining_bytes/6);
+        if((Remaining_bytes%6)!=0)
+         {
+           y=y+1;
+         }*/
+     no_of_times_992 = (Remaining_bytes/248);
+        if((Remaining_bytes%248)!=0)
+         {
+            no_of_times_992= no_of_times_992+1;
+         }
+
+        write("no_of_times_992 = %d",no_of_times_992);
+        connect_cmd();
+       //Send_XCP_PCAN_Disable_Request();
+       // setTimer(abhishek,30000);
+
+     // setTimer(program_clear,28000);
+     // setTimer(program_start,27000);
+        //setTimer(abhishek1,26000);
+
+     }
+}
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Intialise_Download_Variable                                                                */
+/*  description: initialises the variables used for fast programing                                       */
+/*--------------------------------------------------------------------------------------------------------*/
+void Intialise_Download_Variable(long remaining_byte)
+{
+  total_no_of_remaining_bytes = remaining_byte;
+
+  if(total_no_of_remaining_bytes != 0)
+  {
+        if(total_no_of_remaining_bytes < 194)
+        {
+          byte_of_992_chunk = total_no_of_remaining_bytes;
+        }
+        else
+        {
+          byte_of_992_chunk = 194;
+        }
+  }
+}
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  connect_cmd                                                                                */
+/*  description: fills the value to be sent on the CAN for connect request                                */
+/*--------------------------------------------------------------------------------------------------------*/
+void connect_cmd(void)
+{
+  XCP_Command.FDF=1;
+  XCP_Command.dlc=15;
+  next_cmd= XCP_PCAN_DISABLE;
+  XCP_Command(0xFF,0x00,0x00,0x00,0x00,0x00,0x00,0x00);
+}
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Get_PTP_Block                                                                              */
+/*  description: fills the value to be sent on the CAN for Get_PTP_Block request                          */
+/*--------------------------------------------------------------------------------------------------------*/
+void Get_PTP_Block(void)
+{
+   byte Count, End_of_File,New_Block_Detected;
+   byte First_Loop;
+   dword Address;
+   dword Eexpected_Address, Start_Address;
+   word i, No_Of_Data_Bytes_On_Line;
+   First_Loop = TRUE;
+   Count = 0;
+   New_Block_Detected = FALSE;
+   End_of_File = FALSE;
+   Buffer_Index = 0;
+
+   while(!End_of_File)
+   {
+    // write("\n Inside ptp block");
+      if( (PTP_Line[0]=='S') && (PTP_Line[1]=='3') )
+	    {
+          /* Read line length.  To get # of data bytes, */
+		      /* subtract 5 bytes (4 for address and 1 for checksum) */
+		       No_Of_Data_Bytes_On_Line = char_to_digit(PTP_Line[3]) + 16 * char_to_digit(PTP_Line[2]) - 5;
+          /* Check if number of bytes matches length of line. */
+			   /* Subtract 15 = record (2 chars) + Num_Bytes (2 chars) + checksum (2 chars) + address (8 chars) + new line char */
+          if( ((strlen(PTP_Line) - 15)/2) != No_Of_Data_Bytes_On_Line )
+		      {
+		           write ("Error:  ptp line length mismatch.");
+			         write("%d %d",strlen(PTP_Line), No_Of_Data_Bytes_On_Line);
+               End_of_File = TRUE;
+
+          }
+		      else
+          {
+
+			        Address = char_to_digit(PTP_Line[4]);
+			        Address = 16*Address + char_to_digit(PTP_Line[5]);
+			        Address = 16*Address + char_to_digit(PTP_Line[6]);
+			        Address = 16*Address + char_to_digit(PTP_Line[7]);
+			        Address = 16*Address + char_to_digit(PTP_Line[8]);
+			        Address = 16*Address + char_to_digit(PTP_Line[9]);
+              Address = 16*Address + char_to_digit(PTP_Line[10]);
+			        Address = 16*Address + char_to_digit(PTP_Line[11]);
+			        if( First_Loop)
+              {
+			           First_Loop = FALSE;
+			           Start_Address = Address;
+                       ptp_start_addr = Address;
+                       ptp_addr = ptp_start_addr;
+			           Eexpected_Address = Address;
+                       //write("start_ptp_addr %x ptp_addr %x",ptp_addr,ptp_start_addr);
+               }
+               if(Eexpected_Address != Address)
+               {
+                 New_Block_Detected = TRUE;
+               }
+              else
+              {
+
+                  //write (" Ptp Length matched.");
+                  /* Read pairs of ASCII chars into binary bytes and store to buffer */
+                  /* For S3 record, data starts at byte 12 */
+                  Ptp_Char_Index = 12;
+				          for( i = 0; i < No_Of_Data_Bytes_On_Line; i++ )
+		              {
+                      Download_Block_Buffer[Buffer_Index++] = 16*char_to_digit(PTP_Line[Ptp_Char_Index++]) + char_to_digit(PTP_Line[Ptp_Char_Index++]);
+		              }
+
+				          Eexpected_Address = Eexpected_Address + No_Of_Data_Bytes_On_Line;
+				          End_of_File = !fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+
+
+              }
+          }
+      }
+
+
+
+      else if( (PTP_Line[0]=='S') && (PTP_Line[1]=='2') )
+	    {
+          /* Read line length.  To get # of data bytes, */
+		      /* subtract 4 bytes (3 for address and 1 for checksum) */
+		       No_Of_Data_Bytes_On_Line = char_to_digit(PTP_Line[3]) + 16 * char_to_digit(PTP_Line[2]) - 4;
+          /* Check if number of bytes matches length of line. */
+			   /* Subtract 13 = record (2 chars) + Num_Bytes (2 chars) + checksum (2 chars) + address (6 chars) + new line char */
+          if( ((strlen(PTP_Line) - 13)/2) != No_Of_Data_Bytes_On_Line )
+		      {
+
+			         write("%d %d",strlen(PTP_Line), No_Of_Data_Bytes_On_Line);
+               End_of_File = TRUE;
+          }
+		      else
+          {
+     //         write (" Inside S2 Block.Ptp Length matched.");
+			        Address = char_to_digit(PTP_Line[4]);
+			        Address = 16*Address + char_to_digit(PTP_Line[5]);
+			        Address = 16*Address + char_to_digit(PTP_Line[6]);
+			        Address = 16*Address + char_to_digit(PTP_Line[7]);
+			        Address = 16*Address + char_to_digit(PTP_Line[8]);
+			        Address = 16*Address + char_to_digit(PTP_Line[9]);
+       //       write ("Address = %x ",Address );
+
+			        if( First_Loop)
+                   {
+			           First_Loop = FALSE;
+			           Start_Address = Address;
+                       ptp_start_addr = Address;
+                       ptp_addr = ptp_start_addr;
+			           Eexpected_Address = Address;
+                       // write ("I am in first loop.");
+                  }
+          //      write ("Address = %x ",Address );
+          //      write ("expected address = %x",Eexpected_Address );
+               if(Eexpected_Address != Address)
+               {
+                 New_Block_Detected = TRUE;
+            //     write ("New block detected ");
+               }
+              else
+              {
+
+                  /* Read pairs of ASCII chars into binary bytes and store to buffer */
+                  /* For S2 record, data starts at byte 10 */
+                  Ptp_Char_Index = 10;
+				          for( i = 0; i < No_Of_Data_Bytes_On_Line; i++ )
+		              {
+                      Download_Block_Buffer[Buffer_Index++] = 16*char_to_digit(PTP_Line[Ptp_Char_Index++]) + char_to_digit(PTP_Line[Ptp_Char_Index++]);
+		              }
+
+				          Eexpected_Address = Eexpected_Address + No_Of_Data_Bytes_On_Line;
+				          End_of_File = !fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+         //         write("End_of_File = %d", End_of_File);
+
+
+
+              }
+
+          }
+      }
+      else if( (PTP_Line[0]=='S') && (PTP_Line[1]=='1') )
+	    {
+          /* Read line length.  To get # of data bytes, */
+		      /* subtract 3 bytes (2 for address and 1 for checksum) */
+		       No_Of_Data_Bytes_On_Line = char_to_digit(PTP_Line[3]) + 16 * char_to_digit(PTP_Line[2]) - 3;
+          /* Check if number of bytes matches length of line. */
+			   /* Subtract 11 = record (2 chars) + Num_Bytes (2 chars) + checksum (2 chars) + address (4 chars) + new line char */
+          if( ((strlen(PTP_Line) - 11)/2) != No_Of_Data_Bytes_On_Line )
+		      {
+		           write ("Error:  ptp line length mismatch.");
+			         write("%d %d",strlen(PTP_Line), No_Of_Data_Bytes_On_Line);
+               End_of_File = TRUE;
+          }
+		      else
+          {
+			        Address = char_to_digit(PTP_Line[4]);
+			        Address = 16*Address + char_to_digit(PTP_Line[5]);
+			        Address = 16*Address + char_to_digit(PTP_Line[6]);
+			        Address = 16*Address + char_to_digit(PTP_Line[7]);
+			        if( First_Loop)
+                   {
+			           First_Loop = FALSE;
+			           Start_Address = Address;
+                       ptp_start_addr = Address;
+                       ptp_addr = ptp_start_addr;
+			           Eexpected_Address = Address;
+                    }
+               if(Eexpected_Address == Start_Address)
+               {
+
+                  /* Read pairs of ASCII chars into binary bytes and store to buffer */
+                  /* For S2 record, data starts at byte 8 */
+                  Ptp_Char_Index = 8;
+				          for( i = 0; i < No_Of_Data_Bytes_On_Line; i++ )
+		              {
+                      Download_Block_Buffer[Buffer_Index++] = 16*char_to_digit(PTP_Line[Ptp_Char_Index++]) + char_to_digit(PTP_Line[Ptp_Char_Index++]);
+		              }
+
+				          Eexpected_Address = Eexpected_Address + No_Of_Data_Bytes_On_Line;
+				          End_of_File = !fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+
+               }
+
+
+              else
+              {
+                   New_Block_Detected = TRUE;
+              }
+          }
+      }
+      else if( (PTP_Line[0]=='S') && (PTP_Line[1]=='0'))
+      {
+   //      write(" I am here in S0");
+        /* Skip S0 recod, Go to next line */
+        End_of_File = !fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+       }
+      else if( (PTP_Line[0]=='S') && (PTP_Line[1]=='8'))
+      {
+        /* Skip S8 recod, Go to next line */
+        End_of_File = !fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+   //     write("End of file in s8 = %d",End_of_File);
+    //    write(" I am here in S8");
+       }
+      else if( (PTP_Line[0]=='S') && (PTP_Line[1]=='7'))
+      {
+        /* Skip S7 recod, Go to next line */
+        End_of_File = !fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+       }
+      else
+      {
+          write ("Warning:  Unknown PTP Record type %c %c",PTP_Line[0], PTP_Line[1]);
+			    write ("Skipping line");
+		    	End_of_File = !fileGetString (PTP_Line,elcount(PTP_Line),File_Handle);
+      }
+
+	  }
+   write("PTP read is completed and total read bytes are %d", Buffer_Index);
+
+}
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  char_to_digit                                                                              */
+/*  description: converts data from char type to decimal type                                             */
+/*--------------------------------------------------------------------------------------------------------*/
+
+int char_to_digit(char ch)
+{
+   int  digit;
+   digit = 0;
+
+   if ( ch >= '0' && ch <= '9')
+   {
+      digit = ch - '0';
+   }
+   if ( ch >= 'a' && ch <= 'f')
+   {
+      digit = (ch - 'a') + 10;
+   }
+   if ( ch >= 'A' && ch <= 'F')
+   {
+      digit = (ch - 'A') + 10;
+   }
+   return digit;
+}
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Start_the_download                                                                         */
+/*  description: starts the download from big buffer to 8bytes CAN frame                                  */
+/*--------------------------------------------------------------------------------------------------------*/
+void Start_the_download(void)
+{
+  if (1 == initialise_ytemp)
+  {
+     if(dupl_Remaining_bytes <temp_remaining_byte)
+	 {
+	   ytemp=(dupl_Remaining_bytes/6);
+	    //write("ytemp1=%d", ytemp);
+        if((dupl_Remaining_bytes%6)!=0)
+         {
+           ytemp=ytemp+1;
+         }
+		//  write("ytemp2=%d", ytemp);
+        temp_remaining_byte=dupl_Remaining_bytes;
+	 }
+	 else
+	 {
+     ytemp=(temp_remaining_byte/6);
+	 // write("ytemp3=%d", ytemp);
+        if((temp_remaining_byte%6)!=0)
+         {
+           ytemp=ytemp+1;
+         }
+		 // write("ytemp4=%d", ytemp);
+	}
+        x=0;
+        initialise_ytemp =0;
+
+     //write("ytempfinal=%d", ytemp);
+	 dupl_Remaining_bytes=dupl_Remaining_bytes-temp_remaining_byte;
+  }
+
+   if((temp_remaining_byte%6)==0)
+        {
+          asize=6;
+          idx=6;
+        }
+        else if((temp_remaining_byte%6)!=0)
+        {
+          if(x == (temp_remaining_byte/6))
+          {
+             asize=(temp_remaining_byte%6);
+             idx=(temp_remaining_byte%6);
+          }
+          else
+          {
+            asize=6;
+            idx=6;
+          }
+
+        }
+        array[0] =0;
+        array[1] =0;
+        array[2] =0;
+        array[3] =0;
+        array[4] =0;
+        array[5] =0;
+        dex=0;
+        while(idx!=0)
+        {
+          array[dex]=Download_Block_Buffer[rate+dex];
+         // write("Download_Block_Buffer = %x, idex=%x",Download_Block_Buffer[rate+dex],(rate+dex));
+         // write("array = %x, idx=%d",array[dex],dex);
+          dex++;
+          idx--;
+        }
+        rate=rate+dex;
+
+
+      XCP_Command(0xF0,asize,array[0],array[1],array[2],array[3],array[4],array[5]);
+        if(x<(ytemp-1))
+        {
+          x++;
+       // setTimer(abhishek,2000);
+        //  setTimer(abhishek1,1000);
+        }
+        else
+        {
+          nextflag++;
+        }
+
+
+}
+
+Set_MTA_Address_To_Clear()
+{
+
+
+ // MTAAddress = ((usc_add_3 << 24) & 0xFF000000) |  ((usc_add_2 << 16) & 0x00FF0000) | ((usc_add_1 << 8) & 0x0000FF00) | ((usc_add_0) & 0x000000FF);
+  next_cmd = XCP_PROGRAM_START;
+  XCP_Command.CAN = can_ch;
+  XCP_Command.ID = cmdID;
+  XCP_Command.byte(0)=0xF6;
+  XCP_Command.byte(1)=0x00;
+  XCP_Command.byte(2)=0x00;
+  XCP_Command.byte(3)=0x00;
+  XCP_Command.byte(4)= usc_smc_add_3;
+  XCP_Command.byte(5)= usc_smc_add_2;
+  XCP_Command.byte(6)= usc_smc_add_1;
+  XCP_Command.byte(7)= usc_smc_add_0;
+
+  output(XCP_Command);
+}
+
+set_mta_address()
+{
+  //next_cmd =   DOWNLOAD;
+
+  if(BlocksSent == 0)
+  {
+    MTAAddress = ((usc_smc_add_3 << 24) & 0xFF000000) |  ((usc_smc_add_2 << 16) & 0x00FF0000) | ((usc_smc_add_1 << 8) & 0x0000FF00) | ((usc_smc_add_0) & 0x000000FF);
+  }
+  else
+  {
+    MTAAddress = MTAAddress + 992;
+  }
+  XCP_Command.byte(0)=0xF6;
+  XCP_Command.byte(1)=0x00;
+  XCP_Command.byte(2)=0x00;
+  XCP_Command.byte(3)=0x00;
+  XCP_Command.byte(4)= (MTAAddress & 0x000000FF);
+  XCP_Command.byte(5)= (MTAAddress & 0x0000FF00) >> 8;
+  XCP_Command.byte(6)= (MTAAddress & 0x00FF0000) >> 16;
+  XCP_Command.byte(7)= (MTAAddress & 0xFF000000) >> 24;
+
+  output(XCP_Command);
+}
+
+Calculate_Checksum_for_Block_Download()
+{
+  checksum=0;
+  Intialise_Download_Variable(Remaining_bytes);
+
+  for(index =0; index < byte_of_992_chunk; index++)
+  {
+    checksum = checksum + Download_Block_Buffer[GlobalChecksumIndex++];
+  }
+  write("Download Checksum %x", checksum);
+}
+
+program_command()
+{
+    // write("Remaining_bytes2 %d",Remaining_bytes);
+ test = Remaining_bytes%256;
+ // write("test %d",test);
+  if(test == 0)
+  {
+    download_size = 255;
+  }
+  else
+  {
+  // download_size = Remaining_bytes;
+  }
+
+  if(Remaining_bytes >= (download_size+1))
+  {
+  Remaining_bytes =  Remaining_bytes - (download_size +1);
+  }
+  else{
+
+	  Remaining_bytes = 0;
+
+  }
+  // write("Remaining_bytes2 %d",Remaining_bytes);
+ // write("download_size %d",download_size);
+ /* if(Remaining_bytes > 0)
+  {
+    next_cmd = PROGRAMNEXT;
+  }
+  else
+  {
+    next_cmd = XCP_RESET_ECU;
+  }*/
+   next_cmd = PROGRAMNEXT;
+  XCP_Command.byte(0)=0xD0;
+  XCP_Command.byte(1)=download_size;
+  //write("GlobalDataIndex After1 %d",GlobalDataIndex);
+  for(can_frame =2; can_frame < 64; can_frame++)
+    {
+      XCP_Command.byte(can_frame)= Download_Block_Buffer[GlobalDataIndex];
+      GlobalDataIndex++;
+    }
+  output(XCP_Command);
+    //  write("GlobalDataIndex After2 %d",GlobalDataIndex);
+  program_next_command();
+}
+
+program_next_command()
+{
+ // Remaining_bytes =  Remaining_bytes - byte_of_992_chunk;
+ //  write("Remaining_bytes3 %d",Remaining_bytes);
+
+  if(Remaining_bytes > 0)
+  {
+    next_cmd = PROGRAM;
+  }
+  else
+  {
+    next_cmd = XCP_RESET_ECU;
+  }
+ /*if((BlocksSent == 0xFF) || (Remaining_bytes == 0))
+  {
+   // next_cmd = XCP_PROGRAM_MODE;
+    BlocksSent=0;
+  }
+  else
+  {
+    next_cmd = XCP_SEND_BLOCK_DATA;
+    BlocksSent=0xFF;
+  }*/
+
+  Initialize_No_of_Frames(byte_of_992_chunk);
+  //write("byte_of_992_chunk %d",byte_of_992_chunk);
+  //write("No_of_Frames %d",No_of_Frames);
+  //write("No_of_CAN_Frame_Bytes before %d",No_of_CAN_Frame_Bytes);
+
+  for(index=0; index < No_of_Frames; index++)
+  {
+    XCP_Command.byte(0)=0xCA;
+    XCP_Command.byte(1)= ((byte_of_992_chunk -(index *62))-1);
+    if(byte_of_992_chunk -(index *62)>= 62)
+    {
+    XCP_can_frame_sent = 62;
+    }
+    else
+    {
+    XCP_can_frame_sent = byte_of_992_chunk -(index *62);
+    }
+
+   //  write("XCP_can_frame_sent  %d",XCP_can_frame_sent);
+    if(index == (No_of_Frames - 1))
+    {
+      No_of_CAN_Frame_Bytes = byte_of_992_chunk % 62;
+      //write("No_of_CAN_Frame_Bytes After %d",No_of_CAN_Frame_Bytes);
+    }
+    //write("No_of_CAN_Frame_Bytes After %d",No_of_CAN_Frame_Bytes);
+
+    for(can_frame =2; can_frame < XCP_can_frame_sent+2; can_frame++)
+    {
+      XCP_Command.byte(can_frame)= Download_Block_Buffer[GlobalDataIndex++];
+    }
+    output(XCP_Command);
+  //  write("GlobalDataIndex After3 %d",GlobalDataIndex);
+   // wait for key
+
+  }
+
+  write("Remaining_bytes %d",Remaining_bytes);
+}
+
+Initialize_No_of_Frames(dword byte_of_992_chunk_local)
+{
+  No_of_Frames = byte_of_992_chunk_local / 62;
+
+  if((byte_of_992_chunk_local % 62) > 0)
+  {
+    No_of_Frames = No_of_Frames+1;
+  }
+
+
+  if(No_of_Frames>1)
+  {
+    No_of_CAN_Frame_Bytes = 62;
+  }
+  else
+  {
+    No_of_CAN_Frame_Bytes = byte_of_992_chunk_local % 62;
+  }
+}
+
+
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  on start                                                                                   */
+/*  description: displays instruction on help window                                                      */
+/*--------------------------------------------------------------------------------------------------------*/
+on timer stopforerasetocomplete
+{
+  //Send_XCP_Clear_USC_Area_Completed_Request();
+  //write("inside stopforerasetocomplete");
+}
+on start
+{
+  page =1;
+  writeClear(page);
+  writeTextColor(page,255,0,0);
+  writeLineEx(page,2,"Please keep the proper USC/SMC in the config folder");
+  writeLineEx(page,2,"Please keep the name as usc_cal.ptp/smc_cal.ptp");
+  writeTextColor(page,1,1,1);
+  writeLineEx(page,0,"=================================================");
+  writeLineEx(page,0,"         programing select(USC or SMC)           ");
+  writeLineEx(page,0,"=================================================");
+  writeLineEx(page,1,"Press 'U' or 'u' for USC");
+  writeLineEx(page,1,"Press 'S' or 's' for SMC");
+  writeLineEx(page,0,"=================================================");
+  writeLineEx(page,0,"         programing method(USC or SMC)           ");
+  writeLineEx(page,0,"=================================================");
+  writeLineEx(page,0,"=================================================");
+  writeLineEx(page,0,"           GEN8 Hardware                         ");
+  writeLineEx(page,0,"=================================================");
+  writeLineEx(page,0,"=================================================");
+  writeLineEx(page,1,"Press 1 for FRONT CENTER ID 0x10 ");
+  writeLineEx(page,1,"Press 2 for REAR LEFT ID 0x28 ");
+  writeLineEx(page,1,"Press 3 for REAR RIGHT ID 0x30 ");
+  writeLineEx(page,1,"Press 4 for FRONT RIGHT ID 0x20 ");
+  writeLineEx(page,1,"Press 5 for FRONT LEFT ID 0x18 ");
+  writeLineEx(page,1,"Press 'a' to start programing");
+  writeLineEx(page,0,"=================================================");
+  write("\n\n");
+  XCP_Command.FDF=1;
+  XCP_Command.dlc=15;
+}
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Send_XCP_Connect_Request                                                                   */
+/*  description: fills the value to be sent on the CAN for connect request                                */
+/*--------------------------------------------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Send_XCP_Connect_Request                                                                   */
+/*  description: fills the value to be sent on the CAN for connect request                                */
+/*--------------------------------------------------------------------------------------------------------*/
+on key '1'
+{
+
+  if(xcp_VCAN_f == 0)
+  {
+  XCP_Command.ID = 0x10;
+  cmdID = 0x10;
+  }
+
+}
+
+on key '2'
+{
+
+  if(xcp_VCAN_f == 0)
+  {
+  XCP_Command.ID = 0x28;
+  cmdID = 0x28;
+  }
+
+}
+
+
+on key '3'
+{
+  if(xcp_VCAN_f == 0)
+  {
+  XCP_Command.ID = 0x30;
+  cmdID = 0x30;
+  }
+}
+
+on key '4'
+{
+  if(xcp_VCAN_f == 0)
+  {
+  XCP_Command.ID = 0x20;
+  cmdID = 0x20;
+  }
+}
+
+on key '5'
+{
+  if(xcp_VCAN_f == 0)
+  {
+  XCP_Command.ID = 0x18;
+  cmdID = 0x18;
+  }
+
+}
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Send_XCP_Connect_Request                                                                   */
+/*  description: fills the value to be sent on the CAN for connect request                                */
+/*--------------------------------------------------------------------------------------------------------*/
+on key 'S'
+{
+  sector_no =0x00;
+  erase_cmd =0xD1;
+  program_cmd = 0xD0;
+  snprintf(Download_Filename,80,"smc_cal.ptp");
+}
+
+on key 's'
+{
+  sector_no =0x00;
+  erase_cmd =0xD1;
+  program_cmd = 0xD0;
+  snprintf(Download_Filename,80,"smc_cal.ptp");
+
+}
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Send_XCP_Connect_Request                                                                   */
+/*  description: fills the value to be sent on the CAN for connect request                                */
+/*--------------------------------------------------------------------------------------------------------*/
+on key 'U'
+{
+  sector_no =0x01;
+  erase_cmd =0xD1;
+  program_cmd = 0xD0;
+ // set_mode =  0x04;
+  snprintf(Download_Filename,80,"usc_cal.ptp");
+}
+
+on key 'u'
+{
+  sector_no =0x01;
+  erase_cmd =0xD1;
+  program_cmd = 0xD0;
+ // set_mode =  0x04;
+  snprintf(Download_Filename,80,"usc_cal.ptp");
+
+}
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Send_XCP_Connect_Request                                                                   */
+/*  description: fills the value to be sent on the CAN for connect request                                */
+/*--------------------------------------------------------------------------------------------------------*/
+on key 'a'
+{
+  nextflag =0;
+  flash_count =0;
+  Download_PTP_File();
+}
+
+
+on key 'A'
+{
+  nextflag =0;
+  flash_count =0;
+  Download_PTP_File();
+
+}
+
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Send_XCP_Connect_Request                                                                   */
+/*  description: fills the value to be sent on the CAN for connect request                                */
+/*--------------------------------------------------------------------------------------------------------*/
+on message 0x29, 0x11, 0x31, 0x21, 0x19
+{
+    if (this.byte(0) == 0xFF)
+      {
+          //write("nextflag = %d", nextflag);
+        if(1)
+          {
+              switch (next_cmd)
+                  {
+                    case XCP_PCAN_DISABLE:
+                    {
+                        Send_XCP_PCAN_Disable_Request();
+                     // write("Disable PCAN");
+                        break;
+                    }
+                    case XCP_GET_SECTOR_START_ADDRESS:
+                    {
+                        Send_XCP_Get_Sector_Start_Address();
+                     // write("Disable PCAN");
+                        break;
+                    }
+                case XCP_GET_SECTOR_LENGTH_INFO :
+                    {
+                        usc_smc_add_3 = this.byte(4);
+                        usc_smc_add_2 = this.byte(5);
+                        usc_smc_add_1 = this.byte(6);
+                        usc_smc_add_0 = this.byte(7);
+                        Send_XCP_Get_Sector_Length_Info();
+                     // write("Disable PCAN");
+                        break;
+                    }
+                    case XCP_SET_MTA_TO_CLEAR:
+                    {
+                        usc_smc_len_3 = this.byte(4);
+                        usc_smc_len_2 = this.byte(5);
+                        usc_smc_len_1 = this.byte(6);
+                        usc_smc_len_0 = this.byte(7);
+                        Set_MTA_Address_To_Clear();
+                        break;
+                    }
+                    case XCP_PROGRAM_START:
+                    {
+                       Send_XCP_Program_Start_Request();
+                       // setTimer(stopforerasetocomplete, 500);
+                      //write("usc clr cmplete");
+
+                        break;
+                    }
+
+                    case XCP_PROGRAM_CLEAR_USC_AREA:
+                    {
+
+                        Send_XCP_Program_Clear_USC_Area();
+                      //write("clr usc");
+                        break;
+                    }
+
+                    case PROGRAM:
+                    {
+                       program_command();
+                       SetTimer(delay, 5000); //Timer initialization, set to be 5000ms
+                       break;
+                    }
+                    /*case PROGRAMNEXT:
+                    {
+                       program_next_command();
+                       break;
+                    }
+                   */
+                    case XCP_RESET_ECU:
+                    {
+                        Send_XCP_Reset_ECU();
+                        break;
+                    }
+                    default:
+                    {
+                        //nothing
+                        break;
+                    }
+                }
+              }
+              else
+              {
+              write("Stopped: Negative Response received ");
+              }
+      }
+      else
+        {
+              write("Stopped: Negative Response received ");
+        }
+}
+
+on key *
+{
+  write("\n Enter valid input" );
+}
+
+on timer delay
+{
+
+}
+/*--------------------------------------------------------------------------------------------------------*/
+/*  function:  Send_XCP_Connect_Request                                                                   */
+/*  description: fills the value to be sent on the CAN for connect request                                */
+/*--------------------------------------------------------------------------------------------------------*/
+
+/*
+* File Revision History (top to bottom: first revision to last revision)
+*/

@@ -1,0 +1,432 @@
+/*@!Encoding:1252*/
+includes
+{
+    #pragma library("capldll.dll")
+}
+
+variables
+{
+  byte page;
+  byte cal_key[8]={0,0,0,0,0,0,0,0};
+  byte cal_seed[8];
+  byte key_length[2]={8,0};
+  byte length_from_seed;
+  int key_count;
+  byte cal_count =0;
+  byte is_it_for_first_cal=0x01;
+  byte is_it_for_first_daq=0x01;
+  byte is_it_for_first_pgm=0x01;
+  byte is_it_for_first_stim=0x01;
+  byte cal_index=0;
+  byte key_index=0;
+  const char FALSE=0;
+  const char TRUE=1;
+  byte Current_xcp_status;
+  byte ECU_POSITION = 0;
+  byte XCP_Response_Byte0;
+  int64 xcp_seed = 0;
+  int64 calc_key = 0;
+  dword xcp_seed_msb,xcp_seed_lsb =0 ;
+  qword value = 0x4e874e874e874e87ll;
+
+  enum seed_key
+  {
+    UNLOCK_CAL  = 0x01,
+    UNLOCK_DAQ  = 0x04,
+    UNLOCK_STIM = 0x08,
+    UNLOCK_PAGE = 0x10
+  };
+
+  message 0x4f1 xcp_request;
+      //frPDU MsgChannel<num>.<FIBEX PDU name> <PDU var>;
+      //<FIBEX PDU name>: "String that corresponds to a PDU name in the database. The parameters needed to uniquely identify the PDU are taken from the corresponding PDU definition in the database."
+      //<PDU var>: String that specifies the variable name of the object.
+      //MsgChannel<num>: Specifies the transmission channel/cluster. <num> must be a whole number (e.g. 1, 2, 3, ...) that specifies the channel number of the corresponding FlexRay interface.
+  enum XCP_Status
+  {
+    INVALID,
+    XCP_CONNECT,
+    XCP_GET_CAL_SEED,
+    XCP_UNLOCK_CAL,
+    XCP_GET_DAQ_SEED,
+    XCP_UNLOCK_DAQ,
+	  XCP_GET_STIM_SEED,
+    XCP_UNLOCK_STIM,
+    XCP_GET_PGM_SEED,
+    XCP_UNLOCK_PGM
+  };
+
+  enum radar_pos
+  {
+    INVALID_POS,
+    REAR_RIGHT,
+    REAR_LEFT,
+    FRONT_RIGHT,
+    FRONT_LEFT,
+    FRONT_CENTER
+  };
+
+  enum Features_T
+  {
+    FF_NOTHING,
+    FF_Start_SEED_UNLOCK
+  };
+
+  enum Features_T FF_OnGoing = FF_NOTHING;
+}
+
+on start
+{
+    page =1;
+    writeClear(page);
+    writeTextColor(page,255,0,0);
+    writeLineEx(page,2,"Unlock the XCP before sending any XCP user commands");
+    writeTextColor(page,1,1,1);
+   write("----------------------");
+   writeLineEx(page,1,"Press 'D' for CAN FD");
+   write("----------------------");
+   write("1.Choose ECU position");
+   write("----------------------");
+   write("Press a for REAR_RIGHT");
+   write("Press b for REAR_LEFT");
+   write("Press c for FRONT_RIGHT");
+   write("Press d for FRONT_LEFT");
+   write("Press e for FRONT_CENTER");
+   write("-----------------------------------");
+  xcp_request.dlc = 8;
+ }
+
+ on key 'a'
+{
+  ECU_POSITION = REAR_RIGHT;
+  write("RR Selected");
+  start_func();
+}
+
+on key 'b'
+{
+  ECU_POSITION = REAR_LEFT;
+  write("RL Selected");
+  start_func();
+}
+
+on key 'c'
+{
+  ECU_POSITION = FRONT_RIGHT;
+  write("FR Selected");
+  start_func();
+}
+
+on key 'd'
+{
+  ECU_POSITION = FRONT_LEFT;
+  write("FL Selected");
+  start_func();
+}
+
+on key 'e'
+{
+  ECU_POSITION = FRONT_CENTER;
+  write("FC Selected");
+  start_func();
+}
+
+void start_func()
+{
+  FF_OnGoing=FF_Start_SEED_UNLOCK ;
+  Init();
+  XCP_Connect();
+  write("RUNNING: Unlocking the ECU for XCP session");
+}
+
+on key 'D'
+{
+    xcp_request.FDF = 1;
+    xcp_request.dlc = 15;
+}
+
+Init()
+{
+  switch(ECU_POSITION)
+  {
+    case REAR_RIGHT:
+      xcp_request.id = 0x30;
+      break;
+    case REAR_LEFT:
+      xcp_request.id = 0x28;
+      break;
+	case FRONT_RIGHT:
+      xcp_request.id = 0x20;
+      break;
+	case FRONT_LEFT:
+      xcp_request.id = 0x18;
+      break;
+	case FRONT_CENTER:
+      xcp_request.id = 0x10;
+      break;
+  }
+}
+
+void calculate_pgm_key()
+{
+  xcp_seed_msb= (((dword)cal_seed[0]<<24) |((dword)cal_seed[1]<<16) | ((dword)cal_seed[2]<<8) | (cal_seed[3]));
+  xcp_seed_lsb= (((dword)cal_seed[4]<<24) |((dword)cal_seed[5]<<16) | ((dword)cal_seed[6]<<8) | (cal_seed[7]));
+
+  xcp_seed = (((int64)xcp_seed_msb<<32) |(xcp_seed_lsb));
+  calc_key =  (int64)(xcp_seed + value);
+
+  cal_key[0] = calc_key & 0xFF ;
+  cal_key[1] = calc_key >> 8 & 0xFF;
+  cal_key[2] = calc_key >> 16 & 0xFF;
+  cal_key[3] = calc_key >> 24 & 0xFF;
+  cal_key[4] = calc_key >> 32 & 0xFF;
+  cal_key[5] = calc_key >> 40 & 0xFF;
+  cal_key[6] = calc_key >> 48 & 0xFF;
+  cal_key[7] = calc_key >> 56 & 0xFF;
+}
+
+void XCP_Connect (void)
+{
+  Current_xcp_status = XCP_CONNECT;
+  xcp_request.can = 1;
+  xcp_request.byte(0) = 0xFF;
+  xcp_request.byte(1) = 0;
+  xcp_request.byte(2) = 0;
+  xcp_request.byte(3) = 0;
+  xcp_request.byte(4) = 0;
+  xcp_request.byte(5) = 0;
+  xcp_request.byte(6) = 0;
+  xcp_request.byte(7) = 0;
+  output(xcp_request);
+}
+
+void Send_Get_Seed(byte command_2)
+{
+  xcp_request.byte(0) = 0xF8;
+  xcp_request.byte(1) = key_count;
+  xcp_request.byte(2) = command_2;
+  xcp_request.byte(3) = 0;
+  xcp_request.byte(4) = 0;
+  xcp_request.byte(5) = 0;
+  xcp_request.byte(6) = 0;
+  xcp_request.byte(7) = 0;
+  if (command_2 == UNLOCK_CAL)
+  Current_xcp_status = XCP_GET_CAL_SEED;
+  else if (command_2 == UNLOCK_DAQ)
+  Current_xcp_status = XCP_GET_DAQ_SEED;
+  else if (command_2 == UNLOCK_STIM)
+  Current_xcp_status = XCP_GET_STIM_SEED;
+  else if (command_2 == UNLOCK_PAGE)
+  Current_xcp_status = XCP_GET_PGM_SEED;
+
+  output(xcp_request);
+}
+
+void Send_Unlock(byte status)
+{
+  xcp_request.byte(0) = 0xF7;
+  xcp_request.byte(1) = length_from_seed;
+
+    if(cal_count >0)
+    {
+      xcp_request.byte(9) =   cal_key[7];
+      xcp_request.byte(8) =   cal_key[6];
+      xcp_request.byte(7) =   cal_key[5];
+      xcp_request.byte(6) =   cal_key[4];
+      xcp_request.byte(5) =   cal_key[3];
+      xcp_request.byte(4) =   cal_key[2];
+      xcp_request.byte(3) =   cal_key[1];
+      xcp_request.byte(2) =   cal_key[0];
+      cal_count--;
+      length_from_seed =length_from_seed - 8;
+    }
+	if (status == UNLOCK_CAL)
+       Current_xcp_status = XCP_UNLOCK_CAL;
+    else if (status == UNLOCK_DAQ)
+       Current_xcp_status = XCP_UNLOCK_DAQ;
+    else if (status == UNLOCK_STIM)
+       Current_xcp_status = XCP_UNLOCK_STIM;
+    else if (status == UNLOCK_PAGE)
+       Current_xcp_status = XCP_UNLOCK_PGM;
+
+	output(xcp_request);
+}
+
+on message 0xB8, 0x29, 0x19, 0x31, 0x11
+{
+  XCP_Response_Byte0 = this.byte(0);
+
+  switch(Current_xcp_status)
+  {
+    case XCP_CONNECT:
+      if(0xFF == XCP_Response_Byte0)
+      {
+        Send_Get_Seed(UNLOCK_CAL);
+      }
+      break;
+    case XCP_GET_CAL_SEED:
+      if(FF_Start_SEED_UNLOCK == FF_OnGoing)
+      {
+            if(this.byte(1)== 8)
+            {
+              if(is_it_for_first_cal ==0x01)
+              {
+                length_from_seed = this.byte(1);
+                is_it_for_first_cal =FALSE;
+              }
+
+              cal_count++;
+              cal_seed[cal_index++] = this.byte(2);
+              cal_seed[cal_index++] = this.byte(3);
+              cal_seed[cal_index++] = this.byte(4);
+              cal_seed[cal_index++] = this.byte(5);
+              cal_seed[cal_index++] = this.byte(6);
+              cal_seed[cal_index++] = this.byte(7);
+              cal_seed[cal_index++] = this.byte(8);
+              cal_seed[cal_index++] = this.byte(9);
+              dllappCalcKeyfromSeed((dword)UNLOCK_CAL,(dword)(length_from_seed),cal_seed,key_length,cal_key);
+              Send_Unlock(UNLOCK_CAL);
+            }
+            else if(this.byte(0) == 0xFE)
+			{
+				write("Received negative response");
+			}
+      }
+      break;
+
+      case XCP_UNLOCK_CAL:
+      if(FF_Start_SEED_UNLOCK == FF_OnGoing)
+      {
+              cal_index =0;
+              key_index=0;
+              key_count =0;
+              Send_Get_Seed(UNLOCK_DAQ);
+      }
+      break;
+
+      case XCP_GET_DAQ_SEED:
+      if(FF_Start_SEED_UNLOCK == FF_OnGoing)
+      {
+            if(this.byte(1) == 8)
+            {
+              if(is_it_for_first_daq == 0x01)
+              {
+                length_from_seed = this.byte(1);
+                is_it_for_first_daq =FALSE;
+              }
+
+              cal_count++;
+              cal_seed[cal_index++] = this.byte(2);
+              cal_seed[cal_index++] = this.byte(3);
+              cal_seed[cal_index++] = this.byte(4);
+              cal_seed[cal_index++] = this.byte(5);
+              cal_seed[cal_index++] = this.byte(6);
+              cal_seed[cal_index++] = this.byte(7);
+              cal_seed[cal_index++] = this.byte(8);
+              cal_seed[cal_index++] = this.byte(9);
+              dllappCalcKeyfromSeed((dword)UNLOCK_DAQ,(dword)(length_from_seed),cal_seed,key_length,cal_key);
+              Send_Unlock(UNLOCK_DAQ);
+            }
+			else if(this.byte(0) == 0xFE)
+			{
+				write("Received negative response");
+			}
+      }
+      break;
+
+	  case XCP_UNLOCK_DAQ:
+
+      if(FF_Start_SEED_UNLOCK == FF_OnGoing)
+      {
+              cal_index =0;
+              key_index=0;
+              key_count =0;
+              Send_Get_Seed(UNLOCK_STIM);
+      }
+      break;
+
+	  case XCP_GET_STIM_SEED:
+      if(FF_Start_SEED_UNLOCK == FF_OnGoing)
+      {
+            if(this.byte(1) == 8)
+            {
+              if(is_it_for_first_stim == 0x01)
+              {
+                length_from_seed = this.byte(1);
+                is_it_for_first_stim =FALSE;
+              }
+
+              cal_count++;
+
+              cal_seed[cal_index++] = this.byte(2);
+              cal_seed[cal_index++] = this.byte(3);
+              cal_seed[cal_index++] = this.byte(4);
+              cal_seed[cal_index++] = this.byte(5);
+              cal_seed[cal_index++] = this.byte(6);
+              cal_seed[cal_index++] = this.byte(7);
+              cal_seed[cal_index++] = this.byte(8);
+              cal_seed[cal_index++] = this.byte(9);
+              dllappCalcKeyfromSeed((dword)UNLOCK_STIM,(dword)(length_from_seed),cal_seed,key_length,cal_key);
+              Send_Unlock(UNLOCK_STIM);
+            }
+			else if(this.byte(0) == 0xFE)
+			{
+				write("Received negative response");
+			}
+
+
+      }
+      break;
+
+	  case XCP_UNLOCK_STIM:
+      if(FF_Start_SEED_UNLOCK == FF_OnGoing)
+      {
+              cal_index =0;
+              key_index=0;
+              key_count =0;
+              Send_Get_Seed(UNLOCK_PAGE);
+      }
+      break;
+
+      case XCP_GET_PGM_SEED:
+      if(FF_Start_SEED_UNLOCK == FF_OnGoing)
+      {
+            if(this.byte(1) == 8)
+            {
+              if(is_it_for_first_pgm == 0x01)
+              {
+                length_from_seed = this.byte(1);
+                is_it_for_first_pgm =FALSE;
+              }
+
+              cal_count++;
+
+              cal_seed[cal_index++] = this.byte(2);
+              cal_seed[cal_index++] = this.byte(3);
+              cal_seed[cal_index++] = this.byte(4);
+              cal_seed[cal_index++] = this.byte(5);
+              cal_seed[cal_index++] = this.byte(6);
+              cal_seed[cal_index++] = this.byte(7);
+              cal_seed[cal_index++] = this.byte(8);
+              cal_seed[cal_index++] = this.byte(9);
+			  calculate_pgm_key();
+			  Send_Unlock(UNLOCK_PAGE);
+      }
+
+	  else if(this.byte(0) == 0xFE)
+			{
+				write("Received negative response");
+			}
+
+	  }
+      break;
+
+    case XCP_UNLOCK_PGM:
+      if(FF_Start_SEED_UNLOCK == FF_OnGoing)
+      {
+              write("SUCCESSFULL: Unlocked XCP");
+              FF_OnGoing = FF_NOTHING;
+      }
+      break;
+  }
+}
