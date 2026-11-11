@@ -1,0 +1,75 @@
+cc_library(
+    name = "McalInit",
+    srcs = [
+        "src/mcal_init.c",
+    ],
+    hdrs = [
+    ],
+    defines = select({
+        "//:mcal_test_enable": ["MCAL_TEST_ENABLE"],
+        "//conditions:default": [],
+    }),
+    implementation_deps = [],
+    local_defines = select({
+        "//:Build_SQT_Test_Cases": ["ENABLE_SQT_TEST_STUBS"],
+        "//:Build_SIT_Test_Cases": ["ENABLE_SIT_TEST_STUBS"],
+        "//conditions:default": [],
+    }) + select({
+        "//:Build_Disable_int_Wdg": ["DISABLE_INT_WDG"],
+        "//conditions:default": [],
+    }) + select({
+        "//:uart_enable": ["UART_MODULE_ENABLE"],
+        "//conditions:default": [],
+    }),
+    visibility = ["//visibility:public"],
+    deps = [
+        ":McalInit_H",
+        "//software/r52/drivers/mcal/src/test:McalTest_H",
+        "@Gen8_iND13400//software/r52/drivers/mcal/Mipi_wrapper",
+        "@Gen8_iND13400//software/r52/autosar/swc/PLT_SWC/SWC_PLT_CDD_ExternalWdg:dd_pmic",
+        "@Gen8_iND13400//software/r52/drivers/mcal/power_supply_clock",
+        "@iND13400_autosar_sip//Components/Adc:AdcMcalModule",
+        # "@iND13400_autosar_sip//Components/Can:CanModule",
+        "@iND13400_autosar_sip//Components/Can:Can_h",
+        "@iND13400_autosar_sip//Components/Dio",
+        "@iND13400_autosar_sip//Components/Dma",
+        "@iND13400_autosar_sip//Components/Eth",
+        "@iND13400_autosar_sip//Components/Fls",
+        "@iND13400_autosar_sip//Components/I2c",
+        "@iND13400_autosar_sip//Components/Port",
+        "@iND13400_autosar_sip//Components/Spi",
+        "@iND13400_autosar_sip//Components/Uart",
+        "@iND13400_autosar_sip//Components/Wdg:wdg",
+        "//software/r52/autosar/swc/PLT_SWC/SWC_PLT_CDD_MCU_Safety:PLT_CDD_MCU_Safety_h",
+        "//software/common:chandra_h",
+        "//software/common/calibrations/smc:smc_h",
+        "//software/r52/mmic:mmic_h",
+        "//software/r52/mmic/drivers/mipi_csi2:dd_mipi_h",
+        "//software/r52/autosar/config/Appl/Source:PHY_User_Cbk_H",
+    ],
+)
+
+cc_library(
+    name = "McalInit_H",
+    srcs = [],
+    hdrs = [
+        "inc/mcal_init.h",
+    ],
+    implementation_deps = [],
+    strip_include_prefix = "//software/r52/drivers/mcal/inc",
+    visibility = ["//visibility:public"],
+    deps = [
+        # "//software/common:common_h",
+        "//software/r52/autosar/swc/PLT_SWC/SWC_PLT_Service_IoHwAb/bb:SWC_PLT_Service_IoHwAb_h",
+        "@iND13400_autosar_sip//Components/Mcu",
+        "//software/r52/autosar/config/Appl/GenData:BSW_GenData_h",
+        "@iND13400_autosar_sip//Components/Gpt:gpt",
+        # "//software/r52/autosar/config/Appl/GenData:Can_PBcfg_c",
+        "//software/r52/drivers/mcal/gpt:dd_gpt",
+        "@iND13400_autosar_sip//Components/Fls",
+        "@iND13400_autosar_sip//Components/Spi",
+        "@iND13400_autosar_sip//Components/Pwm",
+        "//software/common/board_revision:board_revision_module",
+        "//software/r52/drivers/mcal/src/test:McalTest_H",
+    ],
+)

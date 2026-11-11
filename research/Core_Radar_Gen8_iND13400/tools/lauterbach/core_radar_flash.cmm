@@ -1,0 +1,1036 @@
+GLOBAL &cpu
+GLOBAL &cname0 &cname1 &cname2 &cname3 &cname4
+GLOBAL &start_core0 &start_core1 &start_core2 &start_core3 &start_core4
+GLOBAL &pre_flash_scripts &post_flash_scripts
+GLOBAL &default_flash_session &auto_flash_session
+
+LOCAL &flash_session &input_flash_session &last_flash_session &auto_flash
+ENTRY &input_flash_session
+
+IF VERSION.BUILD()<154087.
+(
+   DIALOG.OK "Trace32 version update required"
+   ENDDO
+)
+
+LOCAL &version
+&version="2.2"
+
+LOCAL &ic0 &ic1 &ic2 &ic3 &ic4
+&n=0
+WHILE &n<5.
+(
+   &core_assign="&"+"core=""&cname"+FORMAT.Decimal(1,&n)+""""
+   &&core_assign
+   IF "&core"!=""
+   (
+      IF InterCom.PING(&core)
+      (
+         &ic_assign="&"+"ic"+FORMAT.Decimal(1,&n)+"=""InterCom &core"""
+         &&ic_assign
+      )
+   )
+   &n=&n+1
+)
+
+IF "&cpu"==""
+(
+   GOSUB CPU_Detect
+)
+
+IF ("&cpu"=="SAF85xx")&&(VERSION.BUILD()<154087.)
+(
+   DIALOG.OK "Trace32 version update required"
+   ENDDO
+)
+
+;* Fall back to local default_flash_session.ini if one was not configured
+IF (!OS.FILE("&default_flash_session"))&&(OS.FILE("default_flash_session.ini"))
+(
+   &default_flash_session="default_flash_session.ini"
+)
+
+;*===========================================================================
+;* Check if the last or input flash session file exists
+;* If it does not then the default flash session is used
+;*===========================================================================
+&auto_flash=FALSE()
+&last_flash_session=OS.FILE.JOINPATH("&core_script_path","last_flash_session.ini")
+IF OS.FILE("&input_flash_session")
+(
+   &flash_session="&input_flash_session"
+   &auto_flash=TRUE()
+)
+ELSE IF OS.FILE("&auto_flash_session")
+(
+   &flash_session="&auto_flash_session"
+   &auto_flash=TRUE()
+)
+ELSE IF OS.FILE("&last_flash_session")
+(
+   &flash_session="&last_flash_session"
+)
+ELSE
+(
+   &flash_session="&default_flash_session"
+)
+
+;*===========================================================================
+;* create and display dialog box
+;*===========================================================================
+LOCAL &clks
+WINPOS 15% 10% 120. 21.
+
+DIALOG
+(&+
+   HEADER "Core Radar Flash Utility for &cpu - Version &version"
+   ICON "[=5VTfYD0T0xEl$3$$n$$KMyhR0]"
+   CLOSE "jumpto Cancel_Flash"
+
+   POS 0. 0. 120. 21.
+   BOX "Flash Session"
+
+;*===========================================================================
+   POS 1. 1. 20. 1.
+   BUTTON "Load Flash Session..."
+   (
+      DIALOG.File *.ini
+      ENTRY %LINE &file
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      &flash_session="&file"
+      GOSUB Load_Flash_Session
+   )
+;*===========================================================================
+   POS 21. 1. 20. 1.
+   BUTTON "Save Flash Session..."
+   (
+      DIALOG.File *.ini
+      ENTRY %LINE &file
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      &flash_session="&file"
+      GOSUB Save_Flash_Session
+   )
+;*===========================================================================
+   POS 41. 1. 20. 1.
+   BUTTON "Load Default Flash Session"
+   (
+      &flash_session="&default_flash_session"
+      GOSUB Load_Flash_Session
+   )
+;*===========================================================================
+;* Options
+;*===========================================================================
+   POS 65. 1. 36. 1.
+   PRE_ERASE: CHECKBOX "Erase all memory before flashing" ""
+;*===========================================================================
+;* file updates
+;*===========================================================================
+   POS 0. 2. 6.
+   LINE "Code"
+;*===========================================================================
+   POS 5. 2. 20.
+   LINE "Symbol"
+;*===========================================================================
+   POS 24. 2. 96.
+   LINE "Files"
+;*===========================================================================
+   POS 6. 3. 3.
+   TEXT "&cname0"
+;*===========================================================================
+   POS 10. 3. 3.
+   TEXT "&cname1"
+;*===========================================================================
+   POS 14. 3. 3.
+   TEXT "&cname2"
+;*===========================================================================
+   POS 18. 3. 3.
+   TEXT "&cname3"
+;*===========================================================================
+   POS 22. 3. 3.
+   TEXT "&cname4"
+;*===========================================================================
+   POS 2. 4. 2.
+   LCODE[0x0]: CHECKBOX "" "GOSUB ChkLOAD 0x0"
+;*===========================================================================
+   POS 6. 4. 2.
+   LSYM0[0x0]: CHECKBOX "" "GOSUB ChkLOAD 0x0"
+;*===========================================================================
+   POS 10. 4. 2.
+   LSYM1[0x0]: CHECKBOX "" "GOSUB ChkLOAD 0x0"
+;*===========================================================================
+   POS 14. 4. 2.
+   LSYM2[0x0]: CHECKBOX "" "GOSUB ChkLOAD 0x0"
+;*===========================================================================
+   POS 18. 4. 2.
+   LSYM3[0x0]: CHECKBOX "" "GOSUB ChkLOAD 0x0"
+;*===========================================================================
+   POS 22. 4. 2.
+   LSYM4[0x0]: CHECKBOX "" "GOSUB ChkLOAD 0x0"
+;*===========================================================================
+   POS 25. 4. 82.
+   LFILE[0x0]: EDIT "" ""
+;*===========================================================================
+   POS 108. 4. 11.
+   BUTTON "Select File..."
+   (
+      &file=DIALOG.STRING(LFILE[0x0])
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      DIALOG.SETFILE LFILE[0x0] "&file;*.elf;*.s19;*.ptp;*.bin;*.hex"
+   )
+;*===========================================================================
+   POS 2. 5. 2.
+   LCODE[0x1]: CHECKBOX "" "GOSUB ChkLOAD 0x1"
+;*===========================================================================
+   POS 6. 5. 2.
+   LSYM0[0x1]: CHECKBOX "" "GOSUB ChkLOAD 0x1"
+;*===========================================================================
+   POS 10. 5. 2.
+   LSYM1[0x1]: CHECKBOX "" "GOSUB ChkLOAD 0x1"
+;*===========================================================================
+   POS 14. 5. 2.
+   LSYM2[0x1]: CHECKBOX "" "GOSUB ChkLOAD 0x1"
+;*===========================================================================
+   POS 18. 5. 2.
+   LSYM3[0x1]: CHECKBOX "" "GOSUB ChkLOAD 0x1"
+;*===========================================================================
+   POS 22. 5. 2.
+   LSYM4[0x1]: CHECKBOX "" "GOSUB ChkLOAD 0x1"
+;*===========================================================================
+   POS 25. 5. 82.
+   LFILE[0x1]: EDIT "" ""
+;*===========================================================================
+   POS 108. 5. 11.
+   BUTTON "Select File..."
+   (
+      &file=DIALOG.STRING(LFILE[0x1])
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      DIALOG.SETFILE LFILE[0x1] "&file;*.elf;*.s19;*.ptp;*.bin;*.hex"
+   )
+;*===========================================================================
+   POS 2. 6. 2.
+   LCODE[0x2]: CHECKBOX "" "GOSUB ChkLOAD 0x2"
+;*===========================================================================
+   POS 6. 6. 2.
+   LSYM0[0x2]: CHECKBOX "" "GOSUB ChkLOAD 0x2"
+;*===========================================================================
+   POS 10. 6. 2.
+   LSYM1[0x2]: CHECKBOX "" "GOSUB ChkLOAD 0x2"
+;*===========================================================================
+   POS 14. 6. 2.
+   LSYM2[0x2]: CHECKBOX "" "GOSUB ChkLOAD 0x2"
+;*===========================================================================
+   POS 18. 6. 2.
+   LSYM3[0x2]: CHECKBOX "" "GOSUB ChkLOAD 0x2"
+;*===========================================================================
+   POS 22. 6. 2.
+   LSYM4[0x2]: CHECKBOX "" "GOSUB ChkLOAD 0x2"
+;*===========================================================================
+   POS 25. 6. 82.
+   LFILE[0x2]: EDIT "" ""
+;*===========================================================================
+   POS 108. 6. 11.
+   BUTTON "Select File..."
+   (
+      &file=DIALOG.STRING(LFILE[0x2])
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      DIALOG.SETFILE LFILE[0x2] "&file;*.elf;*.s19;*.ptp;*.bin;*.hex"
+   )
+;*===========================================================================
+   POS 2. 7. 2.
+   LCODE[0x3]: CHECKBOX "" "GOSUB ChkLOAD 0x3"
+;*===========================================================================
+   POS 6. 7. 2.
+   LSYM0[0x3]: CHECKBOX "" "GOSUB ChkLOAD 0x3"
+;*===========================================================================
+   POS 10. 7. 2.
+   LSYM1[0x3]: CHECKBOX "" "GOSUB ChkLOAD 0x3"
+;*===========================================================================
+   POS 14. 7. 2.
+   LSYM2[0x3]: CHECKBOX "" "GOSUB ChkLOAD 0x3"
+;*===========================================================================
+   POS 18. 7. 2.
+   LSYM3[0x3]: CHECKBOX "" "GOSUB ChkLOAD 0x3"
+;*===========================================================================
+   POS 22. 7. 2.
+   LSYM4[0x3]: CHECKBOX "" "GOSUB ChkLOAD 0x3"
+;*===========================================================================
+   POS 25. 7. 82.
+   LFILE[0x3]: EDIT "" ""
+;*===========================================================================
+   POS 108. 7. 11.
+   BUTTON "Select File..."
+   (
+      &file=DIALOG.STRING(LFILE[0x3])
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      DIALOG.SETFILE LFILE[0x3] "&file;*.elf;*.s19;*.ptp;*.bin;*.hex"
+   )
+;*===========================================================================
+   POS 2. 8. 2.
+   LCODE[0x4]: CHECKBOX "" "GOSUB ChkLOAD 0x4"
+;*===========================================================================
+   POS 6. 8. 2.
+   LSYM0[0x4]: CHECKBOX "" "GOSUB ChkLOAD 0x4"
+;*===========================================================================
+   POS 10. 8. 2.
+   LSYM1[0x4]: CHECKBOX "" "GOSUB ChkLOAD 0x4"
+;*===========================================================================
+   POS 14. 8. 2.
+   LSYM2[0x4]: CHECKBOX "" "GOSUB ChkLOAD 0x4"
+;*===========================================================================
+   POS 18. 8. 2.
+   LSYM3[0x4]: CHECKBOX "" "GOSUB ChkLOAD 0x4"
+;*===========================================================================
+   POS 22. 8. 2.
+   LSYM4[0x4]: CHECKBOX "" "GOSUB ChkLOAD 0x4"
+;*===========================================================================
+   POS 25. 8. 82.
+   LFILE[0x4]: EDIT "" ""
+;*===========================================================================
+   POS 108. 8. 11.
+   BUTTON "Select File..."
+   (
+      &file=DIALOG.STRING(LFILE[0x4])
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      DIALOG.SETFILE LFILE[0x4] "&file;*.elf;*.s19;*.ptp;*.bin;*.hex"
+   )
+;*===========================================================================
+   POS 2. 9. 2.
+   LCODE[0x5]: CHECKBOX "" "GOSUB ChkLOAD 0x5"
+;*===========================================================================
+   POS 6. 9. 2.
+   LSYM0[0x5]: CHECKBOX "" "GOSUB ChkLOAD 0x5"
+;*===========================================================================
+   POS 10. 9. 2.
+   LSYM1[0x5]: CHECKBOX "" "GOSUB ChkLOAD 0x5"
+;*===========================================================================
+   POS 14. 9. 2.
+   LSYM2[0x5]: CHECKBOX "" "GOSUB ChkLOAD 0x5"
+;*===========================================================================
+   POS 18. 9. 2.
+   LSYM3[0x5]: CHECKBOX "" "GOSUB ChkLOAD 0x5"
+;*===========================================================================
+   POS 22. 9. 2.
+   LSYM4[0x5]: CHECKBOX "" "GOSUB ChkLOAD 0x5"
+;*===========================================================================
+   POS 25. 9. 82.
+   LFILE[0x5]: EDIT "" ""
+;*===========================================================================
+   POS 108. 9. 11.
+   BUTTON "Select File..."
+   (
+      &file=DIALOG.STRING(LFILE[0x5])
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      DIALOG.SETFILE LFILE[0x5] "&file;*.elf;*.s19;*.ptp;*.bin;*.hex"
+   )
+;*===========================================================================
+   POS 2. 10. 2.
+   LCODE[0x6]: CHECKBOX "" "GOSUB ChkLOAD 0x6"
+;*===========================================================================
+   POS 6. 10. 2.
+   LSYM0[0x6]: CHECKBOX "" "GOSUB ChkLOAD 0x6"
+;*===========================================================================
+   POS 10. 10. 2.
+   LSYM1[0x6]: CHECKBOX "" "GOSUB ChkLOAD 0x6"
+;*===========================================================================
+   POS 14. 10. 2.
+   LSYM2[0x6]: CHECKBOX "" "GOSUB ChkLOAD 0x6"
+;*===========================================================================
+   POS 18. 10. 2.
+   LSYM3[0x6]: CHECKBOX "" "GOSUB ChkLOAD 0x6"
+;*===========================================================================
+   POS 22. 10. 2.
+   LSYM4[0x6]: CHECKBOX "" "GOSUB ChkLOAD 0x6"
+;*===========================================================================
+   POS 25. 10. 82.
+   LFILE[0x6]: EDIT "" ""
+;*===========================================================================
+   POS 108. 10. 11.
+   BUTTON "Select File..."
+   (
+      &file=DIALOG.STRING(LFILE[0x6])
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      DIALOG.SETFILE LFILE[0x6] "&file;*.elf;*.s19;*.ptp;*.bin;*.hex"
+   )
+;*===========================================================================
+   POS 2. 11. 2.
+   LCODE[0x7]: CHECKBOX "" "GOSUB ChkLOAD 0x7"
+;*===========================================================================
+   POS 6. 11. 2.
+   LSYM0[0x7]: CHECKBOX "" "GOSUB ChkLOAD 0x7"
+;*===========================================================================
+   POS 10. 11. 2.
+   LSYM1[0x7]: CHECKBOX "" "GOSUB ChkLOAD 0x7"
+;*===========================================================================
+   POS 14. 11. 2.
+   LSYM2[0x7]: CHECKBOX "" "GOSUB ChkLOAD 0x7"
+;*===========================================================================
+   POS 18. 11. 2.
+   LSYM3[0x7]: CHECKBOX "" "GOSUB ChkLOAD 0x7"
+;*===========================================================================
+   POS 22. 11. 2.
+   LSYM4[0x7]: CHECKBOX "" "GOSUB ChkLOAD 0x7"
+;*===========================================================================
+   POS 25. 11. 82.
+   LFILE[0x7]: EDIT "" ""
+;*===========================================================================
+   POS 108. 11. 11.
+   BUTTON "Select File..."
+   (
+      &file=DIALOG.STRING(LFILE[0x7])
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      DIALOG.SETFILE LFILE[0x7] "&file;*.elf;*.s19;*.ptp;*.bin;*.hex"
+   )
+;*===========================================================================
+   POS 2. 12. 2.
+   LCODE[0x8]: CHECKBOX "" "GOSUB ChkLOAD 0x8"
+;*===========================================================================
+   POS 6. 12. 2.
+   LSYM0[0x8]: CHECKBOX "" "GOSUB ChkLOAD 0x8"
+;*===========================================================================
+   POS 10. 12. 2.
+   LSYM1[0x8]: CHECKBOX "" "GOSUB ChkLOAD 0x8"
+;*===========================================================================
+   POS 14. 12. 2.
+   LSYM2[0x8]: CHECKBOX "" "GOSUB ChkLOAD 0x8"
+;*===========================================================================
+   POS 18. 12. 2.
+   LSYM3[0x8]: CHECKBOX "" "GOSUB ChkLOAD 0x8"
+;*===========================================================================
+   POS 22. 12. 2.
+   LSYM4[0x8]: CHECKBOX "" "GOSUB ChkLOAD 0x8"
+;*===========================================================================
+   POS 25. 12. 82.
+   LFILE[0x8]: EDIT "" ""
+;*===========================================================================
+   POS 108. 12. 11.
+   BUTTON "Select File..."
+   (
+      &file=DIALOG.STRING(LFILE[0x8])
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      DIALOG.SETFILE LFILE[0x8] "&file;*.elf;*.s19;*.ptp;*.bin;*.hex"
+   )
+;*===========================================================================
+   POS 2. 13. 2.
+   LCODE[0x9]: CHECKBOX "" "GOSUB ChkLOAD 0x9"
+;*===========================================================================
+   POS 6. 13. 2.
+   LSYM0[0x9]: CHECKBOX "" "GOSUB ChkLOAD 0x9"
+;*===========================================================================
+   POS 10. 13. 2.
+   LSYM1[0x9]: CHECKBOX "" "GOSUB ChkLOAD 0x9"
+;*===========================================================================
+   POS 14. 13. 2.
+   LSYM2[0x9]: CHECKBOX "" "GOSUB ChkLOAD 0x9"
+;*===========================================================================
+   POS 18. 13. 2.
+   LSYM3[0x9]: CHECKBOX "" "GOSUB ChkLOAD 0x9"
+;*===========================================================================
+   POS 22. 13. 2.
+   LSYM4[0x9]: CHECKBOX "" "GOSUB ChkLOAD 0x9"
+;*===========================================================================
+   POS 25. 13. 82.
+   LFILE[0x9]: EDIT "" ""
+;*===========================================================================
+   POS 108. 13. 11.
+   BUTTON "Select File..."
+   (
+      &file=DIALOG.STRING(LFILE[0x9])
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      DIALOG.SETFILE LFILE[0x9] "&file;*.elf;*.s19;*.ptp;*.bin;*.hex"
+   )
+;*===========================================================================
+   POS 0. 14. 60.
+   LINE "Source Paths"
+;*===========================================================================
+   POS 1. 15. 46.
+   SPATH[0x0]: EDIT "" ""
+;*===========================================================================
+   POS 48. 15. 11.
+   BUTTON "Select Path..."
+   (
+      &file=DIALOG.STRING(SPATH[0x0])
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      DIALOG.SETDIR SPATH[0x0] "&file;*.*"
+   )
+;*===========================================================================
+   POS 1. 16. 46.
+   SPATH[0x1]: EDIT "" ""
+;*===========================================================================
+   POS 48. 16. 11.
+   BUTTON "Select Path..."
+   (
+      &file=DIALOG.STRING(SPATH[0x1])
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      DIALOG.SETDIR SPATH[0x1] "&file;*.*"
+   )
+;*===========================================================================
+   POS 60. 14. 60.
+   LINE "Source Path Translation"
+;*===========================================================================
+   POS 61. 15. 4.
+   TEXT "From"
+;*===========================================================================
+   POS 65. 15. 42.
+   SPATHFROM: EDIT "" ""
+;*===========================================================================
+   POS 108. 15. 11.
+   BUTTON "Select Path..."
+   (
+      &file=DIALOG.STRING(SPATHFROM)
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      DIALOG.SETDIR SPATHFROM "&file;*.*"
+   )
+;*===========================================================================
+   POS 61. 16. 4.
+   TEXT "To"
+;*===========================================================================
+   POS 65. 16. 42.
+   SPATHTO: EDIT "" ""
+;*===========================================================================
+   POS 108. 16. 11.
+   BUTTON "Select Path..."
+   (
+      &file=DIALOG.STRING(SPATHTO)
+      IF "&file"==""
+      (
+         &file="&filepath\..\"
+      )
+      DIALOG.SETDIR SPATHTO "&file;*.*"
+   )
+;*===========================================================================
+   POS 0. 17. 120.
+   LINE ""
+;==============================================================================
+   POS 1. 18. 94. 2.
+   BUTTON "OK"
+   (
+      PRINT "Flashing"
+      &clks=CLOCK.SECONDS()
+      PRINT "Start Flashing: "+CLOCK.TIME()
+      jumpto FlashAll
+   )
+;*===========================================================================
+   POS 96. 18. 23. 2.
+   BUTTON "Cancel" "jumpto Cancel_Flash"
+)
+;*===========================================================================
+;* End Dialog
+;*===========================================================================
+IF "&ic0"==""
+(
+   &n=0
+   WHILE &n<10.
+   (
+      DIALOG.Disable LSYM0[&n]
+      &n=&n+1
+   )
+)
+IF "&ic1"==""
+(
+   &n=0
+   WHILE &n<10.
+   (
+      DIALOG.Disable LSYM1[&n]
+      &n=&n+1
+   )
+)
+IF "&ic2"==""
+(
+   &n=0
+   WHILE &n<10.
+   (
+      DIALOG.Disable LSYM2[&n]
+      &n=&n+1
+   )
+)
+IF "&ic3"==""
+(
+   &n=0
+   WHILE &n<10.
+   (
+      DIALOG.Disable LSYM3[&n]
+      &n=&n+1
+   )
+)
+IF "&ic4"==""
+(
+   &n=0
+   WHILE &n<10.
+   (
+      DIALOG.Disable LSYM4[&n]
+      &n=&n+1
+   )
+)
+
+GOSUB Load_Flash_Session
+
+IF &auto_flash
+(
+   PRINT "Auto Flashing"
+   &clks=CLOCK.SECONDS()
+   PRINT "Start Flashing: "+CLOCK.TIME()
+   jumpto FlashAll
+)
+STOP
+
+;*===========================================================================
+;* end of scripting for dialog window.
+;*===========================================================================
+
+;*===========================================================================*
+FlashAll:
+
+; Save the current flash session
+&flash_session="&last_flash_session"
+GOSUB Save_Flash_Session
+
+; check for flashing request(s)
+&n=0
+&lcode_flag=(0==1)
+WHILE &n<10.
+(
+   IF DIALOG.BOOLEAN(LCODE[&n])
+   (
+      &lcode_flag=(0==0)
+   )
+   &n=&n+1
+)
+
+IF ("&pre_flash_scripts"!="")
+(
+   &scripts="&pre_flash_scripts "
+   WHILE STRing.SCAN("&scripts", " ", 0.)!=-1
+   (
+      PRIVATE &script
+      &script=STRing.Split("&scripts", " ", 0.)
+
+      PRINT "pre flash: &core_script_path/&script"
+      DO &core_script_path/&script
+
+      &scripts=STRing.Replace("&scripts", "&script ", "", 0.)
+   )
+)
+
+; load the appropriate flash configuration
+PRINT "Configuring Flash"
+&flash_offset=0
+IF &lcode_flag||DIALOG.BOOLEAN(PRE_ERASE)
+(
+   DO &core_script_path/&cpu/flash CONFIGURE
+)
+
+;*===========================================================================
+IF DIALOG.BOOLEAN(PRE_ERASE)
+(
+   PRINT "Erasing all Flash"
+
+   DO &core_script_path/&cpu/flash ERASE ALL
+   PRINT "Complete"
+)
+;*===========================================================================
+PRINT "Programming Flash"
+&n=0
+WHILE &n<10.
+(
+   &fname=DIALOG.STRING(LFILE[&n])
+   IF "&fname"!=""&&(DIALOG.BOOLEAN(LCODE[&n]))
+   (
+      PRINT "Loading &fname into flash"
+      DO &core_script_path/&cpu/flash PROGRAM "&fname"
+   )
+
+   &n=&n+1
+)
+
+PRINT "Complete"
+;*===========================================================================
+
+;*===========================================================================
+;LOAD Symbols
+;*===========================================================================*
+InterCom ALL sYmbol.RESet
+PRINT "Loading Symbols"
+&n=0
+WHILE &n<10.
+(
+   &fname=DIALOG.STRING(LFILE[&n])
+   IF "&fname"!=""
+   (
+      &filetype=OS.FILE.EXTENSION("&fname")
+
+      IF "&filetype"==".elf"
+      (
+         PRINT "Loading symbols from &fname"
+         &dload_flags="/NoClear /NoCode"
+
+         IF DIALOG.BOOLEAN(LSYM0[&n])&&("&ic0"!="")
+         (
+            &ic0 DATA.LOAD.ELF "&fname" &dload_flags
+         )
+         IF DIALOG.BOOLEAN(LSYM1[&n])&&("&ic1"!="")
+         (
+            &ic1 DATA.LOAD.ELF "&fname" &dload_flags
+         )
+         IF DIALOG.BOOLEAN(LSYM2[&n])&&("&ic2"!="")
+         (
+            &ic2 DATA.LOAD.ELF "&fname" &dload_flags
+         )
+         IF DIALOG.BOOLEAN(LSYM3[&n])&&("&ic3"!="")
+         (
+            &ic3 DATA.LOAD.ELF "&fname" &dload_flags
+         )
+         IF DIALOG.BOOLEAN(LSYM4[&n])&&("&ic4"!="")
+         (
+            &ic4 DATA.LOAD.ELF "&fname" &dload_flags
+         )
+      )
+   )
+
+   &n=&n+1
+)
+
+PRINT "Complete"
+;*===========================================================================
+;* Create Source Code Paths
+;* USE sYmbol.list.spath to see current paths
+;*===========================================================================
+&n=0
+WHILE &n<2.
+(
+   &fname=DIALOG.STRING(SPATH[&n])
+   IF ("&fname"!="")
+   (
+      PRINT "Setting Source Code Path to &fname"
+      sYmbol.SourcePATH.SetRecurseDir &fname
+   )
+   &n=&n+1
+)
+
+&frompath=DIALOG.STRING(SPATHFROM)
+&topath=DIALOG.STRING(SPATHTO)
+IF ("&frompath"!=""&&"&topath"!="")
+(
+      PRINT "Translating Source Code Path from &frompath to &topath"
+      InterCom ALL sYmbol.SourcePATH.Translate "&frompath" "&topath"
+)
+
+;*===========================================================================
+;* Make the searches not case sensitive
+;*===========================================================================
+sYmbol.CASE OFF
+
+;*===========================================================================
+PRINT "Flash script completed at "+CLOCK.TIME()
+
+&clke=CLOCK.SECONDS()
+&tsecs=&clke-&clks
+&tmin=&tsecs/60.
+&tsecs=&tsecs%60.
+
+;*===========================================================================
+PRINT "Total flash time was &tmin minutes and &tsecs seconds"
+
+&n=0
+WHILE &n<5.
+(
+   &ic_assign="&"+"ic=""&"+"ic"+FORMAT.Decimal(1,&n)+""""
+   &&ic_assign
+   &start_core_assign="&"+"start_core=""&"+"start_core"+FORMAT.Decimal(1,&n)+""""
+   &&start_core_assign
+   IF "&ic"!=""&&"&start_core"!=""
+   (
+      PRINT "start core: &core_script_path/&start_core"
+      &ic DO &core_script_path/&start_core
+   )
+   &n=&n+1
+)
+
+IF ("&post_flash_scripts"!="")
+(
+   &scripts="&post_flash_scripts "
+   WHILE STRing.SCAN("&scripts", " ", 0.)!=-1
+   (
+      PRIVATE &script
+      &script=STRing.Split("&scripts", " ", 0.)
+
+      PRINT "post flash: &core_script_path/&script"
+      DO &core_script_path/&script
+
+      &scripts=STRing.Replace("&scripts", "&script ", "", 0.)
+   )
+)
+
+DO &core_script_path/&cpu/reset
+
+Cancel_Flash:
+DIALOG.END
+
+ENDDO
+;*===========================================================================
+;* End of flashd.cmm script.   Return to calling script.
+;*===========================================================================*
+
+;*===========================================================================*
+ChkLOAD:
+;*===========================================================================*
+ENTRY &cur
+LOCAL &fname
+&fname=DIALOG.STRING(LFILE[&cur])
+IF "&fname"==""||(!OS.FILE("&fname"))
+(
+   IF "&fname"==""||(!OS.FILE(&fname))
+   (
+      DIALOG.OK "File '&fname' does not exist! Can not set..."
+      DIALOG.SET LCODE[&cur] "OFF"
+      DIALOG.SET LSYM0[&cur] "OFF"
+      DIALOG.SET LSYM1[&cur] "OFF"
+      DIALOG.SET LSYM2[&cur] "OFF"
+      DIALOG.SET LSYM3[&cur] "OFF"
+      DIALOG.SET LSYM4[&cur] "OFF"
+   )
+)
+
+RETURN
+
+Load_Flash_Session:
+LOCAL &element &value
+IF OS.FILE("&flash_session")
+(
+   PRINT "Loading flash session"
+   OPEN #1 "&flash_session" /Read
+   &path=OS.FILE.PATH("&flash_session")
+   &pwd=OS.PresentWorkingDirectory()
+
+   PWD "&path"
+
+   WHILE (0==0)
+   (
+      READ #1 &element &value
+
+      IF "&element"==""
+         GOTO DoneRead
+      ELSE IF "&element"=="VERSION"&&"&value"!="&version"
+      (
+         PRINT %COLOR.RED "Flash session may be incompatible with flash utility version &version"
+         PRINT %COLOR.RED "Update &flash_session to version &version"
+      )
+      ELSE IF "&element"=="PROC"&&"&value"!="&cpu"
+      (
+         DIALOG.OK "Flash session not valid for &cpu"
+         PWD "&pwd"
+         CLOSE #1
+         RETURN
+      )
+      ELSE IF "&element"!="VERSION"&&"&element"!="PROC"&&"&element"!=";"
+      (
+         IF "&value"==""
+            DIALOG.SET &element
+         ELSE IF (STRing.SCAN("&element","LFILE",0)!=-1)
+            DIALOG.SET &element OS.FILE.ABSPATH("&value")
+         ELSE
+            DIALOG.SET &element "&value"
+      )
+   )
+
+DoneRead:
+   PWD "&pwd"
+   CLOSE #1
+)
+
+;*===========================================================================
+;* If file names specified do not exist, then clear them...
+;*===========================================================================
+&n=0
+WHILE &n<10.
+(
+   &fname=DIALOG.STRING(LFILE[&n])
+   IF "&fname"==""||(!OS.FILE("&fname"))
+   (
+      &file="&filepath\..\*.elf;*.s19;*.ptp;*.bin;*.hex"
+      DIALOG.SET LFILE[&n] ""
+      DIALOG.SET LCODE[&n] "OFF"
+      DIALOG.SET LSYM0[&n] "OFF"
+      DIALOG.SET LSYM1[&n] "OFF"
+      DIALOG.SET LSYM2[&n] "OFF"
+      DIALOG.SET LSYM3[&n] "OFF"
+      DIALOG.SET LSYM4[&n] "OFF"
+   )
+   &n=&n+1
+)
+;*===========================================================================
+;* If path names specified do not exist, then clear them
+;*===========================================================================
+&n=0
+WHILE &n<2.
+(
+   &file=DIALOG.STRING(SPATH[&n])
+   IF (!OS.DIR("&file"))
+   (
+      &file="&filepath\..\*.elf;*.s19;*.ptp;*.bin;*.hex"
+      DIALOG.SET SPATH[&n] ""
+   )
+   &n=&n+1
+)
+PRINT "Flash session loaded"
+RETURN
+
+Save_Flash_Session:
+LOCAL &value
+
+PRINT "Writing &flash_session"
+OPEN #1 "&flash_session" /Create
+WRITE #1 "VERSION &version"
+WRITE #1 "PROC &cpu"
+;*===========================================================================
+IF DIALOG.BOOLEAN(PRE_ERASE)
+(
+   WRITE #1 "PRE_ERASE ON"
+)
+ELSE
+(
+   WRITE #1 "PRE_ERASE OFF"
+)
+;*===========================================================================
+
+;*===========================================================================
+&n=0
+WHILE &n<10.
+(
+   &value=DIALOG.STRING(LFILE[&n])
+   WRITE #1 "LFILE[&n] &value"
+   IF DIALOG.BOOLEAN(LCODE[&n])
+   (
+      WRITE #1 "LCODE[&n] ON"
+   )
+   ELSE
+   (
+      WRITE #1 "LCODE[&n] OFF"
+   )
+
+   IF DIALOG.BOOLEAN(LSYM0[&n])
+   (
+      WRITE #1 "LSYM0[&n] ON"
+   )
+   ELSE
+   (
+      WRITE #1 "LSYM0[&n] OFF"
+   )
+
+   IF DIALOG.BOOLEAN(LSYM1[&n])
+   (
+      WRITE #1 "LSYM1[&n] ON"
+   )
+   ELSE
+   (
+      WRITE #1 "LSYM1[&n] OFF"
+   )
+
+   IF DIALOG.BOOLEAN(LSYM2[&n])
+   (
+      WRITE #1 "LSYM2[&n] ON"
+   )
+   ELSE
+   (
+      WRITE #1 "LSYM2[&n] OFF"
+   )
+
+   IF DIALOG.BOOLEAN(LSYM3[&n])
+   (
+      WRITE #1 "LSYM3[&n] ON"
+   )
+   ELSE
+   (
+      WRITE #1 "LSYM3[&n] OFF"
+   )
+
+   IF DIALOG.BOOLEAN(LSYM4[&n])
+   (
+      WRITE #1 "LSYM4[&n] ON"
+   )
+   ELSE
+   (
+      WRITE #1 "LSYM4[&n] OFF"
+   )
+
+   &n=&n+1
+)
+&n=0
+WHILE &n<2.
+(
+   &value=DIALOG.STRING(SPATH[&n])
+   WRITE #1 "SPATH[&n] &value"
+
+   &n=&n+1
+)
+&value=DIALOG.STRING(SPATHFROM)
+WRITE #1 "SPATHFROM &value"
+&value=DIALOG.STRING(SPATHTO)
+WRITE #1 "SPATHTO &value"
+CLOSE #1
+RETURN
+
+CPU_Detect:
+&cpu="Unknown Processor"
+ON ERROR GOSUB
+(
+   DIALOG.MESSAGE "Connect to a powered target and press OK"
+   SYSTEM.DETECT IDCODE
+   RETURN
+)
+SYSTEM.DETECT IDCODE
+ON ERROR inherit
+
+IF IDCODE(0)==0x854402B
+(
+   &cpu="SAF85xx"
+)
+ELSE IF IDCODE(0)==0x1BB7B02F
+(
+   &cpu="AWR294x"
+)
+RETURN

@@ -1,0 +1,13 @@
+Algorithm Output Name,Embedded (CANape) Output Name,Output +/- Range,Output dB Range,Complex Names (Real Part First),Scaling,Small Change +/- Range,Small Change dB Range
+numDetected,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd1_num_detect[*],0,,,p0,0,
+rindx,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd1_rindx[*],0,,,p0,0,
+dindx,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd1_dindx[*],0,,,p0,0,
+aindx,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd1_aindx[*],0,,,p0,0,
+rdop_amp,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd1_rdop_amp[*],,-96,,p0,,-95
+rbinest,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd1_rbinest[*],0.5,,,p0,0,
+dbinest,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd1_dbinest[*],0.5,,,p0,0,
+abinest,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd1_abinest[*],0.5,,,p0,0,
+max_per_range_bin,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd1_max_per_range_bin[*][*],,-96,,p0,,-95
+sig_thold_1st_pass,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd1_signal_thold_first_pass[*][*],,-96,,p0,,-95
+first_pass_thold,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd1_first_pass_thold[*][*],,-96,,p0,,-95
+bv,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd1_bv[*][*],,-36,,p0,,-35

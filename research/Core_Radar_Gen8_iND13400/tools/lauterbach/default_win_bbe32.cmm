@@ -1,0 +1,46 @@
+// T32-3 Wed Mar 19 10:36:04 2014
+
+B::
+
+TOOLBAR ON
+STATUSBAR ON
+FramePOS ,,,, Maximized
+WinPAGE.RESet
+
+WinPAGE.Create Main
+
+WinCLEAR
+
+WinPOS 0. 0. 76. 24. 0. 0. Default
+List.Auto
+
+WinPOS 0. 29. 76. 29. 0. 0. Default
+Register.View /stack
+
+WinPOS 80. 0. 76. 6. 0. 0. Default
+Break.List
+
+WinPOS 80. 11. 76. 45. 0. 0. Default
+Var.Watch %e %spotlight
+
+WinPOS 160. 0. 59. 17. 0. 0. Default
+SYStem.state
+
+WinPOS 160. 34. 74. 7. 0. 0. Default
+AREA.View
+
+WinPOS 160. 45. 74. 11. 14. 0. Default
+Data.Dump e:0x80000000 /dialog /spotlight
+
+WinPAGE.select Main
+
+Var.DelWatch %all
+
+VAR.ADDWATCH Exception_Cause
+VAR.ADDWATCH %HEX MPU_Map_Readback
+VAR.ADDWATCH MainApplication_ProfilingInfo_Overall
+VAR.ADDWATCH MainApplication_ProfilingInfo
+VAR.ADDWATCH ((volatile RA_SFRS_t *)0x844C0000)
+VAR.ADDWATCH ((volatile MIPI_SFRS_t *)0x84480000)
+
+ENDDO

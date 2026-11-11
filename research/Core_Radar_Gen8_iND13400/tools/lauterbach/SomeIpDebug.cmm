@@ -1,0 +1,122 @@
+// T32 Fri May 30 15:11:56 2025
+
+B::
+
+TOOLBAR   ON
+STATUSBAR ON
+FramePOS 384.9,18.353,,,Maximized
+WinPAGE.RESet
+
+WinPAGE.Create P000
+WinCLEAR
+
+WinPAGE.Create Main
+WinCLEAR
+
+WinPOS 160.0 28.0 74. 7. 0. 0. Default
+AREA.View
+
+WinPOS 160.0 39.0 74. 17. 14. 0. Default
+Data.Dump e:0x00000000 /dialog /spotlight
+
+WinPOS 167.4 5.2353 64. 16. 0. 0. W001
+SYStem.state
+
+WinPOS 0.0 29.0 76. 29. 0. 0. Default
+Register.View /stack
+
+WinPOS 166.4 20.353 105. 25. 5. 0. W002
+Frame
+
+WinPOS 128.1 19.941 70. 26. 16. 1. W004
+Data.dump (0x80114c00) /DIALOG
+
+WinPOS 44.7 3.2353 126. 24. 26. 1. W000
+WinTABS 13. 16. 0. 0. 0. 0. 0. 0. 0. 56.
+Break.List
+
+WinPOS 55.5 5.1765 136. 51. 0. 0. Default
+Var.Watch %e %spotlight
+
+Var.AddWatch \\r52App\versions\Git_Status
+Var.AddWatch \\r52App\versions\Git_Commit_Hash
+Var.AddWatch Application_Version
+Var.AddWatch DSP_Range_Config_Counts
+Var.AddWatch DSP_Range_Process_Complete_Counts
+Var.AddWatch Radar_Ctl_Data
+Var.AddWatch Radar_50ms_Counter
+Var.AddWatch XCP_ADC_Log_Chirp_Num
+Var.AddWatch XCP_Doppler_Idx
+Var.AddWatch XCP_Range_Idx
+Var.AddWatch test_re_50ms_counter
+Var.AddWatch SoAd_Instance
+Var.AddWatch SoAd_LocalAddr
+Var.AddWatch SoAd_PCConfig
+Var.AddWatch SoAd_LocalAddrDyn
+Var.AddWatch SoAd_LocalAddrByTcpIpCtrlInd
+Var.AddWatch SoAd_RouteGrp
+Var.AddWatch SoAd_Socket
+Var.AddWatch SoAd_SoCon
+Var.AddWatch SoAd_State
+Var.AddWatch SoAd_TcpIpCtrl
+Var.AddWatch SoAd_UpperLayer
+Var.AddWatch Test_SoConGrpIdx
+Var.AddWatch SoAd_ConfigDataPtr
+Var.AddWatch (*((*((*(SoAd_ConfigDataPtr)).PCPartitionConfigOfPCConfig)).SoConGrpOfPCPartitionConfig)).SoConEndIdxOfSoConGrp
+Var.AddWatch (*((*((*(SoAd_ConfigDataPtr)).PCPartitionConfigOfPCConfig)).SoConGrpOfPCPartitionConfig)).SoConStartIdxOfSoConGrp
+Var.AddWatch EthIf_EthIfCtrlLinkState
+Var.AddWatch IPC_D2M_Buffer
+Var.AddWatch Stream_Table
+Var.AddWatch Test_timeStamp
+Var.AddWatch Enable_UDPTx
+Var.AddWatch Stream_Handler_Init_Params
+Var.AddWatch logging_socket_open
+Var.AddWatch localAddress
+Var.AddWatch remoteAddress
+Var.AddWatch Test_ReturnVal_Soad
+Var.AddWatch Profile_Radar_Trigger_Timer_ISR
+Var.AddWatch TcpIp_EthIfCtrl
+Var.AddWatch TcpIp_State
+Var.AddWatch TcpIp_UdpConfig
+Var.AddWatch Header_Stream
+Var.AddWatch PduInfoPtr
+Var.AddWatch SoAd_State
+Var.AddWatch RetVal_CheckTxIfCheckParam
+Var.AddWatch pduInfo
+Var.AddWatch RetVal_SoAd_TxIf_TransmitPduRouteDest
+Var.AddWatch RetVal_SoAd_SoCon_CheckConnectionStates
+Var.AddWatch RetVal_SoAd_RemoteAddr_IsForceRelease
+Var.AddWatch (*((*(SoAd_ConfigDataPtr)).PCPartitionConfigOfPCConfig)).SocketDynOfPCPartitionConfig
+Var.AddWatch logging_socket_open
+Var.AddWatch remoteAddress
+Var.AddWatch TcpIp_ArpConfig
+Var.AddWatch TcpIp_ArpTableEntry
+Var.AddWatch SoAd_ConfigDataPtr->PCPartitionConfigOfPCConfig[(partitionIdx)].SizeOfInstanceOfPCPartitionConfig
+Var.AddWatch SoAd_ConfigDataPtr->PCPartitionConfigOfPCConfig[(0)].SizeOfInstanceOfPCPartitionConfig
+Var.AddWatch SoAd_ConfigDataPtr->PCPartitionConfigOfPCConfig[(0)].SizeOfSocketOfPCPartitionConfig
+Var.AddWatch Counter_SoConOpen
+Var.AddWatch Array_SoConIdx
+Var.AddWatch SoAd_SoCon
+Var.AddWatch RetVal_SoAd_TxIf_UdpTransmit
+Var.AddWatch SoAd_ConfigDataPtr->PCPartitionConfigOfPCConfig[(0)].TxMgtOfPCPartitionConfig[(1)].TxBytesLenOfTxMgt
+Var.AddWatch retval_SoAd_TxIf_UdpTransmitPdu
+Var.AddWatch retval_SoAd_TxIf_UdpTransmitNPdu
+Var.AddWatch SoAd_ConfigDataPtr->PCPartitionConfigOfPCConfig[(0)].TxMgtOfPCPartitionConfig[(1)].TxBytesLenOfTxMgt
+Var.AddWatch pduRouteDestsTransmitted
+Var.AddWatch pduRouteDestsRejected
+Var.AddWatch localAddress
+Var.AddWatch remoteAddress
+Var.AddWatch TcpIp_ArpTableEntry.str.cnctr_RDR_RdrNet_1bd20df5[9].NetAddrOfArpTableEntry
+Var.AddWatch localpdulength
+Var.AddWatch SOCKET_ID
+
+WinPOS 4.7 3.7059 146. 46. 16. 0. Default
+WinTABS 10. 10. 25.
+List.Auto
+
+WinPOS 160.1 4.4118 111. 55. 0. 0. Default
+Frame /Locals /Caller
+
+WinPAGE.select Main
+
+ENDDO

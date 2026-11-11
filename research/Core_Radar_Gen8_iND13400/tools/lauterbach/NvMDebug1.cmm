@@ -1,0 +1,97 @@
+// T32 Wed Apr 16 13:34:18 2025
+
+B::
+
+TOOLBAR   ON
+STATUSBAR ON
+FramePOS 339.2,11.294,,,Maximized
+WinPAGE.RESet
+
+WinPAGE.Create P000
+WinCLEAR
+
+WinPAGE.Create Main
+WinCLEAR
+
+WinPOS 0.0 29.0 76. 29. 0. 0. Default
+Register.View /stack
+
+WinPOS 160.0 28.0 74. 7. 0. 0. Default
+AREA.View
+
+WinPOS 162.2 16.529 76. 38. 0. 0. Default
+Frame /Locals /Caller
+
+WinPOS 26.5 2.7647 76. 6. 0. 0. Default
+WinTABS 13. 0. 0. 0. 0. 0. 0. 0. 0. 48.
+Break.List
+
+WinPOS 160.0 0.0 68. 16. 0. 0. Default
+SYStem.state
+
+WinPOS 160.0 39.0 74. 17. 14. 0. Default
+Data.Dump e:0x00000000 /dialog /spotlight
+
+WinPOS 128.0 18.882 83. 26. 17. 1. W000
+flashfile.dump
+
+WinPOS 0.0 0.0 103. 58. 22. 0. Default
+WinTABS 10. 10. 25.
+List.Auto
+
+WinPOS 18.8 2.2941 129. 61. 0. 0. Default
+Var.Watch %e %spotlight
+
+Var.AddWatch \\r52App\versions\Git_Status
+Var.AddWatch \\r52App\versions\Git_Commit_Hash
+Var.AddWatch Application_Version
+Var.AddWatch DSP_Range_Config_Counts
+Var.AddWatch DSP_Range_Process_Complete_Counts
+Var.AddWatch Radar_Ctl_Data
+Var.AddWatch Radar_50ms_Counter
+Var.AddWatch XCP_ADC_Log_Chirp_Num
+Var.AddWatch XCP_Doppler_Idx
+Var.AddWatch XCP_Range_Idx
+Var.AddWatch Test_RE_PLT_Appl_NvMHandler_50ms
+Var.AddWatch u8_nvblock_write_pending_alignment
+Var.AddWatch Fls_Module_Status
+Var.AddWatch Fls_Job_Result
+Var.AddWatch JobHandler
+Var.AddWatch flashDev
+Var.AddWatch Driver_Flash0
+Var.AddWatch Flash_Data_Width
+Var.AddWatch temp_flashDev
+Var.AddWatch JobHandler
+Var.AddWatch Fls_Module_Status
+Var.AddWatch status
+Var.AddWatch Tmp_Status
+Var.AddWatch var
+Var.AddWatch Tmp_Status
+Var.AddWatch Alignment_NvM_Read_Record
+Var.AddWatch Alignment_NvM_Record
+Var.AddWatch Fls_Job_Result
+Var.AddWatch Fls_Module_Status
+Var.AddWatch Return_FLS_Read
+Var.AddWatch Radar_Ctl_Data.scan_index
+Var.AddWatch Test_RE_PLT_Appl_NvMHandler_50ms
+Var.AddWatch Flag_Once
+Var.AddWatch Flag_FLS_Read
+Var.AddWatch Return_FLS_Read
+Var.AddWatch buffer_rd
+Var.AddWatch buffer_wr
+Var.AddWatch Flag_FLS_Write
+Var.AddWatch Return_FLS_Write
+Var.AddWatch Flag_FLS_Read
+Var.AddWatch buffer_rd
+Var.AddWatch buffer_wr
+Var.AddWatch Flag_Once
+Var.AddWatch TestDriver
+Var.AddWatch Flag_FLS_Write
+Var.AddWatch Flag_FLS_Read
+Var.AddWatch Rte_SWC_PLT_Appl_NvMHandler_Appl_Alignment_PIM
+Var.AddWatch Test_SWC_PLT_Appl_NvMHandler_Init
+Var.AddWatch u8_nvblock_write_pending_alignment
+
+WinPAGE.select Main
+
+ENDDO

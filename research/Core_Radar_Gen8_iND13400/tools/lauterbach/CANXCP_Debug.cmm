@@ -1,0 +1,60 @@
+// T32 Thu Oct  2 13:53:38 2025
+
+B::
+
+TOOLBAR   ON
+STATUSBAR ON
+FramePOS 22.4,13.176,,,Maximized
+WinPAGE.RESet
+
+WinPAGE.Create P000
+WinCLEAR
+
+WinPAGE.Create Main
+WinCLEAR
+
+WinPOS 0.0 29.0 76. 29. 0. 0. Default
+Register.View /stack
+
+WinPOS 160.0 28.0 74. 7. 0. 0. Default
+AREA.View
+
+WinPOS 160.0 39.0 74. 17. 14. 0. Default
+Data.Dump e:0x00000000 /dialog /spotlight
+
+WinPOS 160.0 0.0 68. 16. 0. 0. Default
+SYStem.state
+
+WinPOS 128.2 4.2353 116. 26. 16. 1. W000
+WinTABS 10. 10. 25.
+List P:0x80010B3A
+
+WinPOS 110.4 31.176 134. 40. 18. 0. Default
+WinTABS 10. 10. 25.
+List.Auto
+
+WinPOS 80.0 0.0 76. 6. 0. 0. Default
+WinTABS 13. 16. 0. 0. 0. 0. 0. 0. 0. 32.
+Break.List
+
+WinPOS 51.6 7.6471 178. 48. 0. 0. Default
+Var.Watch %e %spotlight
+
+Var.AddWatch \\r52App\versions\Git_Status
+Var.AddWatch \\r52App\versions\Git_Commit_Hash
+Var.AddWatch Application_Version
+Var.AddWatch DSP_Range_Config_Counts
+Var.AddWatch DSP_Range_Process_Complete_Counts
+Var.AddWatch Radar_Ctl_Data
+Var.AddWatch Radar_50ms_Counter
+Var.AddWatch XCP_ADC_Log_Chirp_Num
+Var.AddWatch XCP_Doppler_Idx
+Var.AddWatch XCP_Range_Idx
+Var.AddWatch XCP_User_Cmd_List
+Var.AddWatch XCP_Set_Output
+Var.AddWatch XcpAppl_ConnectionState
+Var.AddWatch CanXcp_PduBuffer
+
+WinPAGE.select Main
+
+ENDDO

@@ -1,0 +1,129 @@
+// T32 Fri Sep 18 14:49:32 2026
+
+B::
+
+TOOLBAR   ON
+STATUSBAR ON
+FramePOS 60.0,18.5,,,Maximized
+WinPAGE.RESet
+
+WinPAGE.Create P000
+WinCLEAR
+
+WinPAGE.Create Main
+WinCLEAR
+
+WinPOS 160.0 28.0 74. 7. 0. 0. Default
+AREA.View
+
+WinPOS 160.0 39.0 74. 17. 14. 0. Default
+Data.Dump e:0x00000000 /dialog /spotlight
+
+WinPOS 85.75 44.5 48. 24. 0. 0. W007
+Register
+
+WinPOS 40.25 25.357 76. 39. 0. 0. Default
+Register.View /stack
+
+WinPOS 147.63 2.9286 142. 54. 5. 0. W000
+Frame /Locals /Caller
+
+WinPOS 26.25 0.35714 125. 14. 26. 1. W001
+WinTABS 13. 0. 0. 0. 0. 0. 0. 0. 0. 71.
+Break.List
+
+WinPOS 3.875 0.0 148. 54. 0. 0. Default
+Var.Watch %e %spotlight
+
+Var.AddWatch \\r52App\versions\Git_Status
+Var.AddWatch \\r52App\versions\Git_Commit_Hash
+Var.AddWatch Application_Version
+Var.AddWatch DSP_Range_Config_Counts
+Var.AddWatch DSP_Range_Process_Complete_Counts
+Var.AddWatch Radar_Ctl_Data
+Var.AddWatch Radar_50ms_Counter
+Var.AddWatch XCP_ADC_Log_Chirp_Num
+Var.AddWatch XCP_Doppler_Idx
+Var.AddWatch XCP_Range_Idx
+Var.AddWatch \\r52App\sensor_position\Radar_Position
+Var.AddWatch \\r52App\EthIf_Lcfg\EthIf_EthIfCtrlLinkState
+Var.AddWatch Frame_Tx_Failure_Cnt
+Var.AddWatch Frame_Tx_Success_Cnt
+Var.AddWatch TcpIp_Buf2TxReqMap
+Var.AddWatch Configured_PHY_1Gb
+Var.AddWatch \\r52App\PHY_User_Cbk\Connected_PHY
+Var.AddWatch \\r52App\PHY_User_Cbk\detected_phy_manufacturer
+Var.AddWatch gDebug_read_tja_registers
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_DeviceControl_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_XmiiControl_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_MiiBasicConfig_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_BaseT1PmaCtrl_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_PhyStatus_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_SignalQuality_Reg
+Var.AddWatch TJA1103_SGMIIBasic_Control_Reg
+Var.AddWatch TJA1103_PmaControl1_Reg
+Var.AddWatch TJA1103_PmaStatus1_Reg
+Var.AddWatch TJA1103_PmaStatus2_Reg
+Var.AddWatch TJA1103_PcsControl1_Reg
+Var.AddWatch TJA1103_PcsStatus2_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_DeviceControl_Reg
+Var.AddWatch TJA1103_DeviceStatus_Reg
+Var.AddWatch TJA1103_DeviceConfig_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_XmiiControl_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_MiiBasicConfig_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_PhyControl_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_PhyStatus_Reg
+Var.AddWatch TJA1103_PhyConfig_Reg
+Var.AddWatch TJA1103_PhyState_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_SignalQuality_Reg
+Var.AddWatch TJA1103_Mse_Reg
+Var.AddWatch TJA1103_CableTest_Reg
+Var.AddWatch I2c_Polling_Stats
+Var.AddWatch Test_RE_PLT_ExternalWdg_Init
+Var.AddWatch After_baseT1PmaCtrlReg
+Var.AddWatch TJA1103_BaseT1PmaCtrl_Reg
+Var.AddWatch TJA1103_SignalQuality_Reg
+Var.AddWatch TJA1103_PhyStatus_Reg
+Var.AddWatch TJA1103_PhyControl_Reg
+Var.AddWatch TJA1103_BaseT1PmaCtrl_Reg
+Var.AddWatch TJA1103_MiiBasicConfig_Reg
+Var.AddWatch TJA1103_XmiiControl_Reg
+Var.AddWatch TJA1103_DeviceControl_Reg
+Var.AddWatch Test_Re_50ms_Counter
+Var.AddWatch Mismatched_Counter_TJA1103_BaseT1PmaCtrl_Reg
+Var.AddWatch Correct_Counter_TJA1103_BaseT1PmaCtrl_Reg
+Var.AddWatch Debug_ResetPass
+Var.AddWatch Debug_ResetFail
+Var.AddWatch Hwinit_BASE_T1_PMA_CONTROL
+Var.AddWatch EthSM_TrcvLinkState
+
+WinPOS 160.0 0.0 68. 16. 0. 0. Default
+SYStem.state
+
+WinPOS 99.375 1.5 100. 52. 0. 0. W004
+Var.Watch
+
+Var.AddWatch TJA1103_SGMIIBasic_Control_Reg
+Var.AddWatch TJA1103_PmaControl1_Reg
+Var.AddWatch TJA1103_PmaStatus1_Reg
+Var.AddWatch TJA1103_PmaStatus2_Reg
+Var.AddWatch TJA1103_PcsControl1_Reg
+Var.AddWatch TJA1103_PcsStatus1_Reg
+Var.AddWatch TJA1103_PcsStatus2_Reg
+Var.AddWatch TJA1103_DeviceStatus_Reg
+Var.AddWatch TJA1103_DeviceConfig_Reg
+Var.AddWatch TJA1103_PhyConfig_Reg
+Var.AddWatch TJA1103_PhyState_Reg
+Var.AddWatch TJA1103_Mse_Reg
+Var.AddWatch TJA1103_CableTest_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_BaseT1PmaCtrl_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_PhyStatus_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_PhyControl_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_MiiBasicConfig_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_XmiiControl_Reg
+Var.AddWatch \\r52App\PHY_User_Cbk\TJA1103_DeviceControl_Reg
+Var.AddWatch gDebug_read_tja_registers
+
+WinPAGE.select Main
+
+ENDDO

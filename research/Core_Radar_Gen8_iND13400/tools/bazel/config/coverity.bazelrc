@@ -1,0 +1,5 @@
+# These variables are needed for CI
+common --flag_alias=nightly=//tools/coverity:nightly
+
+common:cov_commit --noremote_accept_cached # Disable the remote cache when committing to the server
+common:cov_commit --nightly=true # Indicate this is a nightly build when committing to the server

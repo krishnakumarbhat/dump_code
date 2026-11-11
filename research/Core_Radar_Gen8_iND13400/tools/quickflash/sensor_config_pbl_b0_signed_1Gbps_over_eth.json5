@@ -1,0 +1,94 @@
+{
+  profiles: [
+    {
+      name: "radar_01_pbl",
+      sensor_id: "Gen8",
+      description: "PBL Position1",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.71",
+      },
+      downloadImages: [
+        {
+          path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19",
+        },
+        {
+          path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_02_pbl",
+      sensor_id: "Gen8",
+      description: "PBL Position2",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.72",
+      },
+      downloadImages: [
+        {
+          path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19",
+        },
+        {
+          path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_03_pbl",
+      sensor_id: "Gen8",
+      description: "PBL Position3",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.73",
+      },
+      downloadImages: [
+        {
+          path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19",
+        },
+        {
+          path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_04_pbl",
+      sensor_id: "Gen8",
+      description: "PBL Position4",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.74",
+      },
+      downloadImages: [
+        {
+          path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19",
+        },
+        {
+          path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_05_pbl",
+      sensor_id: "Gen8",
+      description: "PBL Position5",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.75",
+      },
+      downloadImages: [
+        {
+          path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19",
+        },
+        {
+          path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19",
+        },
+      ],
+    },
+  ],
+}

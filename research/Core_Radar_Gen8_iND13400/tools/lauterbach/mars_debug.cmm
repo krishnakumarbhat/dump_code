@@ -1,0 +1,73 @@
+// T32 Thu Sep 12 17:17:25 2024
+
+B::
+
+TOOLBAR   ON
+STATUSBAR ON
+FramePOS 226.75,-42.0,,,Maximized
+WinPAGE.RESet
+
+WinPAGE.Create P000
+WinCLEAR
+
+WinPAGE.Create Main
+WinCLEAR
+
+WinPOS 0.0 0.0 76. 24. 0. 0. Default
+WinTABS 10. 10. 25.
+List.Auto
+
+WinPOS 0.0 29.0 76. 29. 0. 0. Default
+Register.View /stack
+
+WinPOS 80.0 0.0 76. 6. 0. 0. Default
+WinTABS 13. 0. 0. 0. 0. 0. 0. 0. 0. 48.
+Break.List
+
+WinPOS 166.25 46.0 85. 16. 16. 2. W000
+Var.draw.IPC_D2M_Buffer[1].payload.xcp_data.range_process_ra_output.adc_chirp
+
+WinPOS 180.5 0.0 64. 16. 0. 0. W001
+SYStem.state
+
+WinPOS 166.13 24.0 85. 16. 16. 2. W000
+Var.draw.IPC_D2M_Buffer[0].payload.xcp_data.range_process_ra_output.adc_chirp
+
+WinPOS 161.25 0.071429 80. 10. 0. 0. Default
+Frame /Locals /Caller
+
+WinPOS 53.375 11.786 108. 53. 0. 0. Default
+Var.Watch %e %spotlight
+
+Var.AddWatch Mars_Self_Layer2_InstanceDriver0
+Var.AddWatch SPI_Resources
+Var.AddWatch Mars_Api_Id
+Var.AddWatch Mars_Error_Type
+Var.AddWatch Mars_Error_Id
+Var.AddWatch api_ret_val
+Var.AddWatch Sandeep_test
+Var.AddWatch frame_counter
+Var.AddWatch MIPI_Csi_Rx_Config
+Var.AddWatch Mipi_Config
+Var.AddWatch MIPI_Initialized
+Var.AddWatch MainApplication_ProfilingInfo
+Var.AddWatch XCP_AdcData_Buffer
+Var.AddWatch GPT_Period
+Var.AddWatch execution_time
+Var.AddWatch Timestamp_milliSeconds
+Var.AddWatch Timestamp_Seconds
+Var.AddWatch MMIC_Stream
+Var.AddWatch Is_Test_Pattern_Enabled
+Var.AddWatch Is_CW_Mode_Enabled
+Var.AddWatch MMIC_Error
+Var.AddWatch SMC_Cal_Data.Mars_API_Cal
+Var.AddWatch IPC_D2M_Buffer
+Var.AddWatch XCP_ADC_Log_Chirp_Num
+Var.AddWatch Radar_Ctl_Data
+Var.AddWatch Appl_Range_Variables
+Var.AddWatch Radar_Ctl_State
+Var.AddWatch DSP_Skipped_Frame
+
+WinPAGE.select Main
+
+ENDDO

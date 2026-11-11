@@ -1,0 +1,15 @@
+IF InterCom.PING(R52)
+(
+   ON ERROR CONTinue
+   InterCom R52 SYStem.RESetTarget
+   ON ERROR inherit
+   InterCom R52 SYStem.Attach
+   InterCom R52 Break
+   ; Reset execution to its default state
+   InterCom R52 Register.Set PC 0 ; Set program counter to 0
+   InterCom R52 Register.Set M 0x1A ; Set Mode to EL2/Hypervisor
+)
+IF InterCom.PING(BBE)
+(
+   InterCom BBE Register.Set PC 0x84010000
+)

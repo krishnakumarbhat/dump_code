@@ -1,0 +1,3 @@
+&default_win0="default_win_r52"
+&default_win1="default_win_bbe32"
+&auto_flash_session="../../bazel-bin/outputs/PHY_1Gb/srr8p_satellite_can/flash_session_PHY_1Gb.ini"

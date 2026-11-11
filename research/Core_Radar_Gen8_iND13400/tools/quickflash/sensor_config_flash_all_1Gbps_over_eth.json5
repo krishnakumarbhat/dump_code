@@ -1,0 +1,844 @@
+{
+   profiles: [
+      {
+         name: "flr8_satellite_can_radar_01",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.71",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/flr8_satellite_can/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/flr8_satellite_can/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "flr8_satellite_can_radar_02",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.72",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/flr8_satellite_can/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/flr8_satellite_can/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "flr8_satellite_can_radar_03",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.73",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/flr8_satellite_can/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/flr8_satellite_can/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "flr8_satellite_can_radar_04",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.74",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/flr8_satellite_can/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/flr8_satellite_can/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "flr8_satellite_can_radar_05",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.75",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/flr8_satellite_can/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/flr8_satellite_can/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_satellite_can_radar_01",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.71",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_satellite_can/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_satellite_can/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_satellite_can_radar_02",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.72",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_satellite_can/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_satellite_can/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_satellite_can_radar_03",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.73",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_satellite_can/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_satellite_can/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_satellite_can_radar_04",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.74",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_satellite_can/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_satellite_can/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_satellite_can_radar_05",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.75",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_satellite_can/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_satellite_can/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "flr8_standalone_radar_01",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.71",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/flr8_standalone/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/flr8_standalone/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "flr8_standalone_radar_02",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.72",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/flr8_standalone/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/flr8_standalone/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "flr8_standalone_radar_03",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.73",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/flr8_standalone/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/flr8_standalone/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "flr8_standalone_radar_04",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.74",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/flr8_standalone/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/flr8_standalone/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "flr8_standalone_radar_05",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.75",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/flr8_standalone/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/flr8_standalone/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_standalone_radar_01",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.71",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_standalone/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_standalone/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_standalone_radar_02",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.72",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_standalone/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_standalone/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_standalone_radar_03",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.73",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_standalone/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_standalone/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_standalone_radar_04",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.74",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_standalone/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_standalone/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_standalone_radar_05",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.75",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_standalone/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_standalone/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "flr8_satellite_eth_high_det_radar_01",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.71",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/flr8_satellite_eth_high_det/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/flr8_satellite_eth_high_det/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "flr8_satellite_eth_high_det_radar_02",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.72",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/flr8_satellite_eth_high_det/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/flr8_satellite_eth_high_det/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "flr8_satellite_eth_high_det_radar_03",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.73",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/flr8_satellite_eth_high_det/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/flr8_satellite_eth_high_det/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "flr8_satellite_eth_high_det_radar_04",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.74",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/flr8_satellite_eth_high_det/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/flr8_satellite_eth_high_det/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "flr8_satellite_eth_high_det_radar_05",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.75",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/flr8_satellite_eth_high_det/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/flr8_satellite_eth_high_det/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_satellite_eth_high_det_radar_01",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.71",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_satellite_eth_high_det/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_satellite_eth_high_det/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_satellite_eth_high_det_radar_02",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.72",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_satellite_eth_high_det/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_satellite_eth_high_det/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_satellite_eth_high_det_radar_03",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.73",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_satellite_eth_high_det/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_satellite_eth_high_det/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_satellite_eth_high_det_radar_04",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.74",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_satellite_eth_high_det/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_satellite_eth_high_det/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_satellite_eth_high_det_radar_05",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.75",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_satellite_eth_high_det/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_satellite_eth_high_det/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/pbl_b0_eth_1Gbps_signed.s19"
+            },
+            {
+               path: "../pbl/chandra_b0/eth_1Gbps/hsm_container_b0_v50a_225.s19"
+            },
+         ]
+      },
+      {
+         name: "srr8p_al_can_standalone_radar_01",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.71",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_al_can_standalone/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_al_can_standalone/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/ashok_leyland/can/pbl_al_can_signed.s19",
+            },
+            {
+               path: "../pbl/ashok_leyland/can/hsm_container_b0_v50a_225.s19",
+            },
+         ]
+      },
+      {
+         name: "srr8p_al_can_standalone_radar_02",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.72",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_al_can_standalone/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_al_can_standalone/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/ashok_leyland/can/pbl_al_can_signed.s19",
+            },
+            {
+               path: "../pbl/ashok_leyland/can/hsm_container_b0_v50a_225.s19",
+            },
+         ]
+      },
+      {
+         name: "srr8p_al_can_standalone_radar_03",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.73",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_al_can_standalone/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_al_can_standalone/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/ashok_leyland/can/pbl_al_can_signed.s19",
+            },
+            {
+               path: "../pbl/ashok_leyland/can/hsm_container_b0_v50a_225.s19",
+            },
+         ]
+      },
+      {
+         name: "srr8p_al_can_standalone_radar_04",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.74",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_al_can_standalone/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_al_can_standalone/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/ashok_leyland/can/pbl_al_can_signed.s19",
+            },
+            {
+               path: "../pbl/ashok_leyland/can/hsm_container_b0_v50a_225.s19",
+            },
+         ]
+      },
+      {
+         name: "srr8p_al_can_standalone_radar_05",
+         sensor_id: "Gen8",
+         description: "FLR8 Satellite CAN variant application with default SMC and default USC",
+         server_config: {
+            sensor_ip: "192.168.1.75",
+
+            response_port: 5009
+         },
+         images: [
+            {
+               path: "../PHY_1Gb/srr8p_al_can_standalone/app.s19"
+            },
+            {
+               path: "../PHY_1Gb/srr8p_al_can_standalone/smc_cal.ptp"
+            },
+            {
+               path: "../pbl/ashok_leyland/can/pbl_al_can_signed.s19",
+            },
+            {
+               path: "../pbl/ashok_leyland/can/hsm_container_b0_v50a_225.s19",
+            },
+         ]
+      },
+   ]
+}

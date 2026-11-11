@@ -1,0 +1,89 @@
+; --------------------------------------------------------------------------------
+; @Title: Example for XTENSA library load
+; @Description:
+;   To customize TRACE32 for a certain Cadence configuration DLL libraries can be
+;   used. Here we see the necessary steps to collect information on custom instructions
+;   and registers for TRACE32.
+; @Author: BEH
+; @Copyright: (C) 1989-2022 Lauterbach GmbH, licensed for use with TRACE32(R) only
+; --------------------------------------------------------------------------------
+ENTRY &IntercomName
+LOCAL &IC
+
+
+;Be careful: The version of the libraries has to match the version of Trace32
+;            32 bit windows libraries (*.dll) can only be used with the 32 bit windows version of t32mxtensa.exe
+;            32 bit linux   libraries (*.so)  can only be used with the 32 bit linux   version of t32mxtensa
+
+
+;specify local macros for our configuration:
+LOCAL &LibExtension &LibArchitecture &LibRIArchitecture ;will be set automatically
+LOCAL &XtToolLibPath ;keeps the path for the tools (xtisa.dll, xtparams.dll and xtdebug.dll)
+                     ;we use to extract the needed information from the libraries at
+LOCAL &XtCoreLibPath ;where we expect your configuration specific libraries (libisa-core.dll, libisa-core-hw.dll)
+LOCAL &XtLib1 &XtLib2
+
+;support for intercom call
+  GOSUB BuidIntercomName
+
+;get the OS
+  GOSUB SetLibExtension
+
+; get the configuration specific settings:
+  &XtCoreLibPath=InterCom.GetGlobalMacro(R52,"XtCoreLibPath")
+  &XtToolLibPath=InterCom.GetGlobalMacro(R52,"XtToolLibPath")
+  PRINT "INFO: XtCoreLibPath: &XtCoreLibPath"
+  PRINT "INFO: XtToolLibPath: &XtToolLibPath"
+
+;Here are the steps needed to customize TRACE32 for a certain Cadence configuration:
+;remove old libraries which might still be present from a previous load
+  &IC SYStem.TIE.DELete
+
+;specify where to find the tools TRACE32 needs (xtisa.dll and xtparams.dll)
+  &IC SYStem.TIE.LIBPATH "&XtToolLibPath"
+
+;load the libraries
+  &XtLib1=OS.FILE.JOINPATH("&XtCoreLibPath","libisa-core-hw.&LibExtension")
+  &XtLib2=OS.FILE.JOINPATH("&XtCoreLibPath","libisa-core.&LibExtension")
+  &IC SYStem.TIE.ADDtiedll "&XtLib1"
+  &IC SYStem.TIE.ADDtiedll "&XtLib2"
+  ;you may add more libraries of your configuration if they contain custom instructions or registers
+
+;tell TRACE32 to use the libraries
+  &IC SYStem.TIE.ENAble
+
+;use the libraries for disassembly
+  &IC SYStem.Option DisMode LIBrary
+
+;return to calling PRACTICE file or end command execution
+  ENDDO
+
+SetLibExtension:
+(
+  IF (OS.NAME()=="Windows")
+  (
+    &LibExtension="dll"
+    &LibArchitecture="windows"
+    &LibRIArchitecture="win32"
+  )
+  ELSE
+  (
+    &LibExtension="so"
+    &LibArchitecture="linux"
+    &LibRIArchitecture="linux"
+  )
+  RETURN
+)
+
+BuidIntercomName:
+(
+  if "&IntercomName"==""
+  (
+    &IC=""
+  )
+  ELSE
+  (
+    &IC="IC "+"&IntercomName"
+  )
+  RETURN
+)

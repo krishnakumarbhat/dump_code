@@ -1,0 +1,111 @@
+// T32 Tue Aug 29 16:47:38 2023
+
+B::
+
+TOOLBAR   ON
+STATUSBAR ON
+FramePOS 17.538,9.0952,,,Maximized
+WinPAGE.RESet
+
+WinPAGE.Create P000
+WinCLEAR
+
+WinPAGE.Create Main
+WinCLEAR
+
+WinPOS 0.0 29.0 76. 29. 0. 0. Default
+Register.View /stack
+
+WinPOS 0.0 0.0 76. 24. 0. 0. Default
+WinTABS 10. 10. 25.
+List.Auto
+
+WinPOS 80.0 0.0 76. 6. 0. 0. Default
+WinTABS 13. 0. 0. 0. 0. 0. 0. 0. 0. 48.
+Break.List
+
+WinPOS 80.0 11.0 76. 5. 0. 0. Default
+Frame /Locals /Caller
+
+WinPOS 160.0 0.0 68. 16. 0. 0. Default
+SYStem.state
+
+WinPOS 160.0 28.0 74. 7. 0. 0. Default
+AREA.View
+
+WinPOS 160.0 39.0 74. 17. 14. 0. Default
+Data.Dump e:0x00000000 /dialog /spotlight
+
+WinPOS 1.1538 0.71429 98. 26. 0. 1. W001
+WinTABS 41. 31.
+sYmbol.Browse.Function
+
+WinPOS 12.923 3.4762 100. 25. 0. 0. W003
+per , "MSCM (Miscellaneous System Control Module)"
+WinPAN 0. 30.
+
+WinPOS 2.3077 1.4286 100. 26. 16. 1. W002
+WinTABS 10. 10. 25.
+List e:Update_M7_IPC_Notify
+
+WinPOS 5.3077 -0.14286 54. 28. 0. 0. W000
+Var.Watch
+
+Var.AddWatch Radar_Ctl_State
+Var.AddWatch XCP_Range_Idx
+Var.AddWatch XCP_Doppler_Idx
+Var.AddWatch XCP_Rngidx_Target_start
+Var.AddWatch Xcp_Max_Fp_Tgt_Cnt
+Var.AddWatch Xcp_Max_Fp_Per_Rbin_Target_Cnt
+Var.AddWatch XCP_Max_Static_Target_Case_Enable
+Var.AddWatch XCP_RDD_Vary_Xput_Flag
+
+WinPOS 2.9231 18.524 100. 15. 0. 0. W004
+Var.View %Open %e IPC_Dopp_Rdd_Buf_Read_Addr->payload.xcp_data
+
+WinPOS 68.154 -0.90476 92. 33. 0. 0. Default
+Var.Watch %e %spotlight
+
+Var.AddWatch \\m7App\versions\Git_Status
+Var.AddWatch \\m7App\versions\Git_Commit_Hash
+Var.AddWatch Application_Version
+Var.AddWatch Radar_Ctl_Data
+Var.AddWatch IPC_D2M_Buffer
+Var.AddWatch IPC_M2D_Buffers.ipc_m2d_buffer
+Var.AddWatch MainApplication_ProfilingInfo
+Var.AddWatch IPC_M2D_Buffers.ipc_m2d_one_time_init_data
+Var.AddWatch IPC_M2D_Crc_Err_Cnt
+Var.AddWatch M2D_Buffer_Full_Error_Counter
+Var.AddWatch DSP_D2M_Msg_Header_Cnt
+Var.AddWatch R52_M2D_Msg_Header_Cnt
+Var.AddWatch DSP_Current_Look_Index
+Var.AddWatch dsp_isr_count
+Var.AddWatch IPC_R52_To_BBE_Trigger_Received
+Var.AddWatch DP_Rdd_Buffer_Index
+Var.AddWatch SP_Post_Proc_Buffer_Index
+Var.AddWatch RP_Buffer_Index
+Var.AddWatch R52_M2D_Buffer_Index
+Var.AddWatch p_rdd_int_buff
+Var.AddWatch IPC_Dopp_RDD_Comp_Buf_Read_Addr->payload.rdd_stream_data.rdd_data.rdd1_num_detect
+Var.AddWatch IPC_Dopp_RDD_Comp_Buf_Read_Addr->payload.xcp_data.xcp_max_per_rbin_targets
+Var.AddWatch MainApplication_ProfilingInfo[3].profilingStruct.maxRuntime
+Var.AddWatch Doppler_Proc_Overrun_Counter
+Var.AddWatch &(*dp_dfft_bv_output_buffer)[0]
+Var.AddWatch &(*dp_dfft_bv_output_buffer)[1]
+Var.AddWatch &(*dp_dfft_bv_output_buffer)[2]
+Var.AddWatch *dp_dfft_bv_output_buffer
+Var.AddWatch (*dp_dfft_bv_output_buffer)[0][1]
+Var.AddWatch (*dp_dfft_bv_output_buffer)[0][2]
+Var.AddWatch (*rdop_avg_data)[0]
+Var.AddWatch (*rdop_avg_data)[1]
+Var.AddWatch (*rdop_avg_data)[2]
+Var.AddWatch (*rdop_avg_data)[3]
+Var.AddWatch (rdop_avg_data)
+Var.AddWatch &(*rdop_avg_data)[3]
+Var.AddWatch IPC_Dopp_RDD_Comp_Buf_Read_Addr->payload.xcp_data.rdd1_xcp_rdop_avg_rbin
+Var.AddWatch IPC_Dopp_RDD_Comp_Buf_Read_Addr->payload.xcp_data.rdd1_xcp_rdop_avg_dbin
+Var.AddWatch rdop_avg_data_ptr
+
+WinPAGE.select Main
+
+ENDDO

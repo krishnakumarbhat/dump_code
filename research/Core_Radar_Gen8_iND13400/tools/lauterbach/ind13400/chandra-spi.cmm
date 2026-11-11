@@ -1,0 +1,84 @@
+DO ~~~~/chandra_r52_init.cmm
+WAIT 1s
+DO ~~~~/pll_init.cmm
+
+// Make sure SSI and DMA are OFF (Might have been enabled by sboot)
+PER.Set.ByName "QSPI_FLASH ().SSIENR.SSIC_EN"           0.  // Disable SSI
+PER.Set.ByName "QSPI_FLASH ().DMACR.IDMAE"              0.  // Disable DMA(!)
+
+// configure IP pins
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_CLK.OE_N"  0.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_CLK.DS"    5.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_CLK.PE"    0.
+
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_CSN.OE_N"  0.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_CSN.DS"    5.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_CSN.PE"    0.
+
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D0.DS"     5.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D0.IE"     1.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D0.PS"     0.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D0.PE"     1.
+
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D1.DS"     5.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D1.IE"     1.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D1.PS"     0.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D1.PE"     1.
+
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D2.DS"     5.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D2.IE"     1.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D2.PS"     0.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D2.PE"     1.
+
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D3.DS"     5.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D3.IE"     1.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D3.PS"     0.
+PER.Set.ByName "IOCTRL ().FLASH_QSPI_D3.PE"     1.
+
+// configure QSPI input muxes
+PER.Set.ByName "ARTIE ().SPI_RXD_CTRL.CTL_QSPI_FLASH_RXD0_SEL"  0. // 0 for QSPI, 1 for SPI
+PER.Set.ByName "ARTIE ().SPI_RXD_CTRL.CTL_QSPI_FLASH_RXD1_SEL"  1.
+PER.Set.ByName "ARTIE ().SPI_RXD_CTRL.CTL_QSPI_FLASH_RXD2_SEL"  2.
+PER.Set.ByName "ARTIE ().SPI_RXD_CTRL.CTL_QSPI_FLASH_RXD3_SEL"  3.
+
+// configure SSI peripheral for QPI mode
+PER.Set.ByName "QSPI_FLASH ().SSIENR.SSIC_EN"           0.  // Disable SSI
+PER.Set.ByName "QSPI_FLASH ().CTRLR0.SPI_FRF"           2.  // SPI Frame Format. 0=Standard SPI, 2=QSPI
+PER.Set.ByName "QSPI_FLASH ().CTRLR0.SSTE"              0   // Slave Select Toggle Enable. 0=select stays low for full transfer
+PER.Set.ByName "QSPI_FLASH ().CTRLR0.TMOD"              1.  // Transfer Mode. 0=Tx and Rx simultaneously, 1=Tx only
+PER.Set.ByName "QSPI_FLASH ().CTRLR0.SCPOL"             0.  // Polarity
+PER.Set.ByName "QSPI_FLASH ().CTRLR0.SCPH"              0.  // Phase
+PER.Set.ByName "QSPI_FLASH ().CTRLR0.FRF"               0.  // Frame Format. 0=Motorola SPI
+PER.Set.ByName "QSPI_FLASH ().CTRLR0.DFS"               7.  // Data Frame Size 7=8 bit data frames
+PER.Set.ByName "QSPI_FLASH ().SER"                    0x1   // Configure chip selects (on Chanda, only one is available)
+PER.Set.ByName "QSPI_FLASH ().BAUDR"                    8.  // Fsclk = 250MHz/BAUDR (2 <= BAUDR <= 0xFFFE, BAUDR even)
+PER.Set.ByName "QSPI_FLASH ().SPI_CTRLR0.WAIT_CYCLES"   0.  // Wait cycles between command and data for read operations
+PER.Set.ByName "QSPI_FLASH ().SPI_CTRLR0.INST_L"        2.  // Instruction length. 2 = 8 bit
+PER.Set.ByName "QSPI_FLASH ().SPI_CTRLR0.ADDR_L"        0.  // Address length. 0 = no address
+PER.Set.ByName "QSPI_FLASH ().SPI_CTRLR0.TRANS_TYPE"    2.  // Instruction/Address transfer format. 2=Quad mode for both instruction and address
+PER.Set.ByName "QSPI_FLASH ().SSIENR.SSIC_EN"           1.  // Enable SSI
+
+// Send QPI switch command
+PER.Set.ByName "QSPI_FLASH ().TXFTLR.TXFTHR"    0.  // Transfer start FIFO level
+&DR0_addr=PER.ADDRESS("QSPI_FLASH ().DR0")
+Data.Set &DR0_addr %Long 0xF5                       // 0xF5 = Exit QPI command for ISSI
+WHILE PER.VALUE("QSPI_FLASH ().SR.BUSY")!=0
+(
+  WAIT 0.1
+)
+Data.Set &DR0_addr %Long 0xFF                       // 0xFF = Exit QPI command for Winbond
+WHILE PER.VALUE("QSPI_FLASH ().SR.BUSY")!=0
+(
+    WAIT 0.1
+)
+
+// Switch back to SPI mode
+PER.Set.ByName "ARTIE ().SPI_RXD_CTRL.CTL_QSPI_FLASH_RXD0_SEL" 1. // 0 for QSPI, 1 for SPI
+PER.Set.ByName "QSPI_FLASH ().SSIENR.SSIC_EN" 0. //Disable SSI
+PER.Set.ByName "QSPI_FLASH ().CTRLR0.SPI_FRF" 0. // SPI Frame Format. 0=Standard SPI, 2=QSPI
+PER.Set.ByName "QSPI_FLASH ().CTRLR0.TMOD"    0. // Transfer Mode. 0=Tx and Rx simultaneously, 1=Tx only
+PER.Set.ByName "QSPI_FLASH ().SSIENR.SSIC_EN" 1. // Enable SSI
+
+FLASHFILE.CONFIG 0xBADCAFE1 0xBADCAFE2 0xBADCAFE3 0xBADCAFE4
+FLASHFILE.TARGET 0x00000080--0x1fff 0x00002000--0xFFFF ~~~~/spi64_chandra.bin /KEEP
+FLASHFILE.GETID

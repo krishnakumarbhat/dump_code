@@ -1,0 +1,113 @@
+// --------------------------------------------------------------------------------
+// @Title: Startup script for debug of Chandra ARM Cortex-R52 over SWD
+// @Description:
+// This script connects and starts a debug session on Chandra ARM Cortex-R52
+// using SWD
+// @Keywords: Debug, Chandra, R52, ARM, Cortex-R52, SWD
+// @Board: *Chandra*
+// @Chip: Chandra
+// @Copyright: (C) 2023 Indie Semiconductor
+// --------------------------------------------------------------------------------
+
+// This script is initializing the Chandra SoC via DAP
+// from the primary perspective of the R52 processor
+// no parameter
+
+// --------------------------------------------------------------------------------
+PRIVATE &current_cmm_dir &os_return_code
+&current_cmm_dir=OS.PresentPracticeDirectory()
+&os_return_code=0.
+
+PRINT %COLOR.BLUE "INFO: initialize Chandra ARM Cortex-R52 and start the debugger"
+;RESet
+SYStem.RESet
+
+SYStem.CPU CortexR52 // select the Chandra ARM CPU (Cortex-R52)
+SYStem.JtagClock 25MHz
+SYStem.MemAccess Denied
+
+SYStem.CONFIG.DEBUGPORTTYPE SWD        // Enable SWD mode
+
+SYStem.CONFIG CoreNumber 2
+SYStem.CONFIG CORE 1. 1.  ;R52
+CORE.ASSIGN 1.
+
+SYStem.CONFIG COREDEBUG.Base DAP:0xf9010000 /Core 1.
+SYStem.CONFIG COREDEBUG.Base DAP:0xf8004000 /Core 2.
+
+SYStem.CONFIG CTI.Base APB:0xf9020000
+
+SYStem.CONFIG APBAP1.Base DP:0xf8000000 // AP0: APB-AP that connects to Cortex-R52 core in chip
+SYStem.CONFIG APBAP2.Base DP:0xfc000000 // AP2: APB-AP that connects to DMB
+
+SYStem.CONFIG BMC.Base APB:0xf9030000
+SYStem.CONFIG ETM.Base APB:0xf9040000 /Core 1.
+SYStem.CONFIG STM.Base APB:0xf8011000
+SYStem.CONFIG FUNNEL.Base APB:0xf8012000
+SYStem.CONFIG TPIU.Base APB:0xf8013000
+SYStem.CONFIG ETR.Base APB:0xf8014000
+SYStem.CONFIG GICD.Base APB:0xE1E00000
+SYStem.CONFIG GICR.Base APB:0xF1E00000
+
+Trace.DISable
+
+SYStem.Option.EnReset OFF
+SYStem.Option.ResBreak OFF
+//SYStem.Option.RESetREGister APB:0x8900200C 0xfffeffff 0x00010000 0x00000000 /Long
+
+SYStem.RESetOut
+
+SYStem.Mode Prepare
+PRINT %COLOR.BLUE "INFO: Unlock SWD_ENA_CODE0/1"
+Data.Set EAPB2:0xFC001024 %Long 0x55EEACDC
+Data.Set EAPB2:0xFC001028 %Long 0x1234ACCE
+PRINT %COLOR.BLUE "INFO: Halt Chandra ARM Cortex-R52 CPU on Reset"
+Data.Set EAPB:0x89003010 %Long 0x0000000D
+PRINT %COLOR.BLUE "INFO: Unlock SBI_ENA_CODE0/1 - this releases the reset to the R52"
+Data.Set EAPB2:0xFC00101C %Long 0xFD90CAE8
+Data.Set EAPB2:0xFC001020 %Long 0xAA552574
+
+SYStem.Mode Up
+
+Data.Assemble ST:0x0 b 0x0
+SYStem.Mode Down
+SYStem.RESetOut
+
+SYStem.Mode Prepare
+PRINT %COLOR.BLUE "INFO: Unlock SWD_ENA_CODE0/1"
+Data.Set EAPB2:0xFC001024 %Long 0x55EEACDC
+Data.Set EAPB2:0xFC001028 %Long 0x1234ACCE
+PRINT %COLOR.BLUE "INFO: Halt Chandra ARM Cortex-R52 CPU on Reset"
+Data.Set EAPB:0x89003010 %Long 0x0000000D
+PRINT %COLOR.BLUE "INFO: Unlock SBI_ENA_CODE0/1 - this releases the reset to the R52"
+Data.Set EAPB2:0xFC00101C %Long 0xFD90CAE8
+Data.Set EAPB2:0xFC001020 %Long 0xAA552574
+
+SYStem.Mode Up
+// Enable TCMB/C and establish access maps BEFOR the first PRINT statement!
+// Otherwise windows might get updated, that would access the specified regions.
+PER.Set.simple C15:0x119 %Long 0x7FFE001F     // enable TCMB
+PER.Set.simple C15:0x219 %Long 0x7FFF001F     // enable TCMC
+MAP.DenyAccess 0x010000--0x7FFDFFFF           // gap between TCMA and TCMB
+MAP.BUS32 0x84401000++0x1FF                 // DSP Subsystem Register Bank
+MAP.BUS32 0x84000000++0xFFFF                // BBE32 DRAM0
+MAP.BUS32 0x84010000++0xFFFF                // BBE32 DRAM1
+MAP.BUS32 0x84020000++0xFFFF                // BBE32 IRAM
+MAP.BUS64 0x84100000++0x3FFF                // MIPI OCP Data Buffer
+MAP.BUS32 0x90000000++0x2FFFFF              // TCM Bus Address
+MAP.BUS32 0x91800000++0x1FFFF               // ARTIE Mem Bus Address
+
+PRINT %COLOR.BLUE "INFO: CHANDRA ARM CORTEX-R52 UP"
+
+PER.ReProgram &current_cmm_dir/chandra.per
+PRINT %COLOR.BLUE "INFO: CHANDRA peripheral file programmed"
+
+IF CONFIG.SCREEN()==TRUE()
+(
+MENU.ReProgram &current_cmm_dir/chandra.men
+PRINT %COLOR.BLUE "INFO: CHANDRA peripheral menu programmed"
+)
+
+PRINT %COLOR.BLUE "INFO: CHANDRA ARM INIT Complete"
+Break.CONFIG.METHOD Program Onchip
+ENDDO &os_return_code

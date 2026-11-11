@@ -1,0 +1,9 @@
+// This script blocks until the BBE hits a breakpoint.
+// The script will never return if no breakpoint is hit - this is intended behavior
+// This script is called by matlab and then the script can be monitored for completion.
+// If the script completes - the breakpoint is hit.
+// If the script does not complete, the BBE core is running and did not hit the breakpoint.
+
+Intercom BBE32 WAIT !state.run()
+
+PRINT "Break point encountered. ITF processing can continue."

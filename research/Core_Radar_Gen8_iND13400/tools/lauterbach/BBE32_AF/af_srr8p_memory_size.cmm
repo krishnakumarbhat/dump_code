@@ -1,0 +1,68 @@
+// T32_BBE32 Thu Nov  9 08:35:04 2023
+
+B::
+
+WinPOS 80. 11. 76. 45. 0. 0. Default
+Var.Watch %e %spotlight
+
+// Cals
+Var.AddWatch \
+ sizeof(AF_SSC) \
+ sizeof(AF_USC) \
+ sizeof(af_gainpatfine) \
+ sizeof(af_thold_sensitivity) \
+ sizeof(af_fft_w) \
+ sizeof(af_fft_rev) \
+ sizeof(af_ctx0) \
+ sizeof(af_ctx1) \
+ sizeof(af_crx0) \
+ sizeof(af_crx1) \
+ sizeof(af_cal0_c1) \
+ sizeof(af_cal1_c1) \
+
+// Local Stage Datastructures
+Var.AddWatch \
+ sizeof(RDD_Angle_Data_S1_T) \
+ sizeof(RDD_Angle_Data_S4_T) \
+ sizeof(RDD_Angle_Data_S5_T) \
+ sizeof(Angle_Data) \
+ sizeof(Angle_Data_S4) \
+ sizeof(Angle_Data_S5) \
+
+// Application Mempool structures
+// typedef enum AF_Memory_Location_Tag
+// {
+//    AF_MP_MEMORY = 0,
+//    AF_MP_RDD_DET,
+//    AF_MP_DATA,
+//    AF_MP_ANGLE_DATA,
+//    AF_MP_ANGLE_DATA_S3,
+//    AF_MP_ANGLE_DATA_S4,
+//    AF_MP_RDD_ANGLE_DATA_S1,
+//    AF_MP_MAX_NUM_MEMORY_LOC /* MAX must be at the end*/
+// } AF_Memory_Location_T;
+
+Var.AddWatch \
+ sizeof(AF_Internal_Mem_Info) \
+ AF_Internal_Mem_Info[0].size \
+ AF_Internal_Mem_Info[1].size \
+ AF_Internal_Mem_Info[2].size \
+ AF_Internal_Mem_Info[3].size \
+ AF_Internal_Mem_Info[4].size \
+ AF_Internal_Mem_Info[5].size \
+ AF_Internal_Mem_Info[6].size \
+
+ // High Level Vars
+ Var.AddWatch \
+ sizeof(IPC_D2M_Buffer[0].payload.det_data) \
+ sizeof(IPC_D2M_Buffer[0].payload.det_debug_data) \
+ sizeof(IPC_D2M_Buffer[0].payload.xcp_af_data) \
+ sizeof(IPC_D2M_Buffer[0].payload.dsp_timing_data.af_time) \
+ sizeof(AF_Data_T) \
+ sizeof(RDD_Det_T) \
+ sizeof(AF_Mem_T) \
+ sizeof(AF_Mempool_T) \
+ sizeof(af_input_data) \
+ sizeof(af_output_data) \
+
+ENDDO

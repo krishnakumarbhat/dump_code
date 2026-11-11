@@ -1,0 +1,80 @@
+// T32_BBE32 Thu Nov  9 08:35:04 2023
+
+B::
+
+WinPOS 80. 11. 76. 45. 0. 0. Default
+Var.Watch %e %spotlight
+
+// Cals
+Var.AddWatch \
+ sizeof(AF_SSC) \
+ sizeof(AF_USC) \
+ sizeof(*Calmat_Update_Data_ptr) \
+ sizeof(Calmat_Update_Data) \
+ sizeof(*Cal_Monitoring_Stat_ptr) \
+ sizeof(Cal_Monitoring_Stat) \
+ sizeof(*Sens_Thr_ptr) \
+ sizeof(Sens_Thr) \
+ sizeof(af_gainpatfine) \
+ sizeof(af_thold_sensitivity) \
+ sizeof(af_chamber_el_plane) \
+ sizeof(af_az_lut) \
+ sizeof(af_az_sin_lut) \
+ sizeof(af_fft_w) \
+ sizeof(af_fft_rev) \
+ sizeof(af_el_lut) \
+ sizeof(af_el_sin_lut) \
+ sizeof(af_az_search_range) \
+ sizeof(af_el_search_offset) \
+ sizeof(af_tx_cal_matrix) \
+ sizeof(af_rx_cal_matrix) \
+ sizeof(af_cal_matrix) \
+ sizeof(af_ctx0) \
+ sizeof(af_ctx1) \
+ sizeof(af_crx0) \
+ sizeof(af_crx1) \
+ sizeof(af_cal0_c1) \
+ sizeof(af_cal1_c1) \
+ sizeof(USC_Cal_Data_Ptr->USC_AF_Cal.k_calmat1_c1) \
+ sizeof(USC_Cal_Data_Ptr->USC_AF_Cal.k_calmat2_c1) \
+ sizeof(USC_Cal_Data_Ptr->USC_AF_Cal.k_calmat3_c1) \
+ sizeof(USC_Cal_Data_Ptr->USC_AF_Cal.k_calmat4_c1)
+
+// Local Stage Datastructures
+Var.AddWatch \
+ sizeof(*RDD_Angle_Data_S1_ptr) \
+ sizeof(RDD_Angle_Data_S1) \
+ sizeof(*RDD_Angle_Data_S2_ptr) \
+ sizeof(RDD_Angle_Data_S2) \
+ sizeof(*RDD_Angle_Data_S3_ptr) \
+ sizeof(RDD_Angle_Data_S3) \
+ sizeof(*RDD_Angle_Data_S4_ptr) \
+ sizeof(RDD_Angle_Data_S4) \
+ sizeof(*RDD_Angle_Data_S5_ptr) \
+ sizeof(RDD_Angle_Data_S5) \
+ sizeof(*Angle_Data_ptr) \
+ sizeof(Angle_Data) \
+ sizeof(*Angle_Data_S4_ptr) \
+ sizeof(Angle_Data_S4) \
+ sizeof(*Angle_Data_S5_ptr) \
+ sizeof(Angle_Data_S5)
+
+// High Level Vars
+Var.AddWatch \
+ sizeof(IPC_D2M_Buffer[0].payload.det_data) \
+ sizeof(IPC_D2M_Buffer[0].payload.det_debug_data) \
+ sizeof(IPC_D2M_Buffer[0].payload.xcp_af_data) \
+ sizeof(IPC_D2M_Buffer[0].payload.dsp_timing_data.af_time) \
+ sizeof(*AF_Data_ptr) \
+ sizeof(AF_Data) \
+ sizeof(*RDD_Det_ptr) \
+ sizeof(RDD_Det) \
+ sizeof(*AF_Mem_ptr) \
+ sizeof(AF_Mem) \
+ sizeof(*AF_Mem_Pool_ptr) \
+ sizeof(AF_Mem_Pool) \
+ sizeof(af_input_data) \
+ sizeof(af_output_data) \
+ sizeof(AF_Internal_Mem_Info)
+
+ENDDO

@@ -1,0 +1,92 @@
+ADD
+TOOLBAR
+(
+   TOOLITEM "Sys Up" "[=5V4AcD03l3x3$o$kJKK001t0UtE$$ef@]"
+   (
+      sys.up
+   )
+
+   TOOLITEM "Sys Standby" "[=AV4AkOLth2807t3$CKu$McF17p2V0fX0040VK101I91f0SFg0F00@C454245001t0UtffxUz3UD1101t0UtE$$ef@]"
+   (
+      SYS.DOWN
+      WAIT 0.5s
+      SYS.MODE STANDBY
+      WAIT 0.5s
+      PRINT "Standby Enabled..."
+   )
+
+   TOOLITEM "Sys Down" "[=5V437LVYffxUz3UD1101t0UtE$$ef@]"
+   (
+      SYS.DOWN
+      ;Set reset delay back to default of 250ms
+      DIAG 3000 34. 250.
+   )
+
+   SEPARATOR
+
+   TOOLITEM "Asynchronous Mode" "[=x7m9vhiaXfnx5SXXX2]"
+   (
+      PRINT "Entering ansynchronous debug mode"
+      InterCom ALL SYnch.OFF
+   )
+
+   TOOLITEM "Synchronous Mode" "[=Tpo8C@ImHB0tU2VWkigKG470]"
+   (
+      PRINT "Entering synchronous debug mode"
+      InterCom ALL SYnch.Connect &cname0 &cname1 &cname2 &cname3 &cname4
+      InterCom ALL SYnch.MasterGo ON
+      InterCom ALL SYnch.MasterBreak ON
+      InterCom ALL SYnch.MasterStep ON
+      InterCom ALL SYnch.MasterSystemMode ON
+      InterCom ALL SYnch.SlaveGo ON
+      InterCom ALL SYnch.SlaveBreak ON
+      InterCom ALL SYnch.SlaveStep ON
+      InterCom ALL SYnch.SlaveSystemMode ON
+      InterCom ALL SYnch.ON
+   )
+
+   SEPARATOR
+
+   TOOLITEM "Initialize Basic Trace Configuration. Must be done after code is running." "[=5Vlj3740Fz3F0T2840WtIX004l31e085BjJ28x10]"
+   (
+      ; initialize OFFCHIP trace (ETM, ITM)
+      IF Analyzer()
+      (
+        InterCom &cname0 DO &core_script_path/&cpu/trace_init
+
+;        TPIU.PortMode Continuous
+;        ETM.Trace ON
+;        ETM.DataTrace ON
+;        ETM.COND ALL
+;        ETM.ON
+;
+;        Trace.METHOD Analyzer
+;        Trace.AutoInit ON
+;
+        Trace
+      )
+   )
+
+   SEPARATOR
+
+   TOOLITEM "Reset to Code Start" "RS,R"
+   (
+      InterCom &cname0 DO &core_script_path/&cpu/reset
+   )
+
+   SEPARATOR
+
+   TOOLITEM "Reflash" "FL,g"
+   (
+      InterCom &cname0 FramePOS ,,,, Top
+      InterCom &cname0 DO &core_script_path/core_radar_flash
+   )
+
+   SEPARATOR
+
+   TOOLITEM "Quit all PowerView instances" "[=7VlX$s10E0NN02FV0F100yUViSqonGaL1TVWG0@0lfgNRL0]"
+   (
+      InterCom ALL Quit
+      ENDDO
+   )
+)

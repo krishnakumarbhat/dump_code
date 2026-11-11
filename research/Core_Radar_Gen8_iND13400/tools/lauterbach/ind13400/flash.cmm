@@ -1,0 +1,67 @@
+PRIVATE &command &arguments
+ENTRY &command %LINE &arguments
+
+&command=STRing.UPpeR("&command")
+&version_str = STRing.Replace(VERSION.DATE(), "/", "", 0)
+&version = V.Value(&version_str)
+&expected_version = 202402.
+
+IF "&command"=="CONFIGURE"
+(
+   // Configure flash
+   PRINT "INFO: flash.cmm: CONFIGURE"
+   &version_str = STRing.Replace(VERSION.DATE(), "/", "", 0)
+   &version = V.Value(&version_str)
+   &expected_version = 202402.
+   IF &version>=&expected_version
+   (
+      PRINT "Creating FLASHFILE"
+      FLASHFILE.Delete ALL
+      FLASHFILE.Create 0x0--0x3FFFFF 0x1000 Byte
+   )
+   ELSE
+   (
+      PRINT %COLOR.RED "Update Trace32 to Version >= 2024 SP1"
+   )
+   DO ~~~~/chandra-spi.cmm
+)
+ELSE IF "&command"=="ERASE"
+(
+   // Erase
+   PRINT "INFO: flash.cmm: ERASE"
+   IF ("&arguments"=="ALL")
+   (
+      FLASHFILE.Erase 0x0--0x3FFFFF
+   )
+   ELSE
+   (
+      FLASHFILE.Erase &arguments
+   )
+)
+ELSE IF "&command"=="PROGRAM"
+(
+   // Program
+   PRINT "INFO: flash.cmm: PROGRAM"
+   IF ("&arguments"!="")
+   (
+      &arguments="&arguments "
+      WHILE STRing.SCAN("&arguments", " ", 0.)!=-1
+      (
+         PRIVATE &argument
+         &argument=STRing.Split("&arguments", " ", 0.)
+         PRINT "Loading &argument"
+         IF &version>=&expected_version
+         (
+            FLASHFILE.ReProgram ALL
+         )
+         FLASHFILE.LOAD.S3Record "&argument"
+         IF &version>=&expected_version
+         (
+            FLASHFILE.ReProgram off
+         )
+         &arguments=STRing.Replace("&arguments", "&argument ", "", 0.)
+      )
+   )
+)
+
+ENDDO

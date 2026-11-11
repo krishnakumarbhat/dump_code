@@ -1,0 +1,61 @@
+add
+menu
+(
+    popup "chandra"
+    (
+        menuitem "ARTIE;" "per , ""ARTIE (),ARTIE"""
+        menuitem "ARTIE_NOC;" "per , ""ARTIE_NOC (),ARTIE_NOC"""
+        menuitem "AUX_ACC;" "per , ""AUX_ACC (),AUX_ACC"""
+        popup "CAN"
+        (
+            menuitem "CAN0" "per , ""CAN (),CAN0"""
+            menuitem "CAN1" "per , ""CAN (),CAN1"""
+        )
+        menuitem "CHANDRA_NOC;" "per , ""CHANDRA_NOC (),CHANDRA_NOC"""
+        menuitem "CRC;" "per , ""CRC (),CRC"""
+        menuitem "CRG;" "per , ""CRG (),CRG"""
+        menuitem "CSI;" "per , ""CSI (),CSI"""
+        menuitem "DBGM_CTRL;" "per , ""DBGM_CTRL (),DBGM_CTRL"""
+        menuitem "DBGM_ROM;" "per , ""DBGM_ROM (),DBGM_ROM"""
+        menuitem "DMA;" "per , ""DMA (),DMA"""
+        menuitem "DSP;" "per , ""DSP (),DSP"""
+        menuitem "ETHER;" "per , ""ETHER (),ETHER"""
+        menuitem "ETHER_MAC;" "per , ""ETHER_MAC (),ETHER_MAC"""
+        menuitem "ETHER_SEC;" "per , ""ETHER_SEC (),ETHER_SEC"""
+        menuitem "FUSA_CTRL;" "per , ""FUSA_CTRL (),FUSA_CTRL"""
+        menuitem "GP_ADC;" "per , ""GP_ADC (),GP_ADC"""
+        menuitem "GPIO;" "per , ""GPIO (General Purpose I/O Ports And Peripheral I/O Lines),GPIO"""
+        menuitem "I2C_MS;" "per , ""I2C_MS (),I2C_MS"""
+        menuitem "IOCTRL;" "per , ""IOCTRL (),IOCTRL"""
+        menuitem "MIPI;" "per , ""MIPI (),MIPI"""
+        popup "PWM;Pulse-Width Modulator"
+        (
+            menuitem "PWM0" "per , ""PWM (Pulse-Width Modulator),PWM0"""
+            menuitem "PWM1" "per , ""PWM (Pulse-Width Modulator),PWM1"""
+            menuitem "PWM2" "per , ""PWM (Pulse-Width Modulator),PWM2"""
+            menuitem "PWM3" "per , ""PWM (Pulse-Width Modulator),PWM3"""
+        )
+        menuitem "QSPI_FLASH;" "per , ""QSPI_FLASH (),QSPI_FLASH"""
+        menuitem "QSPI_GP;" "per , ""QSPI_GP (),QSPI_GP"""
+        menuitem "QSPI_MMIC;" "per , ""QSPI_MMIC (),QSPI_MMIC"""
+        menuitem "RA;" "per , ""RA (),RA"""
+        menuitem "RT640;" "per , ""RT640 (),RT640"""
+        menuitem "SERDES;" "per , ""SERDES (),SERDES"""
+        menuitem "SMALL_NOC;" "per , ""SMALL_NOC (),SMALL_NOC"""
+        menuitem "SYSCTRL;" "per , ""SYSCTRL (),SYSCTRL"""
+        menuitem "SYSMEM;" "per , ""SYSMEM (),SYSMEM"""
+        popup "TIMERS"
+        (
+            menuitem "TIMERS" "per , ""TIMERS (),TIMERS"""
+            menuitem "TIMERS1" "per , ""TIMERS (),TIMERS1"""
+        )
+        menuitem "UART;" "per , ""UART (Universal Asynchronous Receiver/Transmitter),UART"""
+        popup "WDT;Watchdog Timer Unit"
+        (
+            menuitem "WDT0" "per , ""WDT (Watchdog Timer Unit),WDT0"""
+            menuitem "WDT1" "per , ""WDT (Watchdog Timer Unit),WDT1"""
+            menuitem "WDT2" "per , ""WDT (Watchdog Timer Unit),WDT2"""
+            menuitem "WDT3" "per , ""WDT (Watchdog Timer Unit),WDT3"""
+        )
+    )
+)

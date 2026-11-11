@@ -1,0 +1,3 @@
+Algorithm Output Name,Embedded (CANape) Output Name,Output +/- Range,Output dB Range,Complex Names (Real Part First),Scaling,Small Change +/- Range,Small Change dB Range
+CFAR_NF_est,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.cfar_nf_est[*][*],,-96,,p0,,-95
+CFAR_thold,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.cfar_thold[*][*],,-192,,p0,,-191

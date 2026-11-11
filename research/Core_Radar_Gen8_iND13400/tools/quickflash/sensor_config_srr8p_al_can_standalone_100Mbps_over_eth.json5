@@ -1,0 +1,244 @@
+{
+  profiles: [
+    {
+      name: "radar_01_app_smc_usc",
+      sensor_id: "Gen8",
+      description: "FLR8 standalone variant application with default SMC and default USC",
+      serverConfig: {
+        sensor_ip: "192.168.1.71",
+      },
+      downloadImages: [
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/app.s19",
+        },
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/smc_cal.ptp",
+        },
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/usc_cal.ptp",
+        },
+      ],
+    },
+    {
+      name: "radar_01_app_smc",
+      sensor_id: "Gen8",
+      description: "FLR8 standalone variant application and default SMC",
+      serverConfig: {
+        sensor_ip: "192.168.1.71",
+      },
+      downloadImages: [
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/app.s19",
+        },
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/smc_cal.ptp",
+        },
+      ],
+    },
+    {
+      name: "radar_01_usc_default",
+      sensor_id: "Gen8",
+      description: "FLR8 standalone variant Default USC",
+      serverConfig: {
+        sensor_ip: "192.168.1.71",
+      },
+      downloadImages: [
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/usc_cal.ptp",
+        },
+      ],
+    },
+    {
+      name: "radar_02_app_smc_usc",
+      sensor_id: "Gen8",
+      description: "FLR8 standalone variant application with default SMC and default USC",
+      serverConfig: {
+        sensor_ip: "192.168.1.72",
+      },
+      downloadImages: [
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/app.s19",
+        },
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/smc_cal.ptp",
+        },
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/usc_cal.ptp",
+        },
+      ],
+    },
+    {
+      name: "radar_02_app_smc",
+      sensor_id: "Gen8",
+      description: "FLR8 standalone variant application and default SMC",
+      serverConfig: {
+        sensor_ip: "192.168.1.72",
+      },
+      downloadImages: [
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/app.s19",
+        },
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/smc_cal.ptp",
+        },
+      ],
+    },
+    {
+      name: "radar_02_usc_default",
+      sensor_id: "Gen8",
+      description: "FLR8 standalone variant Default USC",
+      serverConfig: {
+        sensor_ip: "192.168.1.72",
+      },
+      downloadImages: [
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/usc_cal.ptp",
+        },
+      ],
+    },
+    {
+      name: "radar_03_app_smc_usc",
+      sensor_id: "Gen8",
+      description: "FLR8 standalone variant application with default SMC and default USC",
+      serverConfig: {
+        sensor_ip: "192.168.1.73",
+      },
+      downloadImages: [
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/app.s19",
+        },
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/smc_cal.ptp",
+        },
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/usc_cal.ptp",
+        },
+      ],
+    },
+    {
+      name: "radar_03_app_smc",
+      sensor_id: "Gen8",
+      description: "FLR8 standalone variant application and default SMC",
+      serverConfig: {
+        sensor_ip: "192.168.1.73",
+      },
+      downloadImages: [
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/app.s19",
+        },
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/smc_cal.ptp",
+        },
+      ],
+    },
+    {
+      name: "radar_03_usc_default",
+      sensor_id: "Gen8",
+      description: "FLR8 standalone variant Default USC",
+      serverConfig: {
+        sensor_ip: "192.168.1.73",
+      },
+      downloadImages: [
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/usc_cal.ptp",
+        },
+      ],
+    },
+    {
+      name: "radar_04_app_smc_usc",
+      sensor_id: "Gen8",
+      description: "FLR8 standalone variant application with default SMC and default USC",
+      serverConfig: {
+        sensor_ip: "192.168.1.74",
+      },
+      downloadImages: [
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/app.s19",
+        },
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/smc_cal.ptp",
+        },
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/usc_cal.ptp",
+        },
+      ],
+    },
+    {
+      name: "radar_04_app_smc",
+      sensor_id: "Gen8",
+      description: "FLR8 standalone variant application and default SMC",
+      serverConfig: {
+        sensor_ip: "192.168.1.74",
+      },
+      downloadImages: [
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/app.s19",
+        },
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/smc_cal.ptp",
+        },
+      ],
+    },
+    {
+      name: "radar_04_usc_default",
+      sensor_id: "Gen8",
+      description: "FLR8 standalone variant Default USC",
+      serverConfig: {
+        sensor_ip: "192.168.1.74",
+      },
+      downloadImages: [
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/usc_cal.ptp",
+        },
+      ],
+    },
+    {
+      name: "radar_05_app_smc_usc",
+      sensor_id: "Gen8",
+      description: "FLR8 standalone variant application with default SMC and default USC",
+      serverConfig: {
+        sensor_ip: "192.168.1.75",
+      },
+      downloadImages: [
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/app.s19",
+        },
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/smc_cal.ptp",
+        },
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/usc_cal.ptp",
+        },
+      ],
+    },
+    {
+      name: "radar_05_app_smc",
+      sensor_id: "Gen8",
+      description: "FLR8 standalone variant application and default SMC",
+      serverConfig: {
+        sensor_ip: "192.168.1.75",
+      },
+      downloadImages: [
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/app.s19",
+        },
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/smc_cal.ptp",
+        },
+      ],
+    },
+    {
+      name: "radar_05_usc_default",
+      sensor_id: "Gen8",
+      description: "FLR8 standalone variant Default USC",
+      serverConfig: {
+        sensor_ip: "192.168.1.75",
+      },
+      downloadImages: [
+        {
+          path: "../PHY_100Mb/srr8p_al_can_standalone/usc_cal.ptp",
+        },
+      ],
+    },
+  ],
+}

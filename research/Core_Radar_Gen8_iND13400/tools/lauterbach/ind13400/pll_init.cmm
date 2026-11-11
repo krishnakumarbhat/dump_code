@@ -1,0 +1,33 @@
+IF PER.VALUE("CRG ().CLK_TOP_CTRL.CTL_CG_ROOT_SEL")!=0
+(
+  PRINT %COLOR.MAROON "Clocking is already switched over to PLL, refusing to change PLL settings"
+  ENDDO
+)
+
+// from PllInit()
+PER.Set.ByName "SERDES ().laneA_datapath_0"  0x000A0A01         // SERDES->LANEA_DATAPATH_0.r  = 0x000A0A01;
+PER.Set.ByName "SERDES ().laneA_powerdown_0" 0x00000358         // SERDES->LANEA_POWERDOWN_0.r = 0x00000358;
+PER.Set.ByName "SERDES ().laneB_datapath_0"  0x000A0A01         // SERDES->LANEB_DATAPATH_0.r  = 0x000A0A01;
+PER.Set.ByName "SERDES ().laneB_powerdown_0" 0x00000358         // SERDES->LANEB_POWERDOWN_0.r = 0x00000358;
+PER.Set.ByName "SERDES ().txpll_control_0"   0x004CC000         // SERDES->TXPLL_CONTROL_0.r   = 0x004CC000;
+PER.Set.ByName "SERDES ().txpll_divider1_0"  0x0007C011         // SERDES->TXPLL_DIVIDER1_0.r  = 0x0007C011;
+PER.Set.ByName "SERDES ().txpll_divider2_0"  0x01800000         // SERDES->TXPLL_DIVIDER2_0.r  = 0x01800000;
+PER.Set.ByName "SERDES ().txpll_control_0"   0x0044C000         // SERDES->TXPLL_CONTROL_0.r   = 0x0044C000;
+// // Generating 156Mhz through Tx lane B
+PER.Set.ByName "SERDES ().laneB_driver1_0.TXDRVB" 0x7           // SERDES->LANEB_DRIVER1_0.f.TXDRVB = 0x7;
+PER.Set.ByName "SERDES ().laneB_driver2_0" 0x00FFFFFF           // SERDES->LANEB_DRIVER2_0 = 0x00FFFFFF;
+PER.Set.ByName "SERDES ().laneB_datapath_0.TXPOSTDIVB" 0x1      // SERDES->LANEB_DATAPATH_0.f.TXPOSTDIVB = 0x1;
+PER.Set.ByName "SERDES ().laneB_datapath_0.TXPOSTDIVENB" 0x1    // SERDES->LANEB_DATAPATH_0.f.TXPOSTDIVENB = 0x1;
+// // Transmit PLL Lock Status
+WHILE PER.VALUE("SERDES ().txpll_status_0.TXPLL_LOCK")==0;      // while(SERDES->TXPLL_STATUS_0.f.TXPLL_LOCK == 0);
+(
+    WAIT 0.1s ;                                                 // // Wait for Transmit PLL Lock
+)
+
+// from SysClockSwitchToPllClock()
+// // Change the OTP param
+PER.Set.ByName "ARTIE ().OTP_CTRL0" 0x0                         // ARTIE->OTP_CTRL0 = 0;
+// // Select the PLL CLK to use 0x0 416 MHz, 0x1 External CLK or 0x2 500 MHz
+PER.Set.ByName "CRG ().CLK_TOP_CTRL.CTL_CG_SEL_CLK_TEST" 0x2    // CRG->CLK_TOP_CTRL.f.CTL_CG_SEL_CLK_TEST = 0x2;
+// // Switch the clock to PLL Clock
+PER.Set.ByName "CRG ().CLK_TOP_CTRL.CTL_CG_ROOT_SEL" 0x1        // CRG->CLK_TOP_CTRL.f.CTL_CG_ROOT_SEL = 0x1; //Main clock select for Ref clock vs System Source clocks,0x0: Ref clock,0x1: PLL output clock (500 MHz)

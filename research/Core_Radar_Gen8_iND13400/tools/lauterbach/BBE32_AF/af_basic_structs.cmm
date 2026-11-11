@@ -1,0 +1,49 @@
+// T32_BBE32 Sun Nov 26 22:06:51 2023
+
+B::
+
+WinPOS 80. 11. 76. 45. 0. 0. Default
+Var.Watch %e %spotlight
+
+
+// Outputs
+Var.AddWatch %Hex Angle_Finding_Process_Last_Error
+Var.AddWatch Angle_Finding_Process_Error_Cnt
+Var.AddWatch \
+ IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.num_af_det \
+ IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_dets \
+ IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.det_list_property \
+ IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_debug_data.af_det_debug_data \
+ IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_debug_data.af_debug_detections \
+ IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_diagnostics_info.af_smc_mismatch_flag \
+ IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_diagnostics_info.af_usc_mismatch_flag \
+ IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_diagnostics_info.af_timeout_count
+
+
+// Inputs
+Var.AddWatch rdd_cmp_bv
+Var.AddWatch \
+ IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.rdd_stream_data.rdd_data.rdd1_num_detect \
+ IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.rdd_stream_data.rdd_data.rdd2_num_detect \
+ IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.rdd_stream_data.rdd_data.rdd1_bv \
+ IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.rdd_stream_data.look_data.look_id \
+ IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.rdd_stream_data.look_data.scan_index
+
+;    typedef enum DSP_Main_Application_State_Tag
+;    {
+;       INIT = 0,
+;       IDLE,
+;       RANGE_PROCESSING,
+;       DOPPLER_AND_RDD_PROCESSING,
+;       FUSA_BBE_SELF_TEST_PROCESSING,
+;       ANGLE_FINDING_PROCESSING,     <== 5
+;       RADAR_CAPABILITY_PROCESSING,
+;       TOI_ALIGNMENT_PROCESSING,
+;       TRACKER_PROCESSING,
+;       SIGPROC_POST_PROCESSING,
+;       SIGPROC_POST_PROCESSING_ERROR,
+;       NUM_PROCESSING_STATES
+;    } DSP_Main_Application_State_T;
+Var.AddWatch MainApplication_ProfilingInfo[5]
+
+ENDDO

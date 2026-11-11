@@ -1,0 +1,604 @@
+{
+  profiles: [
+    {
+      name: "radar_01_spc1",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position1",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.71",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_1.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_01_spc2",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position2",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.71",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_2.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_01_spc3",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position3",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.71",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_3.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_01_spc4",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position4",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.71",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_4.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_01_spc5",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position5",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.71",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_5.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_01_spc6",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position6",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.71",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_6.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_01_spc7",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position7",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.71",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_7.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_01_spc8",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position8",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.71",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_8.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_02_spc1",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position1",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.72",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_1.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_02_spc2",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position2",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.72",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_2.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_02_spc3",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position3",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.72",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_3.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_02_spc4",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position4",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.72",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_4.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_02_spc5",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position5",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.72",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_5.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_02_spc6",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position6",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.72",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_6.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_02_spc7",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position7",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.72",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_7.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_02_spc8",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position8",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.72",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_8.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_03_spc1",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position1",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.73",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_1.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_03_spc2",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position2",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.73",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_2.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_03_spc3",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position3",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.73",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_3.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_03_spc4",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position4",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.73",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_4.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_03_spc5",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position5",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.73",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_5.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_03_spc6",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position6",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.73",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_6.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_03_spc7",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position7",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.73",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_7.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_03_spc8",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position8",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.73",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_8.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_04_spc1",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position1",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.74",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_1.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_04_spc2",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position2",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.74",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_2.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_04_spc3",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position3",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.74",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_3.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_04_spc4",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position4",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.74",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_4.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_04_spc5",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position5",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.74",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_5.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_04_spc6",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position6",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.74",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_6.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_04_spc7",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position7",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.74",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_7.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_04_spc8",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position8",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.74",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_8.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_05_spc1",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position1",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.75",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_1.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_05_spc2",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position2",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.75",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_2.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_05_spc3",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position3",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.75",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_3.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_05_spc4",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position4",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.75",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_4.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_05_spc5",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position5",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.75",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_5.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_05_spc6",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position6",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.75",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_6.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_05_spc7",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position7",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.75",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_7.s19",
+        },
+      ],
+    },
+    {
+      name: "radar_05_spc8",
+      sensor_id: "Gen8",
+      description: "SRR8 SPC Position8",
+      serverConfig: {
+
+
+        sensor_ip: "192.168.1.75",
+      },
+      downloadImages: [
+        {
+          path: "../spc/spc_8.s19",
+        },
+      ],
+    },
+  ],
+}

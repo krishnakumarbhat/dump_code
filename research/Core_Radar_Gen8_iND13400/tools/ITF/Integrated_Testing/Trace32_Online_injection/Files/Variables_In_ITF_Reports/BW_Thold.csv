@@ -1,0 +1,5 @@
+Algorithm Output Name,Embedded (CANape) Output Name,Output +/- Range,Output dB Range,Complex Names (Real Part First),Scaling,Small Change +/- Range,Small Change dB Range
+CR_Response,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.bwdep_cr_resp[*],,-192,,p0,,-191
+Sensitivity_Threshold,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.bwdep_sensitivity_thold[*],,-192,,p0,,-191
+HVC_Threshold,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.bwdep_hvc_thold[*],,-192,,p0,,-191
+MB_Threshold,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.bwdep_mb_thold[*],,-192,,p0,,-191

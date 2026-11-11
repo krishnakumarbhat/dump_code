@@ -1,0 +1,84 @@
+// Usage Notes:
+// Set FILE_NAME to the name of the CSV file to dumpt the angle finding detection output to
+// NOTE: this script could take about a minute to run
+// The resulting CSV file can be compared against tv_anglefinding using the supplied matlab script, det_csv_compare.m.
+
+// switch to decimal to avoid confusion
+RADIX.Decimal
+
+LOCAL &FILE_NAME
+&FILE_NAME="af_ds_det.csv"
+
+// SCRIPT BEGINS HERE
+PRIVATE &num_elems &offset
+OPEN #6 &FILE_NAME /Create
+WRITE #6 "num_af_ds_det,"
+WRITE #6 %CONTinue "ran,vel,pow,snr,theta,phi,rcs,spec_res,rdd_idx,az_conf,el_conf,f_single_target,f_superres_target,f_bistatic"
+
+&num_elems=Var.VALUE(IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.num_af_ds_det)
+&offset=0
+WHILE (&offset<&num_elems)
+(
+  IF (&offset==0)
+  (
+    VAR.WRITE #6 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.num_af_ds_det
+    WRITE #6 %CONTinue ","
+  )
+  ELSE
+  (
+      WRITE #6 ","
+  )
+
+  GOSUB writefval #6 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.af_ds_dets[&offset].ran 1
+  GOSUB writefval #6 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.af_ds_dets[&offset].vel 1
+  GOSUB writefval #6 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.af_ds_dets[&offset].pow 1
+  GOSUB writefval #6 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.af_ds_dets[&offset].snr 1
+  GOSUB writefval #6 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.af_ds_dets[&offset].theta 1
+  GOSUB writefval #6 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.af_ds_dets[&offset].phi 1
+  GOSUB writefval #6 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.af_ds_dets[&offset].rcs 1
+  GOSUB writefval #6 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.af_ds_dets[&offset].spec_res 1
+
+  VAR.WRITE #6 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.af_ds_dets[&offset].rdd_idx
+  WRITE #6 %CONTinue ","
+  VAR.WRITE #6 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.af_ds_dets[&offset].az_conf
+  WRITE #6 %CONTinue ","
+  VAR.WRITE #6 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.af_ds_dets[&offset].el_conf
+  WRITE #6 %CONTinue ","
+  VAR.WRITE #6 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.af_ds_dets[&offset].f_single_target
+  WRITE #6 %CONTinue ","
+  VAR.WRITE #6 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.af_ds_dets[&offset].f_superres_target
+  WRITE #6 %CONTinue ","
+  VAR.WRITE #6 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.downselection_data.af_ds_dets[&offset].f_bistatic
+
+  &offset=&offset+1
+)
+
+CLOSE #6
+
+BEEP
+
+// Subroutine writefval
+// Write a float value to the given file with optional comma or newline
+// input parameters
+//  1. file: file number to write out to
+//  2. var: float variable (HLL) to write out
+//  3. int: flag to indicate whether to add a comma or newline
+// return value: none
+writefval:
+  ENTRY &fno &varname &commaflag
+  PRIVATE &tmpstr &formatstr
+  &formatstr="%0.10g"
+
+  IF (&commaflag==1)
+  (
+    SPRINTF &tmpstr "&formatstr" Var.FVALUE(&varname)
+    WRITE &fno %CONTInue "&tmpstr"
+    WRITE #6 %CONTinue ","
+  )
+  ELSE
+  (
+    SPRINTF &tmpstr "&formatstr" Var.FVALUE(&varname)
+    WRITE &fno "&tmpstr"
+  )
+
+RETURN

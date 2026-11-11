@@ -1,0 +1,78 @@
+B::
+
+TOOLBAR ON
+STATUSBAR ON
+FramePOS ,,,, Maximized
+WinPAGE.RESet
+
+WinPAGE.Create Main
+
+WinCLEAR
+
+WinPOS 0. 0. 76. 24. 0. 0. Default
+List.Auto
+
+WinPOS 0. 29. 76. 29. 0. 0. Default
+Register.View /stack
+
+WinPOS 80. 0. 76. 6. 0. 0. Default
+Break.List
+
+WinPOS 80. 11. 76. 5. 0. 0. Default
+Frame /Locals /Caller
+
+WinPOS 80. 21. 76. 35. 0. 0. Default
+Var.Watch %e %spotlight
+Var.AddWatch %s \\r52App\versions\Git_Status
+Var.AddWatch %s \\r52App\versions\Git_Commit_Hash
+Var.AddWatch %Open Application_Version
+
+Var.AddWatch DSP_Range_Config_Counts
+Var.AddWatch DSP_Range_Process_Complete_Counts
+
+Var.AddWatch %Open Radar_Ctl_Data
+Var.AddWatch Radar_50ms_Counter
+
+Var.AddWatch XCP_ADC_Log_Chirp_Num
+Var.AddWatch XCP_Doppler_Idx
+Var.AddWatch XCP_Range_Idx
+
+WinPOS 160. 0. 68. 16. 0. 0. Default
+SYStem.state
+
+WinPOS 160. 28. 74. 7. 0. 0. Default
+AREA.View
+
+WinPOS 160. 39. 74. 17. 14. 0. Default
+Data.Dump e:0x00000000 /dialog /spotlight
+
+if POWERTRACE()
+(
+   WinPOS 249. 7. 21. 10. 0. 0. Default
+   WinPAGE.List
+
+   WinPAGE.Create Trace
+   WinCLEAR
+
+   WinPOS 0. 0. 64. 21. 0. 0. Default
+   Trace
+
+   WinPOS 76. 0. 105. 31. 0. 0. Default
+   Trace.List
+
+   WinPOS 0. 38. 180. 27. 41. 0. Default
+   Trace.Chart.Symbol
+
+   WinPOS 187. 0. 56. 11. 0. 0. Default
+   Var.Watch %e %spotlight
+
+   WinPOS 249. 7. 21. 6. 0. 0. Default
+   WinPAGE.List
+
+   WinPOS 187. 18. 64. 13. 0. 0. Default
+   System.State
+)
+
+WinPAGE.select Main
+
+ENDDO

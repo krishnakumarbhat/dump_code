@@ -1,0 +1,102 @@
+// --------------------------------------------------------------------------------
+// @Title: Startup script for debug of Chandra Xtensa LX7 BBE32 over SWD
+// @Description:
+// This script connects and starts a debug session on Chandra Xtensa LX7 BBE32 Core
+// using SWD
+// @Keywords: Debug, Chandra, R52, ARM, Cortex-R52, SWD
+// @Board: *Chandra*
+// @Chip: Chandra
+// @Copyright: (C) 2023 Indie Semiconductor
+// --------------------------------------------------------------------------------
+PRIVATE &current_cmm_dir &os_return_code
+&current_cmm_dir=OS.PresentPracticeDirectory()
+&os_return_code=0.
+
+;RESet
+SYStem.RESet
+SYStem.Option.EnReset OFF
+
+SYStem.CPU XTENSA_LX7
+SYStem.Option.Endianness Little
+SYStem.CONFIG.DEBUGPORTTYPE SWD
+SYStem.JtagClock 25MHz
+
+SYStem.MemAccess denied
+
+SYStem.CONFIG.CoreNumber 2
+SYStem.CONFIG.CORE 2. 1.  // XTENSA LX7
+CORE.ASSIGN 2.
+
+SYStem.CONFIG COREDEBUG.Base DAP:0xf9010000 /Core 1.
+SYStem.CONFIG COREDEBUG.Base DAP:0xf8004000 /Core 2.
+
+SYStem.CONFIG APBAP1.Base DP:0xf8000000
+SYStem.CONFIG APBAP2.Base DP:0xfc000000
+
+Trace.DISable
+;DIAG 0x3040 0x10
+
+SYStem.Option.SOFTLONG ON
+
+MAP.BUS32 0x84401000++0x1FF // DSP Subsystem Register Bank
+MAP.BUS32 0x84000000++0xFFFF // BBE32 DRAM0
+MAP.BUS32 0x84010000++0xFFFF // BBE32 DRAM1
+MAP.BUS32 0x84020000++0xFFFF // BBE32 IRAM
+
+MAP.BUS64 0x84100000++0x3FFF // MIPI OCP Data Buffer
+
+
+;SYStem.Option.SPILLLOC 0x8402FF00
+;SYStem.Option.RUNSTALLMASKASM ON
+
+;SYStem.Mode Up
+
+PRINT %COLOR.BLUE "INFO: BBE32 SYSTEM UP"
+
+IF SYStem.USECORE()==1.
+(
+    JTAG.UNLOCK
+)
+
+PER.ReProgram &current_cmm_dir/chandra.per
+PRINT %COLOR.BLUE "INFO: CHANDRA peripheral file programmed"
+
+IF CONFIG.SCREEN()==TRUE()
+(
+MENU.ReProgram &current_cmm_dir/chandra.men
+PRINT %COLOR.BLUE "INFO: CHANDRA peripheral menu programmed"
+)
+
+PRINT %COLOR.BLUE "INFO: CHANDRA BBE32 INIT Complete"
+
+LOCAL &script &script_error
+&script=OS.PresentPracticeDirectory()+"/load_opcodes_from_libs.cmm"
+&script_error=0
+ON ERROR GOSUB
+(
+   &script_error=1
+   RETURN
+)
+DO &script
+if &script_error==0
+(
+   PRINT %COLOR.BLUE "INFO: BBE Luna instructions loading Complete"
+)
+ELSE
+(
+   ; Retry once
+   PRINT "INFO: Retrying due to previous error"
+   &script_error=0
+   DO &script
+   if &script_error==0
+   (
+      PRINT %COLOR.BLUE "INFO: BBE Luna instructions loading Complete"
+   )
+   ELSE
+   (
+      PRINT %ERROR "Failed to load BBE Luna instructions - you may want to try manually running &script"
+   )
+)
+ON ERROR inherit
+
+ENDDO &os_return_code

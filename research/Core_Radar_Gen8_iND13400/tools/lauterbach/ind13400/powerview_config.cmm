@@ -1,0 +1,10 @@
+&cname0="R52"
+&carch0="ARM"
+&start_core0="ind13400/chandra-spi"
+
+&cname1="BBE32"
+&carch1="XTENSA"
+&start_core1="ind13400/chandra_bbe32_init"
+
+&pre_flash_scripts="ind13400/pre_flash"
+&post_flash_scripts="ind13400/post_flash"

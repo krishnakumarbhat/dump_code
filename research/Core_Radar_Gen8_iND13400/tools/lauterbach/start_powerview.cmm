@@ -1,0 +1,116 @@
+GLOBAL &cpu
+GLOBAL &cname0 &cname1 &cname2 &cname3 &cname4
+GLOBAL &carch0 &carch1 &carch2 &carch3 &carch4
+GLOBAL &start_core0 &start_core1 &start_core2 &start_core3 &start_core4
+GLOBAL &pre_flash_scripts &post_flash_scripts
+GLOBAL &default_win0 &default_win1 &default_win2 &default_win3 &default_win4
+GLOBAL &default_flash_session &auto_flash_session
+GLOBAL &core_script_path
+GLOBAL &XtToolLibPath &XtCoreLibPath
+
+&core_script_path = OS.PPD()
+
+LOCAL &script
+B::AREA
+&script=OS.PPF()
+PRINT "Executing &script"
+
+PRIVATE &parameters
+ENTRY %LINE &parameters
+
+&cpu=STRing.SCANAndExtract("&parameters","CPU=","")
+PRINT "Configuring for &cpu"
+DO &core_script_path/&cpu/powerview_config
+
+&user_config=STRing.SCANAndExtract("&parameters","USER_CONFIG=","")
+IF "&user_config"!=""
+(
+   PRINT "Loading from &user_config"
+   DO &user_config
+)
+
+&XtToolLibPath=STRing.SCANAndExtract("&parameters","XtToolLibPath=","")
+&XtCoreLibPath=STRing.SCANAndExtract("&parameters","XtCoreLibPath=","")
+PRINT "INFO: XtCoreLibPath: &XtCoreLibPath"
+PRINT "INFO: XtToolLibPath: &XtToolLibPath"
+
+; Detect which other instances need to be started
+PRIVATE &start_c1 &start_c2 &start_c3 &start_c4
+&start_c1=("&cname1"!="")&&(STRing.SCAN("&parameters","&cname1",0)!=-1)
+&start_c2=("&cname2"!="")&&(STRing.SCAN("&parameters","&cname2",0)!=-1)
+&start_c3=("&cname3"!="")&&(STRing.SCAN("&parameters","&cname3",0)!=-1)
+&start_c4=("&cname4"!="")&&(STRing.SCAN("&parameters","&cname4",0)!=-1)
+
+; Name this instance of TRACE32
+InterCom.NAME &cname0
+
+; Start other instances
+IF &start_c1
+   GOSUB Start_Instance 1
+IF &start_c2
+   GOSUB Start_Instance 2
+IF &start_c3
+   GOSUB Start_Instance 3
+IF &start_c4
+   GOSUB Start_Instance 4
+
+; Maximize main instance
+InterCom &cname0 FramePOS ,,,, Maximized
+
+; Move other instances to second monitor (if it exists) and minimize
+InterCom OTHERS FramePOS 100%,,,, Normal
+InterCom OTHERS FramePOS ,,,, Iconic
+
+; Display area window
+InterCom ALL AREA
+
+; Reset and configure menus
+InterCom ALL MENU.RESet
+InterCom ALL MENU.ReProgram &core_script_path/mainmenu
+
+; Execute flash script
+InterCom &cname0 DO &core_script_path/core_radar_flash &auto_flash_session
+
+; Load default windows
+IF "&default_win0"!=""
+   InterCom &cname0 DO &core_script_path/&default_win0
+IF &start_c1&&"&default_win1"!=""
+   InterCom &cname1 DO &core_script_path/&default_win1
+IF &start_c2&&"&default_win2"!=""
+   InterCom &cname2 DO &core_script_path/&default_win2
+IF &start_c3&&"&default_win3"!=""
+   InterCom &cname3 DO &core_script_path/&default_win3
+IF &start_c4&&"&default_win4"!=""
+   InterCom &cname4 DO &core_script_path/&default_win4
+
+PRINT "Done executing &script"
+
+ENDDO
+
+Start_Instance:
+   LOCAL &instance_num &core &arch
+   ENTRY &instance_num
+
+   &core_assign="&"+"core=""&cname"+FORMAT.Decimal(1,&instance_num)+""""
+   &&core_assign
+
+   &arch_assign="&"+"arch=""&carch"+FORMAT.Decimal(1,&instance_num)+""""
+   &&arch_assign
+
+   ; Create instance of TRACE32, if it doesn't exist
+   IF !InterCom.PING(&core)
+   (
+      &icport=InterCom.PORT()+&instance_num
+      &apiport=RCL.PORT(0.)+&instance_num
+
+      &options="/InterCom.PORT &icport /API.PORT &apiport"
+
+      IF "&arch"!=""
+         &options = "/ARCHitecture &arch &options"
+
+      TargetSystem.NewInstance &core &options
+
+      WAIT InterCom.PING(&core)
+   )
+
+   RETURN

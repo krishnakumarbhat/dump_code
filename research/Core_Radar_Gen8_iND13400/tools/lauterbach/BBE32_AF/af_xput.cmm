@@ -1,0 +1,30 @@
+// T32_BBE32 Sun Nov 26 22:06:51 2023
+
+B::
+
+WinPOS 80. 11. 76. 45. 0. 0. Default
+Var.Watch %e %spotlight
+
+;    typedef enum DSP_Main_Application_State_Tag
+;    {
+;       INIT = 0,
+;       IDLE,
+;       RANGE_PROCESSING,
+;       DOPPLER_AND_RDD_PROCESSING,
+;       FUSA_BBE_SELF_TEST_PROCESSING,
+;       ANGLE_FINDING_PROCESSING,     <== 5
+;       RADAR_CAPABILITY_PROCESSING,
+;       TOI_ALIGNMENT_PROCESSING,
+;       TRACKER_PROCESSING,
+;       SIGPROC_POST_PROCESSING,
+;       SIGPROC_POST_PROCESSING_ERROR,
+;       NUM_PROCESSING_STATES
+;    } DSP_Main_Application_State_T;
+Var.AddWatch MainApplication_ProfilingInfo[5] \
+ IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.dsp_timing_data.af_time
+
+Var.AddWatch \
+ g_af_testing_time \
+ g_rcs_testing_time \
+
+ENDDO

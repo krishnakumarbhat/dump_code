@@ -1,0 +1,120 @@
+// T32 Thu Jul 30 22:20:33 2026
+
+B::
+
+TOOLBAR   ON
+STATUSBAR ON
+FramePOS 29.238,16.714,,,Maximized
+WinPAGE.RESet
+
+WinPAGE.Create P000
+WinCLEAR
+
+WinPAGE.Create Main
+WinCLEAR
+
+WinPOS 0.0 0.0 76. 24. 0. 0. Default
+WinTABS 10. 10. 25.
+List.Auto
+
+WinPOS 80.0 11.0 76. 5. 0. 0. Default
+Frame /Locals /Caller
+
+WinPOS 0.0 29.0 76. 29. 0. 0. Default
+Register.View /stack
+
+WinPOS 0.71429 0.42857 98. 26. 0. 1. W000
+WinTABS 41. 31.
+sYmbol.Browse.Function
+
+WinPOS 160.0 28.0 74. 7. 0. 0. Default
+AREA.View
+
+WinPOS 160.0 0.0 68. 16. 0. 0. Default
+SYStem.state
+
+WinPOS 47.0 18.457 116. 26. 16. 1. W002
+WinTABS 10. 10. 25.
+List `PFM_Update_Stage`
+
+WinPOS 160.0 39.0 74. 17. 14. 0. Default
+Data.Dump e:0x00000000 /dialog /spotlight
+
+WinPOS 23.333 10.943 156. 26. 16. 1. W003
+WinTABS 10. 10. 25.
+List `PFM_Update_Stage`
+
+WinPOS 61.714 10.571 116. 26. 16. 1. W001
+WinTABS 10. 10. 25.
+List
+
+WinPOS 0.0 1.0 179. 55. 0. 0. Default
+Var.Watch %e %spotlight
+
+Var.AddWatch \\r52App\versions\Git_Status
+Var.AddWatch \\r52App\versions\Git_Commit_Hash
+Var.AddWatch Application_Version
+Var.AddWatch DSP_Range_Config_Counts
+Var.AddWatch DSP_Range_Process_Complete_Counts
+Var.AddWatch Radar_Ctl_Data
+Var.AddWatch Radar_50ms_Counter
+Var.AddWatch XCP_ADC_Log_Chirp_Num
+Var.AddWatch XCP_Doppler_Idx
+Var.AddWatch XCP_Range_Idx
+Var.AddWatch MainApplication_ProfilingInfo
+Var.AddWatch IPC_M2D_Crc_Err_Counter
+Var.AddWatch IPC_M2D_Crc_Err_Cnt
+Var.AddWatch IPC_M2D_Buffer_Err_Cnt
+Var.AddWatch IPC_D2M_Crc_Err_Counter
+Var.AddWatch IPC_D2M_Crc_Err_Cnt
+Var.AddWatch IPC_D2A_Crc_Err_Counter
+Var.AddWatch IPC_A2M_Crc_Err_Counter
+Var.AddWatch PFM_Fail_Count
+Var.AddWatch PFM_Success_Count
+Var.AddWatch PFM_Flow_Status
+Var.AddWatch pong_elapsed_time_us
+Var.AddWatch ping_elapsed_time_us
+Var.AddWatch XCP_Max_Static_Target_Case_Enable
+Var.AddWatch XCP_RDD_Vary_Xput_Flag
+Var.AddWatch Dwell_Time_Delta
+Var.AddWatch IPC_D2M_Max_Delta_Time_Us
+Var.AddWatch IPC_D2M_Min_Delta_Time_Us
+Var.AddWatch Header_Stream
+Var.AddWatch Header_Stream.xput_info.dsp_overall_xput_inst
+Var.AddWatch Header_Stream.xput_info.RDD_xput_inst
+Var.AddWatch \\bbe32App\main_application\MainApplication_ProfilingInfo_Overall
+Var.AddWatch \\bbe32App\main_application\MainApplication_ProfilingInfo_Overall.maxRuntime
+Var.AddWatch \\bbe32App\main_application\MainApplication_ProfilingInfo_Overall.lastRuntime
+Var.AddWatch DSP_Range_Config_Counts
+Var.AddWatch DSP_Range_Process_Complete_Counts
+Var.AddWatch DSP_Doppler_Process_Complete_Counts
+Var.AddWatch DSP_Sp_Post_Complete_Counts
+Var.AddWatch PLT_Reset_Reason
+Var.AddWatch look_type_induce_err
+Var.AddWatch ping_elapsed_min_time_us
+Var.AddWatch ping_elapsed_max_time_us
+Var.AddWatch pong_elapsed_min_time_us
+Var.AddWatch pong_elapsed_max_time_us
+Var.AddWatch Mmic_Trig_Time_Max
+Var.AddWatch Mmic_Trig_Time_Min
+Var.AddWatch MMIC_Error
+Var.AddWatch DSP_PFM_Index_Isr
+Var.AddWatch DSP_PFM_Index
+Var.AddWatch Range_Proc_Overrun_Counter
+Var.AddWatch Range_Process_Error_Cnt
+Var.AddWatch SP_Post_Proc_Buffer_Index
+Var.AddWatch RP_Buffer_Index
+Var.AddWatch DP_Rdd_Buffer_Index
+Var.AddWatch Appl_Range_Variables
+Var.AddWatch Frame_Time_Buffer
+Var.AddWatch D2M_Buffer_Full_Error_Counter
+Var.AddWatch Timer_Isr_Cnt
+Var.AddWatch PFM_Prev_Stage
+Var.AddWatch Ipc_Shared_Buffer
+Var.AddWatch Ipc_Shared_Buffer
+Var.AddWatch D2M_Buffer_Full_Error_Counter
+Var.AddWatch IPC_R52_Trigger_Failed
+
+WinPAGE.select Main
+
+ENDDO

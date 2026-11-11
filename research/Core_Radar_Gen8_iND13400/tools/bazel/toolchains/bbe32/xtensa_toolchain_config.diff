@@ -1,0 +1,62 @@
+--- toolchains/xtensa/cc_toolchain_config.bzl
++++ toolchains/xtensa/cc_toolchain_config.bzl
+@@ -37,6 +37,20 @@
+ all_actions = all_compile_actions + all_assemble_actions + all_link_actions + [ACTION_NAMES.cpp_link_static_library, ACTION_NAMES.strip]
+
+ def _impl_cc_toolchain_config(ctx):
++
++    # ------------------------------------------------------------------
++    # ✅ NEW: Enable param files (fixes Windows command-length issue)
++    # ------------------------------------------------------------------
++    compiler_param_file_feature = feature(
++        name = "compiler_param_file",
++        enabled = True,
++    )
++
++    archive_param_file_feature = feature(
++        name = "archive_param_file",
++        enabled = True,
++    )
++
+     dependency_file_feature = feature(
+         name = "dependency_file",
+         enabled = True,
+@@ -303,7 +303,7 @@ def _impl_cc_toolchain_config(ctx):
+     lto_feature = feature(
+         name = "lto",
+         provides = ["enable_lto"],
+-        enabled = True if ctx.attr.enable_lto == "Classic" else False,
++        enabled = True if ctx.attr.enable_lto in ["Classic", "ThinLTO"] else False,
+         flag_sets = [
+             flag_set(
+                 actions = [
+@@ -315,7 +315,7 @@ def _impl_cc_toolchain_config(ctx):
+                 flag_groups = [
+                     flag_group(
+                         flags = [
+-                            "-flto",
++                            "-flto" if ctx.attr.enable_lto == "Classic" else "-flto=thin" if ctx.attr.enable_lto == "ThinLTO" else "",
+                         ],
+                     ),
+                 ],
+@@ -401,7 +401,7 @@ cc_toolchain_config = rule(
+         "defines": attr.string_list(default = [], doc = "common defines to add while compiling"),
+         "link_executable": attr.label(mandatory = True, allow_single_file = True, executable = True, cfg = "exec", doc = "Path to Xtensa Linker (xt-clang++)"),
+         "linker_support_package": attr.label(allow_single_file = True, doc = "Path to the Linker Support Package (-mlsp=[provided path]). Should be a filegroup to a single directory"),
+-        "enable_lto": attr.string(default = "Off", doc = "Enable LLVM Link Time Optimizations by default. Options are Off, Classic or Safety", values = ["Off", "Classic", "Safety"]),
++        "enable_lto": attr.string(default = "Off", doc = "Enable LLVM Link Time Optimizations by default. Options are Off, Classic or Safety", values = ["Off", "Classic", "Safety","ThinLTO"]),
+         "linkopts": attr.string_list(default = [], doc = "flags to set while linking objects file"),
+         "license_server": attr.string(mandatory = True, doc = "License address"),
+         "strip_executable": attr.label(mandatory = True, allow_single_file = True, executable = True, cfg = "exec", doc = "Path to Clang Strip Executable. This is different for 32 and 64 bit targes."),
+@@ -351,6 +365,11 @@
+
+     features = [
+         no_legacy_features_feature,
++
++        # ✅ NEW: Windows-safe param files
++        compiler_param_file_feature,
++        archive_param_file_feature,
++
+         license_server_env,
+         xtensa_core_and_system_path_feature,  # BP_CUSTOM
+         default_compile_flags_feature,

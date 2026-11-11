@@ -1,0 +1,20 @@
+Algorithm Output Name,Embedded (CANape) Output Name,Output +/- Range,Output dB Range,Complex Names (Real Part First),Scaling,Small Change +/- Range,Small dB Range
+num_AF_det,ipc_af_buf_read.num_af_det[*],1,,,p0,0,
+ran,ipc_af_buf_read.ran[*],0.004363323,,,p0,0,
+vel,ipc_af_buf_read.vel[*],0,,,p0,0,
+pow,ipc_af_buf_read.pow[*],,1,,p0,,1.1
+snr,ipc_af_buf_read.snr[*],,1,,p0,,1.1
+theta,ipc_af_buf_read.theta[*],0.015,,,p0,0,
+phi,ipc_af_buf_read.phi[*],0,,,p0,0,
+az_conf,ipc_af_buf_read.az_conf[*],0,,,p0,0,
+el_conf,ipc_af_buf_read.el_conf[*],0,,,p0,0,
+Az_AF_Type,ipc_af_buf_read.az_af_type[*],0,,,p0,0,
+El_AF_type,ipc_af_buf_read.el_af_type[*],0,,,p0,0,
+spec_res,ipc_af_buf_read.spec_res[*],,1,,p0,,1.1
+f_single_target,ipc_af_buf_read.f_single_target[*],0,,,p0,0,
+f_superres_target,ipc_af_buf_read.f_superres_target[*],0,,,p0,0,
+f_1Az2El,ipc_af_buf_read.f_1az2el[*],0,,,p0,0,
+f_bistatic,ipc_af_buf_read.f_bistatic[*],0,,,p0,0,
+f_peak_det,ipc_af_buf_read.f_peak_det[*],0,,,p0,0,
+rdd_idx,ipc_af_buf_read.rdd_idx[*],0,,,p0,0,
+rcs,ipc_af_buf_read.rcs[*],,1,,p0,,1.1

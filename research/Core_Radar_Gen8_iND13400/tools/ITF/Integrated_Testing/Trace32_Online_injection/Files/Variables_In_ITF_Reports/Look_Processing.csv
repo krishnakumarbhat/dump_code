@@ -1,0 +1,4 @@
+Algorithm Output Name,Embedded (CANape) Output Name,Output +/- Range,Output dB Range,Complex Names (Real Part First),Scaling,Small Change +/- Range,Small Change dB Range
+rdop_avg,rdop_avg_data[*][*],,-96,,p0,,-95
+range_doppler_array,dfft_bv_output_buffer[*][*][*],,-36,,p0,,-35
+range_fft,RangeProc_OutputDataCube [*][*][*],,-36,,p0,,-35

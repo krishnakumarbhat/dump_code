@@ -1,0 +1,101 @@
+// Serdes Control
+//Data.Set APB:0x8441100C  %Long 0x000A0A01 // laneA_datapath_0
+//Data.Set APB:0x84411020  %Long 0x00000358 // laneA_powerdown_0
+//Data.Set APB:0x84411040  %Long 0x000A0A01 // laneB_datapath_0
+//Data.Set APB:0x84411054  %Long 0x00000358 // laneB_powerdown_0
+//Data.Set APB:0x844110EC  %Long 0x004CC000 // txpll_control_0 - set TXPLL_PD
+//Data.Set APB:0x844110F0  %Long 0x0007C011 // txpll_divider1_0
+//Data.Set APB:0x844110F4  %Long 0x01800000 // txpll_divider2_0
+//Data.Set APB:0x844110EC  %Long 0x0044C000 // txpll_control_0 - clear TXPLL_PD
+//Data.Set APB:0x84411044  %Long Data.Long(APB:0x84411044)|0x38000000 // laneB_driver1_0
+//Data.Set APB:0x84411048  %Long 0x00FFFFFF // laneB_driver2_0
+//Data.Set APB:0x84411040  %Long Data.Long(APB:0x84411040)|0x00000100 // laneB_datapath_0
+//Data.Set APB:0x84411040  %Long Data.Long(APB:0x84411040)|0x00000400 // laneB_datapath_0
+//
+// Wait for Serdes TXPLL_LOCK
+//WHILE (Data.Long(APB:0x84411100)&0x00000001)==0
+//(
+//    WAIT 0.1s
+//)
+
+// Configure base address for debug blocks
+SYStem.CONFIG FUNNEL.Base APB:0xf8012000
+SYStem.CONFIG TPIU.Base APB:0xf8013000
+SYStem.CONFIG ETR.Base APB:0xf8014000
+SYStem.CONFIG REPlicator.Base APB:0xf8010000 // replicator
+;SYStem.CONFIG JTAGAP0.Base DP:0xf2000000 // JTAG-AP that connects to RISC-V core in chip
+
+Trace.DISable
+
+// Configure Sources for each debug block to output trace
+SYSTEM.config ETR.NoFlush ON
+
+SYStem.CONFIG FUNNEL.ATBSource ETM 0
+SYStem.CONFIG REPlicator.ATBSource FUNNEL
+SYStem.CONFIG TPIU.ATBSource REPlicatorA
+
+SYStem.CONFIG TRACEPORT.Type AURORA
+SYStem.CONFIG TRACEPORT.TraceSource TPIU
+
+System.config ETR.NoFlush ON
+SYStem.CONFIG ETR.ATBSource REPlicatorB1
+
+// Configure Endianess and formats for output trace
+TPIU.NOFLUSH ON
+TPIU.PortSize 8
+TPIU.PortMode Wrapped
+
+Data.Set EAPB:0xF8013304 %Long 0xXXXXXXXX|0x1 ; workaround to force setting the wrapped mode right now
+TRACEPORT.LaneCount 1Lane
+TRACEPORT.LaneSpeed 2500Mbps
+TRACEPORT.MsgBItEndian LittleEndian
+TRACEPORT.MsgBYteEndian LittleEndian
+TRACEPORT.MsgWOrdEndian LittleEndian
+TRACEPORT.MsgLongEndian LittleEndian
+TRACEPORT.StartsKiP 0
+TRACEPORT.EndsKiP 0
+Trace.ACCESS DUALPORT
+
+Trace.Method Analyzer
+;InterCom.Execute BBE32 SYStem.CONFIG FUNNEL.Base APB:0xf8012000
+;InterCom.execute BBE32 SYStem.CONFIG TPIU.Base APB:0xf8013000
+;InterCom.execute BBE32 SYStem.CONFIG ETR.Base APB:0xf8014000
+;InterCom.execute BBE32 SYStem.CONFIG REPlicator.Base APB:0xf8010000
+;
+;InterCom.Execute BBE32 SYStem.CONFIG FUNNEL.ATBSource NEXUS 1
+;InterCom.execute BBE32 SYStem.CONFIG REPlicator.ATBSource FUNNEL
+;InterCom.execute BBE32 SYStem.CONFIG TPIU.ATBSource REPlicatorA
+;
+;InterCom.execute BBE32 SYStem.CONFIG TRACEPORT.Type AURORA
+;InterCom.execute BBE32 SYStem.CONFIG TRACEPORT.TraceSource TPIU
+;
+;InterCom.execute BBE32 Data.Set EAPB:0xF8013304 %Long 0xXXXXXXXX|0x1 ; workaround to force setting the wrapped mode right now
+;
+;InterCom.Execute BBE32 Trace.ACCESS DUALPORT
+;InterCom.Execute BBE32 Trace.Method Analyzer
+;InterCom.execute BBE32 Trace.DISable
+;
+;InterCom.execute BBE32 TRACEPORT.LaneCount 1Lane
+;InterCom.execute BBE32 TRACEPORT.LaneSpeed 2500Mbps
+;InterCom.execute BBE32 TRACEPORT.MsgBItEndian LittleEndian
+;InterCom.execute BBE32 TRACEPORT.MsgBYteEndian LittleEndian
+;InterCom.execute BBE32 TRACEPORT.MsgWOrdEndian LittleEndian
+;InterCom.execute BBE32 TRACEPORT.MsgLongEndian LittleEndian
+;InterCom.execute BBE32 TRACEPORT.StartsKiP 0
+;InterCom.execute BBE32 TRACEPORT.EndsKiP 0
+;
+;InterCom.execute BBE32 Trace.OFF
+//etm.bbc on
+etm.clock 500.0MHz
+etm.cycleaccurate OFF
+
+ETM.PortSize 1Lane     ; Set the trace port width to 16
+ETM.DataTrace ON
+ETM.ON
+
+TPIU.PortMode Wrapped
+
+//SYStem.Option.DUALPORT OFF
+//PER.Set.ByName "DBGM_CTRL ().AURORA_CTRL1.TX_ALIGNED" 0x1
+//PER.Set.ByName "DBGM_CTRL ().AURORA_CTRL1.TX_VERIFY" 0x1
+;SYStem.Option.DUALPORT ON

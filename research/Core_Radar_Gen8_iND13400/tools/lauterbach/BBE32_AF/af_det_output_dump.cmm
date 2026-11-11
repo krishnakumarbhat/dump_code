@@ -1,0 +1,117 @@
+// Usage Notes:
+// Set FILE_NAME to the name of the CSV file to dumpt the angle finding detection output to
+// NOTE: this script could take about a minute to run
+// The resulting CSV file can be compared against tv_anglefinding using the supplied matlab script, det_csv_compare.m.
+
+// switch to decimal to avoid confusion
+RADIX.Decimal
+
+LOCAL &FILE_NAME &HAVE_DETECTION_LOG_DATA
+&FILE_NAME="af_det.csv"
+&HAVE_DETECTION_LOG_DATA=1
+
+// SCRIPT BEGINS HERE
+PRIVATE &num_elems &offset
+OPEN #5 &FILE_NAME /Create
+WRITE #5 "num_AF_det,"
+IF (&HAVE_DETECTION_LOG_DATA==1)
+(
+  WRITE #5 %CONTinue "target_selected_post_stage_1,target_selected_post_stage_2,target_selected_post_stage_3,target_selected_post_stage_4,target_selected_post_stage_5,"
+)
+WRITE #5 %CONTinue "ran,vel,pow,snr,theta,phi,rcs,spec_res,rdd_idx,az_conf,el_conf,Az_AF_type,El_AF_type,f_single_target,f_superres_target,f_1az2el,f_bistatic"
+
+&num_elems=Var.VALUE(IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.num_af_det)
+&offset=0
+WHILE (&offset<&num_elems)
+(
+  IF (&offset==0)
+  (
+    VAR.WRITE #5 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.num_af_det
+    WRITE #5 %CONTinue ","
+    IF (&HAVE_DETECTION_LOG_DATA==1)
+    (
+      VAR.WRITE #5 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_debug_data.af_det_debug_data.target_selected_post_stage_1
+      WRITE #5 %CONTinue ","
+      VAR.WRITE #5 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_debug_data.af_det_debug_data.target_selected_post_stage_2
+      WRITE #5 %CONTinue ","
+      VAR.WRITE #5 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_debug_data.af_det_debug_data.target_selected_post_stage_3
+      WRITE #5 %CONTinue ","
+      VAR.WRITE #5 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_debug_data.af_det_debug_data.target_selected_post_stage_4
+      WRITE #5 %CONTinue ","
+      VAR.WRITE #5 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_debug_data.af_det_debug_data.target_selected_post_stage_5
+      WRITE #5 %CONTinue ","
+    )
+  )
+  ELSE
+  (
+    IF (&HAVE_DETECTION_LOG_DATA==1)
+    (
+      WRITE #5 ",,,,,,"
+    )
+    ELSE
+    (
+      WRITE #5 ","
+    )
+  )
+
+  GOSUB writefval #5 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_dets[&offset].ran 1
+  GOSUB writefval #5 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_dets[&offset].vel 1
+  GOSUB writefval #5 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_dets[&offset].pow 1
+  GOSUB writefval #5 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_dets[&offset].snr 1
+  GOSUB writefval #5 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_dets[&offset].theta 1
+  GOSUB writefval #5 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_dets[&offset].phi 1
+  GOSUB writefval #5 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_dets[&offset].rcs 1
+  GOSUB writefval #5 IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_dets[&offset].spec_res 1
+
+  VAR.WRITE #5 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_dets[&offset].rdd_idx
+  WRITE #5 %CONTinue ","
+  VAR.WRITE #5 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_dets[&offset].az_conf
+  WRITE #5 %CONTinue ","
+  VAR.WRITE #5 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_dets[&offset].el_conf
+  WRITE #5 %CONTinue ","
+  VAR.WRITE #5 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_debug_data.af_debug_detections[&offset].az_af_type
+  WRITE #5 %CONTinue ","
+  VAR.WRITE #5 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_debug_data.af_debug_detections[&offset].el_af_type
+  WRITE #5 %CONTinue ","
+  VAR.WRITE #5 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_dets[&offset].f_single_target
+  WRITE #5 %CONTinue ","
+  VAR.WRITE #5 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_dets[&offset].f_superres_target
+  WRITE #5 %CONTinue ","
+  VAR.WRITE #5 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_debug_data.af_debug_detections[&offset].f_1az2el
+  WRITE #5 %CONTinue ","
+  VAR.WRITE #5 %CONTInue IPC_D2M_Buffer[SP_Post_Proc_Buffer_Index].payload.det_data.af_dets[&offset].f_bistatic
+
+  &offset=&offset+1
+)
+
+CLOSE #5
+
+BEEP
+
+ENDDO
+
+// Subroutine writefval
+// Write a float value to the given file with optional comma or newline
+// input parameters
+//  1. file: file number to write out to
+//  2. var: float variable (HLL) to write out
+//  3. int: flag to indicate whether to add a comma or newline
+// return value: none
+writefval:
+  ENTRY &fno &varname &commaflag
+  PRIVATE &tmpstr &formatstr
+  &formatstr="%0.10g"
+
+  IF (&commaflag==1)
+  (
+    SPRINTF &tmpstr "&formatstr" Var.FVALUE(&varname)
+    WRITE &fno %CONTInue "&tmpstr"
+    WRITE #5 %CONTinue ","
+  )
+  ELSE
+  (
+    SPRINTF &tmpstr "&formatstr" Var.FVALUE(&varname)
+    WRITE &fno "&tmpstr"
+  )
+
+RETURN

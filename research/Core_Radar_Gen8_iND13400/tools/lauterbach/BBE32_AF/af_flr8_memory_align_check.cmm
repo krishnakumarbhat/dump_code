@@ -1,0 +1,135 @@
+// Usage Notes:
+// Check anglefinding memory variables to ensure they are aligned on 32-byte boundary
+// Output is written to the B::AREA.View log
+
+// switch to decimal to avoid confusion
+RADIX.Decimal
+LOCAL &failurecount &optionalcount &missingcount &missingoptcount
+
+&failurecount=0
+&optionalcount=0
+&missingcount=0
+&missingoptcount=0
+
+// High Level Vars
+GOSUB test_align "AF_Mem" 1
+GOSUB test_align "*AF_Mem_ptr" 1
+GOSUB test_align "AF_Mem_Pool" 1
+GOSUB test_align "*AF_Mem_Pool_ptr" 1
+GOSUB test_align "RDD_Det" 1
+GOSUB test_align "*RDD_Det_ptr" 1
+GOSUB test_align "AF_Data" 1
+GOSUB test_align "*AF_Data_ptr" 1
+GOSUB test_align "Angle_Data" 1
+GOSUB test_align "*Angle_Data_ptr" 1
+GOSUB test_align "Angle_Data_S4" 1
+GOSUB test_align "*Angle_Data_S4_ptr" 1
+GOSUB test_align "Angle_Data_S5" 1
+GOSUB test_align "*Angle_Data_S5_ptr" 1
+
+// Local Stage Datastructures
+GOSUB test_align "RDD_Angle_Data_S1" 1
+GOSUB test_align "*RDD_Angle_Data_S1_ptr" 1
+GOSUB test_align "RDD_Angle_Data_S2" 1
+GOSUB test_align "*RDD_Angle_Data_S2_ptr" 1
+GOSUB test_align "RDD_Angle_Data_S3" 1
+GOSUB test_align "*RDD_Angle_Data_S3_ptr" 1
+GOSUB test_align "RDD_Angle_Data_S4" 1
+GOSUB test_align "*RDD_Angle_Data_S4_ptr" 1
+GOSUB test_align "RDD_Angle_Data_S5" 1
+GOSUB test_align "*RDD_Angle_Data_S5_ptr" 1
+
+// Cals
+GOSUB test_align "AF_SSC" 1
+GOSUB test_align "AF_USC"
+GOSUB test_align "Calmat_Update_Data" 1
+GOSUB test_align "*Calmat_Update_Data_ptr" 1
+GOSUB test_align "Cal_Monitoring_Stat" 1
+GOSUB test_align "*Cal_Monitoring_Stat_ptr" 1
+GOSUB test_align "Sens_Thr" 1
+GOSUB test_align "*Sens_Thr_ptr" 1
+GOSUB test_align "af_gainpatfine"
+GOSUB test_align "af_thold_sensitivity"
+GOSUB test_align "af_az_lut"
+GOSUB test_align "af_az_sin_lut"
+GOSUB test_align "af_fft_w"
+GOSUB test_align "af_fft_rev"
+GOSUB test_align "af_el_lut"
+GOSUB test_align "af_el_sin_lut"
+GOSUB test_align "af_chamber_el_plane" 1
+GOSUB test_align "af_az_search_range" 1
+GOSUB test_align "af_ctx0"
+// GOSUB test_align "af_ctx1"
+GOSUB test_align "af_crx0"
+// GOSUB test_align "af_crx1"
+GOSUB test_align "af_cal0_c1"
+// GOSUB test_align "af_cal1_c1"
+
+IF &failurecount>0
+(
+    PRINT %ERROR &failurecount " failures were detected (" &missingcount " missing)"
+)
+ELSE
+(
+    PRINT %COLOR.GREEN "No failures were detected"
+)
+IF &optionalcount>0
+(
+    PRINT %ERROR &optionalcount " warnings were detected (" &missingoptcount " missing)"
+)
+ELSE
+(
+    PRINT %COLOR.GREEN "No warnings were detected"
+)
+ENDDO
+
+// Subroutine test_align
+// inputs
+//  1. string: variable name to test
+//  2. int: severity for the test - 1 indicates the test is optional
+// return value: none
+test_align:
+    ENTRY &varname &optional
+    PRIVATE &checkaddr &failincr
+
+    IF "&optional"==""
+        &optional=0
+
+    IF Var.EXIST(&varname)
+    (
+        &checkaddr=Var.ADDRESS(&varname)
+        &checkaddr=ADDRESS.OFFSET(&checkaddr)
+        IF (&checkaddr!=0)&&(&checkaddr&0x1F)==0
+        (
+            PRINT &varname " is aligned"
+        )
+        ELSE
+        (
+            IF &optional==0
+            (
+                PRINT %ERROR &varname " is unaligned: " &checkaddr
+                &failurecount=&failurecount+1
+            )
+            ELSE
+            (
+                PRINT %WARNING &varname " is unaligned: " &checkaddr
+                &optionalcount=&optionalcount+1
+            )
+        )
+    )
+    ELSE
+    (
+        IF &optional==0
+        (
+            PRINT %WARNING &varname " does not exist"
+            &failurecount=&failurecount+1
+            &missingcount=&missingcount+1
+        )
+        ELSE
+        (
+            PRINT &varname " does not exist"
+            &optionalcount=&optionalcount+1
+            &missingoptcount=&missingoptcount+1
+        )
+    )
+RETURN

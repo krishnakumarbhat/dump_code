@@ -1,0 +1,19 @@
+build --bes_backend=grpcs://rapidbuild.grpc.asux.aptiv.com:8001/
+build --bes_header=x-arb-project-id=gpo/core_radar_gen8_ind13400
+build --bes_results_url=https://rapidbuild.asux.aptiv.com/organizations/gpo/projects/core_radar_gen8_ind13400/invocations/
+
+# Upload BES results in async mode to avoid failing builds in case of BES
+# issues. It also makes builds exit slightly faster as bazel does not wait for
+# upload to finish at cost of some warnings for fast susequent builds if unable
+# to upload to BES in less than 5 seconds.
+build --bes_upload_mode=fully_async
+
+build --remote_cache=grpcs://rapidbuild.grpc.asux.aptiv.com:8000/
+build --remote_header=x-arb-project-id=gpo/core_radar_gen8_ind13400
+
+# Do not propagate to cache values when detecting changes during build. Avoids
+# publishing incorrect values to the cache in such cases.
+build --experimental_guard_against_concurrent_changes
+
+# Attempt to re-try a build step if it failed due to remote cache eviction
+build --experimental_remote_cache_eviction_retries=1

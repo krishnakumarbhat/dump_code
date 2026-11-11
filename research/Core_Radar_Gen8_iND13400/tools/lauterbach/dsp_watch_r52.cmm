@@ -1,0 +1,42 @@
+Var.Watch %Decimal %type %index %spotlight
+Var.DelWatch
+
+Var.AddWatch %hex IPC_D2M_Buffer
+Var.AddWatch %hex IPC_M2D_Buffers
+
+Var.AddWatch Doppler_Modulewise_Time
+Var.AddWatch SweepBW_Modulewise_Time
+Var.AddWatch FP_Modulewise_Time
+Var.AddWatch Circ_Shift_NCI_Modulewise_Time
+Var.AddWatch Circ_Shift_CI_Modulewise_Time
+
+Var.AddWatch IPC_D2M_Buffer[1].payload.rdd_stream_data.rdd_data.min_chirp_scaling
+Var.AddWatch IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.min_chirp_scaling
+
+Var.AddWatch DSP_Skipped_Frame
+Var.AddWatch Offline_Mode_Flag
+Var.AddWatch Offline_Mode_Flag_DSP
+Var.AddWatch Offline_Data_Injection_Ptr
+Var.AddWatch XCP_Range_Idx
+Var.AddWatch XCP_Doppler_Idx
+
+Var.AddWatch IPC_Dopp_RDD_Comp_Buf_Read_Addr
+Var.AddWatch %OPEN.2 Appl_Range_Variables
+Var.AddWatch MainApplication_ProfilingInfo
+
+Var.Draw MPRB_Debug_Output
+
+Var.AddWatch %OPEN.1 Offline_Data_Injection
+
+&mipi_base=0x84480000
+
+Var.AddWatch ((volatile MIPI_SFRS_t *const)&mipi_base)->CTRL.f
+Var.AddWatch ((volatile MIPI_SFRS_t *const)&mipi_base)->PING_PONG_DEBUG_STS_REG_1.f
+Var.AddWatch ((volatile MIPI_SFRS_t *const)&mipi_base)->CSI2_PKT_INFO.f
+
+&ra_base=0x844C0000
+
+Var.AddWatch ((volatile RA_SFRS_t *const)&ra_base)->CQ_STATUS.f
+Var.AddWatch ((volatile RA_SFRS_t *const)&ra_base)->RA_STATUS.f
+
+ENDDO

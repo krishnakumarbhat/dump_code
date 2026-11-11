@@ -1,0 +1,5 @@
+Time Slice,Look Type,No of Targets/TimeSlice,Target ID,x_targ(m),y_targ(m),z_targ(m),x_vel(m/s),y_vel(m/s),RCS
+1,1,1,1,21,121,0,0,-12,40
+1,2,1,1,21,121,0,0,-12,40
+1,3,1,1,21,121,0,0,-12,40
+1,4,1,1,21,121,0,0,-12,40

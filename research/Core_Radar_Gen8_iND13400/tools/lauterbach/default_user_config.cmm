@@ -1,0 +1,3 @@
+&default_win0="default_win_r52"
+&default_win1="default_win_bbe32"
+&default_flash_session="../../bazel-bin/outputs/flr8_satellite_can/flash_session.ini"

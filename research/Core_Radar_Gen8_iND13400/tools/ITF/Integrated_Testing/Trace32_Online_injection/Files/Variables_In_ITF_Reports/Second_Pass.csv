@@ -1,0 +1,8 @@
+Algorithm Output Name,Embedded (CANape) Output Name,Output +/- Range,Output dB Range,Complex Names (Real Part First),Scaling,Small Change +/- Range,Small Change dB Range
+numDetected,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd1_num_detect[*],0,,,p0,0,
+range,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd2_range[*],0.03,,,p0,0,
+range_rate,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd2_range_rate[*],0.025,,,p0,0,
+snr,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd2_snr[*],1,,,p0,1.1,
+sp_fail_flag,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd2_second_pass_fail_flag[*],0,,,p0,0,
+below_sp_thold,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.below_sp_thold[*],0,,,p0,0,
+thold_2nd_pass,IPC_D2M_Buffer[0].payload.rdd_stream_data.rdd_data.rdd2_thold_2nd_pass[*][*],,-192,,p0,,-191
