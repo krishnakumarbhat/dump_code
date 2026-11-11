@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2017 rel. 3 sp1 (x64) (http://www.altova.com) by  (Vector Informatik GmbH) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="EndTime" type="ST_Time"/>
+	<xs:element name="LogTime" type="ST_Time"/>
+	<xs:element name="MessageID">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="[^a-z][A-Z]+\d{5}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="StartTime" type="ST_Time"/>
+	<xs:element name="ErrorLevel">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="INFO"/>
+				<xs:enumeration value="WARNING"/>
+				<xs:enumeration value="ERROR"/>
+				<xs:enumeration value="FATAL_ERROR"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="WorkflowStep" type="T_WorkflowStep"/>
+	<xs:attribute name="shortName" type="AT_ShortName"/>
+	<xs:element name="MixedTextPart">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="type" use="required">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="AsrPath"/>
+								<xs:enumeration value="String"/>
+								<xs:enumeration value="DefRef"/>
+								<xs:enumeration value="URI"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="WorkflowMessage">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="LogTime"/>
+				<xs:element ref="WorkflowStep"/>
+				<xs:element ref="MessageID"/>
+				<xs:element ref="ErrorLevel"/>
+				<xs:element ref="ShortDescription"/>
+				<xs:element ref="DetailedDescription" minOccurs="0"/>
+				<xs:element ref="ExternalLink" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShortDescription" type="xs:string"/>
+	<xs:element name="DetailedDescription">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="MixedTextPart" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ExternalLink" type="xs:anyURI"/>
+	<xs:element name="UpdateWorkflowReport">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="StartTime"/>
+				<xs:element ref="WorkflowMessage" maxOccurs="unbounded"/>
+				<xs:element ref="EndTime"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="ST_Time">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[\d]{4}[-][\d]{2}[-][\d]{2}[T][\d]{2}[:][\d]{2}[:][\d]{2}([\.][\d]{3})?[\+][\d]{2}[:][\d]{2}[\[].+[\]]"/>
+			<!-- 2021-01-26T12:48:47.107+01:00[Europe/Berlin] -->
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="T_WorkflowStep">
+		<xs:simpleContent>
+			<xs:extension base="ST_WorkflowStep">
+				<xs:attribute ref="shortName" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="ST_WorkflowStep">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="AT_ShortName">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[^a-z][A-Z]+"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
