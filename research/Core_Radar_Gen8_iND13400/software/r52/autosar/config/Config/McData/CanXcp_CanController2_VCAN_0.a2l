@@ -1,0 +1,110 @@
+/**********************************************************************************************************************
+ *  COPYRIGHT
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  \verbatim
+ *
+ *                 This software is copyright protected and proprietary to Vector Informatik GmbH.
+ *                 Vector Informatik GmbH grants to you only those rights as set out in the license conditions.
+ *                 All other rights remain with Vector Informatik GmbH.
+ *  \endverbatim
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  LICENSE
+ *  -------------------------------------------------------------------------------------------------------------------
+ *            Module: Xcp
+ *           Program: 
+ *          Customer: 
+ *       Expiry Date: Not restricted
+ *    License Scope : The usage is restricted to PAI19494
+ *
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  FILE DESCRIPTION
+ *  -------------------------------------------------------------------------------------------------------------------
+ *              File: CanXcp_CanController2_VCAN_0.a2l
+ *   Generation Time: 2026-05-05 13:21:26
+ *           Project: Gen8_iND13400 - Version 1.0
+ *          Delivery: PAI19494
+ *      Tool Version: DaVinci Configurator Classic (beta) 5.31.55 SP5
+ *
+ *
+ *********************************************************************************************************************/
+
+/**********************************************************************************************************************
+ ! BETA VERSION                                                                                                       !
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ ! This version of DaVinci Configurator Classic and/or the related Basic Software Package is BETA software.               !
+ ! BETA Software is basically operable, but not sufficiently tested, verified and/or qualified for use in series      !
+ ! production and/or in vehicles operating on public or non-public roads.                                             !
+ ! In particular, without limitation, BETA Software may cause unpredictable ECU behavior, may not provide all         !
+ ! functions necessary for use in series production and/or may not comply with quality requirements which are         !
+ ! necessary according to the state of the art. BETA Software must not be used in series production.                  !
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+**********************************************************************************************************************/
+
+
+    /begin XCP_ON_CAN
+      0x0104 /* XCP on CAN version */
+      CAN_ID_MASTER   0 /* CMD/STIM */
+      CAN_ID_SLAVE    0 /* RES/ERR/EV/SERV/DAQ */
+      BAUDRATE        500000 /* BAUDRATE */
+      SAMPLE_POINT    75 /* SAMPLE_POINT */
+      SAMPLE_RATE     SINGLE /* SAMPLE_RATE */
+      BTL_CYCLES      40 /* BTL_CYCLES */
+      SJW             5 /* length synchr. segment */
+            /begin CAN_FD
+        MAX_DLC                         64 /* DLC of CAN frame */
+        CAN_FD_DATA_TRANSFER_BAUDRATE   2000000 /* Baudrate [Hz] */
+        SAMPLE_POINT                    70 /* Sample Point Receiver */
+        BTL_CYCLES                      10 /* BTL_CYCLES */
+        SJW                             1 /* length synchr. segment */
+        
+        SECONDARY_SAMPLE_POINT          0 /* Sender Sample Point */
+        TRANSCEIVER_DELAY_COMPENSATION  OFF
+      /end CAN_FD
+      /begin PROTOCOL_LAYER 
+        0x0104 
+        2000
+        10000
+        2000
+        2000
+        2000
+        2000
+        0
+        64 /* kXcpMaxCto */
+        64 /* kXcpMaxDto */
+        BYTE_ORDER_MSB_LAST /* Byte Order */
+        ADDRESS_GRANULARITY_BYTE
+        OPTIONAL_CMD GET_COMM_MODE_INFO
+ 
+        OPTIONAL_CMD GET_SEED
+        OPTIONAL_CMD UNLOCK
+        OPTIONAL_CMD SET_MTA
+        OPTIONAL_CMD UPLOAD
+        OPTIONAL_CMD SHORT_UPLOAD
+        OPTIONAL_CMD BUILD_CHECKSUM
+        OPTIONAL_CMD USER_CMD
+ 
+        OPTIONAL_CMD DOWNLOAD
+        OPTIONAL_CMD DOWNLOAD_NEXT
+        OPTIONAL_CMD SET_DAQ_PTR
+        OPTIONAL_CMD WRITE_DAQ
+        OPTIONAL_CMD SET_DAQ_LIST_MODE
+        OPTIONAL_CMD GET_DAQ_LIST_MODE
+        OPTIONAL_CMD START_STOP_DAQ_LIST
+        OPTIONAL_CMD START_STOP_SYNCH
+        OPTIONAL_CMD GET_DAQ_PROCESSOR_INFO
+        OPTIONAL_CMD GET_DAQ_EVENT_INFO
+        OPTIONAL_CMD FREE_DAQ
+        OPTIONAL_CMD ALLOC_DAQ
+        OPTIONAL_CMD ALLOC_ODT
+        OPTIONAL_CMD ALLOC_ODT_ENTRY
+        OPTIONAL_CMD PROGRAM_START
+        OPTIONAL_CMD PROGRAM_CLEAR
+        OPTIONAL_CMD PROGRAM
+        OPTIONAL_CMD PROGRAM_RESET
+        OPTIONAL_CMD GET_PGM_PROCESSOR_INFO
+        OPTIONAL_CMD GET_SECTOR_INFO
+        OPTIONAL_CMD WRITE_DAQ_MULTIPLE
+        COMMUNICATION_MODE_SUPPORTED  BLOCK  SLAVE  MASTER  5  0
+      /end PROTOCOL_LAYER        
+    /end XCP_ON_CAN
+

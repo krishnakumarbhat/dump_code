@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00049.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="ff55d029-386d-43a2-b3c2-dfef4c7a5e36">
+      <SHORT-NAME>MICROSAR</SHORT-NAME>
+      <ELEMENTS>
+        <BSW-IMPLEMENTATION UUID="92a32557-572f-4f8e-b617-ace9e504c5e7">
+          <SHORT-NAME>SomeIpXf_Impl</SHORT-NAME>
+          <PROGRAMMING-LANGUAGE>C</PROGRAMMING-LANGUAGE>
+          <RESOURCE-CONSUMPTION UUID="bfdecaf6-d174-4dbc-bff5-32e8ef5674e3">
+            <SHORT-NAME>ResourceConsumption</SHORT-NAME>
+            <MEMORY-SECTIONS>
+              <MEMORY-SECTION UUID="52c280b9-83e0-488e-959a-8f08f369267e">
+                <SHORT-NAME>SOMEIPXF_CODE_ASIL_B</SHORT-NAME>
+                <PREFIX-REF DEST="SECTION-NAME-PREFIX">/MICROSAR/SomeIpXf_Impl/ResourceConsumption/SOMEIPXF</PREFIX-REF>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/CODE_ASIL_B</SW-ADDRMETHOD-REF>
+                <SYMBOL>CODE_ASIL_B</SYMBOL>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="22f0eb74-c349-4c0a-8e9f-c3cb7473fd0c">
+                <SHORT-NAME>SOMEIPXF_VAR_INIT_LOCAL_UNSPECIFIED</SHORT-NAME>
+                <PREFIX-REF DEST="SECTION-NAME-PREFIX">/MICROSAR/SomeIpXf_Impl/ResourceConsumption/SOMEIPXF</PREFIX-REF>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR/Os_ib_bswmd/SwAddrMethods/OsCore0_ASIL_VAR_INIT</SW-ADDRMETHOD-REF>
+                <SYMBOL>VAR_INIT_LOCAL_UNSPECIFIED</SYMBOL>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="0f794644-e970-4dd2-b7c5-94bc140ba146">
+                <SHORT-NAME>SOMEIPXF_VAR_INIT_OsCore0_ASIL_ASIL_B_LOCAL_UNSPECIFIED</SHORT-NAME>
+                <PREFIX-REF DEST="SECTION-NAME-PREFIX">/MICROSAR/SomeIpXf_Impl/ResourceConsumption/SOMEIPXF</PREFIX-REF>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR/Os_ib_bswmd/SwAddrMethods/OsCore0_ASIL_VAR_INIT</SW-ADDRMETHOD-REF>
+                <SYMBOL>VAR_INIT_OsCore0_ASIL_ASIL_B_LOCAL_UNSPECIFIED</SYMBOL>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="94e002a5-6610-436e-9df4-45e4398b8190">
+                <SHORT-NAME>SOMEIPXF_VAR_INIT_OsCore_Qm_QM_LOCAL_UNSPECIFIED</SHORT-NAME>
+                <PREFIX-REF DEST="SECTION-NAME-PREFIX">/MICROSAR/SomeIpXf_Impl/ResourceConsumption/SOMEIPXF</PREFIX-REF>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR/Os_ib_bswmd/SwAddrMethods/OsCore_Qm_VAR_INIT</SW-ADDRMETHOD-REF>
+                <SYMBOL>VAR_INIT_OsCore_Qm_QM_LOCAL_UNSPECIFIED</SYMBOL>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="6aec4f3f-13b7-48e9-ace2-c295d2c62ce2">
+                <SHORT-NAME>SOMEIPXF_VAR_INIT_SystemApplication_OsCore0_QM_LOCAL_UNSPECIFIED</SHORT-NAME>
+                <PREFIX-REF DEST="SECTION-NAME-PREFIX">/MICROSAR/SomeIpXf_Impl/ResourceConsumption/SOMEIPXF</PREFIX-REF>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR/Os_ib_bswmd/SwAddrMethods/SystemApplication_OsCore0_VAR_INIT</SW-ADDRMETHOD-REF>
+                <SYMBOL>VAR_INIT_SystemApplication_OsCore0_QM_LOCAL_UNSPECIFIED</SYMBOL>
+              </MEMORY-SECTION>
+            </MEMORY-SECTIONS>
+            <SECTION-NAME-PREFIXS>
+              <SECTION-NAME-PREFIX>
+                <SHORT-NAME>SOMEIPXF</SHORT-NAME>
+                <SYMBOL>SOMEIPXF</SYMBOL>
+              </SECTION-NAME-PREFIX>
+            </SECTION-NAME-PREFIXS>
+          </RESOURCE-CONSUMPTION>
+          <SW-VERSION>4.40.00</SW-VERSION>
+          <USED-CODE-GENERATOR>DaVinci Configurator</USED-CODE-GENERATOR>
+          <VENDOR-ID>30</VENDOR-ID>
+          <AR-RELEASE-VERSION>4.03.01</AR-RELEASE-VERSION>
+        </BSW-IMPLEMENTATION>
+      </ELEMENTS>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="1fd44c56-05b6-4541-a186-b2ec5a6152d3">
+          <SHORT-NAME>SomeIpXf_ib_bswmd</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE UUID="deb6a76f-6237-4558-8c6e-7853f594d823">
+              <SHORT-NAME>BswModuleDescriptions</SHORT-NAME>
+              <ELEMENTS>
+                <BSW-MODULE-DESCRIPTION UUID="f31ae1ca-d0ca-4b39-92dc-f7d32c10b69c">
+                  <SHORT-NAME>SomeIpXf</SHORT-NAME>
+                  <INTERNAL-BEHAVIORS>
+                    <BSW-INTERNAL-BEHAVIOR UUID="45ad87e3-ea1e-4295-b11b-9091443e6c25">
+                      <SHORT-NAME>SomeIpXfBehavior</SHORT-NAME>
+                    </BSW-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </BSW-MODULE-DESCRIPTION>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

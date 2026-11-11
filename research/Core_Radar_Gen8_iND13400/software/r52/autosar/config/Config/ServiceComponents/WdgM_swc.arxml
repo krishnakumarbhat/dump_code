@@ -1,0 +1,1801 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00053.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="ff55d029-386d-43a2-b3c2-dfef4c7a5e36">
+      <SHORT-NAME>MICROSAR</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="3DAF0FCD-3CD5-411C-AA93-9FC719D1D0D2">
+          <SHORT-NAME>WdgM_swc</SHORT-NAME>
+          <ELEMENTS>
+            <MODE-DECLARATION-GROUP UUID="e89a597d-929f-46d4-99fc-42468d54fd72">
+              <SHORT-NAME>WdgM_Mode</SHORT-NAME>
+              <DESC>
+                <L-2 L="FOR-ALL">The mode declaration group WdgMMode represents the modes of the Watchdog Manager module that will be notified to the SW-Cs / CDDs and the RTE.</L-2>
+              </DESC>
+              <CATEGORY>EXPLICIT_ORDER</CATEGORY>
+              <INITIAL-MODE-REF DEST="MODE-DECLARATION">/MICROSAR/WdgM_swc/WdgM_Mode/SUPERVISION_OK</INITIAL-MODE-REF>
+              <MODE-DECLARATIONS>
+                <MODE-DECLARATION UUID="f8eabe49-1c95-4b64-9974-26fd21e164ab">
+                  <SHORT-NAME>SUPERVISION_OK</SHORT-NAME>
+                  <VALUE>0</VALUE>
+                </MODE-DECLARATION>
+                <MODE-DECLARATION UUID="7556e6f0-dd5e-441c-a33e-71c039e33f9c">
+                  <SHORT-NAME>SUPERVISION_FAILED</SHORT-NAME>
+                  <VALUE>1</VALUE>
+                </MODE-DECLARATION>
+                <MODE-DECLARATION UUID="2109d0fd-f7a3-414d-8b9e-8458b5aa0027">
+                  <SHORT-NAME>SUPERVISION_EXPIRED</SHORT-NAME>
+                  <VALUE>2</VALUE>
+                </MODE-DECLARATION>
+                <MODE-DECLARATION UUID="69fa1110-013b-4758-9370-fa21bc040ffd">
+                  <SHORT-NAME>SUPERVISION_STOPPED</SHORT-NAME>
+                  <VALUE>3</VALUE>
+                </MODE-DECLARATION>
+                <MODE-DECLARATION UUID="697a905f-88d0-4aa5-a905-de7e5c1ff9d5">
+                  <SHORT-NAME>SUPERVISION_DEACTIVATED</SHORT-NAME>
+                  <VALUE>4</VALUE>
+                </MODE-DECLARATION>
+              </MODE-DECLARATIONS>
+              <ON-TRANSITION-VALUE>255</ON-TRANSITION-VALUE>
+            </MODE-DECLARATION-GROUP>
+            <DATA-TYPE-MAPPING-SET UUID="cf990dc6-d532-4a4a-b88c-a366fa892e36">
+              <SHORT-NAME>WdgMMappingSet</SHORT-NAME>
+              <DESC>
+                <L-2 L="FOR-ALL">Contains mapping for mode declaration groups which are provided by WdgM.</L-2>
+              </DESC>
+              <MODE-REQUEST-TYPE-MAPS>
+                <MODE-REQUEST-TYPE-MAP>
+                  <IMPLEMENTATION-DATA-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgMMode</IMPLEMENTATION-DATA-TYPE-REF>
+                  <MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP">/MICROSAR/WdgM_swc/WdgM_Mode</MODE-GROUP-REF>
+                </MODE-REQUEST-TYPE-MAP>
+              </MODE-REQUEST-TYPE-MAPS>
+            </DATA-TYPE-MAPPING-SET>
+          </ELEMENTS>
+          <AR-PACKAGES>
+            <AR-PACKAGE UUID="3A32DA89-7BE7-45F8-89F2-9914A7ACFCF7">
+              <SHORT-NAME>DataTypes</SHORT-NAME>
+              <ELEMENTS>
+                <IMPLEMENTATION-DATA-TYPE UUID="ef8a97a2-4b7d-4f34-b74a-89975d812d9e">
+                  <SHORT-NAME>WdgM_SupervisedEntityIdType</SHORT-NAME>
+                  <DESC>
+                    <L-2 L="FOR-ALL">Identifier of a supervised entity</L-2>
+                  </DESC>
+                  <CATEGORY>TYPE_REFERENCE</CATEGORY>
+                  <SW-DATA-DEF-PROPS>
+                    <SW-DATA-DEF-PROPS-VARIANTS>
+                      <SW-DATA-DEF-PROPS-CONDITIONAL>
+                        <DATA-CONSTR-REF DEST="DATA-CONSTR">/MICROSAR/WdgM_swc/DataTypes/DataConstrs/WdgM_SupervisedEntityIdType_Constr</DATA-CONSTR-REF>
+                        <IMPLEMENTATION-DATA-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint16</IMPLEMENTATION-DATA-TYPE-REF>
+                      </SW-DATA-DEF-PROPS-CONDITIONAL>
+                    </SW-DATA-DEF-PROPS-VARIANTS>
+                  </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE UUID="2db2fac9-1c28-4eec-a957-76163fb41d67">
+                  <SHORT-NAME>WdgM_CheckpointIdType</SHORT-NAME>
+                  <DESC>
+                    <L-2 L="FOR-ALL">Identifier of a checkpoint</L-2>
+                  </DESC>
+                  <CATEGORY>TYPE_REFERENCE</CATEGORY>
+                  <SW-DATA-DEF-PROPS>
+                    <SW-DATA-DEF-PROPS-VARIANTS>
+                      <SW-DATA-DEF-PROPS-CONDITIONAL>
+                        <DATA-CONSTR-REF DEST="DATA-CONSTR">/MICROSAR/WdgM_swc/DataTypes/DataConstrs/WdgM_CheckpointIdType_Constr</DATA-CONSTR-REF>
+                        <IMPLEMENTATION-DATA-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint16</IMPLEMENTATION-DATA-TYPE-REF>
+                      </SW-DATA-DEF-PROPS-CONDITIONAL>
+                    </SW-DATA-DEF-PROPS-VARIANTS>
+                  </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE UUID="b331a4ee-9774-4e6e-9f3a-d1f3cf0ad067">
+                  <SHORT-NAME>WdgM_ModeType</SHORT-NAME>
+                  <DESC>
+                    <L-2 L="FOR-ALL">Identifier of the Watchdog trigger mode</L-2>
+                  </DESC>
+                  <CATEGORY>TYPE_REFERENCE</CATEGORY>
+                  <SW-DATA-DEF-PROPS>
+                    <SW-DATA-DEF-PROPS-VARIANTS>
+                      <SW-DATA-DEF-PROPS-CONDITIONAL>
+                        <DATA-CONSTR-REF DEST="DATA-CONSTR">/MICROSAR/WdgM_swc/DataTypes/DataConstrs/WdgM_ModeType_Constr</DATA-CONSTR-REF>
+                        <IMPLEMENTATION-DATA-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint8</IMPLEMENTATION-DATA-TYPE-REF>
+                      </SW-DATA-DEF-PROPS-CONDITIONAL>
+                    </SW-DATA-DEF-PROPS-VARIANTS>
+                  </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE UUID="21e937e6-79cb-4b70-aa68-ae805aa07d27">
+                  <SHORT-NAME>WdgM_LocalStatusType</SHORT-NAME>
+                  <DESC>
+                    <L-2 L="FOR-ALL">Local Monitoring Status of a supervised entity.</L-2>
+                  </DESC>
+                  <CATEGORY>TYPE_REFERENCE</CATEGORY>
+                  <SW-DATA-DEF-PROPS>
+                    <SW-DATA-DEF-PROPS-VARIANTS>
+                      <SW-DATA-DEF-PROPS-CONDITIONAL>
+                        <COMPU-METHOD-REF DEST="COMPU-METHOD">/MICROSAR/WdgM_swc/DataTypes/CompuMethods/WdgM_LocalStatusType</COMPU-METHOD-REF>
+                        <DATA-CONSTR-REF DEST="DATA-CONSTR">/MICROSAR/WdgM_swc/DataTypes/DataConstrs/WdgM_LocalStatusType_Constr</DATA-CONSTR-REF>
+                        <IMPLEMENTATION-DATA-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint8</IMPLEMENTATION-DATA-TYPE-REF>
+                      </SW-DATA-DEF-PROPS-CONDITIONAL>
+                    </SW-DATA-DEF-PROPS-VARIANTS>
+                  </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE UUID="831d79b3-41f0-41f9-b78d-d8c3e6c52cb0">
+                  <SHORT-NAME>WdgM_GlobalStatusType</SHORT-NAME>
+                  <DESC>
+                    <L-2 L="FOR-ALL">Global Monitoring Status summarizes all local monitoring statuses of all supervised entities.</L-2>
+                  </DESC>
+                  <CATEGORY>TYPE_REFERENCE</CATEGORY>
+                  <SW-DATA-DEF-PROPS>
+                    <SW-DATA-DEF-PROPS-VARIANTS>
+                      <SW-DATA-DEF-PROPS-CONDITIONAL>
+                        <COMPU-METHOD-REF DEST="COMPU-METHOD">/MICROSAR/WdgM_swc/DataTypes/CompuMethods/WdgM_GlobalStatusType</COMPU-METHOD-REF>
+                        <DATA-CONSTR-REF DEST="DATA-CONSTR">/MICROSAR/WdgM_swc/DataTypes/DataConstrs/WdgM_GlobalStatusType_Constr</DATA-CONSTR-REF>
+                        <IMPLEMENTATION-DATA-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint8</IMPLEMENTATION-DATA-TYPE-REF>
+                      </SW-DATA-DEF-PROPS-CONDITIONAL>
+                    </SW-DATA-DEF-PROPS-VARIANTS>
+                  </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE UUID="c41fd920-d2d3-49c8-a499-14fea67ffcd3">
+                  <SHORT-NAME>WdgMMode</SHORT-NAME>
+                  <DESC>
+                    <L-2 L="FOR-ALL">The implementation data type to be mapped to the mode declaration group.</L-2>
+                  </DESC>
+                  <CATEGORY>TYPE_REFERENCE</CATEGORY>
+                  <SW-DATA-DEF-PROPS>
+                    <SW-DATA-DEF-PROPS-VARIANTS>
+                      <SW-DATA-DEF-PROPS-CONDITIONAL>
+                        <COMPU-METHOD-REF DEST="COMPU-METHOD">/MICROSAR/WdgM_swc/DataTypes/CompuMethods/WdgMMode</COMPU-METHOD-REF>
+                        <DATA-CONSTR-REF DEST="DATA-CONSTR">/MICROSAR/WdgM_swc/DataTypes/DataConstrs/WdgMMode_Constr</DATA-CONSTR-REF>
+                        <IMPLEMENTATION-DATA-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint8</IMPLEMENTATION-DATA-TYPE-REF>
+                      </SW-DATA-DEF-PROPS-CONDITIONAL>
+                    </SW-DATA-DEF-PROPS-VARIANTS>
+                  </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+              </ELEMENTS>
+              <AR-PACKAGES>
+                <AR-PACKAGE UUID="B46970A3-F451-456A-BB2F-2D34CC0F1E3A">
+                  <SHORT-NAME>DataConstrs</SHORT-NAME>
+                  <ELEMENTS>
+                    <DATA-CONSTR UUID="478fbae5-6e89-41a2-80c3-a57fcf583d2f">
+                      <SHORT-NAME>WdgM_SupervisedEntityIdType_Constr</SHORT-NAME>
+                      <DATA-CONSTR-RULES>
+                        <DATA-CONSTR-RULE>
+                          <INTERNAL-CONSTRS>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">0</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">65535</UPPER-LIMIT>
+                          </INTERNAL-CONSTRS>
+                        </DATA-CONSTR-RULE>
+                      </DATA-CONSTR-RULES>
+                    </DATA-CONSTR>
+                    <DATA-CONSTR UUID="577b467e-e6f6-48bd-93b4-ebe90c2353d3">
+                      <SHORT-NAME>WdgM_CheckpointIdType_Constr</SHORT-NAME>
+                      <DATA-CONSTR-RULES>
+                        <DATA-CONSTR-RULE>
+                          <INTERNAL-CONSTRS>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">0</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">65535</UPPER-LIMIT>
+                          </INTERNAL-CONSTRS>
+                        </DATA-CONSTR-RULE>
+                      </DATA-CONSTR-RULES>
+                    </DATA-CONSTR>
+                    <DATA-CONSTR UUID="5f75da32-17d1-4798-b091-aa63390ff293">
+                      <SHORT-NAME>WdgM_ModeType_Constr</SHORT-NAME>
+                      <DATA-CONSTR-RULES>
+                        <DATA-CONSTR-RULE>
+                          <INTERNAL-CONSTRS>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">0</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">255</UPPER-LIMIT>
+                          </INTERNAL-CONSTRS>
+                        </DATA-CONSTR-RULE>
+                      </DATA-CONSTR-RULES>
+                    </DATA-CONSTR>
+                    <DATA-CONSTR UUID="52eebbe8-3d47-4cae-951f-115a671648c9">
+                      <SHORT-NAME>WdgM_LocalStatusType_Constr</SHORT-NAME>
+                      <DATA-CONSTR-RULES>
+                        <DATA-CONSTR-RULE>
+                          <INTERNAL-CONSTRS>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">0</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">4</UPPER-LIMIT>
+                          </INTERNAL-CONSTRS>
+                        </DATA-CONSTR-RULE>
+                      </DATA-CONSTR-RULES>
+                    </DATA-CONSTR>
+                    <DATA-CONSTR UUID="bbfdb617-c234-46c8-969a-d9d46413c98a">
+                      <SHORT-NAME>WdgM_GlobalStatusType_Constr</SHORT-NAME>
+                      <DATA-CONSTR-RULES>
+                        <DATA-CONSTR-RULE>
+                          <INTERNAL-CONSTRS>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">0</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">4</UPPER-LIMIT>
+                          </INTERNAL-CONSTRS>
+                        </DATA-CONSTR-RULE>
+                      </DATA-CONSTR-RULES>
+                    </DATA-CONSTR>
+                    <DATA-CONSTR UUID="8c38aea7-5753-4cf9-8606-5c4e5b0d2818">
+                      <SHORT-NAME>WdgMMode_Constr</SHORT-NAME>
+                      <DATA-CONSTR-RULES>
+                        <DATA-CONSTR-RULE>
+                          <INTERNAL-CONSTRS>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">0</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">255</UPPER-LIMIT>
+                          </INTERNAL-CONSTRS>
+                        </DATA-CONSTR-RULE>
+                      </DATA-CONSTR-RULES>
+                    </DATA-CONSTR>
+                  </ELEMENTS>
+                </AR-PACKAGE>
+                <AR-PACKAGE UUID="CD00DEA0-98CF-45B6-A1C4-44AA3D81538F">
+                  <SHORT-NAME>CompuMethods</SHORT-NAME>
+                  <ELEMENTS>
+                    <COMPU-METHOD UUID="fc67ff24-f05b-4e74-a691-a178af442e5d">
+                      <SHORT-NAME>WdgM_LocalStatusType</SHORT-NAME>
+                      <CATEGORY>TEXTTABLE</CATEGORY>
+                      <COMPU-INTERNAL-TO-PHYS>
+                        <COMPU-SCALES>
+                          <COMPU-SCALE>
+                            <SHORT-LABEL>WDGM_LOCAL_STATUS_OK</SHORT-LABEL>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">0</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">0</UPPER-LIMIT>
+                            <COMPU-CONST>
+                              <VT>WDGM_LOCAL_STATUS_OK</VT>
+                            </COMPU-CONST>
+                          </COMPU-SCALE>
+                          <COMPU-SCALE>
+                            <SHORT-LABEL>WDGM_LOCAL_STATUS_FAILED</SHORT-LABEL>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">1</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">1</UPPER-LIMIT>
+                            <COMPU-CONST>
+                              <VT>WDGM_LOCAL_STATUS_FAILED</VT>
+                            </COMPU-CONST>
+                          </COMPU-SCALE>
+                          <COMPU-SCALE>
+                            <SHORT-LABEL>WDGM_LOCAL_STATUS_EXPIRED</SHORT-LABEL>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">2</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">2</UPPER-LIMIT>
+                            <COMPU-CONST>
+                              <VT>WDGM_LOCAL_STATUS_EXPIRED</VT>
+                            </COMPU-CONST>
+                          </COMPU-SCALE>
+                          <COMPU-SCALE>
+                            <SHORT-LABEL>WDGM_LOCAL_STATUS_DEACTIVATED</SHORT-LABEL>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">4</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">4</UPPER-LIMIT>
+                            <COMPU-CONST>
+                              <VT>WDGM_LOCAL_STATUS_DEACTIVATED</VT>
+                            </COMPU-CONST>
+                          </COMPU-SCALE>
+                        </COMPU-SCALES>
+                      </COMPU-INTERNAL-TO-PHYS>
+                    </COMPU-METHOD>
+                    <COMPU-METHOD UUID="66b0a174-5422-4d11-a1b9-0dff54689973">
+                      <SHORT-NAME>WdgM_GlobalStatusType</SHORT-NAME>
+                      <CATEGORY>TEXTTABLE</CATEGORY>
+                      <COMPU-INTERNAL-TO-PHYS>
+                        <COMPU-SCALES>
+                          <COMPU-SCALE>
+                            <SHORT-LABEL>WDGM_GLOBAL_STATUS_OK</SHORT-LABEL>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">0</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">0</UPPER-LIMIT>
+                            <COMPU-CONST>
+                              <VT>WDGM_GLOBAL_STATUS_OK</VT>
+                            </COMPU-CONST>
+                          </COMPU-SCALE>
+                          <COMPU-SCALE>
+                            <SHORT-LABEL>WDGM_GLOBAL_STATUS_FAILED</SHORT-LABEL>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">1</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">1</UPPER-LIMIT>
+                            <COMPU-CONST>
+                              <VT>WDGM_GLOBAL_STATUS_FAILED</VT>
+                            </COMPU-CONST>
+                          </COMPU-SCALE>
+                          <COMPU-SCALE>
+                            <SHORT-LABEL>WDGM_GLOBAL_STATUS_EXPIRED</SHORT-LABEL>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">2</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">2</UPPER-LIMIT>
+                            <COMPU-CONST>
+                              <VT>WDGM_GLOBAL_STATUS_EXPIRED</VT>
+                            </COMPU-CONST>
+                          </COMPU-SCALE>
+                          <COMPU-SCALE>
+                            <SHORT-LABEL>WDGM_GLOBAL_STATUS_STOPPED</SHORT-LABEL>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">3</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">3</UPPER-LIMIT>
+                            <COMPU-CONST>
+                              <VT>WDGM_GLOBAL_STATUS_STOPPED</VT>
+                            </COMPU-CONST>
+                          </COMPU-SCALE>
+                          <COMPU-SCALE>
+                            <SHORT-LABEL>WDGM_GLOBAL_STATUS_DEACTIVATED</SHORT-LABEL>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">4</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">4</UPPER-LIMIT>
+                            <COMPU-CONST>
+                              <VT>WDGM_GLOBAL_STATUS_DEACTIVATED</VT>
+                            </COMPU-CONST>
+                          </COMPU-SCALE>
+                        </COMPU-SCALES>
+                      </COMPU-INTERNAL-TO-PHYS>
+                    </COMPU-METHOD>
+                    <COMPU-METHOD UUID="3c573430-8efb-43b9-b3dd-799611abbb41">
+                      <SHORT-NAME>WdgMMode</SHORT-NAME>
+                      <CATEGORY>TEXTTABLE</CATEGORY>
+                      <COMPU-INTERNAL-TO-PHYS>
+                        <COMPU-SCALES>
+                          <COMPU-SCALE>
+                            <SHORT-LABEL>SUPERVISION_OK</SHORT-LABEL>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">0</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">0</UPPER-LIMIT>
+                            <COMPU-CONST>
+                              <VT>SUPERVISION_OK</VT>
+                            </COMPU-CONST>
+                          </COMPU-SCALE>
+                          <COMPU-SCALE>
+                            <SHORT-LABEL>SUPERVISION_FAILED</SHORT-LABEL>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">1</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">1</UPPER-LIMIT>
+                            <COMPU-CONST>
+                              <VT>SUPERVISION_FAILED</VT>
+                            </COMPU-CONST>
+                          </COMPU-SCALE>
+                          <COMPU-SCALE>
+                            <SHORT-LABEL>SUPERVISION_EXPIRED</SHORT-LABEL>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">2</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">2</UPPER-LIMIT>
+                            <COMPU-CONST>
+                              <VT>SUPERVISION_EXPIRED</VT>
+                            </COMPU-CONST>
+                          </COMPU-SCALE>
+                          <COMPU-SCALE>
+                            <SHORT-LABEL>SUPERVISION_STOPPED</SHORT-LABEL>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">3</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">3</UPPER-LIMIT>
+                            <COMPU-CONST>
+                              <VT>SUPERVISION_STOPPED</VT>
+                            </COMPU-CONST>
+                          </COMPU-SCALE>
+                          <COMPU-SCALE>
+                            <SHORT-LABEL>SUPERVISION_DEACTIVATED</SHORT-LABEL>
+                            <LOWER-LIMIT INTERVAL-TYPE="CLOSED">4</LOWER-LIMIT>
+                            <UPPER-LIMIT INTERVAL-TYPE="CLOSED">4</UPPER-LIMIT>
+                            <COMPU-CONST>
+                              <VT>SUPERVISION_DEACTIVATED</VT>
+                            </COMPU-CONST>
+                          </COMPU-SCALE>
+                        </COMPU-SCALES>
+                      </COMPU-INTERNAL-TO-PHYS>
+                    </COMPU-METHOD>
+                  </ELEMENTS>
+                </AR-PACKAGE>
+              </AR-PACKAGES>
+            </AR-PACKAGE>
+            <AR-PACKAGE UUID="C62D5E34-D4B6-4516-AB06-69728B5C8C55">
+              <SHORT-NAME>Interfaces</SHORT-NAME>
+              <ELEMENTS>
+                <CLIENT-SERVER-INTERFACE UUID="d96575fc-f872-4418-90dc-cb8d0daef060">
+                  <SHORT-NAME>WdgM_AliveSupervision</SHORT-NAME>
+                  <IS-SERVICE>true</IS-SERVICE>
+                  <SERVICE-KIND>WATCH-DOG-MANAGER</SERVICE-KIND>
+                  <OPERATIONS>
+                    <CLIENT-SERVER-OPERATION UUID="35cb0fee-e6a6-4ce0-b24d-b7b4fafd6488">
+                      <SHORT-NAME>CheckpointReached</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Indicates to the Watchdog Manager that a Checkpoint within a Supervised Entity has been reached.</L-2>
+                      </DESC>
+                      <ARGUMENTS>
+                        <ARGUMENT-DATA-PROTOTYPE UUID="edacd86f-d634-4cf3-9951-f15a6e1ad948">
+                          <SHORT-NAME>CPID</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Identifier of the checkpoint within a supervised entity that has been reached.</L-2>
+                          </DESC>
+                          <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_CheckpointIdType</TYPE-TREF>
+                          <DIRECTION>IN</DIRECTION>
+                        </ARGUMENT-DATA-PROTOTYPE>
+                      </ARGUMENTS>
+                      <POSSIBLE-ERROR-REFS>
+                        <POSSIBLE-ERROR-REF DEST="APPLICATION-ERROR">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/E_NOT_OK</POSSIBLE-ERROR-REF>
+                      </POSSIBLE-ERROR-REFS>
+                    </CLIENT-SERVER-OPERATION>
+                  </OPERATIONS>
+                  <POSSIBLE-ERRORS>
+                    <APPLICATION-ERROR UUID="5bdf3f9c-6089-4c05-b3e5-4b8b9ffe473a">
+                      <SHORT-NAME>E_NOT_OK</SHORT-NAME>
+                      <ERROR-CODE>1</ERROR-CODE>
+                    </APPLICATION-ERROR>
+                  </POSSIBLE-ERRORS>
+                </CLIENT-SERVER-INTERFACE>
+                <CLIENT-SERVER-INTERFACE UUID="ef091fd4-b512-451c-80e1-bd58ff6ed03b">
+                  <SHORT-NAME>WdgM_LocalStatus</SHORT-NAME>
+                  <IS-SERVICE>true</IS-SERVICE>
+                  <SERVICE-KIND>WATCH-DOG-MANAGER</SERVICE-KIND>
+                  <OPERATIONS>
+                    <CLIENT-SERVER-OPERATION UUID="9dd69538-384c-4297-9344-4264f030d2c7">
+                      <SHORT-NAME>GetLocalStatus</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Returns the supervision status of a supervised entity.</L-2>
+                      </DESC>
+                      <ARGUMENTS>
+                        <ARGUMENT-DATA-PROTOTYPE UUID="b7a69e38-c13f-4564-82f7-796b689269ca">
+                          <SHORT-NAME>Status</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Supervision status of the given supervised entity.</L-2>
+                          </DESC>
+                          <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_LocalStatusType</TYPE-TREF>
+                          <DIRECTION>OUT</DIRECTION>
+                        </ARGUMENT-DATA-PROTOTYPE>
+                      </ARGUMENTS>
+                      <POSSIBLE-ERROR-REFS>
+                        <POSSIBLE-ERROR-REF DEST="APPLICATION-ERROR">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus/E_NOT_OK</POSSIBLE-ERROR-REF>
+                      </POSSIBLE-ERROR-REFS>
+                    </CLIENT-SERVER-OPERATION>
+                  </OPERATIONS>
+                  <POSSIBLE-ERRORS>
+                    <APPLICATION-ERROR UUID="d98f6795-e870-4ca3-a845-f08903a78944">
+                      <SHORT-NAME>E_NOT_OK</SHORT-NAME>
+                      <ERROR-CODE>1</ERROR-CODE>
+                    </APPLICATION-ERROR>
+                  </POSSIBLE-ERRORS>
+                </CLIENT-SERVER-INTERFACE>
+                <CLIENT-SERVER-INTERFACE UUID="cb66187a-afb8-4c20-a89a-fc14f387e79b">
+                  <SHORT-NAME>WdgM_General</SHORT-NAME>
+                  <IS-SERVICE>true</IS-SERVICE>
+                  <SERVICE-KIND>WATCH-DOG-MANAGER</SERVICE-KIND>
+                  <OPERATIONS>
+                    <CLIENT-SERVER-OPERATION UUID="2a52d9fd-e8ae-4075-b147-d5f423909a8e">
+                      <SHORT-NAME>GetMode</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Returns the current mode of the Watchdog Manager.</L-2>
+                      </DESC>
+                      <ARGUMENTS>
+                        <ARGUMENT-DATA-PROTOTYPE UUID="9dc5490f-60c1-4f88-891f-b36292393baf">
+                          <SHORT-NAME>Mode</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Current mode of the Watchdog Manager.</L-2>
+                          </DESC>
+                          <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_ModeType</TYPE-TREF>
+                          <DIRECTION>OUT</DIRECTION>
+                        </ARGUMENT-DATA-PROTOTYPE>
+                      </ARGUMENTS>
+                      <POSSIBLE-ERROR-REFS>
+                        <POSSIBLE-ERROR-REF DEST="APPLICATION-ERROR">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/E_NOT_OK</POSSIBLE-ERROR-REF>
+                      </POSSIBLE-ERROR-REFS>
+                    </CLIENT-SERVER-OPERATION>
+                    <CLIENT-SERVER-OPERATION UUID="ba99d3ad-8e0e-4b3d-ac1e-9ff2eba3a946">
+                      <SHORT-NAME>GetGlobalStatus</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Returns the global supervision status of the Watchdog Manager.</L-2>
+                      </DESC>
+                      <ARGUMENTS>
+                        <ARGUMENT-DATA-PROTOTYPE UUID="9a71c978-5f0c-480d-8f41-2e34b885228e">
+                          <SHORT-NAME>Status</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Global supervision status of the Watchdog Manager.</L-2>
+                          </DESC>
+                          <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_GlobalStatusType</TYPE-TREF>
+                          <DIRECTION>OUT</DIRECTION>
+                        </ARGUMENT-DATA-PROTOTYPE>
+                      </ARGUMENTS>
+                      <POSSIBLE-ERROR-REFS>
+                        <POSSIBLE-ERROR-REF DEST="APPLICATION-ERROR">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/E_NOT_OK</POSSIBLE-ERROR-REF>
+                      </POSSIBLE-ERROR-REFS>
+                    </CLIENT-SERVER-OPERATION>
+                    <CLIENT-SERVER-OPERATION UUID="e6621b0b-1d86-401b-85a8-7d35087e3a0b">
+                      <SHORT-NAME>GetLocalStatus</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Returns the supervision status of a supervised entity.</L-2>
+                      </DESC>
+                      <ARGUMENTS>
+                        <ARGUMENT-DATA-PROTOTYPE UUID="c4dc20e6-ed81-4bbd-9f92-ae81d6e19380">
+                          <SHORT-NAME>SEID</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Identifier of the supervised entity whose supervision status shall be returned.</L-2>
+                          </DESC>
+                          <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</TYPE-TREF>
+                          <DIRECTION>IN</DIRECTION>
+                        </ARGUMENT-DATA-PROTOTYPE>
+                        <ARGUMENT-DATA-PROTOTYPE UUID="613e9fb1-7874-4628-9343-45cf4d079649">
+                          <SHORT-NAME>Status</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Supervision status of the given supervised entity.</L-2>
+                          </DESC>
+                          <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_LocalStatusType</TYPE-TREF>
+                          <DIRECTION>OUT</DIRECTION>
+                        </ARGUMENT-DATA-PROTOTYPE>
+                      </ARGUMENTS>
+                      <POSSIBLE-ERROR-REFS>
+                        <POSSIBLE-ERROR-REF DEST="APPLICATION-ERROR">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/E_NOT_OK</POSSIBLE-ERROR-REF>
+                      </POSSIBLE-ERROR-REFS>
+                    </CLIENT-SERVER-OPERATION>
+                    <CLIENT-SERVER-OPERATION UUID="5ffb894a-abd2-48a0-8636-edb7cf7d0d74">
+                      <SHORT-NAME>PerformReset</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Instructs the Watchdog Manager to cause a watchdog reset.</L-2>
+                      </DESC>
+                      <POSSIBLE-ERROR-REFS>
+                        <POSSIBLE-ERROR-REF DEST="APPLICATION-ERROR">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/E_NOT_OK</POSSIBLE-ERROR-REF>
+                      </POSSIBLE-ERROR-REFS>
+                    </CLIENT-SERVER-OPERATION>
+                    <CLIENT-SERVER-OPERATION UUID="76279185-6020-4762-8bf2-4f703a6fab37">
+                      <SHORT-NAME>SetMode</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Requests a new trigger mode</L-2>
+                      </DESC>
+                      <ARGUMENTS>
+                        <ARGUMENT-DATA-PROTOTYPE UUID="271f33e9-2615-4573-8837-8bb2e4f5242d">
+                          <SHORT-NAME>Mode</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Desired new trigger mode id.</L-2>
+                          </DESC>
+                          <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_ModeType</TYPE-TREF>
+                          <DIRECTION>IN</DIRECTION>
+                        </ARGUMENT-DATA-PROTOTYPE>
+                        <ARGUMENT-DATA-PROTOTYPE UUID="219bf3da-c250-439c-9985-c2cee9482815">
+                          <SHORT-NAME>CallerID</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Module ID of the calling module.</L-2>
+                          </DESC>
+                          <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint16</TYPE-TREF>
+                          <DIRECTION>IN</DIRECTION>
+                        </ARGUMENT-DATA-PROTOTYPE>
+                      </ARGUMENTS>
+                      <POSSIBLE-ERROR-REFS>
+                        <POSSIBLE-ERROR-REF DEST="APPLICATION-ERROR">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/E_NOT_OK</POSSIBLE-ERROR-REF>
+                      </POSSIBLE-ERROR-REFS>
+                    </CLIENT-SERVER-OPERATION>
+                    <CLIENT-SERVER-OPERATION UUID="f833c9a5-510f-440d-bc9f-ab022129e240">
+                      <SHORT-NAME>GetFirstExpiredSEID</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Returns the id of that supervised entity which first reached the status WDGM_LOCAL_STATUS_EXPIRED.</L-2>
+                      </DESC>
+                      <ARGUMENTS>
+                        <ARGUMENT-DATA-PROTOTYPE UUID="b72e5a5d-9dea-4609-8b2d-cdf2805e6613">
+                          <SHORT-NAME>SEID</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Pointer to a variable that stores the id of the supervised entity.</L-2>
+                          </DESC>
+                          <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</TYPE-TREF>
+                          <DIRECTION>OUT</DIRECTION>
+                        </ARGUMENT-DATA-PROTOTYPE>
+                      </ARGUMENTS>
+                      <POSSIBLE-ERROR-REFS>
+                        <POSSIBLE-ERROR-REF DEST="APPLICATION-ERROR">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/E_NOT_OK</POSSIBLE-ERROR-REF>
+                      </POSSIBLE-ERROR-REFS>
+                    </CLIENT-SERVER-OPERATION>
+                    <CLIENT-SERVER-OPERATION UUID="f0f75fe1-8762-415e-83c1-01403fcea5c8">
+                      <SHORT-NAME>ActivateSupervisionEntity</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Activates the supervision of the given supervised entity.</L-2>
+                      </DESC>
+                      <ARGUMENTS>
+                        <ARGUMENT-DATA-PROTOTYPE UUID="dac34a35-da05-4252-bbc4-9db2b450040d">
+                          <SHORT-NAME>SEID</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Identifier of the supervised entity whose supervision shall be enabled.</L-2>
+                          </DESC>
+                          <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</TYPE-TREF>
+                          <DIRECTION>IN</DIRECTION>
+                        </ARGUMENT-DATA-PROTOTYPE>
+                      </ARGUMENTS>
+                      <POSSIBLE-ERROR-REFS>
+                        <POSSIBLE-ERROR-REF DEST="APPLICATION-ERROR">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/E_NOT_OK</POSSIBLE-ERROR-REF>
+                      </POSSIBLE-ERROR-REFS>
+                    </CLIENT-SERVER-OPERATION>
+                    <CLIENT-SERVER-OPERATION UUID="727ec959-bd48-4dcf-8030-375041e8998b">
+                      <SHORT-NAME>DeactivateSupervisionEntity</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Deactivates the supervision of the given supervised entity.</L-2>
+                      </DESC>
+                      <ARGUMENTS>
+                        <ARGUMENT-DATA-PROTOTYPE UUID="be191815-baf8-46ab-86cd-fde7478562f8">
+                          <SHORT-NAME>SEID</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Identifier of the supervised entity whose supervision shall be disenabled.</L-2>
+                          </DESC>
+                          <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</TYPE-TREF>
+                          <DIRECTION>IN</DIRECTION>
+                        </ARGUMENT-DATA-PROTOTYPE>
+                      </ARGUMENTS>
+                      <POSSIBLE-ERROR-REFS>
+                        <POSSIBLE-ERROR-REF DEST="APPLICATION-ERROR">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/E_NOT_OK</POSSIBLE-ERROR-REF>
+                      </POSSIBLE-ERROR-REFS>
+                    </CLIENT-SERVER-OPERATION>
+                  </OPERATIONS>
+                  <POSSIBLE-ERRORS>
+                    <APPLICATION-ERROR UUID="1852928f-93f2-4c10-8b1b-6e7ef8c742db">
+                      <SHORT-NAME>E_NOT_OK</SHORT-NAME>
+                      <ERROR-CODE>1</ERROR-CODE>
+                    </APPLICATION-ERROR>
+                  </POSSIBLE-ERRORS>
+                </CLIENT-SERVER-INTERFACE>
+                <MODE-SWITCH-INTERFACE UUID="b6d64e99-e2aa-4c97-add9-fef6902397c1">
+                  <SHORT-NAME>WdgM_IndividualMode</SHORT-NAME>
+                  <DESC>
+                    <L-2 L="FOR-ALL">The interface WdgM_IndividualMode is used to signal the local supervision status of a single supervised entity.</L-2>
+                  </DESC>
+                  <IS-SERVICE>true</IS-SERVICE>
+                  <SERVICE-KIND>WATCH-DOG-MANAGER</SERVICE-KIND>
+                  <MODE-GROUP UUID="ca28366f-bbad-4e64-970c-9a5492e2655b">
+                    <SHORT-NAME>currentMode</SHORT-NAME>
+                    <TYPE-TREF DEST="MODE-DECLARATION-GROUP">/MICROSAR/WdgM_swc/WdgM_Mode</TYPE-TREF>
+                  </MODE-GROUP>
+                </MODE-SWITCH-INTERFACE>
+                <MODE-SWITCH-INTERFACE UUID="a301a66c-71ff-417b-b504-17271c83a78f">
+                  <SHORT-NAME>WdgM_GlobalMode</SHORT-NAME>
+                  <DESC>
+                    <L-2 L="FOR-ALL">The interface WdgM_GlobalMode is used to signal the global supervision status that is combined from all individual supervised entities.</L-2>
+                  </DESC>
+                  <IS-SERVICE>true</IS-SERVICE>
+                  <SERVICE-KIND>WATCH-DOG-MANAGER</SERVICE-KIND>
+                  <MODE-GROUP UUID="79392431-099e-4869-91ce-8dff42f0815c">
+                    <SHORT-NAME>currentMode</SHORT-NAME>
+                    <TYPE-TREF DEST="MODE-DECLARATION-GROUP">/MICROSAR/WdgM_swc/WdgM_Mode</TYPE-TREF>
+                  </MODE-GROUP>
+                </MODE-SWITCH-INTERFACE>
+              </ELEMENTS>
+            </AR-PACKAGE>
+            <AR-PACKAGE UUID="bc68f45c-e43c-42a1-9fbf-b4246394084b">
+              <SHORT-NAME>ComponentTypes</SHORT-NAME>
+              <ELEMENTS>
+                <SERVICE-SW-COMPONENT-TYPE UUID="1e343716-fef3-4e90-a07e-e624b76a6072">
+                  <SHORT-NAME>WdgM_OsCore0_ASIL</SHORT-NAME>
+                  <CATEGORY>SERVICE_COMPONENT</CATEGORY>
+                  <PORTS>
+                    <P-PORT-PROTOTYPE UUID="8e77849f-68c4-4fd7-827a-bfcfa266cb50">
+                      <SHORT-NAME>alive_SE_Internal_Wdg</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Alive-P-Port Prototype for supervised entity 'SE_Internal_Wdg' with Id '1' for Application 'OsCore0_ASIL'.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">f208e9c2-8be4-406a-9caa-eeb7cc465ea5</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="40da5d7e-5a8e-44cb-bfd9-f0488c11b073">
+                      <SHORT-NAME>alive_SE_Internal_Wdg_Dummy</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Alive-P-Port Prototype for supervised entity 'SE_Internal_Wdg_Dummy' with Id '0' for Application 'OsCore0_ASIL'.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_Dummy</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">60a932b6-1927-46bc-b63a-5013b5582584</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="2970eb28-8fff-478a-b025-6eeb3137a8d0">
+                      <SHORT-NAME>alive_SE_Alive_Program_Flow_Monitoring</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Alive-P-Port Prototype for supervised entity 'SE_Alive_Program_Flow_Monitoring' with Id '2' for Application 'OsCore0_ASIL'.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Alive_Program_Flow_Monitoring</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">c4f1f285-0129-46d4-a0b2-11fc99473f93</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="7c11ede5-83e6-42e4-82fb-7673bd47c35b">
+                      <SHORT-NAME>localStatus_SE_Internal_Wdg</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">P-Port Prototype for supervised entity 'SE_Internal_Wdg' with Id '1' for Application 'OsCore0_ASIL' to request the local status.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">f208e9c2-8be4-406a-9caa-eeb7cc465ea5</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="38dff228-e876-4bd0-a3bf-eac9c9aedbca">
+                      <SHORT-NAME>localStatus_SE_Internal_Wdg_Dummy</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">P-Port Prototype for supervised entity 'SE_Internal_Wdg_Dummy' with Id '0' for Application 'OsCore0_ASIL' to request the local status.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_Dummy</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">60a932b6-1927-46bc-b63a-5013b5582584</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="45a6ccc4-37ee-4418-b402-9ec318bdf3bf">
+                      <SHORT-NAME>localStatus_SE_Alive_Program_Flow_Monitoring</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">P-Port Prototype for supervised entity 'SE_Alive_Program_Flow_Monitoring' with Id '2' for Application 'OsCore0_ASIL' to request the local status.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Alive_Program_Flow_Monitoring</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">c4f1f285-0129-46d4-a0b2-11fc99473f93</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="dbe5bfa0-b819-4815-bf22-8c95939777a5">
+                      <SHORT-NAME>general_Core0</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">General P-Port-Prototype for core 0 (OsCore0_ASIL)</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMConfigSet/WdgMMode</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">7f100053-7089-45bc-a53b-c5a61e4cda91</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_General</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="2e7d9aea-c022-446d-a0a4-a2de5a5c7e28">
+                      <SHORT-NAME>globalmode_Core0</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Mode port for reporting the global supervision status of WdgMMode of core 0</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMConfigSet/WdgMMode</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">7f100053-7089-45bc-a53b-c5a61e4cda91</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-COM-SPECS>
+                        <MODE-SWITCH-SENDER-COM-SPEC>
+                          <MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_GlobalMode/currentMode</MODE-GROUP-REF>
+                        </MODE-SWITCH-SENDER-COM-SPEC>
+                      </PROVIDED-COM-SPECS>
+                      <PROVIDED-INTERFACE-TREF DEST="MODE-SWITCH-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_GlobalMode</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="cfeb04f6-71e9-47b7-b1ba-0fb82bda694b">
+                      <SHORT-NAME>mode_SE_Internal_Wdg</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Mode port for reporting the local supervision status of SE_Internal_Wdg</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">f208e9c2-8be4-406a-9caa-eeb7cc465ea5</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-COM-SPECS>
+                        <MODE-SWITCH-SENDER-COM-SPEC>
+                          <MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</MODE-GROUP-REF>
+                        </MODE-SWITCH-SENDER-COM-SPEC>
+                      </PROVIDED-COM-SPECS>
+                      <PROVIDED-INTERFACE-TREF DEST="MODE-SWITCH-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="f5ae9c71-51c7-4d39-b337-f5c40ed9ba2b">
+                      <SHORT-NAME>mode_SE_Internal_Wdg_Dummy</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Mode port for reporting the local supervision status of SE_Internal_Wdg_Dummy</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_Dummy</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">60a932b6-1927-46bc-b63a-5013b5582584</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-COM-SPECS>
+                        <MODE-SWITCH-SENDER-COM-SPEC>
+                          <MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</MODE-GROUP-REF>
+                        </MODE-SWITCH-SENDER-COM-SPEC>
+                      </PROVIDED-COM-SPECS>
+                      <PROVIDED-INTERFACE-TREF DEST="MODE-SWITCH-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="83047a95-c1ef-4450-9426-c3c8b0198827">
+                      <SHORT-NAME>mode_SE_Alive_Program_Flow_Monitoring</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Mode port for reporting the local supervision status of SE_Alive_Program_Flow_Monitoring</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Alive_Program_Flow_Monitoring</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">c4f1f285-0129-46d4-a0b2-11fc99473f93</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-COM-SPECS>
+                        <MODE-SWITCH-SENDER-COM-SPEC>
+                          <MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</MODE-GROUP-REF>
+                        </MODE-SWITCH-SENDER-COM-SPEC>
+                      </PROVIDED-COM-SPECS>
+                      <PROVIDED-INTERFACE-TREF DEST="MODE-SWITCH-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="5e9ef5c9-fda1-4a5a-874f-7b14d0f2c8de">
+                      <SHORT-NAME>alive_SE_Internal_Wdg_Appl_IPC_Task</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Alive-P-Port Prototype for supervised entity 'SE_Internal_Wdg_Appl_IPC_Task' with Id '3' for Application 'OsCore0_ASIL'.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_Appl_IPC_Task</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">871d9379-98e3-4439-815e-9973b860624d</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="68a0cd32-1c6a-4d8e-97a4-ade7d313117e">
+                      <SHORT-NAME>alive_SE_Internal_Wdg_Appl_Task_Communication</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Alive-P-Port Prototype for supervised entity 'SE_Internal_Wdg_Appl_Task_Communication' with Id '5' for Application 'OsCore0_ASIL'.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_Appl_Task_Communication</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">a3245486-45fb-4135-8fb1-1ff5b03f5d20</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="c8adc0c1-8cc9-4fbb-8a99-b285a9b380b3">
+                      <SHORT-NAME>alive_SE_Internal_Wdg_Appl_Task_Radar_Control</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Alive-P-Port Prototype for supervised entity 'SE_Internal_Wdg_Appl_Task_Radar_Control' with Id '6' for Application 'OsCore0_ASIL'.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_Appl_Task_Radar_Control</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">91d08336-ceb1-47c5-9d31-7d8b85e5d188</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="f431367c-f166-42f5-9b1b-fe06c748db40">
+                      <SHORT-NAME>alive_SE_Internal_Wdg_BSW_Task</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Alive-P-Port Prototype for supervised entity 'SE_Internal_Wdg_BSW_Task' with Id '7' for Application 'OsCore0_ASIL'.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_BSW_Task</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">d78fa7eb-535a-4881-975d-4c8de2e48a76</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="053193b8-2975-40b0-af05-0b0661294b2e">
+                      <SHORT-NAME>alive_SE_Internal_Wdg_PLT_Appl_Task</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Alive-P-Port Prototype for supervised entity 'SE_Internal_Wdg_PLT_Appl_Task' with Id '4' for Application 'OsCore0_ASIL'.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_PLT_Appl_Task</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">036bb0f0-74d0-49a6-a0ce-967f8689b73c</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="ab2e766c-fed5-4218-8a52-999531ae6886">
+                      <SHORT-NAME>localStatus_SE_Internal_Wdg_Appl_IPC_Task</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">P-Port Prototype for supervised entity 'SE_Internal_Wdg_Appl_IPC_Task' with Id '3' for Application 'OsCore0_ASIL' to request the local status.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_Appl_IPC_Task</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">871d9379-98e3-4439-815e-9973b860624d</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="9fab4153-a021-4fac-939b-6be91cab2f4d">
+                      <SHORT-NAME>localStatus_SE_Internal_Wdg_Appl_Task_Communication</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">P-Port Prototype for supervised entity 'SE_Internal_Wdg_Appl_Task_Communication' with Id '5' for Application 'OsCore0_ASIL' to request the local status.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_Appl_Task_Communication</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">a3245486-45fb-4135-8fb1-1ff5b03f5d20</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="5ed5376f-829e-46ec-9b15-29cc20aa462e">
+                      <SHORT-NAME>localStatus_SE_Internal_Wdg_Appl_Task_Radar_Control</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">P-Port Prototype for supervised entity 'SE_Internal_Wdg_Appl_Task_Radar_Control' with Id '6' for Application 'OsCore0_ASIL' to request the local status.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_Appl_Task_Radar_Control</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">91d08336-ceb1-47c5-9d31-7d8b85e5d188</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="c008cf9a-099b-4a71-bfe6-a881a808bf14">
+                      <SHORT-NAME>localStatus_SE_Internal_Wdg_BSW_Task</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">P-Port Prototype for supervised entity 'SE_Internal_Wdg_BSW_Task' with Id '7' for Application 'OsCore0_ASIL' to request the local status.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_BSW_Task</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">d78fa7eb-535a-4881-975d-4c8de2e48a76</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="c8998c75-af5c-456d-b3e8-bb37c25bfa57">
+                      <SHORT-NAME>localStatus_SE_Internal_Wdg_PLT_Appl_Task</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">P-Port Prototype for supervised entity 'SE_Internal_Wdg_PLT_Appl_Task' with Id '4' for Application 'OsCore0_ASIL' to request the local status.</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_PLT_Appl_Task</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">036bb0f0-74d0-49a6-a0ce-967f8689b73c</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="9c2bc551-3418-4d0f-acc5-de0c76a7504e">
+                      <SHORT-NAME>mode_SE_Internal_Wdg_Appl_IPC_Task</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Mode port for reporting the local supervision status of SE_Internal_Wdg_Appl_IPC_Task</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_Appl_IPC_Task</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">871d9379-98e3-4439-815e-9973b860624d</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-COM-SPECS>
+                        <MODE-SWITCH-SENDER-COM-SPEC>
+                          <MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</MODE-GROUP-REF>
+                        </MODE-SWITCH-SENDER-COM-SPEC>
+                      </PROVIDED-COM-SPECS>
+                      <PROVIDED-INTERFACE-TREF DEST="MODE-SWITCH-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="fa1367e6-3a52-4a55-a7c7-2f65d7159dc8">
+                      <SHORT-NAME>mode_SE_Internal_Wdg_Appl_Task_Communication</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Mode port for reporting the local supervision status of SE_Internal_Wdg_Appl_Task_Communication</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_Appl_Task_Communication</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">a3245486-45fb-4135-8fb1-1ff5b03f5d20</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-COM-SPECS>
+                        <MODE-SWITCH-SENDER-COM-SPEC>
+                          <MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</MODE-GROUP-REF>
+                        </MODE-SWITCH-SENDER-COM-SPEC>
+                      </PROVIDED-COM-SPECS>
+                      <PROVIDED-INTERFACE-TREF DEST="MODE-SWITCH-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="eaf98a55-2c08-47b1-b2f4-b0d80003c7ca">
+                      <SHORT-NAME>mode_SE_Internal_Wdg_Appl_Task_Radar_Control</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Mode port for reporting the local supervision status of SE_Internal_Wdg_Appl_Task_Radar_Control</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_Appl_Task_Radar_Control</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">91d08336-ceb1-47c5-9d31-7d8b85e5d188</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-COM-SPECS>
+                        <MODE-SWITCH-SENDER-COM-SPEC>
+                          <MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</MODE-GROUP-REF>
+                        </MODE-SWITCH-SENDER-COM-SPEC>
+                      </PROVIDED-COM-SPECS>
+                      <PROVIDED-INTERFACE-TREF DEST="MODE-SWITCH-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="1a60c068-5bc4-483d-8881-85052eb04584">
+                      <SHORT-NAME>mode_SE_Internal_Wdg_BSW_Task</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Mode port for reporting the local supervision status of SE_Internal_Wdg_BSW_Task</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_BSW_Task</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">d78fa7eb-535a-4881-975d-4c8de2e48a76</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-COM-SPECS>
+                        <MODE-SWITCH-SENDER-COM-SPEC>
+                          <MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</MODE-GROUP-REF>
+                        </MODE-SWITCH-SENDER-COM-SPEC>
+                      </PROVIDED-COM-SPECS>
+                      <PROVIDED-INTERFACE-TREF DEST="MODE-SWITCH-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                    <P-PORT-PROTOTYPE UUID="de9a326b-7a52-46e7-9ae8-d03673baaa0f">
+                      <SHORT-NAME>mode_SE_Internal_Wdg_PLT_Appl_Task</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Mode port for reporting the local supervision status of SE_Internal_Wdg_PLT_Appl_Task</L-2>
+                      </DESC>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DerivedFromReferrables">
+                            <SDG GID="DV:DerivedFromReferrablesVariant">
+                              <SD GID="DV:InvariantValuesView"/>
+                              <SDX-REF DEST="ECUC-CONTAINER-VALUE">/ActiveEcuC/WdgM/WdgMGeneral/SE_Internal_Wdg_PLT_Appl_Task</SDX-REF>
+                              <SD GID="DV:DerivedFromReferrablesUUID">036bb0f0-74d0-49a6-a0ce-967f8689b73c</SD>
+                            </SDG>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-COM-SPECS>
+                        <MODE-SWITCH-SENDER-COM-SPEC>
+                          <MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</MODE-GROUP-REF>
+                        </MODE-SWITCH-SENDER-COM-SPEC>
+                      </PROVIDED-COM-SPECS>
+                      <PROVIDED-INTERFACE-TREF DEST="MODE-SWITCH-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                  </PORTS>
+                  <INTERNAL-BEHAVIORS>
+                    <SWC-INTERNAL-BEHAVIOR UUID="bb7ee809-c214-4b08-9068-a33dad4857a2">
+                      <SHORT-NAME>WdgM_OsCore0_ASILInternalBehavior</SHORT-NAME>
+                      <DATA-TYPE-MAPPING-REFS>
+                        <DATA-TYPE-MAPPING-REF DEST="DATA-TYPE-MAPPING-SET">/MICROSAR/WdgM_swc/WdgMMappingSet</DATA-TYPE-MAPPING-REF>
+                      </DATA-TYPE-MAPPING-REFS>
+                      <EVENTS>
+                        <TIMING-EVENT UUID="bedacb71-e920-42ba-8fd6-e3287f43b280">
+                          <SHORT-NAME>Timer_WdgM_MainFunction</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/WdgM_MainFunction</START-ON-EVENT-REF>
+                          <PERIOD>0.005</PERIOD>
+                        </TIMING-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="d55a7237-b444-4bc5-b034-45f5d10ab5b1">
+                          <SHORT-NAME>OpEventCheckpointReached_CheckpointReached_alive_SE_Internal_Wdg</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/CheckpointReached</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Internal_Wdg</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="b6d4a671-276a-4e7e-a1db-b80d1031e6a3">
+                          <SHORT-NAME>OpEventCheckpointReached_CheckpointReached_alive_SE_Internal_Wdg_Dummy</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/CheckpointReached</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Internal_Wdg_Dummy</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="70b7163f-13bd-40d2-b2d9-223da5d5b712">
+                          <SHORT-NAME>OpEventCheckpointReached_CheckpointReached_alive_SE_Alive_Program_Flow_Monitoring</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/CheckpointReached</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Alive_Program_Flow_Monitoring</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="57ccfa30-0152-414f-bb18-1850fdc17099">
+                          <SHORT-NAME>OpEventGetLocalStatus_GetLocalStatus_localStatus_SE_Internal_Wdg</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/GetLocalStatus</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Internal_Wdg</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus/GetLocalStatus</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="d879e22d-1781-4538-a95e-023f81c257e9">
+                          <SHORT-NAME>OpEventGetLocalStatus_GetLocalStatus_localStatus_SE_Internal_Wdg_Dummy</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/GetLocalStatus</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Internal_Wdg_Dummy</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus/GetLocalStatus</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="c8e8c785-7dd0-403c-842c-55b75fa4d38f">
+                          <SHORT-NAME>OpEventGetLocalStatus_GetLocalStatus_localStatus_SE_Alive_Program_Flow_Monitoring</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/GetLocalStatus</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Alive_Program_Flow_Monitoring</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus/GetLocalStatus</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="2ba991dd-5149-41db-bf9c-de8b0939161c">
+                          <SHORT-NAME>OpEventGetLocalStatus_GetLocalStatus_general_Core0</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/GetLocalStatus</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/general_Core0</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetLocalStatus</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="e243d21d-deb9-4d3e-9290-b59e02772df4">
+                          <SHORT-NAME>OpEventGetMode_GetMode_general_Core0</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/GetMode</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/general_Core0</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetMode</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="c67a076b-7897-4c75-95d5-dc6c5ea111b7">
+                          <SHORT-NAME>OpEventGetGlobalStatus_GetGlobalStatus_general_Core0</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/GetGlobalStatus</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/general_Core0</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetGlobalStatus</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="cf5da821-028c-4e21-a8d3-15bec24575ee">
+                          <SHORT-NAME>OpEventPerformReset_PerformReset_general_Core0</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/PerformReset</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/general_Core0</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/PerformReset</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="dc0da6ea-0288-4d11-996e-f97a5a99ee71">
+                          <SHORT-NAME>OpEventSetMode_SetMode_general_Core0</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/SetMode</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/general_Core0</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/SetMode</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="782f066f-1b18-4c40-b056-c7e2ac4f6997">
+                          <SHORT-NAME>OpEventGetFirstExpiredSEID_GetFirstExpiredSEID_general_Core0</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/GetFirstExpiredSEID</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/general_Core0</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetFirstExpiredSEID</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="b0955e76-2a0c-4805-9920-b8db96764357">
+                          <SHORT-NAME>OpEventActivateSupervisionEntity_ActivateSupervisionEntity_general_Core0</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/ActivateSupervisionEntity</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/general_Core0</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/ActivateSupervisionEntity</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="6e5be075-a749-4da1-929f-615abcdf1f57">
+                          <SHORT-NAME>OpEventDeactivateSupervisionEntity_DeactivateSupervisionEntity_general_Core0</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/DeactivateSupervisionEntity</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/general_Core0</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/DeactivateSupervisionEntity</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="57770189-5103-4111-a2c0-682f3eb5a939">
+                          <SHORT-NAME>OpEventCheckpointReached_CheckpointReached_alive_SE_Internal_Wdg_Appl_IPC_Task</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/CheckpointReached</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Internal_Wdg_Appl_IPC_Task</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="30a6d260-f235-45ed-9c1c-c128acc9016c">
+                          <SHORT-NAME>OpEventCheckpointReached_CheckpointReached_alive_SE_Internal_Wdg_Appl_Task_Communication</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/CheckpointReached</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Internal_Wdg_Appl_Task_Communication</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="b33a2088-8eef-4e4b-8260-a825d0833306">
+                          <SHORT-NAME>OpEventCheckpointReached_CheckpointReached_alive_SE_Internal_Wdg_Appl_Task_Radar_Control</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/CheckpointReached</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Internal_Wdg_Appl_Task_Radar_Control</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="8ba51c55-20f7-4ce2-929b-6e695be0f485">
+                          <SHORT-NAME>OpEventCheckpointReached_CheckpointReached_alive_SE_Internal_Wdg_BSW_Task</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/CheckpointReached</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Internal_Wdg_BSW_Task</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="821b83a8-17c7-488c-9cb8-25a3b2d1c3fa">
+                          <SHORT-NAME>OpEventCheckpointReached_CheckpointReached_alive_SE_Internal_Wdg_PLT_Appl_Task</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/CheckpointReached</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Internal_Wdg_PLT_Appl_Task</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="9a0f2bd1-054a-46a8-9e4e-c2815916aa23">
+                          <SHORT-NAME>OpEventGetLocalStatus_GetLocalStatus_localStatus_SE_Internal_Wdg_Appl_IPC_Task</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/GetLocalStatus</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Internal_Wdg_Appl_IPC_Task</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus/GetLocalStatus</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="b7d4759e-4513-4dad-aefe-dcfcbefe5ca0">
+                          <SHORT-NAME>OpEventGetLocalStatus_GetLocalStatus_localStatus_SE_Internal_Wdg_Appl_Task_Communication</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/GetLocalStatus</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Internal_Wdg_Appl_Task_Communication</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus/GetLocalStatus</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="632d378c-af48-4d54-8620-98f22ab26a79">
+                          <SHORT-NAME>OpEventGetLocalStatus_GetLocalStatus_localStatus_SE_Internal_Wdg_Appl_Task_Radar_Control</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/GetLocalStatus</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Internal_Wdg_Appl_Task_Radar_Control</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus/GetLocalStatus</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="60b0182a-14e8-46e6-93ff-3d8b65c062c7">
+                          <SHORT-NAME>OpEventGetLocalStatus_GetLocalStatus_localStatus_SE_Internal_Wdg_BSW_Task</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/GetLocalStatus</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Internal_Wdg_BSW_Task</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus/GetLocalStatus</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="d356688e-fb50-4654-9f90-05646a172308">
+                          <SHORT-NAME>OpEventGetLocalStatus_GetLocalStatus_localStatus_SE_Internal_Wdg_PLT_Appl_Task</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior/GetLocalStatus</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Internal_Wdg_PLT_Appl_Task</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_LocalStatus/GetLocalStatus</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                      </EVENTS>
+                      <HANDLE-TERMINATION-AND-RESTART>NO-SUPPORT</HANDLE-TERMINATION-AND-RESTART>
+                      <PORT-API-OPTIONS>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <SHORT-LABEL>SEID</SHORT-LABEL>
+                                  <VALUE>1</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Internal_Wdg</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <SHORT-LABEL>SEID</SHORT-LABEL>
+                                  <VALUE>0</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Internal_Wdg_Dummy</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <SHORT-LABEL>SEID</SHORT-LABEL>
+                                  <VALUE>2</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Alive_Program_Flow_Monitoring</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <VALUE>1</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Internal_Wdg</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <VALUE>0</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Internal_Wdg_Dummy</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <VALUE>2</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Alive_Program_Flow_Monitoring</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/general_Core0</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/globalmode_Core0</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Internal_Wdg</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Internal_Wdg_Dummy</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Alive_Program_Flow_Monitoring</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <SHORT-LABEL>SEID</SHORT-LABEL>
+                                  <VALUE>3</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Internal_Wdg_Appl_IPC_Task</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <SHORT-LABEL>SEID</SHORT-LABEL>
+                                  <VALUE>5</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Internal_Wdg_Appl_Task_Communication</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <SHORT-LABEL>SEID</SHORT-LABEL>
+                                  <VALUE>6</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Internal_Wdg_Appl_Task_Radar_Control</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <SHORT-LABEL>SEID</SHORT-LABEL>
+                                  <VALUE>7</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Internal_Wdg_BSW_Task</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <SHORT-LABEL>SEID</SHORT-LABEL>
+                                  <VALUE>4</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/alive_SE_Internal_Wdg_PLT_Appl_Task</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <VALUE>3</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Internal_Wdg_Appl_IPC_Task</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <VALUE>5</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Internal_Wdg_Appl_Task_Communication</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <VALUE>6</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Internal_Wdg_Appl_Task_Radar_Control</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <VALUE>7</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Internal_Wdg_BSW_Task</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-ARG-VALUES>
+                            <PORT-DEFINED-ARGUMENT-VALUE>
+                              <VALUE>
+                                <NUMERICAL-VALUE-SPECIFICATION>
+                                  <VALUE>4</VALUE>
+                                </NUMERICAL-VALUE-SPECIFICATION>
+                              </VALUE>
+                              <VALUE-TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MICROSAR/WdgM_swc/DataTypes/WdgM_SupervisedEntityIdType</VALUE-TYPE-TREF>
+                            </PORT-DEFINED-ARGUMENT-VALUE>
+                          </PORT-ARG-VALUES>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/localStatus_SE_Internal_Wdg_PLT_Appl_Task</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Internal_Wdg_Appl_IPC_Task</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Internal_Wdg_Appl_Task_Communication</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Internal_Wdg_Appl_Task_Radar_Control</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Internal_Wdg_BSW_Task</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>true</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Internal_Wdg_PLT_Appl_Task</PORT-REF>
+                        </PORT-API-OPTION>
+                      </PORT-API-OPTIONS>
+                      <RUNNABLES>
+                        <RUNNABLE-ENTITY UUID="eae96d00-7d27-45d7-8446-5ea53a036a8d">
+                          <SHORT-NAME>WdgM_MainFunction</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <MODE-SWITCH-POINTS>
+                            <MODE-SWITCH-POINT UUID="1f70122f-6437-4e51-ab51-30472caf59d1">
+                              <SHORT-NAME>ModeSwitchPointWdgM_MainFunction_globalmode_Core0_currentMode</SHORT-NAME>
+                              <MODE-GROUP-IREF>
+                                <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/globalmode_Core0</CONTEXT-P-PORT-REF>
+                                <TARGET-MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_GlobalMode/currentMode</TARGET-MODE-GROUP-REF>
+                              </MODE-GROUP-IREF>
+                            </MODE-SWITCH-POINT>
+                            <MODE-SWITCH-POINT UUID="84bc6b3d-5f33-4ac1-9582-c3c0cf87a734">
+                              <SHORT-NAME>ModeSwitchPointWdgM_MainFunction_mode_SE_Internal_Wdg_currentMode</SHORT-NAME>
+                              <MODE-GROUP-IREF>
+                                <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Internal_Wdg</CONTEXT-P-PORT-REF>
+                                <TARGET-MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</TARGET-MODE-GROUP-REF>
+                              </MODE-GROUP-IREF>
+                            </MODE-SWITCH-POINT>
+                            <MODE-SWITCH-POINT UUID="8fed52d5-be97-442d-a711-640683594bd9">
+                              <SHORT-NAME>ModeSwitchPointWdgM_MainFunction_mode_SE_Internal_Wdg_Dummy_currentMode</SHORT-NAME>
+                              <MODE-GROUP-IREF>
+                                <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Internal_Wdg_Dummy</CONTEXT-P-PORT-REF>
+                                <TARGET-MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</TARGET-MODE-GROUP-REF>
+                              </MODE-GROUP-IREF>
+                            </MODE-SWITCH-POINT>
+                            <MODE-SWITCH-POINT UUID="5fb157cb-aa46-46eb-971a-c5ad29948836">
+                              <SHORT-NAME>ModeSwitchPointWdgM_MainFunction_mode_SE_Alive_Program_Flow_Monitoring_currentMode</SHORT-NAME>
+                              <MODE-GROUP-IREF>
+                                <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Alive_Program_Flow_Monitoring</CONTEXT-P-PORT-REF>
+                                <TARGET-MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</TARGET-MODE-GROUP-REF>
+                              </MODE-GROUP-IREF>
+                            </MODE-SWITCH-POINT>
+                            <MODE-SWITCH-POINT UUID="a224baed-b5a9-4cfe-8d09-28cba7c36e5a">
+                              <SHORT-NAME>ModeSwitchPointWdgM_MainFunction_mode_SE_Internal_Wdg_Appl_IPC_Task_currentMode</SHORT-NAME>
+                              <MODE-GROUP-IREF>
+                                <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Internal_Wdg_Appl_IPC_Task</CONTEXT-P-PORT-REF>
+                                <TARGET-MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</TARGET-MODE-GROUP-REF>
+                              </MODE-GROUP-IREF>
+                            </MODE-SWITCH-POINT>
+                            <MODE-SWITCH-POINT UUID="153a97b7-5b1c-421b-89e9-fa614ec32b30">
+                              <SHORT-NAME>ModeSwitchPointWdgM_MainFunction_mode_SE_Internal_Wdg_Appl_Task_Communication_currentMode</SHORT-NAME>
+                              <MODE-GROUP-IREF>
+                                <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Internal_Wdg_Appl_Task_Communication</CONTEXT-P-PORT-REF>
+                                <TARGET-MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</TARGET-MODE-GROUP-REF>
+                              </MODE-GROUP-IREF>
+                            </MODE-SWITCH-POINT>
+                            <MODE-SWITCH-POINT UUID="2363f5e5-c760-4f8e-a22a-74911e4c93ac">
+                              <SHORT-NAME>ModeSwitchPointWdgM_MainFunction_mode_SE_Internal_Wdg_Appl_Task_Radar_Control_currentMode</SHORT-NAME>
+                              <MODE-GROUP-IREF>
+                                <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Internal_Wdg_Appl_Task_Radar_Control</CONTEXT-P-PORT-REF>
+                                <TARGET-MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</TARGET-MODE-GROUP-REF>
+                              </MODE-GROUP-IREF>
+                            </MODE-SWITCH-POINT>
+                            <MODE-SWITCH-POINT UUID="a4283503-157f-49a1-a0ae-a6224dc652be">
+                              <SHORT-NAME>ModeSwitchPointWdgM_MainFunction_mode_SE_Internal_Wdg_BSW_Task_currentMode</SHORT-NAME>
+                              <MODE-GROUP-IREF>
+                                <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Internal_Wdg_BSW_Task</CONTEXT-P-PORT-REF>
+                                <TARGET-MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</TARGET-MODE-GROUP-REF>
+                              </MODE-GROUP-IREF>
+                            </MODE-SWITCH-POINT>
+                            <MODE-SWITCH-POINT UUID="9b34c231-75ef-4bbd-8f8c-022725626508">
+                              <SHORT-NAME>ModeSwitchPointWdgM_MainFunction_mode_SE_Internal_Wdg_PLT_Appl_Task_currentMode</SHORT-NAME>
+                              <MODE-GROUP-IREF>
+                                <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/mode_SE_Internal_Wdg_PLT_Appl_Task</CONTEXT-P-PORT-REF>
+                                <TARGET-MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP-PROTOTYPE">/MICROSAR/WdgM_swc/Interfaces/WdgM_IndividualMode/currentMode</TARGET-MODE-GROUP-REF>
+                              </MODE-GROUP-IREF>
+                            </MODE-SWITCH-POINT>
+                          </MODE-SWITCH-POINTS>
+                          <SYMBOL>WdgM_MainFunction</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY UUID="f6f3e54d-a984-4202-b40d-c58e36223a71">
+                          <SHORT-NAME>CheckpointReached</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>WdgM_CheckpointReached</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY UUID="cd1adebf-784e-446b-a29c-4db25ce3a25c">
+                          <SHORT-NAME>GetLocalStatus</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>WdgM_GetLocalStatus</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY UUID="9bfc5e09-0d12-4e4d-89ab-e8865970ff6d">
+                          <SHORT-NAME>GetMode</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>WdgM_GetMode</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY UUID="17ae50e7-b2a3-41f0-ace8-018ac372a551">
+                          <SHORT-NAME>GetGlobalStatus</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>WdgM_GetGlobalStatus</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY UUID="74f99f09-7f78-44c9-aab8-d32ab4896385">
+                          <SHORT-NAME>PerformReset</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>WdgM_PerformReset</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY UUID="adcfe980-d6e0-4295-be81-d833b293bea6">
+                          <SHORT-NAME>SetMode</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>WdgM_SetMode</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY UUID="d4782502-e37c-4fdb-b17e-e48522ce1b0b">
+                          <SHORT-NAME>GetFirstExpiredSEID</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>WdgM_GetFirstExpiredSEID</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY UUID="39d4cb57-bde1-4246-a363-876f41e9c3b6">
+                          <SHORT-NAME>ActivateSupervisionEntity</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>WdgM_ActivateSupervisionEntity</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY UUID="dbd05d10-b32c-453f-bd3c-379db5404277">
+                          <SHORT-NAME>DeactivateSupervisionEntity</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>WdgM_DeactivateSupervisionEntity</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                      </RUNNABLES>
+                      <SUPPORTS-MULTIPLE-INSTANTIATION>false</SUPPORTS-MULTIPLE-INSTANTIATION>
+                    </SWC-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </SERVICE-SW-COMPONENT-TYPE>
+                <SWC-IMPLEMENTATION UUID="e74b2483-b0cc-4dd4-a4c6-a79a0b8d7c18">
+                  <SHORT-NAME>WdgM_OsCore0_ASILImplementation</SHORT-NAME>
+                  <PROGRAMMING-LANGUAGE>C</PROGRAMMING-LANGUAGE>
+                  <BEHAVIOR-REF DEST="SWC-INTERNAL-BEHAVIOR">/MICROSAR/WdgM_swc/ComponentTypes/WdgM_OsCore0_ASIL/WdgM_OsCore0_ASILInternalBehavior</BEHAVIOR-REF>
+                </SWC-IMPLEMENTATION>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>
