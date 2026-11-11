@@ -1,0 +1,18 @@
+diff --git a/include/boost/pfr/detail/fields_count.hpp b/include/boost/pfr/detail/fields_count.hpp
+index a16b194..65bdc17 100644
+--- a/include/boost/pfr/detail/fields_count.hpp
++++ b/include/boost/pfr/detail/fields_count.hpp
+@@ -154,11 +154,11 @@ constexpr void* assert_first_not_base(std::index_sequence<>) noexcept
+ ///////////////////// Helper for SFINAE on fields count
+ template <class T, std::size_t... I, class /*Enable*/ = typename std::enable_if<std::is_copy_constructible<T>::value>::type>
+ constexpr auto enable_if_constructible_helper(std::index_sequence<I...>) noexcept
+-    -> typename std::add_pointer<decltype(T{ ubiq_lref_constructor{I}... })>::type;
++    -> typename std::add_pointer<decltype(T{ {ubiq_lref_constructor{I}}... })>::type;
+
+ template <class T, std::size_t... I, class /*Enable*/ = typename std::enable_if<!std::is_copy_constructible<T>::value>::type>
+ constexpr auto enable_if_constructible_helper(std::index_sequence<I...>) noexcept
+-    -> typename std::add_pointer<decltype(T{ ubiq_rref_constructor{I}... })>::type;
++    -> typename std::add_pointer<decltype(T{ {ubiq_rref_constructor{I}}... })>::type;
+
+ template <class T, std::size_t N, class /*Enable*/ = decltype( enable_if_constructible_helper<T>(detail::make_index_sequence<N>()) ) >
+ using enable_if_constructible_helper_t = std::size_t;

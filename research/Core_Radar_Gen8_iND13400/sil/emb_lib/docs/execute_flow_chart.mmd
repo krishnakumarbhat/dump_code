@@ -1,0 +1,157 @@
+graph TD
+    %% Main flow
+    SIL_EXECUTE([Start - <br> Sil_Execute<br>*input, *output]) --> SET_INPUT_PTR[Set_Sil_Radar_Input_Data_Ptr<br>Creates input ptr]
+    SET_INPUT_PTR --> SET_OUTPUT_PTR[Set_Sil_Radar_Output_Data_Ptr<br>Creates output ptr]
+    SET_OUTPUT_PTR --> INIT_EXECUTE_FLAGS[status = E_SIL_RUN_OK;<br>run_emb_lib = false<br>one_time_actions_done = false]
+    INIT_EXECUTE_FLAGS --> INCREMENT_EXEC_COUNTER[Increment_Exec_Counter<br>sil_execute_counter]
+    INCREMENT_EXEC_COUNTER --> POPULATE_IPC_STREAM_DATA[run_emb_lib = populate_ipc_stream_data]
+
+    %% populate_ipc_stream_data subgraph
+    subgraph populate_ipc_stream_data
+        POPULATE_IPC_STREAM_DATA --> MEMSET_IPC_BUFFERS[Clears IPC buffers]
+        MEMSET_IPC_BUFFERS --> CHECK_RUNMODE{run_mode != DSPACE?}
+
+        %% Non-DSPACE path
+        CHECK_RUNMODE -- yes --> POPULATE_STREAM_DATA[populate_stream_data<br>radar_stream]
+        POPULATE_STREAM_DATA --> INIT_FLAGS[scan_index_mismatch_check = false<br>det_scan_is_zero = false <br>no_det_data = false <br>cdc_saturated = false]
+        INIT_FLAGS --> CREATE_INPUT_LOG_PTRS[Create input stream and IPC log ptrs]
+        CREATE_INPUT_LOG_PTRS --> CHECK_DET_PTR{detection_input_ptr != nullptr?}
+
+        %% Detection pointer checks
+        CHECK_DET_PTR -- yes --> SET_CURRENT_SCAN_INDEX[Set_Current_Scan_Index<br>det_input_ptr's scanindex]
+        CHECK_DET_PTR -- no --> LOG_NO_DET_DATA[write_statistical_report<br>No det data <br>no_det_data = true]
+
+        %% Scan index checks
+        SET_CURRENT_SCAN_INDEX --> CHECK_FOR_NEW_DATA{Previous_Scan_Index_Plus_One <= scanindex?}
+        CHECK_FOR_NEW_DATA -- yes --> CHECK_FOR_JUMP{Previous_Scan_Index_Plus_One != scanindex<br>and Get_Prev_Scan_Index != 0?}
+        CHECK_FOR_JUMP -- yes --> LOG_JUMP_IN_SCAN[write_statistical_report<br>Jump in scan]
+        CHECK_FOR_JUMP -- no --> CHECK_DET_INPUT_PTR{detection_input_ptr != nullptr?}
+
+        %% Detection data processing
+        CHECK_DET_INPUT_PTR -- yes --> CHECK_DET_SCAN_NOT_ZERO{detection_input_ptr->scan_index != 0?}
+        CHECK_DET_SCAN_NOT_ZERO -- yes --> CHECK_DET_CHECKSUM{match_checksum?}
+        CHECK_DET_CHECKSUM -- yes --> COPY_DET_DATA[memcpy det_log_ptr]
+        CHECK_DET_CHECKSUM -- no --> SKIP_DET_COPY[Continue]
+        CHECK_DET_SCAN_NOT_ZERO -- no --> LOG_DET_SCAN_ZERO[write_statistical_report<br>scan_index = 0<br>det_scan_is_zero = true<br>Return !det_scan_is_zero]
+        CHECK_DET_INPUT_PTR -- no --> LOG_DET_NULL_PTR[write_statistical_report<br>detection_input_ptr is nullptr]
+        CHECK_FOR_NEW_DATA -- no --> LOG_NO_NEW_DATA[write_statistical_report<br>No new data]
+
+        %% CDC data processing
+        COPY_DET_DATA --> CHECK_RUN_MODE_CDC{run_mode == CDC?}
+        CHECK_RUN_MODE_CDC -- yes --> CHECK_CDC_PTR{cdc_input_combined_ptr != nullptr?}
+        CHECK_CDC_PTR -- yes --> COPY_CDC_DATA[memcpy cdc_log_combined_ptr]
+        COPY_CDC_DATA --> CHECK_CDC_SATURATION[Calculate saturation_check_sum<br>from all CDC chunks]
+        CHECK_CDC_SATURATION --> IS_CDC_SATURATED{saturation_check_sum >= MAX_CDC_COUNT?}
+        IS_CDC_SATURATED -- yes --> LOG_CDC_SATURATED[write_statistical_report<br>CDC saturation<br>cdc_saturated = true<br>Return !cdc_saturated]
+        IS_CDC_SATURATED -- no --> CONTINUE_AFTER_CDC[Continue]
+        CHECK_CDC_PTR -- no --> LOG_CDC_PTR_NULL[write_statistical_report<br>cdc_input_combined_ptr is nullptr]
+        LOG_CDC_PTR_NULL --> CONTINUE_AFTER_CDC
+        CHECK_RUN_MODE_CDC -- no --> CONTINUE_AFTER_CDC
+
+        %% Remaining stream processing
+        CONTINUE_AFTER_CDC --> CHECK_REMAINING_PTRS{remaining_stream_input_ptrs != nullptr?}
+        LOG_DET_NULL_PTR --> CHECK_REMAINING_PTRS
+        SKIP_DET_COPY --> CHECK_REMAINING_PTRS
+        LOG_JUMP_IN_SCAN --> CHECK_DET_INPUT_PTR
+
+        CHECK_REMAINING_PTRS -- yes --> CHECK_REMAINING_SCAN_NOT_ZERO{remaining_stream_input_ptrs->scan_index != 0?}
+        CHECK_REMAINING_SCAN_NOT_ZERO -- yes --> CHECK_SCAN_INDICES_MATCH{remaining_stream_input_ptrs->scan_index == detection_input_ptr->scan_index?}
+        CHECK_SCAN_INDICES_MATCH -- yes --> CHECK_REMAINING_CHECKSUM{match_checksum?}
+        CHECK_REMAINING_CHECKSUM -- yes --> COPY_REMAINING_PTRS[memcpy remaining_stream_log_ptrs]
+        CHECK_REMAINING_CHECKSUM -- no --> SKIP_REMAINING_COPY[Continue]
+        CHECK_SCAN_INDICES_MATCH -- no --> LOG_SCAN_INDEX_MISMATCH[write_statistical_report<br>Scan index mismatch<br>scan_index_mismatch_check = true]
+        CHECK_REMAINING_SCAN_NOT_ZERO -- no --> LOG_REMAINING_SCAN_ZERO[write_statistical_report<br>remaining_stream_input_ptrs->scan_index = 0]
+        CHECK_REMAINING_PTRS -- no --> LOG_REMAINING_PTRS_NULL[write_statistical_report<br>remaining_stream_input_ptrs is nullptr]
+
+        %% Set previous scan and return
+        COPY_REMAINING_PTRS --> SET_PREV_SCAN[Set_Previous_Scan_Index]
+        SKIP_REMAINING_COPY --> SET_PREV_SCAN
+        LOG_SCAN_INDEX_MISMATCH --> SET_PREV_SCAN
+        LOG_REMAINING_SCAN_ZERO --> SET_PREV_SCAN
+        LOG_REMAINING_PTRS_NULL --> SET_PREV_SCAN
+        LOG_NO_NEW_DATA --> SET_PREV_SCAN
+
+        SET_PREV_SCAN --> RETURN_STREAM_STATUS[Return !scan_index_mismatch_check and !no_det_data]
+        LOG_NO_DET_DATA --> RETURN_STREAM_STATUS
+        LOG_DET_SCAN_ZERO --> RETURN_FINAL_STATUS
+        LOG_CDC_SATURATED --> RETURN_FINAL_STATUS
+
+        %% DSPACE path
+        CHECK_RUNMODE -- no --> SETUP_HEADER_CHECKS[UDPRecord_Header_SIL header = Symbol_Record header <br>header_check = header.streamNumber == SYM_RADAR_DATA and <br>header.streamVersion == SIL_DEBUG_INPUT_TYPE_STRUCTURE_VERSION and <br>header.streamDataLen == sizeof SIL_RADAR_Input_Symbol_T <br> payload_check = Symbol_Record payload != nullptr;]
+        SETUP_HEADER_CHECKS --> CHECK_HEADER_PAYLOAD{header_check AND payload_check?}
+
+        CHECK_HEADER_PAYLOAD -- yes --> POPULATE_SYMBOL_DATA[populate_symbol_data<br>Define IPC buffers, memcpy input_sym_ptr]
+        POPULATE_SYMBOL_DATA --> CHECK_IS_DSPACE{run_mode == DSPACE?}
+        CHECK_IS_DSPACE -- yes --> FILL_IPC_FROM_SYMBOL[Fill det, vse, DRA, header streams]
+        CHECK_IS_DSPACE -- no --> SKIP_IPC_FILL[Continue]
+        FILL_IPC_FROM_SYMBOL --> SET_SCAN_INDEX_DSPACE[Set_Current_Scan_Index]
+        SKIP_IPC_FILL --> SET_SCAN_INDEX_DSPACE
+        SET_SCAN_INDEX_DSPACE --> SET_SUCCESS_STATUS[status = true]
+
+        CHECK_HEADER_PAYLOAD -- no --> CHECK_HEADER{header_check?}
+        CHECK_HEADER -- no --> LOG_HEADER_CHECK_FAILED[write_statistical_report<br>header_check failed]
+        CHECK_HEADER -- yes --> CHECK_PAYLOAD{payload_check?}
+        CHECK_PAYLOAD -- no --> LOG_PAYLOAD_CHECK_FAILED[write_statistical_report<br>payload_check failed]
+        CHECK_PAYLOAD -- yes --> SKIP_HEADER_CHECKS[Continue]
+
+        LOG_HEADER_CHECK_FAILED --> SET_FAILURE_STATUS[status = false]
+        LOG_PAYLOAD_CHECK_FAILED --> SET_FAILURE_STATUS
+        SKIP_HEADER_CHECKS --> SET_FAILURE_STATUS
+
+        SET_FAILURE_STATUS --> RETURN_FINAL_STATUS[Return status]
+        SET_SUCCESS_STATUS --> RETURN_FINAL_STATUS
+        RETURN_STREAM_STATUS --> RETURN_FINAL_STATUS
+    end
+
+    %% Main flow after populate_ipc_stream_data
+    RETURN_FINAL_STATUS --> CHECK_RUN_EMB_LIB{run_emb_lib?}
+
+    %% One-time actions path
+    CHECK_RUN_EMB_LIB -- yes --> CHECK_ONE_TIME_ACTIONS{one_time_actions_done?}
+    CHECK_ONE_TIME_ACTIONS -- no --> UPDATE_SMC[update_smc_data]
+    UPDATE_SMC --> CHECK_DSPACE_FOR_SMC{run_mode == DSPACE?}
+    CHECK_DSPACE_FOR_SMC -- yes --> GET_MOUNTING_FROM_SYMBOL[Get mounting values<br>from input symbol]
+    CHECK_DSPACE_FOR_SMC -- no --> CHECK_STATUS_STREAM{status stream available?}
+    CHECK_STATUS_STREAM -- yes --> UPDATE_SMC_FROM_STREAM[Update smc data<br>from status stream]
+    CHECK_STATUS_STREAM -- no --> USE_DEFAULT_MOUNTING[Default mounting data used]
+
+    GET_MOUNTING_FROM_SYMBOL --> SET_ONE_TIME_DONE[one_time_actions_done = true]
+    UPDATE_SMC_FROM_STREAM --> SET_ONE_TIME_DONE
+    USE_DEFAULT_MOUNTING --> SET_ONE_TIME_DONE
+
+    %% Main processing path
+    SET_ONE_TIME_DONE --> POPULATE_MISC_DATA[populate_ipc_misc_data<br>Populate remaining IPC]
+    CHECK_ONE_TIME_ACTIONS -- yes --> POPULATE_MISC_DATA
+
+    POPULATE_MISC_DATA --> LOG_INPUT_EVENTS[Event log input data]
+    LOG_INPUT_EVENTS --> LOG_SCAN_INDEX[Print scan index]
+    LOG_SCAN_INDEX --> SELECT_RUN_MODE{run_mode}
+
+    %% Run mode branches
+    SELECT_RUN_MODE -->|Case CDC| RUN_CDC_MODE[rsp<br>tracker<br>feature]
+    SELECT_RUN_MODE -->|Case DSPACE| RUN_DSPACE_MODE[tracker<br>feature]
+    SELECT_RUN_MODE -->|Case RDD| RUN_RDD_MODE[rsp<br>tracker<br>feature]
+    SELECT_RUN_MODE -->|Case AF| RUN_AF_MODE[rsp<br>tracker<br>feature]
+    SELECT_RUN_MODE -->|Case DET| CHECK_PSP_ENABLED{psp_enabled == 1?}
+
+    CHECK_PSP_ENABLED -- yes --> RUN_DET_RSP[rsp]
+    RUN_DET_RSP --> RUN_DET_TRACKER_FF[tracker<br>feature]
+    CHECK_PSP_ENABLED -- no --> RUN_DET_TRACKER_FF
+
+    %% Final processing steps
+    RUN_CDC_MODE --> TRANSMIT_UDP[transmit_udp_data]
+    RUN_DSPACE_MODE --> TRANSMIT_UDP
+    RUN_RDD_MODE --> TRANSMIT_UDP
+    RUN_AF_MODE --> TRANSMIT_UDP
+    RUN_DET_TRACKER_FF --> TRANSMIT_UDP
+
+    TRANSMIT_UDP --> TRANSMIT_CAN[transmit_can_data]
+    TRANSMIT_CAN --> POPULATE_OUTPUT_SYMBOL[populate_radar_output_symbol<br>Fills output symbol ptr]
+    POPULATE_OUTPUT_SYMBOL --> LOG_OUTPUT_EVENTS[Event log output data]
+
+    %% Final output and return
+    LOG_OUTPUT_EVENTS --> POPULATE_OUTPUT_DATA[populate_radar_output_data <br> Needs to be called irrespective of errors as SIL engine is expecting data in SIL_RADAR_Output_Data_T]
+    CHECK_RUN_EMB_LIB -- no --> POPULATE_OUTPUT_DATA
+
+    POPULATE_OUTPUT_DATA --> RETURN_FINAL_STATUS_ENUM[Return status]
+    RETURN_FINAL_STATUS_ENUM --> END([End])

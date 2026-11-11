@@ -1,0 +1,53 @@
+graph TD
+    %% Main flow
+    SiL_Init([START - <br> SiL_Init<br>config]) --> CHECK_EMB_LIB_CONFIG[Check for emb_lib_config.xml]
+    CHECK_EMB_LIB_CONFIG --> SET_RADAR_POS[Set radar position]
+    SET_RADAR_POS --> INIT_TX_RX_BUFFER[Initialize_Tx_Rx_Buffer_Size]
+    INIT_TX_RX_BUFFER --> RE_LOGGING_INIT[RE_Logging_Init]
+    RE_LOGGING_INIT --> CHECK_CALIB_INFO{config->pCalibInfo != nullptr}
+
+    %% Calibration paths
+    CHECK_CALIB_INFO -- yes --> UPDATE_CALIB_FROM_LOG[update_calibration_from_log]
+    CHECK_CALIB_INFO -- no --> SET_OK_STATUS[status = E_SIL_RUN_OK]
+
+    %% update_calibration_from_log subgraph
+    subgraph update_calibration_from_log
+        UPDATE_CALIB_FROM_LOG --> INIT_CALIB_STATUS[status = false, cal_data_size_check, index = 0]
+        UPDATE_CALIB_FROM_LOG --> CHECK_INTERNALS{Internals Enabled?}
+
+        %% Internals handling path
+        CHECK_INTERNALS -- yes --> INIT_INTERNALS_SIZE[Init internals_data_size]
+        INIT_INTERNALS_SIZE --> CALIB_INTERNALS_CHECK{calib_data has internals?}
+        CALIB_INTERNALS_CHECK -- yes --> CHECK_INTERNALS_SIZE{check internals size}
+        CHECK_INTERNALS_SIZE -- yes --> MEMCPY_INTERNALS[memcpy internals <br> status = true]
+        CHECK_INTERNALS_SIZE -- no --> INTERNALS_SIZE_MISMATCH[Internals size mismatch <br> status = true]
+
+        MEMCPY_INTERNALS --> CALIB_STATUS_CHECK{usc and smc status}
+        INTERNALS_SIZE_MISMATCH --> CALIB_STATUS_CHECK
+
+        %% Calibration source path
+        INIT_CALIB_STATUS --> CALIB_SOURCE_CHECK{Calibration_Source == LOG}
+        CALIB_SOURCE_CHECK -- yes --> CALIB_FLASH_CHECK{CALIB_FLASH != 0}
+        CALIB_SOURCE_CHECK -- no --> DEFAULT_CALIB[default calib data used <br> status = true]
+
+        CALIB_FLASH_CHECK -- yes --> CAL_DATA_SIZE_CHECK{cal_data_size_check?}
+        CALIB_FLASH_CHECK -- no --> DEFAULT_CALIB_USED[default calib data used <br> status = true]
+
+        CAL_DATA_SIZE_CHECK -- yes --> COPY_CALIB_DATA[memcpy calib data <br> status = true]
+        CAL_DATA_SIZE_CHECK -- no --> SIZE_MISMATCH[size mismatch <br> status = false]
+
+        DEFAULT_CALIB --> CALIB_STATUS_CHECK
+        DEFAULT_CALIB_USED --> CALIB_STATUS_CHECK
+        COPY_CALIB_DATA --> CALIB_STATUS_CHECK
+        SIZE_MISMATCH --> CALIB_STATUS_CHECK
+    end
+
+    %% Final status paths
+    CALIB_STATUS_CHECK -- yes --> SET_OK_STATUS
+    CALIB_STATUS_CHECK -- no --> SET_ERR_STATUS[status = E_SIL_INIT_ERR]
+
+    SET_OK_STATUS --> CUSTOMER_SIL_INIT[customer_sil_init]
+    SET_ERR_STATUS --> CUSTOMER_SIL_INIT
+
+    CUSTOMER_SIL_INIT --> RETURN_STATUS[return status]
+    RETURN_STATUS --> END([END])

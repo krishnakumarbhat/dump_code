@@ -1,0 +1,67 @@
+# GitHub CODEOWNERS - Migrated from Gerrit OWNERS
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Rules are evaluated bottom-up; LAST matching pattern wins.
+# For strict enforcement (ALL owners must approve), use the companion
+# GitHub Action: .github/workflows/strict-codeowners.yml
+#
+# Owner groups are GitHub teams in the org. Map:
+#   Core_Radar_Permissions:dev:/CI_OWNERS      → @GPO/coreradars-devops
+#   Core_Radar_Permissions:dev:/AFBB_OWNERS    → @GPO/core-radar-afbb-owners
+#   Core_Radar_Permissions:dev:/MCAL_OWNERS    → @GPO/core-radar-mcal-owners
+#   Core_Radar_Permissions:dev:/SDMF_OWNERS    → @GPO/core-radar-sdmf-owners
+#   Core_Radar_Permissions:dev:/AUTOSAR_OWNERS → @GPO/core-radar-autosar-owners
+#   Core_Radar_Permissions:dev:/BOOT_OWNERS    → @GPO/core-radar-boot-owners
+#   Core_Radar_Permissions:dev:/MEMORY_OWNERS  → @GPO/core-radar-memory-owners
+
+# ===== GitHub config (protect CODEOWNERS itself) =====
+/.github/                                               @GPO/coreradars-devops
+
+# ===== Root config files (was: per-file in root OWNERS → CI_OWNERS) =====
+/MODULE.bazel                                           @GPO/coreradars-devops
+/.bazelrc                                               @GPO/coreradars-devops
+/.bazeliskrc                                            @GPO/coreradars-devops
+/.gitignore                                             @GPO/coreradars-devops
+/.gitmodules                                            @GPO/coreradars-devops
+/.gitattributes                                         @GPO/coreradars-devops
+/.clang-format                                          @GPO/coreradars-devops
+/.pre-commit-config.yaml                                @GPO/coreradars-devops
+/bazelisk                                               @GPO/coreradars-devops
+/bazelisk.exe                                           @GPO/coreradars-devops
+/repo_init.py                                           @GPO/coreradars-devops
+
+# ===== Coverage (was: include CI_OWNERS) =====
+/coverage/                                              @GPO/coreradars-devops
+
+# ===== Tools =====
+/tools/bazel/                                           @GPO/coreradars-devops
+/tools/python/                                          @GPO/coreradars-devops
+/tools/CI/                                              @GPO/coreradars-devops
+
+# ===== MCAL drivers =====
+/software/r52/drivers/mcal/                             @GPO/core-radar-mcal-owners
+
+# ===== AFBB per-file rules =====
+/software/building_block/common/afbb*                   @GPO/core-radar-afbb-owners
+/software/bbe32/inc/anglefinding_project_interface.h    @GPO/core-radar-afbb-owners
+/software/bbe32/src/anglefinding_project_interface.c    @GPO/core-radar-afbb-owners
+/software/bbe32/bb_cfg/afbb*                            @GPO/core-radar-afbb-owners
+
+# ===== SDMF (Logging SWC) =====
+/software/r52/autosar/swc/PLT_SWC/SWC_PLT_CDD_Logging/ @GPO/core-radar-sdmf-owners
+
+# ===== AUTOSAR SWCs =====
+/software/r52/autosar/                                 @GPO/core-radar-autosar-owners
+
+# ===== Boot / Startup =====
+/software/r52/startup/                                 @GPO/core-radar-boot-owners
+/software/bbe32/mpu/                                   @GPO/core-radar-boot-owners
+
+# ===== Memory / Linker =====
+/software/common/linker/                               @GPO/core-radar-memory-owners
+
+# ===== MCU Safety static register =====
+/software/r52/autosar/swc/PLT_SWC/SWC_PLT_CDD_MCU_Safety/bb/Source/static_register_safety.c @GPO/core-radar-mcal-owners
+
+# ===== Signal Population ========
+/software/r52/autosar/swc/PLT_SWC/SWC_PLT_Appl_Communication @Karan-Bopche, @GPO/coreradars-devops

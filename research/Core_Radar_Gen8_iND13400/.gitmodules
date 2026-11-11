@@ -1,0 +1,16 @@
+[submodule "software/r52/autosar/sip"]
+    path = software/r52/autosar/sip
+    url = https://aptv.ghe.com/GPO/core-radar-gen8-ind13400-sip.git
+[submodule "tools/python/Core_Radar_Python_Framework"]
+    path = tools/python/testing_framework/Core_Radar_Python_Framework
+    url = https://aptv.ghe.com/GPO/core-radar-python-framework.git
+    branch = dev
+    ignore = all
+[submodule "tools/ITF/ExecutableSpecs/ADVRADAR_Gen7_Exec_Spec"]
+    path = tools/ITF/ExecutableSpecs/ADVRADAR_Gen7_Exec_Spec
+    url = https://aptv.ghe.com/GPO/core-radar-gen7-exec-spec.git
+    branch = dev
+[submodule "tools/ITF/Mex_Executable_Specs/Core_Radar_Gen8_iND13400_Matlab"]
+    path = tools/ITF/Mex_Executable_Specs/Core_Radar_Gen8_iND13400_Matlab
+    url = https://aptv.ghe.com/GPO/core-radar-gen8-ind13400-matlab.git
+    branch = dev
