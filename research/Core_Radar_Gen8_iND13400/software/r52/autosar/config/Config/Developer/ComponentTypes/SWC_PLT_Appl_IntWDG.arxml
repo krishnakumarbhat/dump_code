@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--This file was saved with a tool from Vector Informatik GmbH-->
+<AUTOSAR xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00050.xsd" xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="B026E376-C182-4785-AA5E-7104824957F5">
+      <SHORT-NAME>ComponentTypes</SHORT-NAME>
+      <ELEMENTS>
+        <APPLICATION-SW-COMPONENT-TYPE UUID="34E60AF0-87EB-4462-AA46-849F8659F1DD">
+          <SHORT-NAME>SWC_PLT_Appl_IntWDG</SHORT-NAME>
+          <PORTS>
+            <R-PORT-PROTOTYPE UUID="F5628918-DE07-48A3-8907-A27C2CCB51CF">
+              <SHORT-NAME>CS_WdgM_AliveSupervision_Internal_Wdg</SHORT-NAME>
+              <REQUIRED-COM-SPECS>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE UUID="AD16D15B-C96E-4E25-90CA-81361639873D">
+              <SHORT-NAME>CS_WdgM_General</SHORT-NAME>
+              <REQUIRED-COM-SPECS>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetFirstExpiredSEID</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetGlobalStatus</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetLocalStatus</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetMode</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/PerformReset</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/SetMode</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/ActivateSupervisionEntity</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/DeactivateSupervisionEntity</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_General</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE UUID="89F13838-A7A6-4051-8C61-52B0EADFF8F9">
+              <SHORT-NAME>CS_Wdg_Disable</SHORT-NAME>
+              <REQUIRED-COM-SPECS>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_Wdg_Disable/Read</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/PortInterfaces/Pi_Wdg_Disable</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE UUID="63FE5126-D646-4625-AFC0-6C7C31879595">
+              <SHORT-NAME>Rp_Wdg_Fault_Injection_Request_IntWdg</SHORT-NAME>
+              <REQUIRED-COM-SPECS>
+                <NONQUEUED-RECEIVER-COM-SPEC>
+                  <DATA-ELEMENT-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_Wdg_Fault_Injection_Request/De_Wdg_Fault_Injection_Request</DATA-ELEMENT-REF>
+                  <HANDLE-OUT-OF-RANGE>NONE</HANDLE-OUT-OF-RANGE>
+                  <ALIVE-TIMEOUT>0</ALIVE-TIMEOUT>
+                  <ENABLE-UPDATE>false</ENABLE-UPDATE>
+                  <FILTER>
+                    <DATA-FILTER-TYPE>ALWAYS</DATA-FILTER-TYPE>
+                  </FILTER>
+                  <HANDLE-NEVER-RECEIVED>false</HANDLE-NEVER-RECEIVED>
+                  <INIT-VALUE>
+                    <NUMERICAL-VALUE-SPECIFICATION>
+                      <VALUE>0</VALUE>
+                    </NUMERICAL-VALUE-SPECIFICATION>
+                  </INIT-VALUE>
+                </NONQUEUED-RECEIVER-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="SENDER-RECEIVER-INTERFACE">/PortInterfaces/Pi_Wdg_Fault_Injection_Request</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE UUID="60F83B99-CE25-4D77-A2A2-B6FC3EDBA010">
+              <SHORT-NAME>CS_WdgM_AliveSupervision_Internal_Wdg_App_Task_General_1</SHORT-NAME>
+              <REQUIRED-COM-SPECS>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE UUID="C4F9DB5B-056C-4F02-B9CB-A8E64D0BB153">
+              <SHORT-NAME>CS_WdgM_AliveSupervision_Internal_Wdg_Appl_IPC_Task</SHORT-NAME>
+              <REQUIRED-COM-SPECS>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE UUID="4ADDBD81-CB25-491C-AC4C-1DB9035BCB4B">
+              <SHORT-NAME>CS_WdgM_AliveSupervision_Internal_Wdg_Appl_Task_Communication</SHORT-NAME>
+              <REQUIRED-COM-SPECS>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE UUID="9885E8DD-C4F1-45FA-9D16-BBAB14BF8632">
+              <SHORT-NAME>CS_WdgM_AliveSupervision_Internal_Wdg_Appl_Task_Radar_Control</SHORT-NAME>
+              <REQUIRED-COM-SPECS>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE UUID="EA1991A6-4DB1-4479-948E-5FEDE9453C72">
+              <SHORT-NAME>CS_WdgM_AliveSupervision_Internal_Wdg_BSW_Task</SHORT-NAME>
+              <REQUIRED-COM-SPECS>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE UUID="DD44FA9C-A21A-4DFD-8697-F28A21257206">
+              <SHORT-NAME>CS_WdgM_AliveSupervision_Internal_Wdg_PLT_Appl_Task</SHORT-NAME>
+              <REQUIRED-COM-SPECS>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+            <P-PORT-PROTOTYPE UUID="54F403D6-DC61-4324-844B-3478476779CE">
+              <SHORT-NAME>CS_Disable_Wdg_Supervised_Entites</SHORT-NAME>
+              <ADMIN-DATA>
+                <SDGS>
+                  <SDG GID="DV:DEV">
+                    <SD GID="DV:ImportModePreset">Keep</SD>
+                  </SDG>
+                </SDGS>
+              </ADMIN-DATA>
+              <PROVIDED-COM-SPECS>
+                <SERVER-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_Disable_Wdg_Supervised_Entites/Operation</OPERATION-REF>
+                  <QUEUE-LENGTH>1</QUEUE-LENGTH>
+                </SERVER-COM-SPEC>
+              </PROVIDED-COM-SPECS>
+              <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/PortInterfaces/Pi_Disable_Wdg_Supervised_Entites</PROVIDED-INTERFACE-TREF>
+            </P-PORT-PROTOTYPE>
+          </PORTS>
+          <INTERNAL-BEHAVIORS>
+            <SWC-INTERNAL-BEHAVIOR UUID="43C2031E-5529-4ECB-9CCB-18CE3AAE13AB">
+              <SHORT-NAME>SWC_PLT_Appl_IntWDG_InternalBehavior</SHORT-NAME>
+              <EVENTS>
+                <INIT-EVENT UUID="8B647E88-D60E-4A69-82BA-DD2B2CE55D6B">
+                  <SHORT-NAME>SWC_PLT_Appl_Wdg_InitEvent</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Appl_IntWDG/SWC_PLT_Appl_IntWDG_InternalBehavior/RE_PLT_Wdg_Init</START-ON-EVENT-REF>
+                </INIT-EVENT>
+                <TIMING-EVENT UUID="AA84D72A-A6B5-4E6D-BCD9-F50D8A008C6D">
+                  <SHORT-NAME>TMT_RE_PLT_WDG_Main_50ms</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Appl_IntWDG/SWC_PLT_Appl_IntWDG_InternalBehavior/RE_PLT_WDG_Main_50ms</START-ON-EVENT-REF>
+                  <PERIOD>0.05</PERIOD>
+                </TIMING-EVENT>
+                <TIMING-EVENT UUID="DF53977D-D314-4B4C-B764-078D2CC92E61">
+                  <SHORT-NAME>TMT_RE_PLT_WDG_Main_5ms</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Appl_IntWDG/SWC_PLT_Appl_IntWDG_InternalBehavior/RE_PLT_WDG_Main_5ms</START-ON-EVENT-REF>
+                  <PERIOD>0.005</PERIOD>
+                </TIMING-EVENT>
+                <OPERATION-INVOKED-EVENT UUID="F1F3974B-0651-4E39-949A-7C7478C735AA">
+                  <SHORT-NAME>OIT_CS_Disable_Wdg_Supervised_Entites_Operation_CS_Disable_Wdg_Supervised_Entites_Operation</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Appl_IntWDG/SWC_PLT_Appl_IntWDG_InternalBehavior/CS_Disable_Wdg_Supervised_Entites_Operation</START-ON-EVENT-REF>
+                  <OPERATION-IREF>
+                    <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_Disable_Wdg_Supervised_Entites</CONTEXT-P-PORT-REF>
+                    <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_Disable_Wdg_Supervised_Entites/Operation</TARGET-PROVIDED-OPERATION-REF>
+                  </OPERATION-IREF>
+                </OPERATION-INVOKED-EVENT>
+                <TIMING-EVENT UUID="DB5FC0E7-B122-49AC-83C2-B911BC6ED6FC">
+                  <SHORT-NAME>TMT_RE_PLT_WDG_INTERNAL_WDG_Appl_IPC_Task</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Appl_IntWDG/SWC_PLT_Appl_IntWDG_InternalBehavior/RE_PLT_WDG_INTERNAL_WDG_Appl_IPC_Task</START-ON-EVENT-REF>
+                  <PERIOD>0.05</PERIOD>
+                </TIMING-EVENT>
+                <TIMING-EVENT UUID="0D808165-FFE2-40D3-A7FC-64CD627FB9B7">
+                  <SHORT-NAME>TMT_RE_PLT_WDG_INTERNAL_WDG_Appl_Task_Communication</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Appl_IntWDG/SWC_PLT_Appl_IntWDG_InternalBehavior/RE_PLT_WDG_INTERNAL_WDG_Appl_Task_Communication</START-ON-EVENT-REF>
+                  <PERIOD>0.025</PERIOD>
+                </TIMING-EVENT>
+                <TIMING-EVENT UUID="7DD780D9-F0BD-4210-AF67-95F3382D18BD">
+                  <SHORT-NAME>TMT_RE_PLT_WDG_INTERNAL_WDG_Appl_Task_Radar_Control</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Appl_IntWDG/SWC_PLT_Appl_IntWDG_InternalBehavior/RE_PLT_WDG_INTERNAL_WDG_Appl_Task_Radar_Control</START-ON-EVENT-REF>
+                  <PERIOD>0.05</PERIOD>
+                </TIMING-EVENT>
+                <TIMING-EVENT UUID="A7A7BBEF-C357-4EB6-8A43-46E75527D545">
+                  <SHORT-NAME>TMT_RE_PLT_WDG_INTERNAL_WDG_BSW_Task</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Appl_IntWDG/SWC_PLT_Appl_IntWDG_InternalBehavior/RE_PLT_WDG_INTERNAL_WDG_BSW_Task</START-ON-EVENT-REF>
+                  <PERIOD>0.025</PERIOD>
+                </TIMING-EVENT>
+                <TIMING-EVENT UUID="2B2644FB-C3A2-432D-8935-3168538FF4BE">
+                  <SHORT-NAME>TMT_RE_PLT_WDG_INTERNAL_WDG_PLT_Appl_Task</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Appl_IntWDG/SWC_PLT_Appl_IntWDG_InternalBehavior/RE_PLT_WDG_INTERNAL_WDG_PLT_Appl_Task</START-ON-EVENT-REF>
+                  <PERIOD>0.025</PERIOD>
+                </TIMING-EVENT>
+              </EVENTS>
+              <HANDLE-TERMINATION-AND-RESTART>NO-SUPPORT</HANDLE-TERMINATION-AND-RESTART>
+              <RUNNABLES>
+                <RUNNABLE-ENTITY UUID="41E78182-CB9E-4A5B-94C2-08363D323002">
+                  <SHORT-NAME>RE_PLT_Wdg_Init</SHORT-NAME>
+                  <ADMIN-DATA>
+                    <SDGS>
+                      <SDG GID="edve:RunnableKind">
+                        <SD>InitRunnable</SD>
+                      </SDG>
+                    </SDGS>
+                  </ADMIN-DATA>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="2362A172-F051-4142-B255-1E899C993BA2">
+                      <SHORT-NAME>SC_CS_WdgM_General_ActivateSupervisionEntity</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/ActivateSupervisionEntity</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="09196D92-CDAC-4184-93DE-3352E886539E">
+                      <SHORT-NAME>SC_CS_WdgM_General_DeactivateSupervisionEntity</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/DeactivateSupervisionEntity</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="4817F21D-0081-4721-B083-657B36E0E5BD">
+                      <SHORT-NAME>SC_CS_WdgM_General_GetFirstExpiredSEID</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetFirstExpiredSEID</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="50E7B419-03AB-4BB8-9E6E-13254022F0FE">
+                      <SHORT-NAME>SC_CS_WdgM_General_GetGlobalStatus</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetGlobalStatus</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="F324717F-C84A-4109-8A97-B320033891B2">
+                      <SHORT-NAME>SC_CS_WdgM_General_GetLocalStatus</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetLocalStatus</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="DFAF2CB4-6510-4FC8-AFB7-B0C15EB6980C">
+                      <SHORT-NAME>SC_CS_WdgM_General_GetMode</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetMode</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="C469DA62-2021-4D0E-BE10-65BEB57AD484">
+                      <SHORT-NAME>SC_CS_WdgM_General_PerformReset</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/PerformReset</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="6806ADAE-A0C2-4882-B7AD-A29032F14131">
+                      <SHORT-NAME>SC_CS_WdgM_General_SetMode</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/SetMode</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>RE_PLT_Wdg_Init</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="BFDC8C7D-EA98-498F-A973-D6725B4BC3A1">
+                  <SHORT-NAME>RE_PLT_WDG_Main_50ms</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0.05</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                    <VARIABLE-ACCESS UUID="FBCA65A7-7718-405C-AD80-C0E3EC1F790D">
+                      <SHORT-NAME>REC_Rp_Wdg_Fault_Injection_Request_IntWdg_De_Wdg_Fault_Injection_Request</SHORT-NAME>
+                      <ACCESSED-VARIABLE>
+                        <AUTOSAR-VARIABLE-IREF>
+                          <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/Rp_Wdg_Fault_Injection_Request_IntWdg</PORT-PROTOTYPE-REF>
+                          <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_Wdg_Fault_Injection_Request/De_Wdg_Fault_Injection_Request</TARGET-DATA-PROTOTYPE-REF>
+                        </AUTOSAR-VARIABLE-IREF>
+                      </ACCESSED-VARIABLE>
+                    </VARIABLE-ACCESS>
+                  </DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                  <SYMBOL>RE_PLT_WDG_Main_50ms</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="3D61AE34-9857-4F25-9055-85A14DF002E2">
+                  <SHORT-NAME>RE_PLT_WDG_Main_5ms</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0.005</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="D45F6A8F-DC8A-42E2-BC72-1103A34E1057">
+                      <SHORT-NAME>SC_CS_WdgM_AliveSupervision_Internal_Wdg_CheckpointReached</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_AliveSupervision_Internal_Wdg</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="0412F74A-31CE-4436-A0D9-B2EB68BA69A9">
+                      <SHORT-NAME>SC_CS_WdgM_General_ActivateSupervisionEntity</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/ActivateSupervisionEntity</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="D191409C-8389-4BAA-B038-08ABDF96AB37">
+                      <SHORT-NAME>SC_CS_WdgM_General_DeactivateSupervisionEntity</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/DeactivateSupervisionEntity</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="D814AF42-236A-4EC4-9D7A-E1488C1CA646">
+                      <SHORT-NAME>SC_CS_WdgM_General_GetFirstExpiredSEID</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetFirstExpiredSEID</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="83AFF2B4-1604-46A6-AF11-C205315B1488">
+                      <SHORT-NAME>SC_CS_WdgM_General_GetGlobalStatus</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetGlobalStatus</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="E0F9467C-F5D2-4681-B1A3-97EA786291CA">
+                      <SHORT-NAME>SC_CS_WdgM_General_GetLocalStatus</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetLocalStatus</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="CFD79247-F1E5-480B-9464-E585F1D39D4D">
+                      <SHORT-NAME>SC_CS_WdgM_General_GetMode</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/GetMode</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="8D88F476-F639-4CF4-96C7-EF34FD56EB0B">
+                      <SHORT-NAME>SC_CS_WdgM_General_PerformReset</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/PerformReset</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="5225FE8F-ED7F-4E7F-B09F-776EA2972731">
+                      <SHORT-NAME>SC_CS_WdgM_General_SetMode</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_General</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_General/SetMode</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="60341601-758B-44E0-997A-433D59146A0D">
+                      <SHORT-NAME>SC_Pi_Wdg_Disable</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_Wdg_Disable</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_Wdg_Disable/Read</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>RE_PLT_WDG_Main_5ms</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="5AA8645C-BACE-4CAA-B266-B1E70BB9BCB5">
+                  <SHORT-NAME>CS_Disable_Wdg_Supervised_Entites_Operation</SHORT-NAME>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="3F798FA3-553F-4071-B9C2-DF9B636ECD6D">
+                  <SHORT-NAME>RE_PLT_WDG_INTERNAL_WDG_Appl_IPC_Task</SHORT-NAME>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="8F6B2989-3BF0-4870-A384-009E00ECC9FD">
+                      <SHORT-NAME>SC_CS_WdgM_AliveSupervision_Internal_Wdg_Appl_IPC_Task_CheckpointReached</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_AliveSupervision_Internal_Wdg_Appl_IPC_Task</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>RE_PLT_WDG_INTERNAL_WDG_Appl_IPC_Task</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="A274CE2F-CADC-4FE9-8ED9-C7AF3DC87C43">
+                  <SHORT-NAME>RE_PLT_WDG_INTERNAL_WDG_Appl_Task_Communication</SHORT-NAME>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="3BF3683F-1193-4F19-BAAB-A3EF31F642D0">
+                      <SHORT-NAME>SC_CS_WdgM_AliveSupervision_Internal_Wdg_Appl_Task_Communication_CheckpointReached</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_AliveSupervision_Internal_Wdg_Appl_Task_Communication</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>RE_PLT_WDG_INTERNAL_WDG_Appl_Task_Communication</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="1A76AAB7-469E-4E40-BD14-A9904D907DA0">
+                  <SHORT-NAME>RE_PLT_WDG_INTERNAL_WDG_Appl_Task_Radar_Control</SHORT-NAME>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="54DFF528-182D-4041-8677-46CE4FE8385D">
+                      <SHORT-NAME>SC_CS_WdgM_AliveSupervision_Internal_Wdg_Appl_Task_Radar_Control_CheckpointReached</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_AliveSupervision_Internal_Wdg_Appl_Task_Radar_Control</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>RE_PLT_WDG_INTERNAL_WDG_Appl_Task_Radar_Control</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="F16CE812-9960-476E-9E89-7ADFB00039D2">
+                  <SHORT-NAME>RE_PLT_WDG_INTERNAL_WDG_BSW_Task</SHORT-NAME>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="AEFEF630-6E30-45C2-B018-AB49527FCED8">
+                      <SHORT-NAME>SC_CS_WdgM_AliveSupervision_Internal_Wdg_BSW_Task_CheckpointReached</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_AliveSupervision_Internal_Wdg_BSW_Task</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>RE_PLT_WDG_INTERNAL_WDG_BSW_Task</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="58E697A1-599D-41BD-9BC4-B8A7570CD1E9">
+                  <SHORT-NAME>RE_PLT_WDG_INTERNAL_WDG_PLT_Appl_Task</SHORT-NAME>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="BBA50940-E1DA-4607-A9C0-F9FCAD502D6A">
+                      <SHORT-NAME>SC_CS_WdgM_AliveSupervision_Internal_Wdg_PLT_Appl_Task_CheckpointReached</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Appl_IntWDG/CS_WdgM_AliveSupervision_Internal_Wdg_PLT_Appl_Task</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/WdgM_swc/Interfaces/WdgM_AliveSupervision/CheckpointReached</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>RE_PLT_WDG_INTERNAL_WDG_PLT_Appl_Task</SYMBOL>
+                </RUNNABLE-ENTITY>
+              </RUNNABLES>
+              <SUPPORTS-MULTIPLE-INSTANTIATION>false</SUPPORTS-MULTIPLE-INSTANTIATION>
+            </SWC-INTERNAL-BEHAVIOR>
+          </INTERNAL-BEHAVIORS>
+        </APPLICATION-SW-COMPONENT-TYPE>
+        <SWC-IMPLEMENTATION UUID="610E9588-7A54-4175-8C8D-FAD5EB63BDD5">
+          <SHORT-NAME>SWC_PLT_Appl_IntWDG_Implementation</SHORT-NAME>
+          <CODE-DESCRIPTORS>
+            <CODE UUID="70B4BA5C-90FB-498F-B0A8-9A331C16C818">
+              <SHORT-NAME>Default</SHORT-NAME>
+              <ARTIFACT-DESCRIPTORS>
+                <AUTOSAR-ENGINEERING-OBJECT>
+                  <CATEGORY>SWSRC</CATEGORY>
+                </AUTOSAR-ENGINEERING-OBJECT>
+              </ARTIFACT-DESCRIPTORS>
+            </CODE>
+          </CODE-DESCRIPTORS>
+          <BEHAVIOR-REF DEST="SWC-INTERNAL-BEHAVIOR">/ComponentTypes/SWC_PLT_Appl_IntWDG/SWC_PLT_Appl_IntWDG_InternalBehavior</BEHAVIOR-REF>
+        </SWC-IMPLEMENTATION>
+      </ELEMENTS>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

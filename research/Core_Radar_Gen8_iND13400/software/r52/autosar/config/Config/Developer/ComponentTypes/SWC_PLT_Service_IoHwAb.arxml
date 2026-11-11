@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--This file was saved with a tool from Vector Informatik GmbH-->
+<AUTOSAR xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00050.xsd" xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="B026E376-C182-4785-AA5E-7104824957F5">
+      <SHORT-NAME>ComponentTypes</SHORT-NAME>
+      <ELEMENTS>
+        <SERVICE-SW-COMPONENT-TYPE UUID="FF7A5CDC-8429-483C-85DF-37C577145ABF">
+          <SHORT-NAME>SWC_PLT_Service_IoHwAb</SHORT-NAME>
+          <PORTS>
+            <P-PORT-PROTOTYPE UUID="F48014FE-DB3E-4344-91D7-CF5C5BE6C748">
+              <SHORT-NAME>CS_RawAdcCount</SHORT-NAME>
+              <PROVIDED-COM-SPECS>
+                <SERVER-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_RawAdcCount/Read</OPERATION-REF>
+                  <QUEUE-LENGTH>1</QUEUE-LENGTH>
+                </SERVER-COM-SPEC>
+              </PROVIDED-COM-SPECS>
+              <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/PortInterfaces/Pi_RawAdcCount</PROVIDED-INTERFACE-TREF>
+            </P-PORT-PROTOTYPE>
+            <P-PORT-PROTOTYPE UUID="8C206772-ED27-4E5A-9ECF-CACA96473FA5">
+              <SHORT-NAME>CS_Update_Thermal_Mon_Temps</SHORT-NAME>
+              <PROVIDED-COM-SPECS>
+                <SERVER-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_Update_Thermal_Mon_Temps/Read</OPERATION-REF>
+                  <QUEUE-LENGTH>1</QUEUE-LENGTH>
+                </SERVER-COM-SPEC>
+              </PROVIDED-COM-SPECS>
+              <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/PortInterfaces/Pi_Update_Thermal_Mon_Temps</PROVIDED-INTERFACE-TREF>
+            </P-PORT-PROTOTYPE>
+            <P-PORT-PROTOTYPE UUID="BA66326B-C3FF-4557-ABAF-6F02F60DBF29">
+              <SHORT-NAME>Pi_Get_FloatingPinPosition</SHORT-NAME>
+              <PROVIDED-COM-SPECS>
+                <SERVER-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_Get_FloatingPinPosition/FaultStatus</OPERATION-REF>
+                  <QUEUE-LENGTH>1</QUEUE-LENGTH>
+                </SERVER-COM-SPEC>
+              </PROVIDED-COM-SPECS>
+              <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/PortInterfaces/Pi_Get_FloatingPinPosition</PROVIDED-INTERFACE-TREF>
+            </P-PORT-PROTOTYPE>
+            <P-PORT-PROTOTYPE UUID="F60E293B-7890-40E4-A59F-98C5F7962A68">
+              <SHORT-NAME>Pp_Get_STM_TimeStamp</SHORT-NAME>
+              <PROVIDED-COM-SPECS>
+                <SERVER-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_Get_STM_TimeStamp/Get_STM_TimeStamp</OPERATION-REF>
+                  <QUEUE-LENGTH>1</QUEUE-LENGTH>
+                </SERVER-COM-SPEC>
+              </PROVIDED-COM-SPECS>
+              <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/PortInterfaces/Pi_Get_STM_TimeStamp</PROVIDED-INTERFACE-TREF>
+            </P-PORT-PROTOTYPE>
+            <P-PORT-PROTOTYPE UUID="64BB49D8-E275-43D6-B57F-1A6B422BA1D0">
+              <SHORT-NAME>Pp_PWMDutyCycle</SHORT-NAME>
+              <PROVIDED-COM-SPECS>
+                <SERVER-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_PWMDutyCycle/PWMDutyCycle</OPERATION-REF>
+                  <QUEUE-LENGTH>1</QUEUE-LENGTH>
+                </SERVER-COM-SPEC>
+              </PROVIDED-COM-SPECS>
+              <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/PortInterfaces/Pi_PWMDutyCycle</PROVIDED-INTERFACE-TREF>
+            </P-PORT-PROTOTYPE>
+            <P-PORT-PROTOTYPE UUID="3676B2E5-7073-419E-9FF5-B0D1B6C19D9C">
+              <SHORT-NAME>Pp_Set_DIO_LED_SRC_PULL</SHORT-NAME>
+              <PROVIDED-COM-SPECS>
+                <SERVER-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_Set_DIO_LED_SRC_PULL/Write</OPERATION-REF>
+                  <QUEUE-LENGTH>1</QUEUE-LENGTH>
+                </SERVER-COM-SPEC>
+              </PROVIDED-COM-SPECS>
+              <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/PortInterfaces/Pi_Set_DIO_LED_SRC_PULL</PROVIDED-INTERFACE-TREF>
+            </P-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE UUID="72789FDC-6D00-4FFB-A174-98252381AB59">
+              <SHORT-NAME>Rp_ADC_XCP_Req</SHORT-NAME>
+              <REQUIRED-COM-SPECS>
+                <NONQUEUED-RECEIVER-COM-SPEC>
+                  <DATA-ELEMENT-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_ADC_XCP_Req/De_ADC_XCP_Req</DATA-ELEMENT-REF>
+                  <ALIVE-TIMEOUT>0</ALIVE-TIMEOUT>
+                  <ENABLE-UPDATE>false</ENABLE-UPDATE>
+                  <FILTER>
+                    <DATA-FILTER-TYPE>ALWAYS</DATA-FILTER-TYPE>
+                  </FILTER>
+                  <HANDLE-NEVER-RECEIVED>false</HANDLE-NEVER-RECEIVED>
+                  <INIT-VALUE>
+                    <NUMERICAL-VALUE-SPECIFICATION>
+                      <VALUE>0</VALUE>
+                    </NUMERICAL-VALUE-SPECIFICATION>
+                  </INIT-VALUE>
+                </NONQUEUED-RECEIVER-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="SENDER-RECEIVER-INTERFACE">/PortInterfaces/Pi_ADC_XCP_Req</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+          </PORTS>
+          <INTERNAL-BEHAVIORS>
+            <SWC-INTERNAL-BEHAVIOR UUID="">
+              <SHORT-NAME>SWC_PLT_Service_IoHwAb_InternalBehavior</SHORT-NAME>
+              <EVENTS>
+                <OPERATION-INVOKED-EVENT UUID="AAB34E6F-D349-48B3-AFBD-A0DF46A33CBD">
+                  <SHORT-NAME>OIT_CS_RawAdcCount_ADC_Count_Read_CS_RawAdcCount_ADC_Count_Read</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Service_IoHwAb/SWC_PLT_Service_IoHwAb_InternalBehavior/CS_RawAdcCount_Read</START-ON-EVENT-REF>
+                  <OPERATION-IREF>
+                    <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Service_IoHwAb/CS_RawAdcCount</CONTEXT-P-PORT-REF>
+                    <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_RawAdcCount/Read</TARGET-PROVIDED-OPERATION-REF>
+                  </OPERATION-IREF>
+                </OPERATION-INVOKED-EVENT>
+                <OPERATION-INVOKED-EVENT UUID="A84FC3EB-284A-41E5-B515-02C40B1CDD49">
+                  <SHORT-NAME>OIT_CS_Thermal_Mon_Temps_Read_CS_Thermal_Mon_Temps_Read</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Service_IoHwAb/SWC_PLT_Service_IoHwAb_InternalBehavior/CS_Update_Thermal_Mon_Temps_Read</START-ON-EVENT-REF>
+                  <OPERATION-IREF>
+                    <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Service_IoHwAb/CS_Update_Thermal_Mon_Temps</CONTEXT-P-PORT-REF>
+                    <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_Update_Thermal_Mon_Temps/Read</TARGET-PROVIDED-OPERATION-REF>
+                  </OPERATION-IREF>
+                </OPERATION-INVOKED-EVENT>
+                <OPERATION-INVOKED-EVENT UUID="D915BD44-8BB9-4706-9FA0-8508ACC306FA">
+                  <SHORT-NAME>OIT_Pi_Get_FloatingPinPosition_FaultStatus_Pi_Get_FloatingPinPosition_FaultStatus</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Service_IoHwAb/SWC_PLT_Service_IoHwAb_InternalBehavior/Get_FloatingPinPosition_FaultStatus</START-ON-EVENT-REF>
+                  <OPERATION-IREF>
+                    <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Service_IoHwAb/Pi_Get_FloatingPinPosition</CONTEXT-P-PORT-REF>
+                    <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_Get_FloatingPinPosition/FaultStatus</TARGET-PROVIDED-OPERATION-REF>
+                  </OPERATION-IREF>
+                </OPERATION-INVOKED-EVENT>
+                <OPERATION-INVOKED-EVENT UUID="15CB5069-256F-4A88-B0FB-04900841A08C">
+                  <SHORT-NAME>OIT_Pp_Get_STM_TimeStamp_Get_STM_TimeStamp_Pp_Get_STM_TimeStamp_Get_STM_TimeStamp</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Service_IoHwAb/SWC_PLT_Service_IoHwAb_InternalBehavior/Get_STM_TimeStamp</START-ON-EVENT-REF>
+                  <OPERATION-IREF>
+                    <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Service_IoHwAb/Pp_Get_STM_TimeStamp</CONTEXT-P-PORT-REF>
+                    <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_Get_STM_TimeStamp/Get_STM_TimeStamp</TARGET-PROVIDED-OPERATION-REF>
+                  </OPERATION-IREF>
+                </OPERATION-INVOKED-EVENT>
+                <OPERATION-INVOKED-EVENT UUID="39241242-1C56-4E4F-A1BA-78EDC3AA4C50">
+                  <SHORT-NAME>OIT_Pp_PWMDutyCycle_PWMDutyCycle_Pp_PWMDutyCycle_PWMDutyCycle</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Service_IoHwAb/SWC_PLT_Service_IoHwAb_InternalBehavior/Pp_PWMDutyCycle</START-ON-EVENT-REF>
+                  <OPERATION-IREF>
+                    <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Service_IoHwAb/Pp_PWMDutyCycle</CONTEXT-P-PORT-REF>
+                    <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_PWMDutyCycle/PWMDutyCycle</TARGET-PROVIDED-OPERATION-REF>
+                  </OPERATION-IREF>
+                </OPERATION-INVOKED-EVENT>
+                <TIMING-EVENT UUID="E1DEDFF3-A95C-4723-B5B5-91D5AB817A36">
+                  <SHORT-NAME>TMT_RE_Service_IoHwAb_ADCFilter_5ms</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Service_IoHwAb/SWC_PLT_Service_IoHwAb_InternalBehavior/RE_PLT_Service_IoHwAb_ADCFilter_5ms</START-ON-EVENT-REF>
+                  <PERIOD>0.005</PERIOD>
+                </TIMING-EVENT>
+                <INIT-EVENT UUID="38C4A581-6AAC-4894-A974-2331FFDEB33F">
+                  <SHORT-NAME>SWC_PLT_Service_IoHwAb_InitEvent</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Service_IoHwAb/SWC_PLT_Service_IoHwAb_InternalBehavior/RE_PLT_Service_IoHwAb_Init</START-ON-EVENT-REF>
+                </INIT-EVENT>
+                <TIMING-EVENT UUID="71F02A9D-3491-491C-AC87-229C664F979C">
+                  <SHORT-NAME>TMT_RE_Service_IoHwAb_Main_5ms</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Service_IoHwAb/SWC_PLT_Service_IoHwAb_InternalBehavior/RE_PLT_Service_IoHwAb_Main_5ms</START-ON-EVENT-REF>
+                  <PERIOD>0.005</PERIOD>
+                </TIMING-EVENT>
+                <OPERATION-INVOKED-EVENT UUID="FEF7F2C3-B269-472F-A7C4-518043D97AD1">
+                  <SHORT-NAME>OIT_Pp_Set_DIO_LED_SRC_PULL_Write_Pp_Set_DIO_LED_SRC_PULL_Write</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_Service_IoHwAb/SWC_PLT_Service_IoHwAb_InternalBehavior/Set_DIO_LED_SRC_PULL</START-ON-EVENT-REF>
+                  <OPERATION-IREF>
+                    <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Service_IoHwAb/Pp_Set_DIO_LED_SRC_PULL</CONTEXT-P-PORT-REF>
+                    <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/PortInterfaces/Pi_Set_DIO_LED_SRC_PULL/Write</TARGET-PROVIDED-OPERATION-REF>
+                  </OPERATION-IREF>
+                </OPERATION-INVOKED-EVENT>
+              </EVENTS>
+              <PORT-API-OPTIONS>
+                <PORT-API-OPTION>
+                  <ENABLE-TAKE-ADDRESS>false</ENABLE-TAKE-ADDRESS>
+                  <ERROR-HANDLING>NO-TRANSFORMER-ERROR-HANDLING</ERROR-HANDLING>
+                  <INDIRECT-API>false</INDIRECT-API>
+                  <PORT-REF DEST="P-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Service_IoHwAb/Pp_Get_STM_TimeStamp</PORT-REF>
+                </PORT-API-OPTION>
+                <PORT-API-OPTION>
+                  <ENABLE-TAKE-ADDRESS>false</ENABLE-TAKE-ADDRESS>
+                  <ERROR-HANDLING>NO-TRANSFORMER-ERROR-HANDLING</ERROR-HANDLING>
+                  <INDIRECT-API>false</INDIRECT-API>
+                  <PORT-REF DEST="P-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Service_IoHwAb/Pp_Set_DIO_LED_SRC_PULL</PORT-REF>
+                </PORT-API-OPTION>
+              </PORT-API-OPTIONS>
+              <RUNNABLES>
+                <RUNNABLE-ENTITY UUID="E072C6D5-7470-4C89-8DBD-90DF44CA137A">
+                  <SHORT-NAME>CS_RawAdcCount_Read</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SYMBOL>CS_RawAdcCount_Read</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="0A5CD5DD-979B-4AB6-8445-C5106A177528">
+                  <SHORT-NAME>CS_Update_Thermal_Mon_Temps_Read</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SYMBOL>CS_Update_Thermal_Mon_Temps_Read</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="67CD3D2E-2ABA-45BF-86E9-537FC2CFD5CD">
+                  <SHORT-NAME>Get_FloatingPinPosition_FaultStatus</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SYMBOL>Get_FloatingPinPosition_FaultStatus</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="C8FEF6E6-5CD3-452B-B37A-3F5C90CA9382">
+                  <SHORT-NAME>Get_STM_TimeStamp</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SYMBOL>Get_STM_TimeStamp</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="EABD9C05-E4D0-4EEB-A161-95767D1FF1B1">
+                  <SHORT-NAME>Pp_PWMDutyCycle</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SYMBOL>Pp_PWMDutyCycle</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="E6B83CD8-B536-4318-B87B-4968A2E6BAA2">
+                  <SHORT-NAME>RE_PLT_Service_IoHwAb_ADCFilter_5ms</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                    <VARIABLE-ACCESS UUID="62B67A7A-6509-4AD5-8607-829B28D1FE1C">
+                      <SHORT-NAME>REC_Rp_ADC_XCP_Req_De_ADC_XCP_Req</SHORT-NAME>
+                      <ACCESSED-VARIABLE>
+                        <AUTOSAR-VARIABLE-IREF>
+                          <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_Service_IoHwAb/Rp_ADC_XCP_Req</PORT-PROTOTYPE-REF>
+                          <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_ADC_XCP_Req/De_ADC_XCP_Req</TARGET-DATA-PROTOTYPE-REF>
+                        </AUTOSAR-VARIABLE-IREF>
+                      </ACCESSED-VARIABLE>
+                    </VARIABLE-ACCESS>
+                  </DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                  <SYMBOL>RE_PLT_Service_IoHwAb_ADCFilter_5ms</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="75E8C182-2D22-404D-940D-FB5D275FAE9B">
+                  <SHORT-NAME>RE_PLT_Service_IoHwAb_Init</SHORT-NAME>
+                  <DESC>
+                    <L-2 L="FOR-ALL">This will initialize all static variables of this SWC
+</L-2>
+                  </DESC>
+                  <ADMIN-DATA>
+                    <SDGS>
+                      <SDG GID="edve:RunnableKind">
+                        <SD>InitRunnable</SD>
+                      </SDG>
+                    </SDGS>
+                  </ADMIN-DATA>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SYMBOL>RE_PLT_Service_IoHwAb_Init</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="BB0F98E3-9C1F-4671-9F04-0168F9A4CC0F">
+                  <SHORT-NAME>RE_PLT_Service_IoHwAb_Main_5ms</SHORT-NAME>
+                  <DESC>
+                    <L-2 L="FOR-ALL">This runnable will directly read the ADC values and start the conversions</L-2>
+                  </DESC>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SYMBOL>RE_PLT_Service_IoHwAb_Main_5ms</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="D0C622DB-2078-4D39-8FCB-EFCC1EDE262B">
+                  <SHORT-NAME>Set_DIO_LED_SRC_PULL</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SYMBOL>Set_DIO_LED_SRC_PULL</SYMBOL>
+                </RUNNABLE-ENTITY>
+              </RUNNABLES>
+              <SUPPORTS-MULTIPLE-INSTANTIATION>false</SUPPORTS-MULTIPLE-INSTANTIATION>
+            </SWC-INTERNAL-BEHAVIOR>
+          </INTERNAL-BEHAVIORS>
+        </SERVICE-SW-COMPONENT-TYPE>
+        <SWC-IMPLEMENTATION UUID="AB73BECD-C46B-4CCD-A2CC-19D20E325083">
+          <SHORT-NAME>SWC_PLT_Service_IoHwAb_Implementation</SHORT-NAME>
+          <CODE-DESCRIPTORS>
+            <CODE UUID="52C7A716-A18A-4979-9843-CB3A8277575F">
+              <SHORT-NAME>Default</SHORT-NAME>
+              <ARTIFACT-DESCRIPTORS>
+                <AUTOSAR-ENGINEERING-OBJECT>
+                  <CATEGORY>SWSRC</CATEGORY>
+                </AUTOSAR-ENGINEERING-OBJECT>
+              </ARTIFACT-DESCRIPTORS>
+            </CODE>
+          </CODE-DESCRIPTORS>
+          <BEHAVIOR-REF DEST="SWC-INTERNAL-BEHAVIOR">/ComponentTypes/SWC_PLT_Service_IoHwAb/SWC_PLT_Service_IoHwAb_InternalBehavior</BEHAVIOR-REF>
+        </SWC-IMPLEMENTATION>
+      </ELEMENTS>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

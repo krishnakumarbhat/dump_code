@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--This file was saved with a tool from Vector Informatik GmbH-->
+<AUTOSAR xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00050.xsd" xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="B026E376-C182-4785-AA5E-7104824957F5">
+      <SHORT-NAME>ComponentTypes</SHORT-NAME>
+      <ELEMENTS>
+        <APPLICATION-SW-COMPONENT-TYPE UUID="B9E88336-545E-47DF-94D7-803F13A7051C">
+          <SHORT-NAME>SWC_PLT_CDD_HIL</SHORT-NAME>
+          <PORTS>
+            <R-PORT-PROTOTYPE UUID="00C0BAD5-0CD6-48F5-91E3-85E19CADD7E0">
+              <SHORT-NAME>Rp_Hil_Activation</SHORT-NAME>
+              <ADMIN-DATA>
+                <SDGS>
+                  <SDG GID="DV:DEV">
+                    <SD GID="DV:ImportModePreset">Keep</SD>
+                  </SDG>
+                </SDGS>
+              </ADMIN-DATA>
+              <REQUIRED-COM-SPECS>
+                <NONQUEUED-RECEIVER-COM-SPEC>
+                  <DATA-ELEMENT-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_Hil_Activation/De_Hil_Activation</DATA-ELEMENT-REF>
+                  <HANDLE-OUT-OF-RANGE>NONE</HANDLE-OUT-OF-RANGE>
+                  <ALIVE-TIMEOUT>0</ALIVE-TIMEOUT>
+                  <ENABLE-UPDATE>false</ENABLE-UPDATE>
+                  <FILTER>
+                    <DATA-FILTER-TYPE>ALWAYS</DATA-FILTER-TYPE>
+                  </FILTER>
+                  <HANDLE-NEVER-RECEIVED>false</HANDLE-NEVER-RECEIVED>
+                  <INIT-VALUE>
+                    <NUMERICAL-VALUE-SPECIFICATION>
+                      <VALUE>0</VALUE>
+                    </NUMERICAL-VALUE-SPECIFICATION>
+                  </INIT-VALUE>
+                </NONQUEUED-RECEIVER-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="SENDER-RECEIVER-INTERFACE">/PortInterfaces/Pi_Hil_Activation</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE UUID="ABA58495-6BEF-4657-8737-EBA03D9006EE">
+              <SHORT-NAME>Rp_HIL_Periodic_Handler</SHORT-NAME>
+              <ADMIN-DATA>
+                <SDGS>
+                  <SDG GID="DV:DEV">
+                    <SD GID="DV:ImportModePreset">Keep</SD>
+                  </SDG>
+                </SDGS>
+              </ADMIN-DATA>
+              <REQUIRED-INTERFACE-TREF DEST="TRIGGER-INTERFACE">/PortInterfaces/Pi_HIL_Periodic_Handler</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+          </PORTS>
+          <INTERNAL-BEHAVIORS>
+            <SWC-INTERNAL-BEHAVIOR UUID="9DBDF2F8-2C26-47A9-A7B9-B355D07DC517">
+              <SHORT-NAME>SWC_PLT_CDD_HIL_InternalBehavior</SHORT-NAME>
+              <EVENTS>
+                <INIT-EVENT UUID="7DE533E5-D860-4788-8A8F-9F42378439DD">
+                  <SHORT-NAME>SWC_PLT_CDD_HIL_InitEvent</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_CDD_HIL/SWC_PLT_CDD_HIL_InternalBehavior/RE_PLT_HIL_Init</START-ON-EVENT-REF>
+                </INIT-EVENT>
+                <EXTERNAL-TRIGGER-OCCURRED-EVENT UUID="33BF31CA-53DC-4710-8CBE-1498E876B188">
+                  <SHORT-NAME>EXTO_RE_HIL_Periodic_Handler_Rp_HIL_Periodic_Handler_Trigger</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_CDD_HIL/SWC_PLT_CDD_HIL_InternalBehavior/RE_HIL_Periodic_Handler</START-ON-EVENT-REF>
+                  <TRIGGER-IREF>
+                    <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_HIL/Rp_HIL_Periodic_Handler</CONTEXT-R-PORT-REF>
+                    <TARGET-TRIGGER-REF DEST="TRIGGER">/PortInterfaces/Pi_HIL_Periodic_Handler/Trigger</TARGET-TRIGGER-REF>
+                  </TRIGGER-IREF>
+                </EXTERNAL-TRIGGER-OCCURRED-EVENT>
+              </EVENTS>
+              <HANDLE-TERMINATION-AND-RESTART>NO-SUPPORT</HANDLE-TERMINATION-AND-RESTART>
+              <RUNNABLES>
+                <RUNNABLE-ENTITY UUID="3F8ED893-6994-4F80-BFA1-8460F219C5D4">
+                  <SHORT-NAME>RE_PLT_HIL_Init</SHORT-NAME>
+                  <ADMIN-DATA>
+                    <SDGS>
+                      <SDG GID="edve:RunnableKind">
+                        <SD>InitRunnable</SD>
+                      </SDG>
+                    </SDGS>
+                  </ADMIN-DATA>
+                  <DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                    <VARIABLE-ACCESS UUID="3973BAC5-FC29-4F7B-91C0-E1DACB48E333">
+                      <SHORT-NAME>REC_Rp_Hil_Activation_De_Hil_Activation</SHORT-NAME>
+                      <ACCESSED-VARIABLE>
+                        <AUTOSAR-VARIABLE-IREF>
+                          <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_HIL/Rp_Hil_Activation</PORT-PROTOTYPE-REF>
+                          <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_Hil_Activation/De_Hil_Activation</TARGET-DATA-PROTOTYPE-REF>
+                        </AUTOSAR-VARIABLE-IREF>
+                      </ACCESSED-VARIABLE>
+                    </VARIABLE-ACCESS>
+                  </DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="B667BB62-7194-4E7A-B467-695698189AB7">
+                  <SHORT-NAME>RE_HIL_Periodic_Handler</SHORT-NAME>
+                  <SYMBOL>RE_HIL_Periodic_Handler</SYMBOL>
+                </RUNNABLE-ENTITY>
+              </RUNNABLES>
+              <SUPPORTS-MULTIPLE-INSTANTIATION>false</SUPPORTS-MULTIPLE-INSTANTIATION>
+            </SWC-INTERNAL-BEHAVIOR>
+          </INTERNAL-BEHAVIORS>
+        </APPLICATION-SW-COMPONENT-TYPE>
+        <SWC-IMPLEMENTATION UUID="0CF4C256-5AA9-4500-B874-6522A06BDC43">
+          <SHORT-NAME>SWC_PLT_CDD_HIL_Implementation</SHORT-NAME>
+          <RESOURCE-CONSUMPTION UUID="D8242C1F-4160-4838-94AB-7AACDFFF4AFE">
+            <SHORT-NAME>ResourceConsumption</SHORT-NAME>
+            <MEMORY-SECTIONS>
+              <MEMORY-SECTION UUID="A1B2C3D4-E5F6-7890-ABCD-EF0123456789">
+                <SHORT-NAME>CODE</SHORT-NAME>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/CODE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="15F3C05A-3B60-4A64-A7EC-F8C194D0BCD4">
+                <SHORT-NAME>VAR_SAVED_ZONE</SHORT-NAME>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/CODE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="3FA7F523-1961-47F6-B400-6ECF198EADDD">
+                <SHORT-NAME>VAR_NOINIT_UNSPECIFIED</SHORT-NAME>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/CODE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="57E2B6A8-6516-4220-A26F-CECEC34E387E">
+                <SHORT-NAME>VAR_INIT_UNSPECIFIED</SHORT-NAME>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/CODE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="6675C503-BD5C-4140-B77A-AE2A3889F69F">
+                <SHORT-NAME>VAR_ZERO_INIT_UNSPECIFIED</SHORT-NAME>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/CODE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+            </MEMORY-SECTIONS>
+          </RESOURCE-CONSUMPTION>
+          <BEHAVIOR-REF DEST="SWC-INTERNAL-BEHAVIOR">/ComponentTypes/SWC_PLT_CDD_HIL/SWC_PLT_CDD_HIL_InternalBehavior</BEHAVIOR-REF>
+        </SWC-IMPLEMENTATION>
+      </ELEMENTS>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

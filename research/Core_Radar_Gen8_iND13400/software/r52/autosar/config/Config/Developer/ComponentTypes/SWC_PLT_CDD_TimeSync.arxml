@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--This file was saved with a tool from Vector Informatik GmbH-->
+<AUTOSAR xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00050.xsd" xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="B026E376-C182-4785-AA5E-7104824957F5">
+      <SHORT-NAME>ComponentTypes</SHORT-NAME>
+      <ELEMENTS>
+        <APPLICATION-SW-COMPONENT-TYPE UUID="F1272CD0-CFA5-4579-8DF7-ACD41680715B">
+          <SHORT-NAME>SWC_PLT_CDD_TimeSync</SHORT-NAME>
+          <PORTS>
+            <P-PORT-PROTOTYPE UUID="6DC7052B-0D38-48E5-ADDB-5643A2697836">
+              <SHORT-NAME>Pp_Time_Stamp</SHORT-NAME>
+              <PROVIDED-COM-SPECS>
+                <NONQUEUED-SENDER-COM-SPEC>
+                  <DATA-ELEMENT-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_Time_Stamp/De_StbM_TimeStampType</DATA-ELEMENT-REF>
+                  <INIT-VALUE>
+                    <RECORD-VALUE-SPECIFICATION>
+                      <FIELDS>
+                        <NUMERICAL-VALUE-SPECIFICATION>
+                          <SHORT-LABEL>timeBaseStatus</SHORT-LABEL>
+                          <VALUE>0</VALUE>
+                        </NUMERICAL-VALUE-SPECIFICATION>
+                        <NUMERICAL-VALUE-SPECIFICATION>
+                          <SHORT-LABEL>nanoseconds</SHORT-LABEL>
+                          <VALUE>0</VALUE>
+                        </NUMERICAL-VALUE-SPECIFICATION>
+                        <NUMERICAL-VALUE-SPECIFICATION>
+                          <SHORT-LABEL>seconds</SHORT-LABEL>
+                          <VALUE>0</VALUE>
+                        </NUMERICAL-VALUE-SPECIFICATION>
+                        <NUMERICAL-VALUE-SPECIFICATION>
+                          <SHORT-LABEL>secondsHi</SHORT-LABEL>
+                          <VALUE>0</VALUE>
+                        </NUMERICAL-VALUE-SPECIFICATION>
+                      </FIELDS>
+                    </RECORD-VALUE-SPECIFICATION>
+                  </INIT-VALUE>
+                </NONQUEUED-SENDER-COM-SPEC>
+              </PROVIDED-COM-SPECS>
+              <PROVIDED-INTERFACE-TREF DEST="SENDER-RECEIVER-INTERFACE">/PortInterfaces/Pi_Time_Stamp</PROVIDED-INTERFACE-TREF>
+            </P-PORT-PROTOTYPE>
+            <P-PORT-PROTOTYPE UUID="06EE3CDB-1538-4B77-8413-308543D12451">
+              <SHORT-NAME>Pp_Time_Stamp_Delta</SHORT-NAME>
+              <PROVIDED-COM-SPECS>
+                <NONQUEUED-SENDER-COM-SPEC>
+                  <DATA-ELEMENT-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_Time_Stamp_Delta/De_Time_Stamp_Delta</DATA-ELEMENT-REF>
+                  <INIT-VALUE>
+                    <NUMERICAL-VALUE-SPECIFICATION>
+                      <VALUE>0</VALUE>
+                    </NUMERICAL-VALUE-SPECIFICATION>
+                  </INIT-VALUE>
+                </NONQUEUED-SENDER-COM-SPEC>
+              </PROVIDED-COM-SPECS>
+              <PROVIDED-INTERFACE-TREF DEST="SENDER-RECEIVER-INTERFACE">/PortInterfaces/Pi_Time_Stamp_Delta</PROVIDED-INTERFACE-TREF>
+            </P-PORT-PROTOTYPE>
+            <P-PORT-PROTOTYPE UUID="C9C1A383-09FA-4CE2-85AE-F72CF744753F">
+              <SHORT-NAME>Pp_Timesync_Status</SHORT-NAME>
+              <PROVIDED-COM-SPECS>
+                <NONQUEUED-SENDER-COM-SPEC>
+                  <DATA-ELEMENT-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_Timesync_Status/De_Timesync_Status</DATA-ELEMENT-REF>
+                  <INIT-VALUE>
+                    <NUMERICAL-VALUE-SPECIFICATION>
+                      <VALUE>85</VALUE>
+                    </NUMERICAL-VALUE-SPECIFICATION>
+                  </INIT-VALUE>
+                </NONQUEUED-SENDER-COM-SPEC>
+              </PROVIDED-COM-SPECS>
+              <PROVIDED-INTERFACE-TREF DEST="SENDER-RECEIVER-INTERFACE">/PortInterfaces/Pi_Timesync_Status</PROVIDED-INTERFACE-TREF>
+            </P-PORT-PROTOTYPE>
+            <P-PORT-PROTOTYPE UUID="A496C598-8150-4EF3-B2B4-52E578994C1F">
+              <SHORT-NAME>Pp_TimeSync_Status_No_Tsyn_Error</SHORT-NAME>
+              <PROVIDED-COM-SPECS>
+                <NONQUEUED-SENDER-COM-SPEC>
+                  <DATA-ELEMENT-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_STS_No_TSyn_Error/De_STS_No_TSyn_Error</DATA-ELEMENT-REF>
+                  <INIT-VALUE>
+                    <NUMERICAL-VALUE-SPECIFICATION>
+                      <VALUE>0</VALUE>
+                    </NUMERICAL-VALUE-SPECIFICATION>
+                  </INIT-VALUE>
+                </NONQUEUED-SENDER-COM-SPEC>
+              </PROVIDED-COM-SPECS>
+              <PROVIDED-INTERFACE-TREF DEST="SENDER-RECEIVER-INTERFACE">/PortInterfaces/Pi_STS_No_TSyn_Error</PROVIDED-INTERFACE-TREF>
+            </P-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE UUID="D668501C-D610-491B-9A76-B1B2C29C9D1A">
+              <SHORT-NAME>Pp_GlobalTime_Slave_StbMSynchronizedTimeBase</SHORT-NAME>
+              <REQUIRED-COM-SPECS>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase/GetCurrentTime</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase/GetRateDeviation</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase/GetTimeBaseStatus</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase/GetTimeLeap</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase/GetSyncTimeRecordHead</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE UUID="760BB4C8-2B77-4562-9284-53492B5A3140">
+              <SHORT-NAME>Rp_Global_Seconds_Cnt</SHORT-NAME>
+              <REQUIRED-COM-SPECS>
+                <NONQUEUED-RECEIVER-COM-SPEC>
+                  <DATA-ELEMENT-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_Global_Seconds/De_Global_Seconds_Cnt</DATA-ELEMENT-REF>
+                  <ALIVE-TIMEOUT>0</ALIVE-TIMEOUT>
+                  <ENABLE-UPDATE>false</ENABLE-UPDATE>
+                  <FILTER>
+                    <DATA-FILTER-TYPE>ALWAYS</DATA-FILTER-TYPE>
+                  </FILTER>
+                  <HANDLE-NEVER-RECEIVED>false</HANDLE-NEVER-RECEIVED>
+                  <INIT-VALUE>
+                    <NUMERICAL-VALUE-SPECIFICATION>
+                      <VALUE>0</VALUE>
+                    </NUMERICAL-VALUE-SPECIFICATION>
+                  </INIT-VALUE>
+                </NONQUEUED-RECEIVER-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="SENDER-RECEIVER-INTERFACE">/PortInterfaces/Pi_Global_Seconds</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE UUID="650135C9-9962-41A8-A8AE-56715C21AFED">
+              <SHORT-NAME>Rp_StbMStatusNotificationCallback_StbMSynchronizedTimeBase</SHORT-NAME>
+              <REQUIRED-COM-SPECS>
+                <NONQUEUED-RECEIVER-COM-SPEC>
+                  <DATA-ELEMENT-REF DEST="VARIABLE-DATA-PROTOTYPE">/MICROSAR/StbM_swc/Interfaces/StatusNotification/eventNotification</DATA-ELEMENT-REF>
+                  <ALIVE-TIMEOUT>0</ALIVE-TIMEOUT>
+                  <ENABLE-UPDATE>false</ENABLE-UPDATE>
+                  <FILTER>
+                    <DATA-FILTER-TYPE>ALWAYS</DATA-FILTER-TYPE>
+                  </FILTER>
+                  <HANDLE-NEVER-RECEIVED>false</HANDLE-NEVER-RECEIVED>
+                </NONQUEUED-RECEIVER-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="SENDER-RECEIVER-INTERFACE">/MICROSAR/StbM_swc/Interfaces/StatusNotification</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+            <P-PORT-PROTOTYPE UUID="ECF827EF-D9A5-4603-8C61-A43498746C56">
+              <SHORT-NAME>Pp_Time_Synchronization_Fault_Status</SHORT-NAME>
+              <ADMIN-DATA>
+                <SDGS>
+                  <SDG GID="DV:DEV">
+                    <SD GID="DV:ImportModePreset">Keep</SD>
+                  </SDG>
+                </SDGS>
+              </ADMIN-DATA>
+              <PROVIDED-COM-SPECS>
+                <NONQUEUED-SENDER-COM-SPEC>
+                  <DATA-ELEMENT-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_Time_Synchronization_Fault_Status/De_Time_Synchronization_Fault_Status</DATA-ELEMENT-REF>
+                  <HANDLE-OUT-OF-RANGE>NONE</HANDLE-OUT-OF-RANGE>
+                  <INIT-VALUE>
+                    <NUMERICAL-VALUE-SPECIFICATION>
+                      <VALUE>170</VALUE>
+                    </NUMERICAL-VALUE-SPECIFICATION>
+                  </INIT-VALUE>
+                </NONQUEUED-SENDER-COM-SPEC>
+              </PROVIDED-COM-SPECS>
+              <PROVIDED-INTERFACE-TREF DEST="SENDER-RECEIVER-INTERFACE">/PortInterfaces/Pi_Time_Synchronization_Fault_Status</PROVIDED-INTERFACE-TREF>
+            </P-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE UUID="4D8F962D-C109-4B26-8EA2-A44307C4191D">
+              <SHORT-NAME>Pp_GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync</SHORT-NAME>
+              <ADMIN-DATA>
+                <SDGS>
+                  <SDG GID="DV:DEV">
+                    <SD GID="DV:ImportModePreset">Keep</SD>
+                  </SDG>
+                </SDGS>
+              </ADMIN-DATA>
+              <REQUIRED-COM-SPECS>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync/GetSyncTimeRecordHead</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync/GetTimeBaseStatus</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync/GetTimeLeap</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync/GetRateDeviation</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync/GetCurrentTime</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+          </PORTS>
+          <INTERNAL-BEHAVIORS>
+            <SWC-INTERNAL-BEHAVIOR UUID="B1C7469B-2B33-4A74-A92E-7AD08DAE7B1F">
+              <SHORT-NAME>SWC_PLT_CDD_TimeSync_InternalBehavior</SHORT-NAME>
+              <EXCLUSIVE-AREAS>
+                <EXCLUSIVE-AREA UUID="024E4F71-CDB1-492B-99AF-48A96F66454F">
+                  <SHORT-NAME>TimeSync_ExclusiveArea</SHORT-NAME>
+                </EXCLUSIVE-AREA>
+              </EXCLUSIVE-AREAS>
+              <EVENTS>
+                <TIMING-EVENT UUID="1C9BCE90-F7B1-4351-84D6-DF278FCF16B3">
+                  <SHORT-NAME>TMT_RE_PLT_TimeSync_Main_50ms</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_CDD_TimeSync/SWC_PLT_CDD_TimeSync_InternalBehavior/RE_PLT_TimeSync_Main_50ms</START-ON-EVENT-REF>
+                  <PERIOD>0.05</PERIOD>
+                </TIMING-EVENT>
+                <DATA-RECEIVED-EVENT UUID="F6F8BA2F-D61E-4F4B-8B40-919B9CF8F164">
+                  <SHORT-NAME>DRT_DRE_StatusNotification_Callback_Rp_StbMStatusNotificationCallback_StbMSynchronizedTimeBase_eventNotification</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_CDD_TimeSync/SWC_PLT_CDD_TimeSync_InternalBehavior/DRE_StatusNotification_Callback</START-ON-EVENT-REF>
+                  <DATA-IREF>
+                    <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Rp_StbMStatusNotificationCallback_StbMSynchronizedTimeBase</CONTEXT-R-PORT-REF>
+                    <TARGET-DATA-ELEMENT-REF DEST="VARIABLE-DATA-PROTOTYPE">/MICROSAR/StbM_swc/Interfaces/StatusNotification/eventNotification</TARGET-DATA-ELEMENT-REF>
+                  </DATA-IREF>
+                </DATA-RECEIVED-EVENT>
+                <INIT-EVENT UUID="33235D42-8250-4E0B-86DB-C7BC36124D57">
+                  <SHORT-NAME>SWC_PLT_CDD_TimeSync_InitEvent</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/SWC_PLT_CDD_TimeSync/SWC_PLT_CDD_TimeSync_InternalBehavior/RE_PLT_TimeSync_Init</START-ON-EVENT-REF>
+                </INIT-EVENT>
+              </EVENTS>
+              <HANDLE-TERMINATION-AND-RESTART>NO-SUPPORT</HANDLE-TERMINATION-AND-RESTART>
+              <RUNNABLES>
+                <RUNNABLE-ENTITY UUID="55FB07F8-EDD7-4124-BFB6-D241C2388FA7">
+                  <SHORT-NAME>RE_PLT_TimeSync_Main_50ms</SHORT-NAME>
+                  <CAN-ENTERS>
+                    <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                      <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/ComponentTypes/SWC_PLT_CDD_TimeSync/SWC_PLT_CDD_TimeSync_InternalBehavior/TimeSync_ExclusiveArea</EXCLUSIVE-AREA-REF>
+                    </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                  </CAN-ENTERS>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                    <VARIABLE-ACCESS UUID="D27C2896-4F57-4CE9-9AE0-05A3670E24CD">
+                      <SHORT-NAME>REC_Rp_Global_Seconds_Cnt_De_Global_Seconds_Cnt</SHORT-NAME>
+                      <ACCESSED-VARIABLE>
+                        <AUTOSAR-VARIABLE-IREF>
+                          <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Rp_Global_Seconds_Cnt</PORT-PROTOTYPE-REF>
+                          <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_Global_Seconds/De_Global_Seconds_Cnt</TARGET-DATA-PROTOTYPE-REF>
+                        </AUTOSAR-VARIABLE-IREF>
+                      </ACCESSED-VARIABLE>
+                    </VARIABLE-ACCESS>
+                    <VARIABLE-ACCESS UUID="6EBEEB06-20D6-4993-B334-752B7FB3B7FF">
+                      <SHORT-NAME>REC_Rp_StbMStatusNotificationCallback_StbMSynchronizedTimeBase_eventNotification</SHORT-NAME>
+                      <ACCESSED-VARIABLE>
+                        <AUTOSAR-VARIABLE-IREF>
+                          <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Rp_StbMStatusNotificationCallback_StbMSynchronizedTimeBase</PORT-PROTOTYPE-REF>
+                          <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/MICROSAR/StbM_swc/Interfaces/StatusNotification/eventNotification</TARGET-DATA-PROTOTYPE-REF>
+                        </AUTOSAR-VARIABLE-IREF>
+                      </ACCESSED-VARIABLE>
+                    </VARIABLE-ACCESS>
+                  </DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                  <DATA-SEND-POINTS>
+                    <VARIABLE-ACCESS UUID="242B95AB-FCFE-4F14-8257-E6E4D763735C">
+                      <SHORT-NAME>SEND_Pp_Time_Stamp_De_StbM_TimeStampType</SHORT-NAME>
+                      <ACCESSED-VARIABLE>
+                        <AUTOSAR-VARIABLE-IREF>
+                          <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Pp_Time_Stamp</PORT-PROTOTYPE-REF>
+                          <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_Time_Stamp/De_StbM_TimeStampType</TARGET-DATA-PROTOTYPE-REF>
+                        </AUTOSAR-VARIABLE-IREF>
+                      </ACCESSED-VARIABLE>
+                    </VARIABLE-ACCESS>
+                    <VARIABLE-ACCESS UUID="57B86201-779D-409F-8693-D4B0B2ABF715">
+                      <SHORT-NAME>SEND_Pp_Timesync_Status_De_Timesync_Status</SHORT-NAME>
+                      <ACCESSED-VARIABLE>
+                        <AUTOSAR-VARIABLE-IREF>
+                          <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Pp_Timesync_Status</PORT-PROTOTYPE-REF>
+                          <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_Timesync_Status/De_Timesync_Status</TARGET-DATA-PROTOTYPE-REF>
+                        </AUTOSAR-VARIABLE-IREF>
+                      </ACCESSED-VARIABLE>
+                    </VARIABLE-ACCESS>
+                    <VARIABLE-ACCESS UUID="B5F3E7E8-CB38-40C5-8000-EEDAE585BCCF">
+                      <SHORT-NAME>SEND_Pp_Time_Synchronization_Fault_Status_De_Time_Synchronization_Fault_Status</SHORT-NAME>
+                      <ACCESSED-VARIABLE>
+                        <AUTOSAR-VARIABLE-IREF>
+                          <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Pp_Time_Synchronization_Fault_Status</PORT-PROTOTYPE-REF>
+                          <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_Time_Synchronization_Fault_Status/De_Time_Synchronization_Fault_Status</TARGET-DATA-PROTOTYPE-REF>
+                        </AUTOSAR-VARIABLE-IREF>
+                      </ACCESSED-VARIABLE>
+                    </VARIABLE-ACCESS>
+                  </DATA-SEND-POINTS>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="355FDD07-0052-409D-8A83-D57449D12C1D">
+                      <SHORT-NAME>SC_Pp_GlobalTime_Slave_StbMSynchronizedTimeBase_GetCurrentTime</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Pp_GlobalTime_Slave_StbMSynchronizedTimeBase</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase/GetCurrentTime</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="49BA61FA-42BC-4B0F-931B-ECE28F12CADC">
+                      <SHORT-NAME>SC_GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync_GetCurrentTime</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Pp_GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync/GetCurrentTime</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="DFD95074-E605-448B-A426-F2315D6927DD">
+                      <SHORT-NAME>SC_GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync_GetRateDeviation</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Pp_GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync/GetRateDeviation</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="F295666F-4D75-423E-BDA5-CEE489B76B26">
+                      <SHORT-NAME>SC_GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync_GetSyncTimeRecordHead</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Pp_GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync/GetSyncTimeRecordHead</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="44621FDC-5CEF-4FDD-A619-A5D1EF636C66">
+                      <SHORT-NAME>SC_GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync_GetTimeBaseStatus</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Pp_GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync/GetTimeBaseStatus</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="6CE68D1F-4F11-4CA7-9CD4-481F01E10CA8">
+                      <SHORT-NAME>SC_GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync_GetTimeLeap</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Pp_GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase_CanTsync/GetTimeLeap</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="228620D3-413F-4820-9E5C-047E32048CFD">
+                      <SHORT-NAME>SC_Pp_GlobalTime_Slave_StbMSynchronizedTimeBase_GetRateDeviation</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Pp_GlobalTime_Slave_StbMSynchronizedTimeBase</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase/GetRateDeviation</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="05772F1F-078C-416A-80C3-5102110F13CD">
+                      <SHORT-NAME>SC_Pp_GlobalTime_Slave_StbMSynchronizedTimeBase_GetSyncTimeRecordHead</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Pp_GlobalTime_Slave_StbMSynchronizedTimeBase</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase/GetSyncTimeRecordHead</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="4C3A73B4-42D9-4955-830F-2B942D79ABB1">
+                      <SHORT-NAME>SC_Pp_GlobalTime_Slave_StbMSynchronizedTimeBase_GetTimeBaseStatus</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Pp_GlobalTime_Slave_StbMSynchronizedTimeBase</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase/GetTimeBaseStatus</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="4D26F833-FE71-4A43-81BE-5ED0524635E3">
+                      <SHORT-NAME>SC_Pp_GlobalTime_Slave_StbMSynchronizedTimeBase_GetTimeLeap</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Pp_GlobalTime_Slave_StbMSynchronizedTimeBase</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/MICROSAR/StbM_swc/Interfaces/GlobalTime_Slave_StbMSynchronizedTimeBase/GetTimeLeap</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>RE_PLT_TimeSync_Main_50ms</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="A16E71B0-BA0E-4FA6-9F2F-839416821F1C">
+                  <SHORT-NAME>DRE_StatusNotification_Callback</SHORT-NAME>
+                  <DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                    <VARIABLE-ACCESS UUID="44AF1ABD-C778-4131-B4D2-57BDF2E4273F">
+                      <SHORT-NAME>REC_Rp_StbMStatusNotificationCallback_StbMSynchronizedTimeBase_eventNotification</SHORT-NAME>
+                      <ACCESSED-VARIABLE>
+                        <AUTOSAR-VARIABLE-IREF>
+                          <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Rp_StbMStatusNotificationCallback_StbMSynchronizedTimeBase</PORT-PROTOTYPE-REF>
+                          <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/MICROSAR/StbM_swc/Interfaces/StatusNotification/eventNotification</TARGET-DATA-PROTOTYPE-REF>
+                        </AUTOSAR-VARIABLE-IREF>
+                      </ACCESSED-VARIABLE>
+                    </VARIABLE-ACCESS>
+                  </DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                  <DATA-SEND-POINTS>
+                    <VARIABLE-ACCESS UUID="B5271B0D-3B56-47EE-A78D-99E164178851">
+                      <SHORT-NAME>SEND_Pp_TimeSync_Status_No_Tsyn_Error_De_STS_No_TSyn_Error</SHORT-NAME>
+                      <ACCESSED-VARIABLE>
+                        <AUTOSAR-VARIABLE-IREF>
+                          <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Pp_TimeSync_Status_No_Tsyn_Error</PORT-PROTOTYPE-REF>
+                          <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_STS_No_TSyn_Error/De_STS_No_TSyn_Error</TARGET-DATA-PROTOTYPE-REF>
+                        </AUTOSAR-VARIABLE-IREF>
+                      </ACCESSED-VARIABLE>
+                    </VARIABLE-ACCESS>
+                    <VARIABLE-ACCESS UUID="E65458C5-863D-4D45-B2EC-82B51C2852FA">
+                      <SHORT-NAME>SEND_Pp_Time_Stamp_Delta_De_Time_Stamp_Delta</SHORT-NAME>
+                      <ACCESSED-VARIABLE>
+                        <AUTOSAR-VARIABLE-IREF>
+                          <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/ComponentTypes/SWC_PLT_CDD_TimeSync/Pp_Time_Stamp_Delta</PORT-PROTOTYPE-REF>
+                          <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/PortInterfaces/Pi_Time_Stamp_Delta/De_Time_Stamp_Delta</TARGET-DATA-PROTOTYPE-REF>
+                        </AUTOSAR-VARIABLE-IREF>
+                      </ACCESSED-VARIABLE>
+                    </VARIABLE-ACCESS>
+                  </DATA-SEND-POINTS>
+                  <SYMBOL>DRE_StatusNotification_Callback</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="E0A7734C-9EDB-4F3C-B1C2-A3B9FF7B7C45">
+                  <SHORT-NAME>RE_PLT_TimeSync_Init</SHORT-NAME>
+                  <ADMIN-DATA>
+                    <SDGS>
+                      <SDG GID="edve:RunnableKind">
+                        <SD>InitRunnable</SD>
+                      </SDG>
+                    </SDGS>
+                  </ADMIN-DATA>
+                </RUNNABLE-ENTITY>
+              </RUNNABLES>
+              <SUPPORTS-MULTIPLE-INSTANTIATION>false</SUPPORTS-MULTIPLE-INSTANTIATION>
+            </SWC-INTERNAL-BEHAVIOR>
+          </INTERNAL-BEHAVIORS>
+        </APPLICATION-SW-COMPONENT-TYPE>
+        <SWC-IMPLEMENTATION UUID="A631B236-A218-4E2D-93AC-82A45D29660D">
+          <SHORT-NAME>SWC_PLT_CDD_TimeSync_Implementation</SHORT-NAME>
+          <CODE-DESCRIPTORS>
+            <CODE UUID="EF99D8A9-3755-4A5E-8DFD-99D1B8697F41">
+              <SHORT-NAME>Default</SHORT-NAME>
+              <ARTIFACT-DESCRIPTORS>
+                <AUTOSAR-ENGINEERING-OBJECT>
+                  <CATEGORY>SWSRC</CATEGORY>
+                </AUTOSAR-ENGINEERING-OBJECT>
+              </ARTIFACT-DESCRIPTORS>
+            </CODE>
+          </CODE-DESCRIPTORS>
+          <BEHAVIOR-REF DEST="SWC-INTERNAL-BEHAVIOR">/ComponentTypes/SWC_PLT_CDD_TimeSync/SWC_PLT_CDD_TimeSync_InternalBehavior</BEHAVIOR-REF>
+        </SWC-IMPLEMENTATION>
+      </ELEMENTS>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>
