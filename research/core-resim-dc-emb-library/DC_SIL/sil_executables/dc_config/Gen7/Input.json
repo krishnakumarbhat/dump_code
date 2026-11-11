@@ -1,0 +1,28 @@
+{
+	"reprocessingInputFileStreams": [
+		{
+			"key": "BN_CALIFR",
+			"files": [
+				"C:\\Users\\ouymc2\\Downloads\\CCA_9010_3100099_DEBUG_20260804_135802_0048\\CCA_9010_3100099_BUS_20260804_135802_0048.MF4"
+			]
+		},
+		{
+			"key": "BN_FASETH",
+			"files": [
+				"C:\\Users\\ouymc2\\Downloads\\CCA_9010_3100099_DEBUG_20260804_135802_0048\\CCA_9010_3100099_BUS_20260804_135802_0048.MF4"
+			]
+		},
+		{
+			"key": "SRR_DEBUG",
+			"files": [
+				"C:\\Users\\ouymc2\\Downloads\\CCA_9010_3100099_DEBUG_20260804_135802_0048\\CCA_9010_3100099_DEBUG_20260804_135802_0048.MF4"
+			]
+		},
+		{
+			"key": "SRR_REFERENCE",
+			"files": [
+				""
+			]
+		}
+	]
+}
