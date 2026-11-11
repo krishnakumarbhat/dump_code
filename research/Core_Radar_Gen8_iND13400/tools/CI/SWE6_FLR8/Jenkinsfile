@@ -1,0 +1,662 @@
+@Library('YGGDRASIL_Libs@88a041d7f91607b4306baa042b4506a202ad31c0')
+import java.text.SimpleDateFormat
+import java.util.Date
+
+def jfrog = new Main.Jfrog()
+def utils = new Main.Utils()
+
+def latestFlr8GUIFile = ''
+def latestFlr8DiagFile = ''
+
+def pythonSendJobResultsToPH = ''
+def pythonSendHtmlComparisionToPH = ''
+def pythonSendJfrogReportsToPH = ''
+def generate_ci_piecharts = ''
+def artifactoryUploadPath = ''
+def sqtsFrameworkPath = ''
+def swe6ReportPath = ''
+def grafanaDashboardPath = ''
+def swe6_flr8_job_url = ''
+def jfrog_gui_url  = ''
+def static_jfrog_html_url = ''
+def jfrog_all_reports = ''
+
+def currentDate = ''
+def genVersion = ""
+def fullCommitID = ''
+def variantFlr8 = ''
+def todayVariant = ''
+def todayXcp = ''
+def testScheduleHtml = ''
+def theme = [:]
+// ================= EMAIL RECIPIENTS =====================
+// Edit this list to add/remove recipients. Keep alphabetized for clarity.
+def emailRecipients = [
+  "Ampavathina.Trivikram@aptiv.com",
+  "Arjun.Duraisamy@aptiv.com",
+  "Azeej.Shaik@aptiv.com",
+  "Bc.Manjunath@aptiv.com",
+  "chayadevi.hp@aptiv.com",
+  "Dinesh.Chintapalli@aptiv.com",
+  "fred.grandlienard@aptiv.com",
+  "Jonnalagadda.Sai.Dheeraj@aptiv.com",
+  "kavitha.kakarla@aptiv.com",
+  "litty.k.p@aptiv.com",
+  "mallikarjuna.chirithanal@aptiv.com",
+  "Manasa.L@aptiv.com",
+  "maddi.nagarjuna@aptiv.com",
+  "mithun.krishna@aptiv.com",
+  "Nikhil.Hc@aptiv.com",
+  "Osmane.Gani.Shaik@aptiv.com",
+  "Priyanka.Rawat@aptiv.com",
+  "priyanka.rawat@aptiv.com",
+  "Sai.Teja.Kr@aptiv.com",
+  "Shaik.Unnisa@aptiv.com",
+  "shreedevi.mirji@aptiv.com",
+  "Sneha.Murali@aptiv.com",
+  "Sriramya.Sanagavarapu@aptiv.com",
+  "Suma.Patil@aptiv.com",
+  "Sumalatha.Bs@aptiv.com",
+  "sneha.kumari.2@aptiv.com",
+  "swati.swaroop.gupta@aptiv.com",
+  "Venkata.Bharath.Kumar.Nandyala@aptiv.com",
+  "Vishal.Patil@aptiv.com"
+]
+// To add a new recipient, just add a new line above and keep the list alphabetized.
+
+pipeline {
+  agent {
+    label "Gen8_CICD_Agent"
+  }
+  environment {
+    SHORT_COMMIT_HASH        = GIT_COMMIT.substring(0,7)
+    JFROG_BUILD_NAME         = "${JOB_BASE_NAME}_${BUILD_NUMBER}".replace("%2F", "_")
+    JFROG_BUILD_NUMBER       = "${BUILD_NUMBER}"
+    JFROG_URL                = "https://jfrog.asux.aptiv.com"
+    ARTIFACTORY_BASE_REPO    = "core_radar-aptiv-00000000-gen8_ind13400-local"
+    FULL_COMMIT_HASH         = "${env.GIT_COMMIT}"
+  }
+  stages {
+    stage ('Setup') {
+      steps {
+        script {
+          //Get the Parent Commit Hash & fetch the latest DEV commit
+          fetch_refspec = "+refs/heads/dev:refs/remotes/origin/dev"
+          if ("${GIT_BRANCH}" == "dev"){
+            bat "git fetch --no-tags --force -- origin ${fetch_refspec}"
+          }
+
+          echo "SWE6 is running for CommitId: $FULL_COMMIT_HASH"
+
+          dir("${WORKSPACE}\\tools\\python\\testing_framework") {
+            echo '------------------------------------ Running Precommit -----------------------------------------'
+            bat 'STEP1_REPO_INIT.bat'
+
+            echo '--------------------------------- Initiate Python Repo ---------------------------------------'
+            bat 'STEP3_Initiate_Python_Automation_Repo.bat'
+
+            echo '--------------------------------- Downloading Dependencies -------------------------------------'
+            bat 'STEP4_Python_FM_Dependency_Installer.bat'
+            bat 'python -m pip install beautifulsoup4 psycopg2 matplotlib pandas'
+          }
+
+          //Define the most common variables and paths
+          genVersion = "Gen8"
+          variantFlr8 = "FLR8"
+          fullCommitID = "${FULL_COMMIT_HASH}"
+          artifactoryUploadPath = "${ARTIFACTORY_BASE_REPO}/${GIT_BRANCH}"
+          pythonSendJobResultsToPH = "${WORKSPACE}\\tools\\python\\platformHealthMetrices\\sendSwe6GuiResultsToPH.py"
+          pythonSendHtmlComparisionToPH = "${WORKSPACE}\\tools\\python\\platformHealthMetrices\\sendNewFailuresToPH.py"
+          pythonSendJfrogReportsToPH = "${WORKSPACE}\\tools\\python\\platformHealthMetrices\\sendJfrogReportsToPH.py"
+          generate_ci_piecharts = "${WORKSPACE}\\tools\\python\\platformHealthMetrices\\generate_ci_piecharts.py"
+          sqtsFrameworkPath = "${WORKSPACE}\\tools\\python\\testing_framework\\Core_Radar_Python_Framework"
+          swe6ReportPath = "${WORKSPACE}\\tools\\python\\testing_framework\\Core_Radar_Python_Framework\\Reports\\SWE6"
+          grafanaDashboardPath = "https://platformhealth.389177498442.awsaptiv.com/grafana/d/feap0ghfcaxhcd/core-radar-gen8-ind13400?orgId=1&from=now-2d&to=now&timezone=America%2FIndianapolis"
+          swe6_flr8_job_url = "https://cloudbees.asux.aptiv.com/core-radar-gen8-aptiv-00000000/job/iND13400/job/SWE6/job/SWE6_FLR8/"
+
+          // Daily rotation: all FLR8 variant + XCP protocol combinations (5-day cycle, no repetition)
+          // flr8_standalone:             ETH only
+          // flr8_al_can_standalone:      ETH + CAN
+          // flr8_satellite_can:          ETH + CAN
+          // flr8_satellite_eth_high_det: ETH only
+          def flr8TestMatrix = [
+            [variant: 'flr8_standalone',             xcp: 'Eth_Direct'],
+            [variant: 'flr8_al_can_standalone',      xcp: 'CAN'],
+            [variant: 'flr8_al_can_standalone',      xcp: 'Eth_Direct'],
+            [variant: 'flr8_satellite_can',          xcp: 'CAN'],
+            [variant: 'flr8_satellite_can',          xcp: 'Eth_Direct'],
+            [variant: 'flr8_satellite_eth_high_det', xcp: 'Eth_Direct'],
+          ]
+          def dayOfYear = new Date().format("D").toInteger()
+          def comboIndex = dayOfYear % flr8TestMatrix.size()
+          todayVariant = flr8TestMatrix[comboIndex].variant
+          todayXcp = flr8TestMatrix[comboIndex].xcp
+          echo "Day ${dayOfYear} (index ${comboIndex}/${flr8TestMatrix.size()}): Testing ${todayVariant} [${todayXcp}]"
+
+          // Alternating email theme: odd days = dark, even days = light
+          if (dayOfYear % 2 == 1) {
+            theme = [
+              bodyBg: '#0f172a', textColor: '#e2e8f0', cardBg: '#1e293b', cardBorder: '',
+              subText: '#94a3b8', linkColor: '#38bdf8', dateHL: '#93c5fd', sectionTitle: '#60a5fa',
+              badgeBg: '#334155', badgeText: '#60a5fa', labelColor: '#94a3b8',
+              variantColor: '#f0abfc', xcpColor: '#fbbf24', commitColor: '#67e8f9',
+              passBg: '#022c22', passText: '#4ade80', failBg: '#3f1d1d', failText: '#f87171',
+              skipBg: '#422006', skipText: '#facc15', errBg: '#2e1065', errText: '#c084fc',
+              failTitle: '#D0312D', failValue: '#ffffff', noteText: '#9ca3af',
+              todayRowBg: '#1e3a5f', todayRowText: '#fbbf24',
+              altRow1: '#0f172a', altRow2: '#1e293b', rowText: '#cbd5e1',
+              footerText: '#94a3b8', greetText: '', pieCenterBg: '#1e293b',
+              headerSubText: '#9fb3c8', headerVariant: '#f0abfc', headerXcp: '#fbbf24'
+            ]
+          } else {
+            theme = [
+              bodyBg: '#f1f5f9', textColor: '#1e293b', cardBg: '#ffffff', cardBorder: 'border:1px solid #e2e8f0;',
+              subText: '#64748b', linkColor: '#2563eb', dateHL: '#1d4ed8', sectionTitle: '#1d4ed8',
+              badgeBg: '#e0e7ff', badgeText: '#1d4ed8', labelColor: '#64748b',
+              variantColor: '#7c3aed', xcpColor: '#b45309', commitColor: '#0891b2',
+              passBg: '#dcfce7', passText: '#166534', failBg: '#fee2e2', failText: '#991b1b',
+              skipBg: '#fef9c3', skipText: '#854d0e', errBg: '#f3e8ff', errText: '#6b21a8',
+              failTitle: '#dc2626', failValue: '#dc2626', noteText: '#64748b',
+              todayRowBg: '#dbeafe', todayRowText: '#1e40af',
+              altRow1: '#f8fafc', altRow2: '#ffffff', rowText: '#475569',
+              footerText: '#64748b', greetText: 'color:#334155;', pieCenterBg: '#ffffff',
+              headerSubText: '#c7d2fe', headerVariant: '#e9d5ff', headerXcp: '#fde68a'
+            ]
+          }
+
+          // Build dynamic rotation schedule for email
+          def today = new Date()
+          def scheduleRows = ""
+          for (int i = 0; i < flr8TestMatrix.size(); i++) {
+            def idx = (dayOfYear + i) % flr8TestMatrix.size()
+            def combo = flr8TestMatrix[idx]
+            def dateLabel = (i == 0) ? "▶ Today (${today.format('EEE, MMM dd')})" : (today + i).format('EEE, MMM dd')
+            def rowBg = (i == 0) ? "background:${theme.todayRowBg};" : (i % 2 == 0) ? "background:${theme.altRow2};" : "background:${theme.altRow1};"
+            def rowColor = (i == 0) ? "color:${theme.todayRowText};font-weight:bold;" : "color:${theme.rowText};"
+            scheduleRows += "<tr style='${rowBg}'><td style='padding:6px 12px;${rowColor}'>${dateLabel}</td><td style='padding:6px 12px;${rowColor}'>${combo.variant}</td><td style='padding:6px 12px;${rowColor}'>${combo.xcp}</td></tr>"
+          }
+          testScheduleHtml = scheduleRows
+        }
+      }
+    }
+    // ----------------------------------------- SWE6 (FLR8): Start ---------------------------------------
+    stage('Build') {
+      steps{
+        script {
+          dir("${WORKSPACE}"){
+
+            echo '--------------------------------------- Initiate Build for FLR8 ---------------------------------------'
+            bat """
+              if exist buildFiles_output_combined.zip del /f /q buildFiles_output_combined.zip
+              jf rt download "core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/ind13400/nightly/latest/buildFiles_output_combined.zip" "." --flat=true
+              if exist bazel-bin\\outputs rmdir /s /q bazel-bin\\outputs
+              mkdir bazel-bin\\outputs
+              tar -xf buildFiles_output_combined.zip -C bazel-bin\\outputs
+              dir bazel-bin\\outputs
+            """
+          }
+        }
+      }
+    }
+    stage('Test') {
+      steps{
+        script {
+          catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+
+            echo '--------------------------------------- Initiate Tests run for FLR8 ---------------------------------------'
+            try {
+              echo "------- Running: ${todayVariant} [${todayXcp}] -------"
+              def subVariantCmd = "Run_Test_Cases.bat -b Variant ${todayVariant} --xcp_protocol ${todayXcp} --ci_cd_environment"
+
+              dir("${sqtsFrameworkPath}"){
+                bat "${subVariantCmd}"
+              }
+            } catch (e) {
+              echo "Test Execution Failed: ${e.getMessage()}!! Continuing..."
+            }
+
+            echo'--------------------------------------- Initiate search for the latest Report ---------------------------------------'
+            dir("${swe6ReportPath}"){
+              //Get the current date (pipeline run date)
+              currentDate = powershell(returnStdout: true, script: '''
+                Get-Date -Format "MMM_dd_yyyy"
+              ''').trim()
+              echo "Searching for the HTML files on date: ${currentDate}"
+
+              // Find for the latest GUI Report.
+              latestFlr8GUIFile = powershell(returnStdout: true, script: """
+                (Get-ChildItem -Path . -Filter "*${variantFlr8}*${currentDate}*.html" |
+                Where-Object { \$_.Name -match "GUI" } |
+                Sort-Object LastWriteTime -Descending |
+                Select-Object -First 1).FullName
+              """).trim()
+              echo "Latest Report Found: ${latestFlr8GUIFile}"
+            }
+          }
+        }
+      }
+    }
+    stage('JFrog'){
+      steps{
+            script {
+              catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                // Configure jf CLI (v2) server — required since it does not auto-read JFROG_URL
+                withCredentials([usernamePassword(credentialsId: 'SID_JFrog_API_Key', usernameVariable: 'JFROG_USER', passwordVariable: 'JFROG_API_KEY')]) {
+                  bat """
+                    jf c add default --url=${JFROG_URL} --user=%JFROG_USER% --password=%JFROG_API_KEY% --interactive=false --overwrite
+                  """
+                }
+                dir("${swe6ReportPath}"){
+
+                  // Upload the GUI report to JFrog artifactory
+                  if (latestFlr8GUIFile) {
+                    echo '------------------------------- Initiate GUI Report upload to JFROG for FLR8 -------------------------------'
+                    def fileName = latestFlr8GUIFile.toString()
+                    def justFileName = fileName.substring(Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\')) + 1)
+
+                    jfrog.uploadFile(fileName,
+                        "${artifactoryUploadPath}/SWE6/Reports/FLR8/",
+                        "${JFROG_BUILD_NAME}",
+                        "${JFROG_BUILD_NUMBER}",
+                        "JOB_URL=${JOB_URL};")
+
+                    // JFrog URL to view uploaded report
+                    jfrog_all_reports = "${JFROG_URL}/ui/native/${artifactoryUploadPath}/SWE6/Reports/FLR8/"
+                    jfrog_gui_url = "${jfrog_all_reports}/${justFileName}"
+                    echo "Uploaded FLR8 Test Report to Common location (All Reports Location): ${jfrog_gui_url}"
+
+                    // Clean up static location for new GUI Report
+                    def staticLatestPath = "core_radar-aptiv-00000000-gen8_ind13400-local/dev/SWE6/latest_report/flr8/"
+                    bat """
+                        jf rt del "${staticLatestPath}*" --quiet || exit 0
+                    """
+
+                    // Upload latest report to static location
+                    jfrog.uploadFile(
+                        fileName,
+                        "${staticLatestPath}",
+                        "${JFROG_BUILD_NAME}",
+                        "${JFROG_BUILD_NUMBER}",
+                        "JOB_URL=${JOB_URL};"
+                    )
+
+                    static_jfrog_html_url = "${JFROG_URL}/ui/native/${staticLatestPath}${justFileName}"
+                    echo "Uploaded FLR8 Test Report to Static location (Latest Report Location): ${static_jfrog_html_url}"
+
+                    withCredentials([usernamePassword(credentialsId: 'SID_JFrog_API_Key', usernameVariable: 'JFROG_USER', passwordVariable: 'JFROG_API_KEY')]) {
+                      bat """
+                        python ${pythonSendJfrogReportsToPH} --variant "${variantFlr8}" --gen_version "${genVersion}"
+                      """
+                    }
+                    echo 'Top 10 Test Reports from JFrog has been updated in Platform-Health.'
+
+                  } else {
+                    error "--------------- Latest FLR8 HTML file NOT FOUND !! Hence, JFrog Artifactory upload FAILED !!. ---------------"
+                  }
+                }
+              }
+            }
+        }
+      }
+    stage('Grafana') {
+          steps {
+            script {
+              catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                dir("${swe6ReportPath}"){
+
+                  //Extract the data from the HTML report and send it to the Platform-Health Matrices.
+                  if (latestFlr8GUIFile) {
+                    echo '---------------------------- Update Platform-Health (Grafana Dashboard) for FLR8 ----------------------------'
+                    def jobType = "SWE6"
+
+                    echo "Latest SWE6 HTML Test Report is: ${latestFlr8GUIFile} from date: ${currentDate}. Extracting its data & Sending to PH..."
+                    bat """
+                      python ${pythonSendJobResultsToPH} --htmlfile "${latestFlr8GUIFile}" --variant "${variantFlr8}" --job_type "${jobType}" --gen_version "${genVersion}" --commit_id "${fullCommitID}" > "${swe6ReportPath}\\swe6_results_summary.txt"
+                    """
+                    echo "Test/SRS Results Uploaded to SWE6 Platform-Health Dashboard: ${grafanaDashboardPath}"
+
+                    echo 'Performing Comparision with previous HTML report to fetch new failures and update Platform-Health with the same...'
+                    bat """
+                      python ${pythonSendHtmlComparisionToPH} --variant "${variantFlr8}" --gen_version "${genVersion}" --job_type "${jobType}" > "${swe6ReportPath}\\new_failures_test_srs.txt"
+                    """
+                    echo 'New Failures in Test/SRS uploaded to Platform-Health Dashboard'
+
+                  } else {
+                    error "Latest FLR8 HTML file NOT FOUND !! Hence, Platform-Health visualization FAILED !!"
+                  }
+                }
+              }
+            }
+          }
+        }
+    stage('Email'){
+      steps {
+        script {
+          dir("${swe6ReportPath}") {
+
+            def summaryFile = readFile('swe6_results_summary.txt')
+            def comparisonFile = readFile('new_failures_test_srs.txt')
+            def latestReportName = latestFlr8GUIFile.tokenize('\\')[-1]
+
+            // REGEX — extract values immediately, then null out Matchers (not serializable in CPS)
+            def testMatcher = summaryFile =~ /TOTAL:\s*(\d+), PASSED:\s*(\d+), FAILED:\s*(\d+), SKIPPED:\s*(\d+), ERRORS:\s*(\d+)/
+            def srsMatcher = summaryFile =~ /SRS RESULTS =+[\s\S]*?TOTAL:\s*(\d+), PASSED:\s*(\d+), FAILED:\s*(\d+), ERRORS:\s*(\d+)/
+            def newTestFailMatcher = comparisonFile =~ /New Failed Test Count:\s*(\d+)/
+            def newSrsFailMatcher = comparisonFile =~ /New Failed SRS Count:\s*(\d+)/
+
+            if (!testMatcher || !srsMatcher) {
+                testMatcher = null
+                srsMatcher = null
+                newTestFailMatcher = null
+                newSrsFailMatcher = null
+                error "Unable to parse swe6_results_summary.txt file"
+            }
+
+            // VALUES
+            def TOTAL = testMatcher[0][1]
+            def PASSED = testMatcher[0][2]
+            def FAILED = testMatcher[0][3]
+            def SKIPPED = testMatcher[0][4]
+            def ERRORS = testMatcher[0][5]
+            def SRS_PASSED = srsMatcher[0][2]
+            def SRS_FAILED = srsMatcher[0][3]
+            def SRS_ERRORS = srsMatcher[0][4]
+            def NEW_TEST_FAIL = newTestFailMatcher ? newTestFailMatcher[0][1] : '0'
+            def NEW_SRS_FAIL = newSrsFailMatcher ? newSrsFailMatcher[0][1] : '0'
+
+            // Null out Matchers before any checkpoint-able step (bat, sh, etc.)
+            testMatcher = null
+            srsMatcher = null
+            newTestFailMatcher = null
+            newSrsFailMatcher = null
+
+            //PIE CHART GENERATION
+            bat """
+              python ${generate_ci_piecharts} --passed-tests ${PASSED} --failed-tests ${FAILED} --skipped-tests ${SKIPPED} --error-tests ${ERRORS} --passed-srs ${SRS_PASSED} --failed-srs ${SRS_FAILED} --error-srs ${SRS_ERRORS}
+            """
+
+            // SEND EMAIL
+            emailext(
+              from: "CICD Advanced Radar <donotreply@aptiv.com>",
+              subject: "Gen8 SWE6 (FLR8) Nightly Job Run #${env.BUILD_NUMBER} | ${todayVariant} [${todayXcp}]",
+              to: emailRecipients.join(", "),
+              mimeType: 'text/html',
+              attachmentsPattern: "${latestReportName}, swe6_results_summary.txt,new_failures_test_srs.txt,test_results_pie.png,srs_results_pie.png",
+
+              body: """
+<html>
+<body style="margin:0;background:${theme.bodyBg};font-family:Segoe UI,Arial;color:${theme.textColor};">
+
+<div style="max-width:1000px;margin:auto;padding:20px;">
+
+<!-- HEADER -->
+<div style="background:#1520A6;padding:15px;border-radius:6px;">
+<h2 style="margin:0;color:white;">🚀 Gen8 SWE6 Nightly CI-Test Execution Report</h2>
+<p style="margin-top:6px;color:${theme.headerSubText};font-size:13px;">Variant: <strong style="color:${theme.headerVariant};">${todayVariant}</strong> &nbsp;|&nbsp; XCP: <strong style="color:${theme.headerXcp};">${todayXcp}</strong></p>
+</div>
+
+<!-- GREETING -->
+<div style="margin-top:18px;font-size:14px;${theme.greetText}">
+
+Hello Team,<br><br>
+
+Here are the test results from nightly CI Job for
+<strong style="color:${theme.dateHL};">${new Date().format("EEEE dd-MMMM-yyyy")}</strong>
+</div>
+
+<!-- BUILD CONFIG -->
+<div style="background:${theme.cardBg};margin-top:15px;padding:15px;border-radius:10px;${theme.cardBorder}">
+<h3 style="color:${theme.sectionTitle};margin-top:0;">🔧 Build Configuration</h3>
+<table style="font-size:14px;border-spacing:8px 4px;">
+<tr><td style="color:${theme.labelColor};">Variant Tested:</td><td><strong style="color:${theme.variantColor};">${todayVariant}</strong></td></tr>
+<tr><td style="color:${theme.labelColor};">XCP Protocol:</td><td><strong style="color:${theme.xcpColor};">${todayXcp}</strong></td></tr>
+<tr><td style="color:${theme.labelColor};">Commit ID:</td><td><code style="color:${theme.commitColor};">${fullCommitID}</code></td></tr>
+</table>
+</div>
+
+<!-- ================= TWO COLUMN ================= -->
+<table width="100%" cellpadding="10" cellspacing="0" style="margin-top:25px;">
+<tr>
+
+<!-- TEST -->
+<td width="50%" valign="top">
+<div style="background:${theme.cardBg};border-radius:10px;padding:15px;${theme.cardBorder}">
+
+<div style="text-align:center;margin-bottom:12px;">
+<span style="background:${theme.badgeBg};padding:6px 16px;border-radius:20px;font-weight:bold;color:${theme.badgeText};">
+
+Overall Test Summary
+</span>
+</div>
+
+<table align="center">
+<tr>
+
+<td width="220">
+<table style="border-spacing:0 6px;width:200px;font-size:13px;">
+<tr><td style="background:${theme.passBg};padding:7px;border-radius:6px;color:${theme.passText};">
+
+PASSED <span style="float:right;font-weight:bold;">${PASSED}</span></td></tr>
+<tr><td style="background:${theme.failBg};padding:7px;border-radius:6px;color:${theme.failText};">
+
+FAILED <span style="float:right;font-weight:bold;">${FAILED}</span></td></tr>
+<tr><td style="background:${theme.skipBg};padding:7px;border-radius:6px;color:${theme.skipText};">
+
+SKIPPED <span style="float:right;font-weight:bold;">${SKIPPED}</span></td></tr>
+<tr><td style="background:${theme.errBg};padding:7px;border-radius:6px;color:${theme.errText};">
+
+ERROR <span style="float:right;font-weight:bold;">${ERRORS}</span></td></tr>
+</table>
+</td>
+
+<td width="20"></td>
+
+<td align="center">
+<img src="cid:test_results_pie.png" width="170">
+</td>
+
+</tr>
+</table>
+
+</div>
+</td>
+
+<!-- SRS -->
+<td width="50%" valign="top">
+<div style="background:${theme.cardBg};border-radius:10px;padding:15px;${theme.cardBorder}">
+
+<div style="text-align:center;margin-bottom:12px;">
+<span style="background:${theme.badgeBg};padding:6px 16px;border-radius:20px;font-weight:bold;color:${theme.badgeText};">
+
+Overall SRS Summary
+</span>
+</div>
+
+<table align="center">
+<tr>
+
+<td width="220">
+<table style="border-spacing:0 6px;width:200px;font-size:13px;">
+<tr><td style="background:${theme.passBg};padding:7px;border-radius:6px;color:${theme.passText};">
+
+PASSED <span style="float:right;font-weight:bold;">${SRS_PASSED}</span></td></tr>
+<tr><td style="background:${theme.failBg};padding:7px;border-radius:6px;color:${theme.failText};">
+
+FAILED <span style="float:right;font-weight:bold;">${SRS_FAILED}</span></td></tr>
+<tr><td style="background:${theme.errBg};padding:7px;border-radius:6px;color:${theme.errText};">
+
+ERROR <span style="float:right;font-weight:bold;">${SRS_ERRORS}</span></td></tr>
+</table>
+</td>
+
+<td width="20"></td>
+
+<td align="center">
+<img src="cid:srs_results_pie.png" width="170">
+</td>
+
+</tr>
+</table>
+
+</div>
+</td>
+
+</tr>
+</table>
+
+<!-- DASHBOARD -->
+<div style="background:${theme.cardBg};margin-top:20px;padding:15px;border-radius:10px;${theme.cardBorder}">
+<h3 style="color:${theme.sectionTitle};">📊 Reports & Dashboards</h3>
+
+<a href="${grafanaDashboardPath}"
+style="color:${theme.linkColor};text-decoration:none; display:block;">
+🔍 Platform Health Visualization
+</a>
+<br>
+<a href="${static_jfrog_html_url}"
+style="color:${theme.linkColor};text-decoration:none; display:block; margin-top:6px;">
+⬇️ Download Latest Test Report
+</a>
+<br>
+<a href="${jfrog_all_reports}"
+style="color:${theme.linkColor};text-decoration:none; display:block; margin-top:6px;">
+📂 Find all Test Reports
+</a>
+
+</div>
+
+<!-- FAILURES -->
+<div style="background:${theme.cardBg};margin-top:20px;padding:18px;border-radius:10px;${theme.cardBorder}">
+<h3 style="color:${theme.failTitle};margin-bottom:15px;">⛔ New Failures Detected</h3>
+
+<p style="font-size:16px; margin:6px 0;">Delta Failures in Test Cases: <span style="font-weight:bold; color:${theme.failValue};">${NEW_TEST_FAIL}</span></p>
+
+<p style="font-size:16px; margin:6px 0;">Delta Failures in SRS (Requirements): <span style="font-weight:bold; color:${theme.failValue};">${NEW_SRS_FAIL}</span></p>
+</div>
+
+<br>
+
+<div style="font-size:12px; color:${theme.noteText}; font-style:italic;">
+<b>Note:</b><br>
+
+    &nbsp;&nbsp;• Delta represents newly introduced failures compared to the previous run.<br>
+&nbsp;&nbsp;• Refer attachments for detailed reports.
+
+</div>
+
+<!-- ROTATION SCHEDULE -->
+<div style="background:${theme.cardBg};margin-top:20px;padding:18px;border-radius:10px;${theme.cardBorder}">
+<h3 style="color:${theme.sectionTitle};margin-top:0;">📅 Test Rotation Schedule (5-Day Cycle)</h3>
+<p style="font-size:12px;color:${theme.subText};margin-top:2px;">Each day a different variant + protocol combination is tested automatically.</p>
+<table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:10px;">
+<tr style="background:#1e40af;">
+  <th style="padding:10px 12px;text-align:left;color:#ffffff;font-size:14px;border-bottom:2px solid #3b82f6;">Date</th>
+  <th style="padding:10px 12px;text-align:left;color:#ffffff;font-size:14px;border-bottom:2px solid #3b82f6;">Variant</th>
+  <th style="padding:10px 12px;text-align:left;color:#ffffff;font-size:14px;border-bottom:2px solid #3b82f6;">XCP Protocol</th>
+</tr>
+${testScheduleHtml}
+</table>
+</div>
+
+<!-- EMAIL SIGNATURE -->
+<p style="margin-top:30px;">Best Regards,<br>
+<b style="color:#00539C;">Gen8 SWE6 CI</b><br>
+<a href="${swe6_flr8_job_url}" style="color:#0078D7;">♾️ CI-Job Link</a>
+</p>
+
+<!-- FOOTER -->
+<div style="margin-top:20px;font-size:12px;color:${theme.footerText};text-align:center;">
+
+📎 Attached Reports: HTML Test Execution, Results Summary & Delta Failures
+</div>
+
+</div>
+</body>
+</html>
+
+"""
+            )
+
+            // ---- Teams Notification via Power Automate Webhook ----
+            // Posts an Adaptive Card to the Teams channel. The webhook URL is stored
+            // as a Jenkins credential (string secret ID: ADVRADAR_SWE6_TEAMS_WEBHOOK_URL).
+            // If not configured, this block is silently skipped.
+            try {
+              withCredentials([string(credentialsId: 'ADVRADAR_SWE6_TEAMS_WEBHOOK_URL', variable: 'TEAMS_WEBHOOK_URL')]) {
+                // Null-safe int coercion so a missing/non-numeric metric does not throw NPE and silently suppress the Teams card.
+                def toIntSafe = { v -> (v == null) ? 0 : (v.toString().trim().isInteger() ? v.toString().trim().toInteger() : 0) }
+                def hasFail = (toIntSafe(FAILED) > 0 || toIntSafe(ERRORS) > 0 || toIntSafe(NEW_TEST_FAIL) > 0)
+                // Single-backslash \u escapes are decoded by the Groovy compiler into
+                // the actual unicode glyphs, so JsonOutput.toJson serializes them as
+                // real characters (or proper JSON \uXXXX escapes), which Teams renders.
+                // Double-backslash (\\u274c) emits the literal 6-char text "\u274c".
+                def teamsStatus = hasFail ? "\u274c FAILED" : "\u2705 PASSED"
+                def statusColor = hasFail ? "Attention" : "Good"
+                def cardTitle = "Gen8 SWE6 (FLR8) Nightly #${env.BUILD_NUMBER}"
+
+                // Build upcoming schedule (next 3 days)
+                def scheduleMatrix = [
+                  [variant: 'flr8_standalone',             xcp: 'Eth_Direct'],
+                  [variant: 'flr8_al_can_standalone',      xcp: 'CAN'],
+                  [variant: 'flr8_al_can_standalone',      xcp: 'Eth_Direct'],
+                  [variant: 'flr8_satellite_can',          xcp: 'CAN'],
+                  [variant: 'flr8_satellite_can',          xcp: 'Eth_Direct'],
+                  [variant: 'flr8_satellite_eth_high_det', xcp: 'Eth_Direct'],
+                ]
+                def doy = new Date().format("D").toInteger()
+                def upcomingLines = []
+                for (int i = 1; i < Math.min(4, scheduleMatrix.size()); i++) {
+                  def ci = (doy + i) % scheduleMatrix.size()
+                  def c = scheduleMatrix[ci]
+                  def dl = (new Date() + i).format('EEE MMM dd')
+                  upcomingLines.add("${dl}: ${c.variant} [${c.xcp}]")
+                }
+                def upcomingText = upcomingLines.join("\n\n")
+
+                def cardPayload = [
+                  type: "message",
+                  attachments: [[
+                    contentType: "application/vnd.microsoft.card.adaptive",
+                    content: [
+                      type: "AdaptiveCard",
+                      '$schema': "http://adaptivecards.io/schemas/adaptive-card.json",
+                      version: "1.4",
+                      body: [
+                        [type:"TextBlock", size:"Large", weight:"Bolder", color:"Accent", text:cardTitle],
+                        [type:"TextBlock", weight:"Bolder", color:statusColor, text:teamsStatus],
+                        [type:"TextBlock", wrap:true, text:"**Variant:** ${todayVariant}  |  **XCP:** ${todayXcp}  |  **Commit:** ${env.SHORT_COMMIT_HASH}"],
+                        [type:"TextBlock", wrap:true, color:"Good", text:"\u2705 Tests PASSED: ${PASSED}"],
+                        [type:"TextBlock", wrap:true, color:"Attention", text:"\u274c Tests FAILED: ${FAILED}  |  Errors: ${ERRORS}"],
+                        [type:"TextBlock", wrap:true, color:"Warning", text:"\u26a0\ufe0f Tests SKIPPED: ${SKIPPED}  |  New Failures: ${NEW_TEST_FAIL}"],
+                        [type:"TextBlock", wrap:true, color:"Good", text:"\u2705 SRS: ${SRS_PASSED} passed / ${SRS_FAILED} failed / ${SRS_ERRORS} errors"],
+                        [type:"TextBlock", wrap:true, isSubtle:true, separator:true, text:"**New Failures:** ${NEW_TEST_FAIL} test / ${NEW_SRS_FAIL} SRS"],
+                        [type:"TextBlock", wrap:true, separator:true, size:"Small", weight:"Bolder", text:"Upcoming Schedule:"],
+                        [type:"TextBlock", wrap:true, size:"Small", isSubtle:true, text:upcomingText],
+                        [type:"TextBlock", wrap:true, text:"[CI Job](${swe6_flr8_job_url}) | [Latest Report](${static_jfrog_html_url}) | [All Reports](${jfrog_all_reports}) | [Platform Health](${grafanaDashboardPath})"]
+                      ]
+                    ]
+                  ]]
+                ]
+
+                def jsonPayload = groovy.json.JsonOutput.toJson(cardPayload)
+                // Write to temp file to avoid shell quoting issues
+                writeFile file: 'teams_card_payload.json', text: jsonPayload
+
+                try {
+                  bat 'powershell -NoProfile -Command "Invoke-RestMethod -Uri $env:TEAMS_WEBHOOK_URL -Method Post -ContentType \'application/json\' -Body (Get-Content -Raw teams_card_payload.json)"'
+                  echo "Teams notification sent successfully."
+                } finally {
+                  // Always remove the payload file, even when the POST fails, so it does not leak on the agent workspace.
+                  bat 'if exist teams_card_payload.json del /f /q teams_card_payload.json'
+                }
+              }
+            } catch (Exception teamsErr) {
+              echo "Teams notification skipped or failed: ${teamsErr.message}"
+            }
+          }
+        }
+      }
+    }
+    // ----------------------------------------- SWE6 (FLR8): End ---------------------------------------
+  }
+}
