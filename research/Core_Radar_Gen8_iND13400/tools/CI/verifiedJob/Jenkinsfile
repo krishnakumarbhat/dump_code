@@ -1,0 +1,224 @@
+import groovy.transform.Field
+
+@Library('YGGDRASIL_Libs@88a041d7f91607b4306baa042b4506a202ad31c0') _
+def jfrog = new Main.Jfrog()
+
+def artifactory_upload_path = ""
+def fetch_refspec = ""
+def sw_version = ""
+def upload_bazel_cache = ""
+
+@Field def jfrog_output_url = ""
+
+pipeline {
+  options {
+    ansiColor('xterm')
+  }
+
+  agent {
+    kubernetes {
+      yaml '''
+        apiVersion: v1
+        kind: Pod
+        spec:
+          containers:
+          - name: "git"
+            image: "jfrog.asux.aptiv.com/core_radar-aptiv-00000000-docker-local/alpine-git:v2.30.1"
+            tty: true
+            command: ["/bin/sh"]
+            workingDir: /opt/jenkins
+          imagePullSecrets:
+          - name: aptiv-jfrog-docker
+        '''
+    }
+  }
+
+  environment {
+    VARIANTS                        = "flr8,srr8p"
+    OUTPUT_PATH                     = "${WORKSPACE}/bazel-bin/outputs"
+    ARTIFACTORY_BASE_REPO           = "core_radar-aptiv-00000000-gen8_ind13400-local"
+    JFROG_URL                       = "https://jfrog.asux.aptiv.com"
+    SHORT_COMMIT_HASH               = GIT_COMMIT.substring(0,7)
+    ARTIFACTORY_BASELINE_DOWNLOAD   = ""
+  }
+
+  stages {
+    stage ('Setup') {
+      steps {
+        script {
+          def parent_hash = ""
+          def parent_hash_short = ""
+
+          if (env.TAG_NAME){
+            // If build was triggered by a Tag
+            artifactory_upload_path = "${ARTIFACTORY_BASE_REPO}/releases/${env.TAG_NAME}"
+            fetch_refspec = "+refs/heads/*:refs/remotes/origin/*"
+            sw_version = env.TAG_NAME
+          }
+          else if (env.GERRIT_REFNAME) {
+            // If build was triggered by a Gerrit Review
+            artifactory_upload_path = "${ARTIFACTORY_BASE_REPO}/reviews/${GIT_BRANCH}"
+            fetch_refspec = "+${GERRIT_REFNAME}"
+          }
+          else {
+            // Else build was triggered by a branch update
+            artifactory_upload_path = "${ARTIFACTORY_BASE_REPO}/branches/${GIT_BRANCH}/${SHORT_COMMIT_HASH}"
+            fetch_refspec = "+refs/heads/${GIT_BRANCH}:refs/remotes/origin/${GIT_BRANCH}"
+          }
+          jfrog_output_url = "${JFROG_URL}/ui/repos/tree/General/${artifactory_upload_path}"
+
+          echo "fetch_refspec = ${fetch_refspec}"
+          echo "artifactory_upload_path = ${artifactory_upload_path}"
+
+          // Get Parent Commit Hash
+          if ("${GIT_BRANCH}" == "dev"){
+            // Get last dev commit from this dev commit
+            parent_hash = sh (script: "git rev-parse ${GIT_COMMIT}^", returnStdout: true).trim()
+            upload_bazel_cache = "--remote_upload_local_results"
+          }
+          else {
+            // Get last dev commit that this branch was formed from or merged with
+            withCredentials([gitUsernamePassword(credentialsId: 'SID_Gerrit_API_Key',
+            gitToolName: 'git-tool')]) {
+                sh 'git fetch --no-tags --force --no-recurse-submodules -- origin +refs/heads/dev:refs/remotes/origin/dev'
+            }
+            parent_hash = sh (script: "git merge-base ${GIT_COMMIT} origin/dev", returnStdout: true).trim()
+          }
+
+          parent_hash_short = parent_hash.substring(0,7)
+          ARTIFACTORY_BASELINE_DOWNLOAD = "${ARTIFACTORY_BASE_REPO}/dev/${parent_hash_short}/coverity/baseline"
+          echo "---- Envionment variables for Verified job ----"
+          echo sh(script: 'env|sort', returnStdout: true)
+        }
+      }
+    }
+    stage ('Trigger Jobs') {
+      parallel{
+        // stage('Build & Test') {
+        //   stages{
+        //     stage('Build') {
+        //       steps {
+        //         script {
+        //           def build_cmd = "bazelisk build //:gen8 --color=yes ${upload_bazel_cache} --jobs=auto"
+
+        //           // Trigger the Build Job
+        //           build job: "iND13400/Build-Job",
+        //           parameters: [
+        //               string(name: 'VARIANTS', value: "${VARIANTS}"),
+        //               string(name: 'COMMIT_HASH', value: "${GIT_COMMIT}"),
+        //               string(name: 'BRANCH_NAME', value: "${GIT_BRANCH}"),
+        //               string(name: 'BUILD_CMD', value: "${build_cmd}"),
+        //               string(name: 'ARTIFACTORY_UPLOAD_PATH', value: "${artifactory_upload_path}/buildFiles/"),
+        //               string(name: 'OUTPUT_PATH', value: "bazel-bin/outputs"),
+        //               string(name: 'FETCH_REFSPEC', value: "${fetch_refspec}"),
+        //               string(name: 'GERRIT_CHANGE_NUMBER', value: env.GERRIT_CHANGE_NUMBER),
+        //               string(name: 'GERRIT_CHANGE_URL', value: env.GERRIT_CHANGE_URL),
+        //               string(name: 'GERRIT_PATCHSET_NUMBER', value: env.GERRIT_PATCHSET_NUMBER),
+        //               string(name: 'GERRIT_CHANGE_ID', value: env.GERRIT_CHANGE_ID),
+        //               string(name: 'GERRIT_CREDENTIALS_ID', value: env.GERRIT_CREDENTIALS_ID),
+        //               string(name: 'GERRIT_BRANCH', value: env.GERRIT_BRANCH),
+        //           ],
+        //           wait: true,
+        //           propagate: true
+        //         }
+        //       }
+        //     }
+        //     // stage ('Smoke-Test'){
+        //     //   steps {
+        //     //     script {
+        //     //       // Trigger the Integration Test Job
+        //     //       build job: "iND13400/Smoke-Test-Job",
+        //     //       parameters: [
+        //     //           string(name: 'VARIANTS', value: "${VARIANTS}"),
+        //     //           string(name: 'COMMIT_HASH', value: "${GIT_COMMIT}"),
+        //     //           string(name: 'BRANCH_NAME', value: "${GIT_BRANCH}"),
+        //     //           string(name: 'ARTIFACTORY_DOWNLOAD_PATH', value: "${artifactory_upload_path}/buildFiles/"),
+        //     //           string(name: 'ARTIFACTORY_UPLOAD_PATH',   value: "${artifactory_upload_path}/smokeTests/"),
+        //     //           string(name: 'FETCH_REFSPEC', value: "${fetch_refspec}"),
+        //     //           string(name: 'SW_VERSION', value: "${sw_version}"),
+        //     //           string(name: 'GERRIT_CHANGE_NUMBER', value: env.GERRIT_CHANGE_NUMBER),
+        //     //           string(name: 'GERRIT_CHANGE_URL', value: env.GERRIT_CHANGE_URL),
+        //     //           string(name: 'GERRIT_PATCHSET_NUMBER', value: env.GERRIT_PATCHSET_NUMBER),
+        //     //           string(name: 'GERRIT_CHANGE_ID', value: env.GERRIT_CHANGE_ID),
+        //     //           string(name: 'GERRIT_CREDENTIALS_ID', value: env.GERRIT_CREDENTIALS_ID),
+        //     //           string(name: 'GERRIT_BRANCH', value: env.GERRIT_BRANCH),
+        //     //       ],
+        //     //       wait: true,
+        //     //       propagate: true
+        //     //     }
+        //     //   }
+        //     // }
+        //   }
+        // }
+        stage ('Tag') {
+          when { branch 'dev' }
+          steps {
+            script {
+              sh "git config --global filter.lfs.smudge \"git-lfs smudge --skip -- %f\""
+              sh "git config --global filter.lfs.process \"git-lfs filter-process --skip\""
+              sh "git sparse-checkout disable"
+              def previous_commit = sh(script: 'git diff --name-only HEAD~1 HEAD', returnStdout: true)
+              println("Following files has been changed in previous commit: ${previous_commit}")
+              if ("${previous_commit}".trim().contains('software/common/versions/versions.c')) {
+                def app_major = sh(script:
+                  '''
+                    #!/bin/bash
+
+                    app_major_str="$(grep '.major' software/common/versions/versions.c)"
+
+                    regex="\\.major[[:space:]]*=[[:space:]]*([[:digit:]]+)[uU]*"
+                    if [[ $app_major_str =~ $regex ]]; then
+                        app_major="${BASH_REMATCH[1]}"
+                    fi
+                    echo "$app_major"
+                  ''',
+                  returnStdout: true,
+                ).trim()
+                def app_minor = sh(script:
+                  '''
+                    #!/bin/bash
+
+                    app_minor_str="$(grep '.minor' software/common/versions/versions.c)"
+
+                    regex="\\.minor[[:space:]]*=[[:space:]]*([[:digit:]]+)[uU]*"
+                    if [[ $app_minor_str =~ $regex ]]; then
+                        app_minor="${BASH_REMATCH[1]}"
+                    fi
+                    echo "$app_minor"
+                  ''',
+                  returnStdout: true,
+                ).trim()
+                def app_patch = sh(script:
+                  '''
+                    #!/bin/bash
+
+                    app_patch_str="$(grep '.patch' software/common/versions/versions.c)"
+
+                    regex="\\.patch[[:space:]]*=[[:space:]]*([[:digit:]]+)[uU]*"
+                    if [[ $app_patch_str =~ $regex ]]; then
+                        app_patch="${BASH_REMATCH[1]}"
+                    fi
+                    echo "$app_patch"
+                  ''',
+                  returnStdout: true,
+                ).trim()
+                def tag = "v${app_major}.${app_minor}.${app_patch}"
+
+                echo "Adding Tag ${tag} to commit ${GIT_COMMIT}"
+                try {
+                  withCredentials([gitUsernamePassword(credentialsId: 'SID_Gerrit_API_Key', gitToolName: 'Default')]) {
+                    sh "git tag ${tag} ${GIT_COMMIT}"
+                    sh "git push origin ${tag}"
+                  }
+                } catch (err) {
+                  echo "Tag ${tag} already exists! Cannot create a new tag with the same version."
+                  echo "This error is expected when versions.c is changed, but the version number is not."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
