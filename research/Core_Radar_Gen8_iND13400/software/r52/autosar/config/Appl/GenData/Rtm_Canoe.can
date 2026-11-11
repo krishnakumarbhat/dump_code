@@ -1,0 +1,773 @@
+/**********************************************************************************************************************
+ *  COPYRIGHT
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  \verbatim
+ *
+ *                 This software is copyright protected and proprietary to Vector Informatik GmbH.
+ *                 Vector Informatik GmbH grants to you only those rights as set out in the license conditions.
+ *                 All other rights remain with Vector Informatik GmbH.
+ *  \endverbatim
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  LICENSE
+ *  -------------------------------------------------------------------------------------------------------------------
+ *            Module: Rtm
+ *           Program: 
+ *          Customer: 
+ *       Expiry Date: Not restricted
+ *    License Scope : The usage is restricted to PAI19494
+ *
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  FILE DESCRIPTION
+ *  -------------------------------------------------------------------------------------------------------------------
+ *              File: Rtm_Canoe.can
+ *   Generation Time: 2026-07-28 13:43:16
+ *           Project: Gen8_iND13400 - Version 1.0
+ *          Delivery: PAI19494
+ *      Tool Version: DaVinci Configurator Classic (beta) 5.31.55 SP5
+ *
+ *
+ *********************************************************************************************************************/
+
+/**********************************************************************************************************************
+ ! BETA VERSION                                                                                                       !
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ ! This version of DaVinci Configurator Classic and/or the related Basic Software Package is BETA software.               !
+ ! BETA Software is basically operable, but not sufficiently tested, verified and/or qualified for use in series      !
+ ! production and/or in vehicles operating on public or non-public roads.                                             !
+ ! In particular, without limitation, BETA Software may cause unpredictable ECU behavior, may not provide all         !
+ ! functions necessary for use in series production and/or may not comply with quality requirements which are         !
+ ! necessary according to the state of the art. BETA Software must not be used in series production.                  !
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+**********************************************************************************************************************/
+
+
+
+/** @defgroup CAPL Rtm
+* \brief Rtm_Canoe.can offers GUI based Rtm control.
+* @{
+*/
+/** @defgroup Internal Internal */
+/** @defgroup External External */
+/** @} */
+
+/// @cond DEV
+
+includes
+{
+#include "RtmCan.cin"
+}
+
+
+variables
+{
+/**********************************************************************************************************************
+ *  GLOBAL DATA TYPES AND STRUCTURES
+ *********************************************************************************************************************/
+  enum measurementVariant {
+    LIVE = 1,
+    PARALLEL = 2,
+    SERIAL = 3,
+    CLEAR = 4
+  };
+
+  enum systemState {
+    STATE_IDLE = 0,
+    STATE_CALIBRATED_IDLE = 1,
+    STATE_WAIT_FOR_ECU_RESPONSE = 2,
+    STATE_LIVE_MEASUREMENT = 3,
+    STATE_ERROR_EXIT = 4
+  };
+  enum systemState gState = STATE_IDLE;
+
+  enum boolean {
+    FALSE = 0,
+    TRUE = 1
+  };
+
+  enum triggerReadingState {
+    TR_IDLE = 0,
+    TR_REQUEST_RECEIVED = 1,
+    TR_UPLOAD_FINISHED = 2
+  };
+
+
+/**********************************************************************************************************************
+ *  GLOBAL DATA PROTOTYPES
+ *********************************************************************************************************************/
+  enum boolean gAlreadyReseted = FALSE;
+
+  enum RtmCan_MeasurementStateType gActiveMeasurements[RTMCAN_MEASUREMENTS_COUNT];
+
+  enum measurementVariant measVariant = CLEAR;
+
+  enum triggerReadingState gTriggerReadingState = TR_IDLE;
+
+  enum boolean gDidClearResultsSucceed = TRUE;
+}
+
+/// @endcond
+
+
+/**********************************************************************************************************************
+ *  LOCAL FUNCTIONS
+ *********************************************************************************************************************/
+
+/**********************************************************************************************************************
+  Appl_RtmCanRespReceived
+**********************************************************************************************************************/
+/*! \brief        Provides text for measurement procedure.
+ *  \details      Callback function for RtmCan.cin. Called if positive response is received from ECU.
+ *  \param[in]    originState             The origin state of RtmCan.cin in which the Rtm_Resp was received. The
+ *                                        current state can be requested by calling RtmCan_GetRtmCanState().
+ *  \return       -
+ *  \pre          Must only be called by RtmCan.cin.
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void Appl_RtmCanRespReceived(enum RtmCan_StateType originState)
+{
+  if ((gState == STATE_WAIT_FOR_ECU_RESPONSE) || (gState == STATE_LIVE_MEASUREMENT))
+  {
+    testSupplyTextEvent("EcuResponseOk");
+  }
+} /* Appl_RtmCanRespReceived */
+
+
+/**********************************************************************************************************************
+  Appl_RtmCanMeasurementFinished
+**********************************************************************************************************************/
+/*! \brief        Provides text for measurement procedure.
+ *  \details      Callback function for RtmCan.cin. Called if runtime measurement is successfully finished. If
+ *                trigger reading was received, indicate that measurement is finished and generate intermediate csv
+ *                reports.
+ *  \return       -
+ *  \pre          Must only be called by RtmCan.cin.
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void Appl_RtmCanMeasurementFinished()
+{
+  testSupplyTextEvent("MeasurementFinished");
+
+  if (gTriggerReadingState == TR_REQUEST_RECEIVED)
+  {
+    gTriggerReadingState = TR_UPLOAD_FINISHED;
+    RtmCan_GenerateReport(RTMCAN_REPORT_ALL, RTMCAN_TRUE);
+  }
+} /* Appl_RtmCanMeasurementFinished */
+
+
+/**********************************************************************************************************************
+  Appl_RtmCanTriggerReadingReceived
+**********************************************************************************************************************/
+/*! \brief        Triggers generation of html report and finalizes the measurement.
+ *  \details      Callback function for RtmCan.cin. Called if trigger reading request was received what stops the
+ *                measurement.
+ *  \return       -
+ *  \pre          Must only be called by RtmCan.cin.
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void Appl_RtmCanTriggerReadingReceived()
+{
+  if ((gTriggerReadingState == TR_IDLE) && (RtmCan_GetRtmCanState() == RTMCAN_STATE_MEASURING))
+  {
+    gTriggerReadingState = TR_REQUEST_RECEIVED;
+  }
+} /* Appl_RtmCanTriggerReadingReceived */
+
+
+/**********************************************************************************************************************
+  _GenerateReport
+**********************************************************************************************************************/
+/*! \brief        Generates a html report.
+ *  \details      The html report complements the csv reports, generated by RtmCan.cin.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void _GenerateReport()
+{
+  dword i;
+  dword j;
+  dword precision;
+  struct RtmCan_ResultType resultMP;
+
+  precision = 2;
+
+  for (i = RTMCAN_NUMBER_OF_OVERHEAD_MPS; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+  {
+    if (RtmCan_MeasurementSectionActive[i] == TRUE)
+    {
+      char text[200];
+      char name[128];
+      char mpType[50];
+
+      /* Get results of current MP. */
+      RtmCan_GetMPResultByID(i, resultMP);
+
+      if ((strlen(RtmCan_Measurements[i].Name)) > 70)
+      {
+        for (j = 0; j < 70; j++)
+        {
+          name[j] = RtmCan_Measurements[i].Name[j];
+        }
+        name[70] = '\n';
+
+        for (j = 70; j < strlen(RtmCan_Measurements[i].Name); j++)
+        {
+          name[j + 1] = RtmCan_Measurements[i].Name[j];
+        }
+      }
+      else
+      {
+        snprintf(name, elcount(name), "%s", RtmCan_Measurements[i].Name);
+      }
+
+      if (resultMP.RtmCan_Result_MP_Type == RTMCAN_MP_TYPE_GROSS_EXECUTIONTIME)
+      {
+        strncpy(mpType, "GrossExecutionTime", elcount(mpType));
+      }
+      else if (resultMP.RtmCan_Result_MP_Type == RTMCAN_MP_TYPE_FLAT_EXECUTIONTIME)
+      {
+        strncpy(mpType, "FlatExecutionTime", elcount(mpType));
+      }
+      else if (resultMP.RtmCan_Result_MP_Type == RTMCAN_MP_TYPE_NET_EXECUTIONTIME)
+      {
+        strncpy(mpType, "NetExecutionTime", elcount(mpType));
+      }
+      else
+      {
+        mpType[0] = '\0';
+      }
+
+      snprintf(text, elcount(text), "%s_Meas_%s\\n\\nMeasurementGroup: %s\\nMP type: %s", RtmCan_Measurements[i].Group, name, RtmCan_Measurements[i].Group, mpType);
+      if ((RtmCan_Measurements[i].MeasurementCount_current - RtmCan_Measurements[i].MeasurementCount_last) == 0)
+      {
+        TestStepPass(text, "Measurement was active but never executed.\n\n\n\n");
+      }
+      else
+      {
+        if (RtmCan_Measurements[i].AssignedToCore < RTMCAN_NUMBER_OF_CORES)
+        {
+          if ((resultMP.RtmCan_Result_MP_Type == RTMCAN_MP_TYPE_GROSS_EXECUTIONTIME)
+           && (resultMP.RtmCan_Result_ID != RTMCAN_INDEX_OF_CPU_LOAD))
+          {
+            TestStepPass(text, "count: %u\nmax: %.*f us\nmin: %.*f us\naverage: %.*f us\ncore ID: %u\nrelative max: %.*f percent\n",
+              resultMP.RtmCan_Result_NumberOfExecution,
+              precision, resultMP.RtmCan_Result_MaxRuntime_us,
+              precision, resultMP.RtmCan_Result_MinRuntime_us,
+              precision, resultMP.RtmCan_Result_AverageRuntime_us,
+              resultMP.RtmCan_Result_AssignedToCore,
+              1, resultMP.RtmCan_Result_RelativeMax_percent
+            );
+          }
+          else
+          {
+            TestStepPass(text, "count: %u\nmax: %.*f us\nmin: %.*f us\naverage: %.*f us\noverall cpuload: %.*f%%\ncore ID: %u\nrelative max: %.*f percent\n",
+              resultMP.RtmCan_Result_NumberOfExecution,
+              precision, resultMP.RtmCan_Result_MaxRuntime_us,
+              precision, resultMP.RtmCan_Result_MinRuntime_us,
+              precision, resultMP.RtmCan_Result_AverageRuntime_us,
+              1, resultMP.RtmCan_Result_CpuLoad,
+              resultMP.RtmCan_Result_AssignedToCore,
+              1, resultMP.RtmCan_Result_RelativeMax_percent
+            );
+          }
+        }
+        else
+        {
+          if ((resultMP.RtmCan_Result_MP_Type == RTMCAN_MP_TYPE_GROSS_EXECUTIONTIME)
+           && (resultMP.RtmCan_Result_ID != RTMCAN_INDEX_OF_CPU_LOAD))
+          {
+            TestStepPass(text, "count: %u\nmax: %.*f us\nmin: %.*f us\naverage: %.*f us\ncore ID: %s\nrelative max: %.*f percent\n",
+              resultMP.RtmCan_Result_NumberOfExecution,
+              precision, resultMP.RtmCan_Result_MaxRuntime_us,
+              precision, resultMP.RtmCan_Result_MinRuntime_us,
+              precision, resultMP.RtmCan_Result_AverageRuntime_us,
+              "-",
+              1, resultMP.RtmCan_Result_RelativeMax_percent
+            );
+          }
+          else
+          {
+            TestStepPass(text, "count: %u\nmax: %.*f us\nmin: %.*f us\naverage: %.*f us\noverall cpuload: %.*f%%\ncore ID: %s\nrelative max: %.*f percent\n",
+              resultMP.RtmCan_Result_NumberOfExecution,
+              precision, resultMP.RtmCan_Result_MaxRuntime_us,
+              precision, resultMP.RtmCan_Result_MinRuntime_us,
+              precision, resultMP.RtmCan_Result_AverageRuntime_us,
+              1, resultMP.RtmCan_Result_CpuLoad,
+              "-",
+              1, resultMP.RtmCan_Result_RelativeMax_percent
+            );
+          }
+        }
+      }
+    }
+  }
+} /* _GenerateReport */
+
+
+/**********************************************************************************************************************
+  _ControlMeasurement
+**********************************************************************************************************************/
+/*! \brief        Controls the runtime measurement.
+ *  \details      Starts measurement in a specified
+ *  \param[in]    variant                 The specified measurement mode.
+ *  \param[in]    timeToMeas              The requested measurement duration. If set to 0, the measurement duration is
+ *                                          endless.
+ *  \return       -
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void _ControlMeasurement(enum measurementVariant variant, dword timeToMeas)
+{
+  int i;
+  char text[200];
+  enum RtmCan_ReturnValueType retVal;
+
+  if (gState == STATE_ERROR_EXIT)
+  {
+    TestCaseFail();
+
+    if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("Rtm Warning @%lld: Measurement skipped due to previous errors", timeNowInt64()/100);
+    }
+
+    return;
+  }
+
+  switch(variant)
+  {
+    case LIVE:
+
+      retVal = RtmCan_StartMeasurement(RTMCAN_MODE_LIVE, timeToMeas);
+
+      if (retVal == RTMCAN_E_OK)
+      {
+        if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+        {
+          write("Rtm Info @%lld: Live measurement started", timeNowInt64()/100);
+        }
+
+        gState = STATE_LIVE_MEASUREMENT;
+
+        snprintf(text, elcount(text), "Please press \"Yes\" to stop Live Measurement");
+        TestWaitForTesterConfirmation(text);
+        RtmCan_StopMeasurement();
+      }
+      else
+      {
+        TestCaseFail();
+      }
+    break;
+
+    case SERIAL:
+
+      /* If endless measurement is active: */
+      if (timeToMeas == 0)
+      {
+        if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+        {
+          write("Rtm Info @%lld: Due to invalid setting, time to measure set to 1s.", timeNowInt64()/100);
+        }
+        timeToMeas = 1000; /* 1000ms = 1s */
+
+        if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+        {
+          write("Rtm Error @%lld: Invalid input, time to measure must be greater 0 in serial measurement mode!", timeNowInt64()/100);
+        }
+      }
+
+      snprintf(text, elcount(text), "%d s/MP", (timeToMeas/1000));
+      TestReportAddSetupInfo("Measurement duration:", text);
+
+      retVal = RtmCan_StartMeasurement(RTMCAN_MODE_SERIAL, timeToMeas);
+
+      if (retVal == RTMCAN_E_OK)
+      {
+        gState = STATE_WAIT_FOR_ECU_RESPONSE;
+
+        sysSetVariableInt("Rtm", "Rtm_MeasurementCounter", sysGetVariableInt("Rtm", "Rtm_MeasurementCounter") + 1);
+
+        if (1 != testWaitForTextEvent("MeasurementFinished", (RTMCAN_MEASUREMENTS_COUNT * timeToMeas * 10000)))
+        {
+          if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("Rtm Error @%lld: Timeout measurement stop", timeNowInt64()/100);
+          }
+
+          TestCaseFail();
+          gState = STATE_ERROR_EXIT;
+          return;
+        }
+      }
+      else
+      {
+        TestCaseFail();
+      }
+
+    break;
+
+    case PARALLEL:
+
+      retVal = RtmCan_StartMeasurement(RTMCAN_MODE_PARALLEL, timeToMeas);
+
+      if (retVal == RTMCAN_E_OK)
+      {
+        gState = STATE_WAIT_FOR_ECU_RESPONSE;
+
+        sysSetVariableInt("Rtm", "Rtm_MeasurementCounter", sysGetVariableInt("Rtm", "Rtm_MeasurementCounter") + 1);
+
+        /* If endless measurement is active: */
+        if (timeToMeas == 0)
+        {
+          /* Wait for explicit stop. */
+          snprintf(text, elcount(text), "Please press \"Yes\" to stop Parallel Measurement");
+          TestWaitForTesterConfirmation(text);
+
+          if (gTriggerReadingState == TR_IDLE)
+          {
+            RtmCan_StopMeasurement();
+          }
+          else
+          {
+            snprintf(text, elcount(text), "Attention: A trigger reading request was recevied in the meantime!\nThis means that the measurement was already stopped!\nThis message closes automatically after 5s or by pressing \"Yes\".");
+            TestWaitForTesterConfirmation(text, 5000);
+          }
+        }
+
+        if (gTriggerReadingState != TR_UPLOAD_FINISHED)
+        {
+          if (1 != testWaitForTextEvent("MeasurementFinished", (RTMCAN_MEASUREMENTS_COUNT * timeToMeas * 10000)))
+          {
+            if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+            {
+              write("Rtm Error @%lld: Timeout measurement stop", timeNowInt64()/100);
+            }
+
+            TestCaseFail();
+            gState = STATE_ERROR_EXIT;
+            return;
+          }
+        }
+
+        gTriggerReadingState = TR_IDLE;
+
+        if (timeToMeas == 0)
+        {
+          snprintf(text, elcount(text), "%.*f ms", 3, ((double)RtmCan_MeasurementDuration_us/1000));
+          TestReportAddSetupInfo("Measurement duration:", text);
+        }
+        else
+        {
+          snprintf(text, elcount(text), "%d s", (timeToMeas/1000));
+          TestReportAddSetupInfo("Measurement duration:", text);
+        }
+      }
+      else
+      {
+        TestCaseFail();
+      }
+
+    break;
+  }
+
+  TestStepPass();
+} /* _ControlMeasurement */
+
+
+/// @cond DEV
+
+/**********************************************************************************************************************
+  on preStart
+**********************************************************************************************************************/
+/*! \brief        Initializes the Rtm_Canoe.can.
+ *  \details      Called by CANoe during simulation start up.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+on preStart
+{
+  dword i;
+  gState = STATE_IDLE;
+  gAlreadyReseted = FALSE;
+  measVariant = CLEAR;
+
+  RtmCan_SetMPStateAll(RTMCAN_MP_STATE_INACTIVE);
+
+  for (i = 0; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+  {
+    gActiveMeasurements[i] = RTMCAN_MP_STATE_INACTIVE;
+  }
+} /* on preStart */
+
+/// @endcond
+
+
+/**********************************************************************************************************************
+  RuntimeMeasurement
+**********************************************************************************************************************/
+/*! \brief        Starts a runtime measurement.
+ *  \details      Testfunction called by CANoe to start a runtime measurement.
+ *  \param[in]    variant                 The measurement mode.
+ *  \return       -
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+testfunction RuntimeMeasurement(enum measurementVariant variant)
+{
+  dword i;
+  char text[200];
+  dword maxDurationMs;
+  long timeToMeasure;
+  long isXcpConnected;
+
+  isXcpConnected = 0;
+
+  if (1 != testWaitForTextEvent("ClearResults", 1000))
+  {
+    /* There was no clear results. */
+  }
+
+  if (gDidClearResultsSucceed == FALSE)
+  {
+    TestCaseFail();
+    gState = STATE_ERROR_EXIT;
+    return;
+  }
+
+  if (RtmCan_State == RTMCAN_STATE_UNINIT)
+  {
+    for (i = 0; ((i < 10) && (isXcpConnected == 0)); i++)
+    {
+      isXcpConnected = xcpIsConnected("Rtm");
+      testWaitForTimeOut(500); 
+    }
+
+    if (isXcpConnected < 1)
+    {
+      TestCaseFail();
+      gState = STATE_ERROR_EXIT;
+
+      snprintf(text, elcount(text), "Attention: The measurement failed due to not established XCP connection!\n\nThis message closes automatically after 5s or by pressing \"Yes\".");
+      TestWaitForTesterConfirmation(text, 5000);
+
+      if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+      {
+        write("Rtm Error @%lld: Failed due to not established XCP connection", timeNowInt64()/100);
+      }
+      return;
+    }
+    RtmCan_ResetRtmCanState();
+  }
+
+  maxDurationMs = 0xFFFF * RTMCAN_MAINFUNCTIONCYCLETIME_MS;
+  timeToMeasure = 0;
+
+  for (i = RTMCAN_NUMBER_OF_OVERHEAD_MPS; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+  {
+    if (gActiveMeasurements[i] == RTMCAN_MP_STATE_ACTIVE)
+    {
+      RtmCan_SetMPStateByID(i, RTMCAN_MP_STATE_ACTIVE);
+    }
+  }
+
+  /* If live measurement is active: */
+  if (variant == LIVE)
+  {
+    _ControlMeasurement(variant, 0);
+  }
+  /* Otherwise, serial or parallel is active: */
+  else
+  {
+    if (variant == PARALLEL)
+    {
+      snprintf(text, elcount(text), "Please enter measurement duration in seconds (Max: %d s).\nTo start an endless measurement, enter \"0\".\nNote that the input value must be a positive integer value, other values may be casted.", maxDurationMs/1000);
+    }
+    else
+    {
+      snprintf(text, elcount(text), "Please enter measurement duration in seconds (Max: %d s).\nNote that the input value must be a positive integer value, other values may be casted.", maxDurationMs/1000);
+    }
+
+    TestWaitForValueInput(text);
+    timeToMeasure = TestGetValueInput();
+
+    if (timeToMeasure < 0)
+    {
+      timeToMeasure = timeToMeasure * (-1);
+    }
+
+    if ((variant == SERIAL) && (timeToMeasure == 0))
+    {
+      if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+      {
+        write("Rtm Warning @%lld: Measurement duration (%d s) invalid for serial measurement", timeNowInt64()/100, timeToMeasure);
+      }
+
+      TestCaseFail();
+      gState = STATE_ERROR_EXIT;
+    }
+    if (timeToMeasure <= (maxDurationMs/1000))
+    {
+      TestReportAddSetupInfo("Rtm Generator Version", "12.01.00");
+    }
+    else
+    {
+      if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+      {
+        write("Rtm Warning @%lld: Measurement duration (%d s) invalid", timeNowInt64()/100, timeToMeasure);
+      }
+
+      TestCaseFail();
+      gState = STATE_ERROR_EXIT;
+    }
+
+    _ControlMeasurement(variant, (timeToMeasure * 1000));
+
+    /* Generate all available reports. */
+    RtmCan_GenerateReport(RTMCAN_REPORT_ALL, RTMCAN_FALSE);
+
+    /* Additionally generate html report for TFS. */
+    _GenerateReport();
+
+    gState = STATE_IDLE;
+  }
+} /* RuntimeMeasurement */
+
+
+/**********************************************************************************************************************
+  RegisterActiveSection
+**********************************************************************************************************************/
+/*! \brief        Sets measurement points active for measurement.
+ *  \details      Testfunction called by CANoe to set measurement points active.
+ *  \param[in]    measurementSectionId    The ID of the measurement point.
+ *  \return       -
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+testfunction RegisterActiveSection(int measurementSectionId)
+{
+  gActiveMeasurements[measurementSectionId] = RTMCAN_MP_STATE_ACTIVE;
+
+  if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+  {
+    write("Rtm Info @%lld: Measurement with ID: %d is scheduled for measurement", timeNowInt64()/100, measurementSectionId);
+  }
+} /* RegisterActiveSection */
+
+
+/**********************************************************************************************************************
+  RegisterMultiActiveSection
+**********************************************************************************************************************/
+/*! \brief        Sets measurement points active for multi measurement.
+ *  \details      Testfunction called by CANoe to set multi measurement points active.
+ *  \param[in]    measurementSectionIdGross  The ID of the gross measurement point.
+ *  \param[in]    measurementSectionIdNet    The ID of the net measurement point.
+ *  \param[in]    measurementSectionIdFlat   The ID of the flat measurement point.
+ *  \return       -
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+testfunction RegisterMultiActiveSection(int measurementSectionIdGross, int measurementSectionIdNet, int measurementSectionIdFlat)
+{
+  // GrossMP 
+  if (measurementSectionIdGross < RTMCAN_MEASUREMENTS_COUNT)
+  {
+    gActiveMeasurements[measurementSectionIdGross] = RTMCAN_MP_STATE_ACTIVE;
+  }
+
+  // NetMP 
+  if (measurementSectionIdNet < RTMCAN_MEASUREMENTS_COUNT)
+  {
+    gActiveMeasurements[measurementSectionIdNet] = RTMCAN_MP_STATE_ACTIVE;
+  }
+
+  // FlatMP 
+  if (measurementSectionIdFlat < RTMCAN_MEASUREMENTS_COUNT)
+  {
+    gActiveMeasurements[measurementSectionIdFlat] = RTMCAN_MP_STATE_ACTIVE;
+  }
+} /* RegisterMultiActiveSection */
+
+
+/**********************************************************************************************************************
+  ClearResultsOnEcu
+**********************************************************************************************************************/
+/*! \brief        Clears the measurement results on ECU and in CANoe.
+ *  \details      Testfunction called by CANoe to clear all measurement results.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+testfunction ClearResultsOnEcu()
+{
+  dword i;
+  long isXcpConnected;
+
+  isXcpConnected = 0;
+  gDidClearResultsSucceed = TRUE;
+
+  if (RtmCan_State == RTMCAN_STATE_UNINIT)
+  {
+    for (i = 0; ((i < 10) && (isXcpConnected == 0)); i++)
+    {
+      isXcpConnected = xcpIsConnected("Rtm");
+      testWaitForTimeOut(500); 
+    }
+
+    if (isXcpConnected < 1)
+    {
+      char text[200];
+
+      TestCaseFail();
+      gState = STATE_ERROR_EXIT;
+      gDidClearResultsSucceed = FALSE;
+
+      snprintf(text, elcount(text), "Attention: The clear results failed due to not established XCP connection!\n\nThis message closes automatically after 5s or by pressing \"Yes\".");
+      TestWaitForTesterConfirmation(text, 5000);
+
+      if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+      {
+        write("Rtm Error @%lld: Failed due to not established XCP connection", timeNowInt64()/100);
+      }
+      return;
+    }
+    RtmCan_ResetRtmCanState();
+  }
+
+  gState = STATE_WAIT_FOR_ECU_RESPONSE;
+
+  RtmCan_ClearAll();
+
+  if (1 != TestWaitForTextEvent("EcuResponseOk", 1000))
+  {
+    if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("Rtm Error @%lld: Timeout clear results on ECU", timeNowInt64()/100);
+    }
+
+    TestCaseFail();
+    gState = STATE_ERROR_EXIT;
+    return;
+  }
+
+  testSupplyTextEvent("ClearResults");
+
+  sysSetVariableInt("Rtm", "Rtm_MeasurementCounter", sysGetVariableInt("Rtm", "Rtm_MeasurementCounter") + 1);
+  gState = STATE_IDLE;
+} /* ClearResultsOnEcu */
+
+

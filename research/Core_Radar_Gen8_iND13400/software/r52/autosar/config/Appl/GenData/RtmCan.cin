@@ -1,0 +1,4492 @@
+/**********************************************************************************************************************
+ *  COPYRIGHT
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  \verbatim
+ *
+ *                 This software is copyright protected and proprietary to Vector Informatik GmbH.
+ *                 Vector Informatik GmbH grants to you only those rights as set out in the license conditions.
+ *                 All other rights remain with Vector Informatik GmbH.
+ *  \endverbatim
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  LICENSE
+ *  -------------------------------------------------------------------------------------------------------------------
+ *            Module: Rtm
+ *           Program: 
+ *          Customer: 
+ *       Expiry Date: Not restricted
+ *    License Scope : The usage is restricted to PAI19494
+ *
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  FILE DESCRIPTION
+ *  -------------------------------------------------------------------------------------------------------------------
+ *              File: RtmCan.cin
+ *   Generation Time: 2026-08-24 12:50:15
+ *           Project: Gen8_iND13400 - Version 1.0
+ *          Delivery: PAI19494
+ *      Tool Version: DaVinci Configurator Classic (beta) 5.31.55 SP5
+ *
+ *
+ *********************************************************************************************************************/
+
+/**********************************************************************************************************************
+ ! BETA VERSION                                                                                                       !
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ ! This version of DaVinci Configurator Classic and/or the related Basic Software Package is BETA software.               !
+ ! BETA Software is basically operable, but not sufficiently tested, verified and/or qualified for use in series      !
+ ! production and/or in vehicles operating on public or non-public roads.                                             !
+ ! In particular, without limitation, BETA Software may cause unpredictable ECU behavior, may not provide all         !
+ ! functions necessary for use in series production and/or may not comply with quality requirements which are         !
+ ! necessary according to the state of the art. BETA Software must not be used in series production.                  !
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+**********************************************************************************************************************/
+
+
+
+/** @defgroup CAPL Rtm
+* \brief RtmCan.cin offers services to control Rtm dynamically.
+* @{
+*/
+/** @defgroup Internal Internal */
+/** @defgroup External External */
+/** @defgroup Callback Callback */
+/** @} */
+
+/// @cond DEV
+
+variables
+{
+/**********************************************************************************************************************
+ *  GLOBAL DATA TYPES AND STRUCTURES
+ *********************************************************************************************************************/
+  enum RtmCan_MeasurementCommandType {
+    RTMCAN_CMD_NULL = 0,
+    RTMCAN_CMD_SERIAL = 1,
+    RTMCAN_CMD_PARALLEL = 2,
+    RTMCAN_CMD_LIVE = 3,
+    RTMCAN_CMD_STOP = 4,
+    RTMCAN_CMD_CLEAR = 5
+  };
+
+  enum RtmCan_MeasurementModeType {
+    RTMCAN_MODE_SERIAL = 0,
+    RTMCAN_MODE_PARALLEL = 1,
+    RTMCAN_MODE_LIVE = 2
+  };
+
+  enum RtmCan_MeasurementStateType {
+    RTMCAN_MP_STATE_INACTIVE = 0,
+    RTMCAN_MP_STATE_ACTIVE = 1
+  };
+
+  enum RtmCan_MeasurementPointType {
+    RTMCAN_MP_TYPE_GROSS_EXECUTIONTIME = 0,
+    RTMCAN_MP_TYPE_FLAT_EXECUTIONTIME = 1,
+    RTMCAN_MP_TYPE_NET_EXECUTIONTIME = 2
+  };
+
+  enum RtmCan_Boolean {
+    RTMCAN_FALSE = 0,
+    RTMCAN_TRUE = 1
+  };
+
+  enum RtmCan_StateType {
+    RTMCAN_STATE_UNINIT = 0,
+    RTMCAN_STATE_WAITFORACTION = 1,
+    RTMCAN_STATE_BUSY = 2,
+    RTMCAN_STATE_MEASURING = 3,
+    RTMCAN_STATE_CLEARRESULTS = 4
+  };
+
+  enum RtmCan_EventType {
+    RTMCAN_EVENT_INIT = 0,
+    RTMCAN_EVENT_ACTIONFINISHED = 1,
+    RTMCAN_EVENT_MEASURING = 2,
+    RTMCAN_EVENT_CLEARRESULTS = 3,
+    RTMCAN_EVENT_WAITINGFORUPLOAD = 4,
+    RTMCAN_EVENT_CHANGESTATE = 5,
+    RTMCAN_EVENT_GETRESULT = 6,
+    RTMCAN_EVENT_GENERATEREPORT = 7
+  };
+
+  enum RtmCan_ReturnValueType {
+    RTMCAN_E_OK = 0,
+    RTMCAN_E_MEASUREMENT_NOT_STOPPABLE = 1,
+    RTMCAN_E_INTERFACE_IS_BUSY = 2,
+    RTMCAN_E_NO_MATCH_FOUND = 3,
+    RTMCAN_E_INVALID_EVENT = 4,
+    RTMCAN_E_INVALID_STATE = 5,
+    RTMCAN_E_NOT_AVAILABLE_IN_MULTICORE_SYSTEM = 6,
+    RTMCAN_E_NOT_AVAILABLE_WITH_16BIT_COUNTER = 7,
+    RTMCAN_E_NOT_SUPPORTED = 8
+  };
+
+  enum RtmCan_ReportVariantType {
+    RTMCAN_REPORT_ALL = 0,
+    RTMCAN_REPORT_OVERALL_CSV = 1,
+    RTMCAN_REPORT_RUNNABLE_CSV = 2,
+    RTMCAN_REPORT_LET_CSV = 3
+  };
+
+  enum RtmCan_DebugLevelType {
+    RTMCAN_DEBUGLEVEL_OFF = 0,
+    RTMCAN_DEBUGLEVEL_ERROR = 1,
+    RTMCAN_DEBUGLEVEL_WARNING = 2,
+    RTMCAN_DEBUGLEVEL_INFO = 3
+  };
+
+  enum RtmCan_LetErrorType {
+    RTMCAN_LET_ERROR_OK = 0,
+    RTMCAN_LET_ERROR_INTERVAL_EXCEEDED = 1,
+    RTMCAN_LET_ERROR_UNEXPECTED_RELEASE = 2,
+    RTMCAN_LET_ERROR_UNEXPECTED_TERMINATE = 3,
+    RTMCAN_LET_ERROR_UNEXPECTED_RUNNABLE_EXECUTION = 4
+  };
+
+  struct RtmCan_MeasurementType {
+    word ID;
+    word ByteIndex;
+    byte BitMask;
+    char Name[128];
+    char Group[50];
+    char LetErrorVar[256];
+    enum RtmCan_MeasurementPointType MpType; 
+    enum RtmCan_Boolean DisableInterrupts;
+    enum RtmCan_Boolean IsRunnableMP;
+    enum RtmCan_Boolean IsLetMP;
+    enum RtmCan_LetErrorType LetError;
+    dword AssignedToCore;
+
+    dword MeasurementTime_current;
+    dword MeasurementTime_last;
+    dword MeasurementCount_current;
+    dword MeasurementCount_last;
+    dword MeasurementMin;
+    dword MeasurementMax;
+    dword TargetRuntime;
+
+    double MeasurementRuntime;
+    double MeasurementCpuLoad_Percent;
+
+    int MeasurementCycleTimeCorrection;
+  };
+
+  struct RtmCan_ResultType {
+    dword  RtmCan_Result_ID;
+    char   RtmCan_Result_Name[128];
+    char   RtmCan_Result_Group[50];
+    enum RtmCan_MeasurementPointType RtmCan_Result_MP_Type;
+    double RtmCan_Result_MinRuntime_us;
+    double RtmCan_Result_MaxRuntime_us;
+    double RtmCan_Result_RelativeMax_percent;
+    double RtmCan_Result_RelativeRemaining_percent;
+    double RtmCan_Result_AverageRuntime_us;
+    dword  RtmCan_Result_NumberOfExecution;
+    double RtmCan_Result_CpuLoad;
+    dword  RtmCan_Result_AssignedToCore;
+    qword  RtmCan_Result_MeasurementDuration_us;
+  };
+  
+
+
+/**********************************************************************************************************************
+ *  GLOBAL DATA PROTOTYPES
+ *********************************************************************************************************************/
+  const dword RTMCAN_MEASUREMENTS_COUNT       = 15;
+  const dword RTMCAN_CONFIG_ARRAY_SIZE        = 2;
+  const dword RTMCAN_MEASUREMENT_FREQ_MS      = 250000;
+  const dword RTMCAN_MAINFUNCTIONCYCLETIME_MS = 50;
+
+  const dword RTMCAN_CPULOAD_VIA_XCP          = 0;
+  const dword RTMCAN_CPULOAD_VIA_C_API        = 1;
+  const dword RTMCAN_INDEX_OF_CPU_LOAD        = 14;
+  const dword RTMCAN_NUMBER_OF_CORES          = 1;
+  const dword RTMCAN_NUMBER_OF_OVERHEAD_MPS   = 4;
+  const dword RTMCAN_MULTICORE_SUPPORT        = 0;
+  const dword RTMCAN_32BIT_COUNTER            = 1;
+  const dword RTMCAN_NUMBER_OF_LET_MPS        = 0;
+
+  enum RtmCan_Boolean RtmCan_StoppableMeasurementRunning       = RTMCAN_FALSE;
+  enum RtmCan_Boolean RtmCan_LiveMeasurementActive             = RTMCAN_FALSE;
+  enum RtmCan_StateType RtmCan_State                           = RTMCAN_STATE_UNINIT;
+  enum RtmCan_MeasurementModeType RtmCan_ActiveMeasurementMode = RTMCAN_MODE_SERIAL;
+  enum RtmCan_MeasurementStateType RtmCan_MeasurementSectionActive[RTMCAN_MEASUREMENTS_COUNT];
+  enum RtmCan_MeasurementStateType RtmCan_MeasurementSectionActive_Serial[RTMCAN_MEASUREMENTS_COUNT];
+  enum RtmCan_Boolean RtmCan_ExecTime_NonNested_Available      = RTMCAN_TRUE;
+  enum RtmCan_Boolean RtmCan_ExecTime_Nested_Available         = RTMCAN_FALSE;
+
+  struct RtmCan_MeasurementType RtmCan_Measurements[RTMCAN_MEASUREMENTS_COUNT];
+
+  char RtmCan_XcpUploadVariable_time[200];
+  char RtmCan_XcpUploadVariable_count[200];
+  char RtmCan_XcpUploadVariable_max[200];
+  char RtmCan_XcpUploadVariable_min[200];
+
+  char RtmCan_XcpUploadVariable_time_receive[200];
+  char RtmCan_XcpUploadVariable_count_receive[200];
+  char RtmCan_XcpUploadVariable_max_receive[200];
+  char RtmCan_XcpUploadVariable_min_receive[200];
+
+  dword RtmCan_LiveMeasurementCounter;
+  dword RtmCan_AverageMainFunctionCycleTime;
+  dword RtmCan_MainFunctionCounter;
+  dword RtmCan_ExpectedUploads = 0;
+  dword RtmCan_TimeCtr[RTMCAN_MEASUREMENTS_COUNT]; /* ESCAN00086290 */
+  dword RtmCan_CountCtr[RTMCAN_MEASUREMENTS_COUNT]; /* ESCAN00086290 */
+
+  qword RtmCan_MeasurementDuration_us;
+
+  long RtmCan_MeasurementConfigArray[RTMCAN_CONFIG_ARRAY_SIZE];
+  
+}
+
+/// @endcond
+
+/**********************************************************************************************************************
+ *  LOCAL FUNCTIONS
+ *********************************************************************************************************************/
+
+/* ############################################################ */
+/* INIT AREA -> */
+
+/**********************************************************************************************************************
+  _RtmCan_InitData
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Initializes all global data.
+ *  \details      Initializes all global data.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void _RtmCan_InitData()
+{
+  long var;
+
+  RtmCan_AverageMainFunctionCycleTime = 0;
+  RtmCan_MainFunctionCounter = 0;
+
+  RtmCan_MeasurementDuration_us = 0;
+
+  RtmCan_StoppableMeasurementRunning = RTMCAN_FALSE;
+
+  RtmCan_ExpectedUploads = 0;
+  RtmCan_LiveMeasurementCounter = 0;
+
+  /* MP Rtm_Overhead_GrossExecutionTime_EnableISRs with index 0 */
+  RtmCan_Measurements[0].ID                             = 0;
+  RtmCan_Measurements[0].ByteIndex                      = 0;
+  RtmCan_Measurements[0].BitMask                        = 1;
+  RtmCan_Measurements[0].DisableInterrupts              = RTMCAN_FALSE;
+  RtmCan_Measurements[0].IsRunnableMP                   = RTMCAN_FALSE;
+  RtmCan_Measurements[0].IsLetMP                        = RTMCAN_FALSE;
+  RtmCan_Measurements[0].LetError                       = RTMCAN_LET_ERROR_OK;
+  RtmCan_Measurements[0].MpType                         = RTMCAN_MP_TYPE_GROSS_EXECUTIONTIME;
+  Snprintf(RtmCan_Measurements[0].Name, elCount(RtmCan_Measurements[0].Name), "Rtm_Overhead_GrossExecutionTime_EnableISRs");
+  Snprintf(RtmCan_Measurements[0].Group, elCount(RtmCan_Measurements[0].Group), "null");
+  Snprintf(RtmCan_Measurements[0].LetErrorVar, elCount(RtmCan_Measurements[0].LetErrorVar), "");
+  RtmCan_Measurements[0].AssignedToCore                 = 0;
+
+  RtmCan_Measurements[0].MeasurementTime_current        = 0;
+  RtmCan_Measurements[0].MeasurementTime_last           = 0;
+  RtmCan_Measurements[0].MeasurementCount_current       = 0;
+  RtmCan_Measurements[0].MeasurementCount_last          = 0;
+  RtmCan_Measurements[0].MeasurementMin                 = 0;
+  RtmCan_Measurements[0].MeasurementMax                 = 0;
+  RtmCan_Measurements[0].TargetRuntime                  = 0;
+  RtmCan_Measurements[0].MeasurementRuntime             = 0;
+  RtmCan_Measurements[0].MeasurementCpuLoad_Percent     = 0;
+  RtmCan_Measurements[0].MeasurementCycleTimeCorrection = 0;
+
+  RtmCan_TimeCtr[0] = 0;
+  RtmCan_CountCtr[0] = 0;
+
+
+  /* MP Rtm_Overhead_GrossExecutionTime_DisableISRs with index 1 */
+  RtmCan_Measurements[1].ID                             = 1;
+  RtmCan_Measurements[1].ByteIndex                      = 0;
+  RtmCan_Measurements[1].BitMask                        = 2;
+  RtmCan_Measurements[1].DisableInterrupts              = RTMCAN_TRUE;
+  RtmCan_Measurements[1].IsRunnableMP                   = RTMCAN_FALSE;
+  RtmCan_Measurements[1].IsLetMP                        = RTMCAN_FALSE;
+  RtmCan_Measurements[1].LetError                       = RTMCAN_LET_ERROR_OK;
+  RtmCan_Measurements[1].MpType                         = RTMCAN_MP_TYPE_GROSS_EXECUTIONTIME;
+  Snprintf(RtmCan_Measurements[1].Name, elCount(RtmCan_Measurements[1].Name), "Rtm_Overhead_GrossExecutionTime_DisableISRs");
+  Snprintf(RtmCan_Measurements[1].Group, elCount(RtmCan_Measurements[1].Group), "null");
+  Snprintf(RtmCan_Measurements[1].LetErrorVar, elCount(RtmCan_Measurements[1].LetErrorVar), "");
+  RtmCan_Measurements[1].AssignedToCore                 = 0;
+
+  RtmCan_Measurements[1].MeasurementTime_current        = 0;
+  RtmCan_Measurements[1].MeasurementTime_last           = 0;
+  RtmCan_Measurements[1].MeasurementCount_current       = 0;
+  RtmCan_Measurements[1].MeasurementCount_last          = 0;
+  RtmCan_Measurements[1].MeasurementMin                 = 0;
+  RtmCan_Measurements[1].MeasurementMax                 = 0;
+  RtmCan_Measurements[1].TargetRuntime                  = 0;
+  RtmCan_Measurements[1].MeasurementRuntime             = 0;
+  RtmCan_Measurements[1].MeasurementCpuLoad_Percent     = 0;
+  RtmCan_Measurements[1].MeasurementCycleTimeCorrection = 0;
+
+  RtmCan_TimeCtr[1] = 0;
+  RtmCan_CountCtr[1] = 0;
+
+
+  /* MP Rtm_Overhead_NetExecutionTime_EnableISRs with index 2 */
+  RtmCan_Measurements[2].ID                             = 2;
+  RtmCan_Measurements[2].ByteIndex                      = 0;
+  RtmCan_Measurements[2].BitMask                        = 4;
+  RtmCan_Measurements[2].DisableInterrupts              = RTMCAN_FALSE;
+  RtmCan_Measurements[2].IsRunnableMP                   = RTMCAN_FALSE;
+  RtmCan_Measurements[2].IsLetMP                        = RTMCAN_FALSE;
+  RtmCan_Measurements[2].LetError                       = RTMCAN_LET_ERROR_OK;
+  RtmCan_Measurements[2].MpType                         = RTMCAN_MP_TYPE_NET_EXECUTIONTIME;
+  Snprintf(RtmCan_Measurements[2].Name, elCount(RtmCan_Measurements[2].Name), "Rtm_Overhead_NetExecutionTime_EnableISRs");
+  Snprintf(RtmCan_Measurements[2].Group, elCount(RtmCan_Measurements[2].Group), "null");
+  Snprintf(RtmCan_Measurements[2].LetErrorVar, elCount(RtmCan_Measurements[2].LetErrorVar), "");
+  RtmCan_Measurements[2].AssignedToCore                 = 0;
+
+  RtmCan_Measurements[2].MeasurementTime_current        = 0;
+  RtmCan_Measurements[2].MeasurementTime_last           = 0;
+  RtmCan_Measurements[2].MeasurementCount_current       = 0;
+  RtmCan_Measurements[2].MeasurementCount_last          = 0;
+  RtmCan_Measurements[2].MeasurementMin                 = 0;
+  RtmCan_Measurements[2].MeasurementMax                 = 0;
+  RtmCan_Measurements[2].TargetRuntime                  = 0;
+  RtmCan_Measurements[2].MeasurementRuntime             = 0;
+  RtmCan_Measurements[2].MeasurementCpuLoad_Percent     = 0;
+  RtmCan_Measurements[2].MeasurementCycleTimeCorrection = 0;
+
+  RtmCan_TimeCtr[2] = 0;
+  RtmCan_CountCtr[2] = 0;
+
+
+  /* MP Rtm_Overhead_NetExecutionTime_DisableISRs with index 3 */
+  RtmCan_Measurements[3].ID                             = 3;
+  RtmCan_Measurements[3].ByteIndex                      = 0;
+  RtmCan_Measurements[3].BitMask                        = 8;
+  RtmCan_Measurements[3].DisableInterrupts              = RTMCAN_TRUE;
+  RtmCan_Measurements[3].IsRunnableMP                   = RTMCAN_FALSE;
+  RtmCan_Measurements[3].IsLetMP                        = RTMCAN_FALSE;
+  RtmCan_Measurements[3].LetError                       = RTMCAN_LET_ERROR_OK;
+  RtmCan_Measurements[3].MpType                         = RTMCAN_MP_TYPE_NET_EXECUTIONTIME;
+  Snprintf(RtmCan_Measurements[3].Name, elCount(RtmCan_Measurements[3].Name), "Rtm_Overhead_NetExecutionTime_DisableISRs");
+  Snprintf(RtmCan_Measurements[3].Group, elCount(RtmCan_Measurements[3].Group), "null");
+  Snprintf(RtmCan_Measurements[3].LetErrorVar, elCount(RtmCan_Measurements[3].LetErrorVar), "");
+  RtmCan_Measurements[3].AssignedToCore                 = 0;
+
+  RtmCan_Measurements[3].MeasurementTime_current        = 0;
+  RtmCan_Measurements[3].MeasurementTime_last           = 0;
+  RtmCan_Measurements[3].MeasurementCount_current       = 0;
+  RtmCan_Measurements[3].MeasurementCount_last          = 0;
+  RtmCan_Measurements[3].MeasurementMin                 = 0;
+  RtmCan_Measurements[3].MeasurementMax                 = 0;
+  RtmCan_Measurements[3].TargetRuntime                  = 0;
+  RtmCan_Measurements[3].MeasurementRuntime             = 0;
+  RtmCan_Measurements[3].MeasurementCpuLoad_Percent     = 0;
+  RtmCan_Measurements[3].MeasurementCycleTimeCorrection = 0;
+
+  RtmCan_TimeCtr[3] = 0;
+  RtmCan_CountCtr[3] = 0;
+
+
+  /* MP Appl_BackgroundTask with index 4 */
+  RtmCan_Measurements[4].ID                             = 4;
+  RtmCan_Measurements[4].ByteIndex                      = 0;
+  RtmCan_Measurements[4].BitMask                        = 16;
+  RtmCan_Measurements[4].DisableInterrupts              = RTMCAN_FALSE;
+  RtmCan_Measurements[4].IsRunnableMP                   = RTMCAN_FALSE;
+  RtmCan_Measurements[4].IsLetMP                        = RTMCAN_FALSE;
+  RtmCan_Measurements[4].LetError                       = RTMCAN_LET_ERROR_OK;
+  RtmCan_Measurements[4].MpType                         = RTMCAN_MP_TYPE_NET_EXECUTIONTIME;
+  Snprintf(RtmCan_Measurements[4].Name, elCount(RtmCan_Measurements[4].Name), "Appl_BackgroundTask");
+  Snprintf(RtmCan_Measurements[4].Group, elCount(RtmCan_Measurements[4].Group), "null");
+  Snprintf(RtmCan_Measurements[4].LetErrorVar, elCount(RtmCan_Measurements[4].LetErrorVar), "");
+  RtmCan_Measurements[4].AssignedToCore                 = 0;
+
+  RtmCan_Measurements[4].MeasurementTime_current        = 0;
+  RtmCan_Measurements[4].MeasurementTime_last           = 0;
+  RtmCan_Measurements[4].MeasurementCount_current       = 0;
+  RtmCan_Measurements[4].MeasurementCount_last          = 0;
+  RtmCan_Measurements[4].MeasurementMin                 = 0;
+  RtmCan_Measurements[4].MeasurementMax                 = 0;
+  RtmCan_Measurements[4].TargetRuntime                  = 0;
+  RtmCan_Measurements[4].MeasurementRuntime             = 0;
+  RtmCan_Measurements[4].MeasurementCpuLoad_Percent     = 0;
+  RtmCan_Measurements[4].MeasurementCycleTimeCorrection = 0;
+
+  RtmCan_TimeCtr[4] = 0;
+  RtmCan_CountCtr[4] = 0;
+
+
+  /* MP Appl_IPC_Task with index 5 */
+  RtmCan_Measurements[5].ID                             = 5;
+  RtmCan_Measurements[5].ByteIndex                      = 0;
+  RtmCan_Measurements[5].BitMask                        = 32;
+  RtmCan_Measurements[5].DisableInterrupts              = RTMCAN_FALSE;
+  RtmCan_Measurements[5].IsRunnableMP                   = RTMCAN_FALSE;
+  RtmCan_Measurements[5].IsLetMP                        = RTMCAN_FALSE;
+  RtmCan_Measurements[5].LetError                       = RTMCAN_LET_ERROR_OK;
+  RtmCan_Measurements[5].MpType                         = RTMCAN_MP_TYPE_NET_EXECUTIONTIME;
+  Snprintf(RtmCan_Measurements[5].Name, elCount(RtmCan_Measurements[5].Name), "Appl_IPC_Task");
+  Snprintf(RtmCan_Measurements[5].Group, elCount(RtmCan_Measurements[5].Group), "null");
+  Snprintf(RtmCan_Measurements[5].LetErrorVar, elCount(RtmCan_Measurements[5].LetErrorVar), "");
+  RtmCan_Measurements[5].AssignedToCore                 = 0;
+
+  RtmCan_Measurements[5].MeasurementTime_current        = 0;
+  RtmCan_Measurements[5].MeasurementTime_last           = 0;
+  RtmCan_Measurements[5].MeasurementCount_current       = 0;
+  RtmCan_Measurements[5].MeasurementCount_last          = 0;
+  RtmCan_Measurements[5].MeasurementMin                 = 0;
+  RtmCan_Measurements[5].MeasurementMax                 = 0;
+  RtmCan_Measurements[5].TargetRuntime                  = 0;
+  RtmCan_Measurements[5].MeasurementRuntime             = 0;
+  RtmCan_Measurements[5].MeasurementCpuLoad_Percent     = 0;
+  RtmCan_Measurements[5].MeasurementCycleTimeCorrection = 0;
+
+  RtmCan_TimeCtr[5] = 0;
+  RtmCan_CountCtr[5] = 0;
+
+
+  /* MP Appl_Task with index 6 */
+  RtmCan_Measurements[6].ID                             = 6;
+  RtmCan_Measurements[6].ByteIndex                      = 0;
+  RtmCan_Measurements[6].BitMask                        = 64;
+  RtmCan_Measurements[6].DisableInterrupts              = RTMCAN_FALSE;
+  RtmCan_Measurements[6].IsRunnableMP                   = RTMCAN_FALSE;
+  RtmCan_Measurements[6].IsLetMP                        = RTMCAN_FALSE;
+  RtmCan_Measurements[6].LetError                       = RTMCAN_LET_ERROR_OK;
+  RtmCan_Measurements[6].MpType                         = RTMCAN_MP_TYPE_NET_EXECUTIONTIME;
+  Snprintf(RtmCan_Measurements[6].Name, elCount(RtmCan_Measurements[6].Name), "Appl_Task");
+  Snprintf(RtmCan_Measurements[6].Group, elCount(RtmCan_Measurements[6].Group), "null");
+  Snprintf(RtmCan_Measurements[6].LetErrorVar, elCount(RtmCan_Measurements[6].LetErrorVar), "");
+  RtmCan_Measurements[6].AssignedToCore                 = 0;
+
+  RtmCan_Measurements[6].MeasurementTime_current        = 0;
+  RtmCan_Measurements[6].MeasurementTime_last           = 0;
+  RtmCan_Measurements[6].MeasurementCount_current       = 0;
+  RtmCan_Measurements[6].MeasurementCount_last          = 0;
+  RtmCan_Measurements[6].MeasurementMin                 = 0;
+  RtmCan_Measurements[6].MeasurementMax                 = 0;
+  RtmCan_Measurements[6].TargetRuntime                  = 0;
+  RtmCan_Measurements[6].MeasurementRuntime             = 0;
+  RtmCan_Measurements[6].MeasurementCpuLoad_Percent     = 0;
+  RtmCan_Measurements[6].MeasurementCycleTimeCorrection = 0;
+
+  RtmCan_TimeCtr[6] = 0;
+  RtmCan_CountCtr[6] = 0;
+
+
+  /* MP Appl_Task_Communication with index 7 */
+  RtmCan_Measurements[7].ID                             = 7;
+  RtmCan_Measurements[7].ByteIndex                      = 0;
+  RtmCan_Measurements[7].BitMask                        = 128;
+  RtmCan_Measurements[7].DisableInterrupts              = RTMCAN_FALSE;
+  RtmCan_Measurements[7].IsRunnableMP                   = RTMCAN_FALSE;
+  RtmCan_Measurements[7].IsLetMP                        = RTMCAN_FALSE;
+  RtmCan_Measurements[7].LetError                       = RTMCAN_LET_ERROR_OK;
+  RtmCan_Measurements[7].MpType                         = RTMCAN_MP_TYPE_NET_EXECUTIONTIME;
+  Snprintf(RtmCan_Measurements[7].Name, elCount(RtmCan_Measurements[7].Name), "Appl_Task_Communication");
+  Snprintf(RtmCan_Measurements[7].Group, elCount(RtmCan_Measurements[7].Group), "null");
+  Snprintf(RtmCan_Measurements[7].LetErrorVar, elCount(RtmCan_Measurements[7].LetErrorVar), "");
+  RtmCan_Measurements[7].AssignedToCore                 = 0;
+
+  RtmCan_Measurements[7].MeasurementTime_current        = 0;
+  RtmCan_Measurements[7].MeasurementTime_last           = 0;
+  RtmCan_Measurements[7].MeasurementCount_current       = 0;
+  RtmCan_Measurements[7].MeasurementCount_last          = 0;
+  RtmCan_Measurements[7].MeasurementMin                 = 0;
+  RtmCan_Measurements[7].MeasurementMax                 = 0;
+  RtmCan_Measurements[7].TargetRuntime                  = 0;
+  RtmCan_Measurements[7].MeasurementRuntime             = 0;
+  RtmCan_Measurements[7].MeasurementCpuLoad_Percent     = 0;
+  RtmCan_Measurements[7].MeasurementCycleTimeCorrection = 0;
+
+  RtmCan_TimeCtr[7] = 0;
+  RtmCan_CountCtr[7] = 0;
+
+
+  /* MP Appl_Task_Fast with index 8 */
+  RtmCan_Measurements[8].ID                             = 8;
+  RtmCan_Measurements[8].ByteIndex                      = 1;
+  RtmCan_Measurements[8].BitMask                        = 1;
+  RtmCan_Measurements[8].DisableInterrupts              = RTMCAN_FALSE;
+  RtmCan_Measurements[8].IsRunnableMP                   = RTMCAN_FALSE;
+  RtmCan_Measurements[8].IsLetMP                        = RTMCAN_FALSE;
+  RtmCan_Measurements[8].LetError                       = RTMCAN_LET_ERROR_OK;
+  RtmCan_Measurements[8].MpType                         = RTMCAN_MP_TYPE_NET_EXECUTIONTIME;
+  Snprintf(RtmCan_Measurements[8].Name, elCount(RtmCan_Measurements[8].Name), "Appl_Task_Fast");
+  Snprintf(RtmCan_Measurements[8].Group, elCount(RtmCan_Measurements[8].Group), "null");
+  Snprintf(RtmCan_Measurements[8].LetErrorVar, elCount(RtmCan_Measurements[8].LetErrorVar), "");
+  RtmCan_Measurements[8].AssignedToCore                 = 0;
+
+  RtmCan_Measurements[8].MeasurementTime_current        = 0;
+  RtmCan_Measurements[8].MeasurementTime_last           = 0;
+  RtmCan_Measurements[8].MeasurementCount_current       = 0;
+  RtmCan_Measurements[8].MeasurementCount_last          = 0;
+  RtmCan_Measurements[8].MeasurementMin                 = 0;
+  RtmCan_Measurements[8].MeasurementMax                 = 0;
+  RtmCan_Measurements[8].TargetRuntime                  = 0;
+  RtmCan_Measurements[8].MeasurementRuntime             = 0;
+  RtmCan_Measurements[8].MeasurementCpuLoad_Percent     = 0;
+  RtmCan_Measurements[8].MeasurementCycleTimeCorrection = 0;
+
+  RtmCan_TimeCtr[8] = 0;
+  RtmCan_CountCtr[8] = 0;
+
+
+  /* MP Appl_Task_High_Prio with index 9 */
+  RtmCan_Measurements[9].ID                             = 9;
+  RtmCan_Measurements[9].ByteIndex                      = 1;
+  RtmCan_Measurements[9].BitMask                        = 2;
+  RtmCan_Measurements[9].DisableInterrupts              = RTMCAN_FALSE;
+  RtmCan_Measurements[9].IsRunnableMP                   = RTMCAN_FALSE;
+  RtmCan_Measurements[9].IsLetMP                        = RTMCAN_FALSE;
+  RtmCan_Measurements[9].LetError                       = RTMCAN_LET_ERROR_OK;
+  RtmCan_Measurements[9].MpType                         = RTMCAN_MP_TYPE_NET_EXECUTIONTIME;
+  Snprintf(RtmCan_Measurements[9].Name, elCount(RtmCan_Measurements[9].Name), "Appl_Task_High_Prio");
+  Snprintf(RtmCan_Measurements[9].Group, elCount(RtmCan_Measurements[9].Group), "null");
+  Snprintf(RtmCan_Measurements[9].LetErrorVar, elCount(RtmCan_Measurements[9].LetErrorVar), "");
+  RtmCan_Measurements[9].AssignedToCore                 = 0;
+
+  RtmCan_Measurements[9].MeasurementTime_current        = 0;
+  RtmCan_Measurements[9].MeasurementTime_last           = 0;
+  RtmCan_Measurements[9].MeasurementCount_current       = 0;
+  RtmCan_Measurements[9].MeasurementCount_last          = 0;
+  RtmCan_Measurements[9].MeasurementMin                 = 0;
+  RtmCan_Measurements[9].MeasurementMax                 = 0;
+  RtmCan_Measurements[9].TargetRuntime                  = 0;
+  RtmCan_Measurements[9].MeasurementRuntime             = 0;
+  RtmCan_Measurements[9].MeasurementCpuLoad_Percent     = 0;
+  RtmCan_Measurements[9].MeasurementCycleTimeCorrection = 0;
+
+  RtmCan_TimeCtr[9] = 0;
+  RtmCan_CountCtr[9] = 0;
+
+
+  /* MP Appl_Task_Logging with index 10 */
+  RtmCan_Measurements[10].ID                             = 10;
+  RtmCan_Measurements[10].ByteIndex                      = 1;
+  RtmCan_Measurements[10].BitMask                        = 4;
+  RtmCan_Measurements[10].DisableInterrupts              = RTMCAN_FALSE;
+  RtmCan_Measurements[10].IsRunnableMP                   = RTMCAN_FALSE;
+  RtmCan_Measurements[10].IsLetMP                        = RTMCAN_FALSE;
+  RtmCan_Measurements[10].LetError                       = RTMCAN_LET_ERROR_OK;
+  RtmCan_Measurements[10].MpType                         = RTMCAN_MP_TYPE_NET_EXECUTIONTIME;
+  Snprintf(RtmCan_Measurements[10].Name, elCount(RtmCan_Measurements[10].Name), "Appl_Task_Logging");
+  Snprintf(RtmCan_Measurements[10].Group, elCount(RtmCan_Measurements[10].Group), "null");
+  Snprintf(RtmCan_Measurements[10].LetErrorVar, elCount(RtmCan_Measurements[10].LetErrorVar), "");
+  RtmCan_Measurements[10].AssignedToCore                 = 0;
+
+  RtmCan_Measurements[10].MeasurementTime_current        = 0;
+  RtmCan_Measurements[10].MeasurementTime_last           = 0;
+  RtmCan_Measurements[10].MeasurementCount_current       = 0;
+  RtmCan_Measurements[10].MeasurementCount_last          = 0;
+  RtmCan_Measurements[10].MeasurementMin                 = 0;
+  RtmCan_Measurements[10].MeasurementMax                 = 0;
+  RtmCan_Measurements[10].TargetRuntime                  = 0;
+  RtmCan_Measurements[10].MeasurementRuntime             = 0;
+  RtmCan_Measurements[10].MeasurementCpuLoad_Percent     = 0;
+  RtmCan_Measurements[10].MeasurementCycleTimeCorrection = 0;
+
+  RtmCan_TimeCtr[10] = 0;
+  RtmCan_CountCtr[10] = 0;
+
+
+  /* MP BSW_Task with index 11 */
+  RtmCan_Measurements[11].ID                             = 11;
+  RtmCan_Measurements[11].ByteIndex                      = 1;
+  RtmCan_Measurements[11].BitMask                        = 8;
+  RtmCan_Measurements[11].DisableInterrupts              = RTMCAN_FALSE;
+  RtmCan_Measurements[11].IsRunnableMP                   = RTMCAN_FALSE;
+  RtmCan_Measurements[11].IsLetMP                        = RTMCAN_FALSE;
+  RtmCan_Measurements[11].LetError                       = RTMCAN_LET_ERROR_OK;
+  RtmCan_Measurements[11].MpType                         = RTMCAN_MP_TYPE_NET_EXECUTIONTIME;
+  Snprintf(RtmCan_Measurements[11].Name, elCount(RtmCan_Measurements[11].Name), "BSW_Task");
+  Snprintf(RtmCan_Measurements[11].Group, elCount(RtmCan_Measurements[11].Group), "null");
+  Snprintf(RtmCan_Measurements[11].LetErrorVar, elCount(RtmCan_Measurements[11].LetErrorVar), "");
+  RtmCan_Measurements[11].AssignedToCore                 = 0;
+
+  RtmCan_Measurements[11].MeasurementTime_current        = 0;
+  RtmCan_Measurements[11].MeasurementTime_last           = 0;
+  RtmCan_Measurements[11].MeasurementCount_current       = 0;
+  RtmCan_Measurements[11].MeasurementCount_last          = 0;
+  RtmCan_Measurements[11].MeasurementMin                 = 0;
+  RtmCan_Measurements[11].MeasurementMax                 = 0;
+  RtmCan_Measurements[11].TargetRuntime                  = 0;
+  RtmCan_Measurements[11].MeasurementRuntime             = 0;
+  RtmCan_Measurements[11].MeasurementCpuLoad_Percent     = 0;
+  RtmCan_Measurements[11].MeasurementCycleTimeCorrection = 0;
+
+  RtmCan_TimeCtr[11] = 0;
+  RtmCan_CountCtr[11] = 0;
+
+
+  /* MP IdleTask_OsCore0 with index 12 */
+  RtmCan_Measurements[12].ID                             = 12;
+  RtmCan_Measurements[12].ByteIndex                      = 1;
+  RtmCan_Measurements[12].BitMask                        = 16;
+  RtmCan_Measurements[12].DisableInterrupts              = RTMCAN_FALSE;
+  RtmCan_Measurements[12].IsRunnableMP                   = RTMCAN_FALSE;
+  RtmCan_Measurements[12].IsLetMP                        = RTMCAN_FALSE;
+  RtmCan_Measurements[12].LetError                       = RTMCAN_LET_ERROR_OK;
+  RtmCan_Measurements[12].MpType                         = RTMCAN_MP_TYPE_NET_EXECUTIONTIME;
+  Snprintf(RtmCan_Measurements[12].Name, elCount(RtmCan_Measurements[12].Name), "IdleTask_OsCore0");
+  Snprintf(RtmCan_Measurements[12].Group, elCount(RtmCan_Measurements[12].Group), "null");
+  Snprintf(RtmCan_Measurements[12].LetErrorVar, elCount(RtmCan_Measurements[12].LetErrorVar), "");
+  RtmCan_Measurements[12].AssignedToCore                 = 0;
+
+  RtmCan_Measurements[12].MeasurementTime_current        = 0;
+  RtmCan_Measurements[12].MeasurementTime_last           = 0;
+  RtmCan_Measurements[12].MeasurementCount_current       = 0;
+  RtmCan_Measurements[12].MeasurementCount_last          = 0;
+  RtmCan_Measurements[12].MeasurementMin                 = 0;
+  RtmCan_Measurements[12].MeasurementMax                 = 0;
+  RtmCan_Measurements[12].TargetRuntime                  = 0;
+  RtmCan_Measurements[12].MeasurementRuntime             = 0;
+  RtmCan_Measurements[12].MeasurementCpuLoad_Percent     = 0;
+  RtmCan_Measurements[12].MeasurementCycleTimeCorrection = 0;
+
+  RtmCan_TimeCtr[12] = 0;
+  RtmCan_CountCtr[12] = 0;
+
+
+  /* MP Radar_Ctrl_Task with index 13 */
+  RtmCan_Measurements[13].ID                             = 13;
+  RtmCan_Measurements[13].ByteIndex                      = 1;
+  RtmCan_Measurements[13].BitMask                        = 32;
+  RtmCan_Measurements[13].DisableInterrupts              = RTMCAN_FALSE;
+  RtmCan_Measurements[13].IsRunnableMP                   = RTMCAN_FALSE;
+  RtmCan_Measurements[13].IsLetMP                        = RTMCAN_FALSE;
+  RtmCan_Measurements[13].LetError                       = RTMCAN_LET_ERROR_OK;
+  RtmCan_Measurements[13].MpType                         = RTMCAN_MP_TYPE_NET_EXECUTIONTIME;
+  Snprintf(RtmCan_Measurements[13].Name, elCount(RtmCan_Measurements[13].Name), "Radar_Ctrl_Task");
+  Snprintf(RtmCan_Measurements[13].Group, elCount(RtmCan_Measurements[13].Group), "null");
+  Snprintf(RtmCan_Measurements[13].LetErrorVar, elCount(RtmCan_Measurements[13].LetErrorVar), "");
+  RtmCan_Measurements[13].AssignedToCore                 = 0;
+
+  RtmCan_Measurements[13].MeasurementTime_current        = 0;
+  RtmCan_Measurements[13].MeasurementTime_last           = 0;
+  RtmCan_Measurements[13].MeasurementCount_current       = 0;
+  RtmCan_Measurements[13].MeasurementCount_last          = 0;
+  RtmCan_Measurements[13].MeasurementMin                 = 0;
+  RtmCan_Measurements[13].MeasurementMax                 = 0;
+  RtmCan_Measurements[13].TargetRuntime                  = 0;
+  RtmCan_Measurements[13].MeasurementRuntime             = 0;
+  RtmCan_Measurements[13].MeasurementCpuLoad_Percent     = 0;
+  RtmCan_Measurements[13].MeasurementCycleTimeCorrection = 0;
+
+  RtmCan_TimeCtr[13] = 0;
+  RtmCan_CountCtr[13] = 0;
+
+
+  /* MP Rtm_CpuLoadMeasurement with index 14 */
+  RtmCan_Measurements[14].ID                             = 14;
+  RtmCan_Measurements[14].ByteIndex                      = 1;
+  RtmCan_Measurements[14].BitMask                        = 64;
+  RtmCan_Measurements[14].DisableInterrupts              = RTMCAN_FALSE;
+  RtmCan_Measurements[14].IsRunnableMP                   = RTMCAN_FALSE;
+  RtmCan_Measurements[14].IsLetMP                        = RTMCAN_FALSE;
+  RtmCan_Measurements[14].LetError                       = RTMCAN_LET_ERROR_OK;
+  RtmCan_Measurements[14].MpType                         = RTMCAN_MP_TYPE_GROSS_EXECUTIONTIME;
+  Snprintf(RtmCan_Measurements[14].Name, elCount(RtmCan_Measurements[14].Name), "Rtm_CpuLoadMeasurement");
+  Snprintf(RtmCan_Measurements[14].Group, elCount(RtmCan_Measurements[14].Group), "CpuLoad");
+  Snprintf(RtmCan_Measurements[14].LetErrorVar, elCount(RtmCan_Measurements[14].LetErrorVar), "");
+  RtmCan_Measurements[14].AssignedToCore                 = 0;
+
+  RtmCan_Measurements[14].MeasurementTime_current        = 0;
+  RtmCan_Measurements[14].MeasurementTime_last           = 0;
+  RtmCan_Measurements[14].MeasurementCount_current       = 0;
+  RtmCan_Measurements[14].MeasurementCount_last          = 0;
+  RtmCan_Measurements[14].MeasurementMin                 = 0;
+  RtmCan_Measurements[14].MeasurementMax                 = 0;
+  RtmCan_Measurements[14].TargetRuntime                  = 0;
+  RtmCan_Measurements[14].MeasurementRuntime             = 0;
+  RtmCan_Measurements[14].MeasurementCpuLoad_Percent     = 0;
+  RtmCan_Measurements[14].MeasurementCycleTimeCorrection = 0;
+
+  RtmCan_TimeCtr[14] = 0;
+  RtmCan_CountCtr[14] = 0;
+
+} /* _RtmCan_InitData */
+
+
+/**********************************************************************************************************************
+  _RtmCan_InitMeasurementConfig
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Initializes the measurement config array.
+ *  \details      Each bit in the measurement configuration array represents one MP. If the bit is set to 1, the MP is
+ *                active in the ECU. This function deactivates all MPs.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void _RtmCan_InitMeasurementConfig()
+{
+  int i;
+
+  for(i = 0; i < RTMCAN_CONFIG_ARRAY_SIZE; i++)
+  {
+    RtmCan_MeasurementConfigArray[i] = 0;
+  }
+} /* _RtmCan_InitMeasurementConfig */
+
+
+/**********************************************************************************************************************
+  _RtmCan_InitMeasurementPointState
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Initializes the measurement point states to inactive.
+ *  \details      Deactivates all measurement points locally in RtmCan.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void _RtmCan_InitMeasurementPointState()
+{
+  dword i;
+
+  /* The overhead MPs are always active. All others are initially inactive. */
+  for (i = 0; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+  {
+    RtmCan_MeasurementSectionActive_Serial[i] = RTMCAN_MP_STATE_INACTIVE;
+
+    if (i < RTMCAN_NUMBER_OF_OVERHEAD_MPS)
+    {
+      RtmCan_MeasurementSectionActive[i] = RTMCAN_MP_STATE_ACTIVE;
+    }
+    else
+    {
+      RtmCan_MeasurementSectionActive[i] = RTMCAN_MP_STATE_INACTIVE;
+    }
+  }
+} /* _RtmCan_InitMeasurementPointState */
+
+/* <- INIT AREA */
+/* ############################################################ */
+
+
+/* ############################################################ */
+/* INTERNAL HELPER APIs: */
+
+/**********************************************************************************************************************
+  _RtmCan_StateTransition
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Changes state of RtmCan.
+ *  \details      Depending on current state and the specified eventthe new state is set.
+ *  \param[in]    event                   Active MP ID.
+ *  \return       RTMCAN_E_OK             The state transition succeeded.
+ *  \return       RTMCAN_E_INVALID_EVENT  The state transition failed due to an invalid event.
+ *  \return       RTMCAN_E_INVALID_STATE  The state transition failed due to an invalid state.
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+enum RtmCan_ReturnValueType _RtmCan_StateTransition(enum RtmCan_EventType event)
+{
+  enum RtmCan_ReturnValueType retVal;
+
+  retVal = RTMCAN_E_INVALID_EVENT;
+
+  switch(RtmCan_State)
+  {
+    /* RTMCAN_STATE_UNINIT -> RTMCAN_STATE_WAITFORACTION
+     *   if event:
+     *    - RTMCAN_EVENT_INIT occurs.
+     */
+    case(RTMCAN_STATE_UNINIT) :
+      switch(event)
+      {
+        case(RTMCAN_EVENT_INIT) :
+          if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Info @%lld: RtmCan_State == RTMCAN_STATE_WAITFORACTION", timeNowInt64()/100);
+          }
+          RtmCan_State = RTMCAN_STATE_WAITFORACTION;
+          retVal = RTMCAN_E_OK;
+          break;
+
+        default :
+          if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Warning @%lld: Invalid event in state RTMCAN_STATE_UNINIT.", timeNowInt64()/100);
+          }
+          break;
+      }
+      break;
+
+    /* RTMCAN_STATE_WAITFORACTION -> RTMCAN_STATE_MEASURING
+     *   if event:
+     *    - RTMCAN_EVENT_MEASURING occurs.
+     *
+     * RTMCAN_STATE_WAITFORACTION -> RTMCAN_STATE_CLEARRESULTS
+     *   if event:
+     *    - RTMCAN_EVENT_CLEARRESULTS occurs.
+     *
+     * RTMCAN_STATE_WAITFORACTION -> RTMCAN_STATE_BUSY
+     *   if event:
+     *    - RTMCAN_EVENT_WAITINGFORUPLOAD,
+     *    - RTMCAN_EVENT_CHANGESTATE,
+     *    - RTMCAN_EVENT_GETRESULT or
+     *    - RTMCAN_EVENT_GENERATEREPORT occurs.
+     */
+    case(RTMCAN_STATE_WAITFORACTION) :
+      switch(event)
+      {
+        case(RTMCAN_EVENT_MEASURING) :
+          if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Info @%lld: RtmCan_State == RTMCAN_STATE_MEASURING", timeNowInt64()/100);
+          }
+          RtmCan_State = RTMCAN_STATE_MEASURING;
+          retVal = RTMCAN_E_OK;
+          break;
+
+        case(RTMCAN_EVENT_CLEARRESULTS) :
+          if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Info @%lld: RtmCan_State == RTMCAN_STATE_CLEARRESULTS", timeNowInt64()/100);
+          }
+          RtmCan_State = RTMCAN_STATE_CLEARRESULTS;
+          retVal = RTMCAN_E_OK;
+          break;
+
+        case(RTMCAN_EVENT_WAITINGFORUPLOAD) :
+        case(RTMCAN_EVENT_CHANGESTATE) :
+        case(RTMCAN_EVENT_GETRESULT) :
+        case(RTMCAN_EVENT_GENERATEREPORT) :
+          if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Info @%lld: RtmCan_State == RTMCAN_STATE_BUSY", timeNowInt64()/100);
+          }
+          RtmCan_State = RTMCAN_STATE_BUSY;
+          retVal = RTMCAN_E_OK;
+          break;
+
+        default :
+          if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Warning @%lld: Invalid event in state RTMCAN_STATE_WAITFORACTION.", timeNowInt64()/100);
+          }
+          break;
+      }
+      break;
+
+    /* RTMCAN_STATE_BUSY -> RTMCAN_STATE_WAITFORACTION
+     *   if event:
+     *    - RTMCAN_EVENT_ACTIONFINISHED occurs.
+     *
+     * RTMCAN_STATE_BUSY -> RTMCAN_STATE_MEASURING
+     *   if event:
+     *    - RTMCAN_EVENT_MEASURING occurs.
+     */
+    case(RTMCAN_STATE_BUSY) :
+      switch(event)
+      {
+        case(RTMCAN_EVENT_ACTIONFINISHED) :
+          if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Info @%lld: RtmCan_State == RTMCAN_STATE_WAITFORACTION", timeNowInt64()/100);
+          }
+          RtmCan_State = RTMCAN_STATE_WAITFORACTION;
+          retVal = RTMCAN_E_OK;
+          break;
+
+        case(RTMCAN_EVENT_MEASURING) :
+          if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Info @%lld: RtmCan_State == RTMCAN_STATE_MEASURING", timeNowInt64()/100);
+          }
+          RtmCan_State = RTMCAN_STATE_MEASURING;
+          retVal = RTMCAN_E_OK;
+          break;
+
+        default :
+          if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Warning @%lld: Invalid event in state RTMCAN_STATE_BUSY.", timeNowInt64()/100);
+          }
+          break;
+      }
+      break;
+
+    /* RTMCAN_STATE_MEASURING -> RTMCAN_STATE_WAITFORACTION
+     *   if event:
+     *    - RTMCAN_EVENT_ACTIONFINISHED occurs.
+     *
+     * RTMCAN_STATE_MEASURING -> RTMCAN_STATE_BUSY
+     *   if event:
+     *    - RTMCAN_EVENT_WAITINGFORUPLOAD occurs.
+     */
+    case(RTMCAN_STATE_MEASURING) :
+      switch(event)
+      {
+        case(RTMCAN_EVENT_ACTIONFINISHED) :
+          if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Info @%lld: RtmCan_State == RTMCAN_STATE_WAITFORACTION", timeNowInt64()/100);
+          }
+          RtmCan_State = RTMCAN_STATE_WAITFORACTION;
+          retVal = RTMCAN_E_OK;
+          break;
+
+        case(RTMCAN_EVENT_WAITINGFORUPLOAD) :
+          if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Info @%lld: RtmCan_State == RTMCAN_STATE_BUSY", timeNowInt64()/100);
+          }
+          RtmCan_State = RTMCAN_STATE_BUSY;
+          retVal = RTMCAN_E_OK;
+          break;
+
+        default :
+          if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Warning @%lld: Invalid event in state RTMCAN_STATE_MEASURING.", timeNowInt64()/100);
+          }
+          break;
+      }
+      break;
+
+    /* RTMCAN_STATE_CLEARRESULTS -> RTMCAN_STATE_WAITFORACTION
+     *   if event:
+     *    - RTMCAN_EVENT_ACTIONFINISHED occurs.
+     */
+    case(RTMCAN_STATE_CLEARRESULTS) :
+      switch(event)
+      {
+        case(RTMCAN_EVENT_ACTIONFINISHED) :
+          if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Info @%lld: RtmCan_State == RTMCAN_STATE_WAITFORACTION", timeNowInt64()/100);
+          }
+          RtmCan_State = RTMCAN_STATE_WAITFORACTION;
+          retVal = RTMCAN_E_OK;
+          break;
+
+        default :
+          if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Warning @%lld: Invalid event in state RTMCAN_STATE_CLEARRESULTS.", timeNowInt64()/100);
+          }
+          break;
+      }
+      break;
+
+    /* Invalid state! -> RTMCAN_STATE_UNINIT */
+    default :
+      if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+      {
+        write("RtmCan Error @%lld: Is in invalid state. Set to RTMCAN_STATE_UNINIT.", timeNowInt64()/100);
+      }
+      RtmCan_State = RTMCAN_STATE_UNINIT;
+      retVal = RTMCAN_E_INVALID_STATE;
+      break;
+  }
+
+  return retVal;
+} /* _RtmCan_StateTransition */
+
+/**********************************************************************************************************************
+  _RtmCan_StoreLastResults
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Stores last measurement results.
+ *  \details      Only required for Live Measurement.
+ *  \param[in]    measurementId           Active MP ID.
+ *  \return       -
+ *  \pre          Live measurement is executed.
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void _RtmCan_StoreLastResults(int measurementId)
+{
+  RtmCan_Measurements[measurementId].MeasurementCount_last = RtmCan_Measurements[measurementId].MeasurementCount_current;
+  RtmCan_Measurements[measurementId].MeasurementTime_last = RtmCan_Measurements[measurementId].MeasurementTime_current;
+} /* _RtmCan_StoreLastResults */
+
+/**********************************************************************************************************************
+  _RtmCan_CreateLiveMeasurementVariables
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Creates system variables for all MPs.
+ *  \details      Creates one variable for runtime and one for CPU load.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          Live measurement is executed.
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void _RtmCan_CreateLiveMeasurementVariables()
+{
+  int i;
+  char tmpText[200];
+
+  SysDefineNamespace("RtmLive");
+  SysDefineVariableFloat("RtmLive", "Rtm_CPULoad", 0.0);
+
+  SysDefineNamespace("Rtm");
+  sysDefineVariableInt("Rtm", "Rtm_MeasurementCounter", 0);
+
+  for (i = 0; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+  {
+    snprintf(tmpText, elcount(tmpText), "%s_cpuload", RtmCan_Measurements[i].Name );
+    sysDefineVariableFloat("RtmLive", tmpText, 0.0);
+
+    snprintf(tmpText, elcount(tmpText), "%s_runtime", RtmCan_Measurements[i].Name );
+    sysDefineVariableFloat("RtmLive", tmpText, 0.0);
+  }
+} /* _RtmCan_CreateLiveMeasurementVariables */
+
+/**********************************************************************************************************************
+  _RtmCan_WaitForUpload
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Helper function to wait some ticks.
+ *  \details      Used to wait for Xcp upload. Waits as long as specified.
+ *  \param[in]    endValue                Specifies the duration of waiting.
+ *  \return       -
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+/* Just wait for specified time. */
+void _RtmCan_WaitForUpload(dword endValue)
+{
+  dword i;
+
+  for (i = 0; i < endValue; i++)
+  {
+  }
+} /* _RtmCan_WaitForUpload */
+
+
+/**********************************************************************************************************************
+  _RtmCan_ConfigureMeasurements
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Set the measurement config array, defining which MP is active on ECU.
+ *  \details      Prepares the measurement config array which can be written to the ECU. It overtakes the user
+ *                configuration settings to decide which MP is active and which is inactive.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          The user should set the active MPs prior to start a measurement.
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void _RtmCan_ConfigureMeasurements()
+{
+  int i;
+
+  _RtmCan_InitMeasurementConfig();
+
+  for (i = 0; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+  {
+    if (RtmCan_MeasurementSectionActive[i] == RTMCAN_MP_STATE_ACTIVE)
+    {
+       RtmCan_MeasurementConfigArray[RtmCan_Measurements[i].ByteIndex] |= (RtmCan_Measurements[i].BitMask);
+    }
+    else
+    {
+       RtmCan_MeasurementConfigArray[RtmCan_Measurements[i].ByteIndex] &= ~(RtmCan_Measurements[i].BitMask);
+    }
+  }
+} /* _RtmCan_ConfigureMeasurements */
+
+
+/**********************************************************************************************************************
+  _RtmCan_TransmitCtrlArray
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Transmits the measurement config array, defining which MP is active.
+ *  \details      Prepares the measurement config array which can be written to the ECU. It overtakes the user
+ *                configuration settings to decide which MP is active and which is inactive.
+ *  \param[in]    initialOnEcu            if set to RTMCAN_TRUE, deactivate all MPs on the ECU.
+ *                                        if set to RTMCAN_FALSE, the last setting of active/inactive MPs is
+ *                                          transmitted to ECU.
+ *  \return       -
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void _RtmCan_TransmitCtrlArray(enum RtmCan_Boolean initialOnEcu)
+{
+  int i;
+  long tmpMeasConfigArray[RTMCAN_CONFIG_ARRAY_SIZE];
+
+  if (initialOnEcu == RTMCAN_TRUE)
+  {
+    for (i = 0; i < RTMCAN_CONFIG_ARRAY_SIZE; i++)
+    {
+      tmpMeasConfigArray[i] = (long)0;
+    }
+  }
+  else
+  {
+    for (i = 0; i < RTMCAN_CONFIG_ARRAY_SIZE; i++)
+    {
+      tmpMeasConfigArray[i] = (long)RtmCan_MeasurementConfigArray[i];
+    }
+  }
+
+ 
+  sysSetVariableLongArray(sysvar::XCP::Rtm::Rtm_MeasurementConfig, tmpMeasConfigArray, RTMCAN_CONFIG_ARRAY_SIZE);
+} /* _RtmCan_TransmitCtrlArray */
+
+
+/**********************************************************************************************************************
+  _RtmCan_TransmitEcuCommand
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Transmits a Rtm command to ECU.
+ *  \details      The command defines what the Rtm has to do next.
+ *  \param[in]    cmd                     If set to RTMCAN_CMD_SERIAL, a serial measurement is started.
+ *                                        If set to RTMCAN_CMD_PARALLEL, a parallel measurement is started.
+ *                                        If set to RTMCAN_CMD_LIVE, a live measurement is started.
+ *                                        If set to RTMCAN_CMD_STOP, the current measurement is stopped.
+ *                                        If set to RTMCAN_CMD_CLEAR, all measurement results on the ECU are cleared.
+ *  \return       -
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void _RtmCan_TransmitEcuCommand(dword cmd)
+{
+  if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+  {
+    write("RtmCan Info @%lld: Write %x to \"Rtm_Cmd\".", timeNowInt64()/100, cmd);
+  }
+  @sysvar::XCP::Rtm::Rtm_Cmd = cmd;
+} /* _RtmCan_TransmitEcuCommand */
+
+
+/**********************************************************************************************************************
+  _RtmCan_BuildEcuCommand
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Assembles the Rtm command.
+ *  \details      The command defines what the Rtm has to do next.
+ *  \param[in]    command                 If set to RTMCAN_CMD_SERIAL, a serial measurement is started.
+ *                                        If set to RTMCAN_CMD_PARALLEL, a parallel measurement is started.
+ *                                        If set to RTMCAN_CMD_LIVE, a live measurement is started.
+ *                                        If set to RTMCAN_CMD_STOP, the current measurement is stopped.
+ *                                        If set to RTMCAN_CMD_CLEAR, all measurement results on the ECU are cleared.
+ *  \param[in]    timeMs                  Requested measurement duration. Is only relevant to start a measurement.
+ *                                        If set to 0, the duration is unlimited and must be stopped by calling
+ *                                        RtmCan_StopMeasurement.
+ *  \return       Assembled Rtm command.
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+dword _RtmCan_BuildEcuCommand(enum RtmCan_MeasurementCommandType command, dword timeMs)
+{
+  dword cmd;
+
+  cmd = 0;
+
+  if ((timeMs / RTMCAN_MAINFUNCTIONCYCLETIME_MS) < 2)
+  {
+    /* Measurement Duration to small, measure endless. */
+    timeMs = 0;
+  }
+  else
+  {
+    timeMs = (timeMs / RTMCAN_MAINFUNCTIONCYCLETIME_MS) - 1;
+  }
+
+  if (RTMCAN_CMD_SERIAL == command)
+  {
+    if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      if (timeMs > 0)
+      {
+        write("RtmCan Info @%lld: - start SERIAL measurement for %dms", timeNowInt64()/100, (timeMs * RTMCAN_MAINFUNCTIONCYCLETIME_MS));
+      }
+      else
+      {
+        write("RtmCan Info @%lld: - start SERIAL measurement until call to \"RtmCan_StopMeasurement()\".", timeNowInt64()/100);
+      }
+    }
+
+    cmd = (((dword)RTMCAN_CMD_SERIAL) << 28) | timeMs;
+  }
+  else if (RTMCAN_CMD_PARALLEL == command)
+  {
+    if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      if (timeMs > 0)
+      {
+        write("RtmCan Info @%lld: - start PARALLEL measurement for %dms", timeNowInt64()/100, (timeMs * RTMCAN_MAINFUNCTIONCYCLETIME_MS));
+      }
+      else
+      {
+        write("RtmCan Info @%lld: - start PARALLEL measurement until call to \"RtmCan_StopMeasurement()\".", timeNowInt64()/100);
+      }
+    }
+
+    cmd = (((dword)RTMCAN_CMD_PARALLEL) << 28) | timeMs;
+  }
+  else if (RTMCAN_CMD_LIVE == command)
+  {
+    if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      if (timeMs > 0)
+      {
+        write("RtmCan Info @%lld: - start LIVE measurement for %dms", timeNowInt64()/100, (timeMs * RTMCAN_MAINFUNCTIONCYCLETIME_MS));
+      }
+      else
+      {
+        write("RtmCan Info @%lld: - start LIVE measurement until call to \"RtmCan_StopMeasurement()\".", timeNowInt64()/100);
+      }
+    }
+
+    cmd = (((dword)RTMCAN_CMD_LIVE) << 28) | timeMs;
+  }
+  else if (RTMCAN_CMD_STOP == command)
+  {
+    if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Info @%lld: - STOP measurement.", timeNowInt64()/100);
+    }
+    cmd = (((dword)RTMCAN_CMD_STOP) << 28) | 0;
+  }
+  else if (RTMCAN_CMD_CLEAR == command)
+  {
+    if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Info @%lld: - CLEAR results on ECU.", timeNowInt64()/100);
+    }
+    cmd = (((dword)RTMCAN_CMD_CLEAR) << 28) | 0;
+  }
+  else
+  {
+    if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Error @%lld: Invalid measurement duration specified (%lld ms)",timeNowInt64()/100, (timeMs * RTMCAN_MAINFUNCTIONCYCLETIME_MS));
+    }
+
+    RtmCan_State = RTMCAN_STATE_WAITFORACTION;
+  }
+
+  return cmd;
+} /* _RtmCan_BuildEcuCommand */
+
+
+/**********************************************************************************************************************
+  _RtmCan_CalculateCpuLoad
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates the CPU load of the requested MP.
+ *  \details      The calculation depends on the measurement duration.
+ *  \param[in]    mpIndex                 The requested MP index.
+ *  \param[in]    runtime                 The runtime the MP in us.
+ *  \return       The calculated CPU load of the MP in %.
+ *  \pre          Must be called after _RtmCan_CalculateRuntime() for the same MP.
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+double _RtmCan_CalculateCpuLoad(dword mpIndex, double runtime)
+{
+  double cpuLoad;
+  dword count;
+  double correction;
+
+  cpuLoad = 0;
+
+  if (RtmCan_MeasurementSectionActive[mpIndex] == RTMCAN_MP_STATE_ACTIVE)
+  {
+    /* If the measurement is endless and therefore stoppable. */
+    if (RtmCan_StoppableMeasurementRunning == RTMCAN_FALSE)
+    {
+      correction = @sysvar::XCP::Rtm::Rtm_MeasTimeCorrection; /* in ticks */
+
+      correction = ((correction * 1000) / RTMCAN_MEASUREMENT_FREQ_MS); /* in us */
+
+      /* And if current measurement mode is LIVE. */
+      if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+      {
+         /* The measurement duration is always one Main Function Cycle. */
+        RtmCan_MeasurementDuration_us = (qword)(RTMCAN_MAINFUNCTIONCYCLETIME_MS * 1000); /* in us */
+      }
+    }
+
+    count = RtmCan_Measurements[mpIndex].MeasurementCount_current - RtmCan_Measurements[mpIndex].MeasurementCount_last;
+
+    if (0 == count && RtmCan_LiveMeasurementActive == RTMCAN_FALSE)
+    {
+      count = RtmCan_Measurements[mpIndex].MeasurementCount_current;
+    }
+
+    if ((count != 0) && (RtmCan_MeasurementDuration_us != 0))
+    {
+      /* Calculate CPU load: */
+      if (mpIndex == RTMCAN_INDEX_OF_CPU_LOAD)
+      {
+        if (RTMCAN_CPULOAD_VIA_C_API == 1)
+        {
+          cpuLoad = (double)((double)(100 * runtime) / (double)(RTMCAN_MAINFUNCTIONCYCLETIME_MS * 1000));
+        }
+        else
+        {
+          cpuLoad = (double)((double)(100 * runtime * count) / (double)(RtmCan_MeasurementDuration_us));
+        }
+      }
+      else
+      {
+        if (RtmCan_StoppableMeasurementRunning == RTMCAN_TRUE)
+        {
+          cpuLoad = (double)((double)(100 * runtime * count) / (double)(RtmCan_MeasurementDuration_us));
+        }
+        else
+        {
+
+          if (((int64)(RtmCan_MeasurementDuration_us) >   (int64)correction) &&
+              ((int64)(RtmCan_MeasurementDuration_us) > (int64)(-correction)) &&
+              ((RTMCAN_MAINFUNCTIONCYCLETIME_MS * RTMCAN_MEASUREMENT_FREQ_MS) > correction)
+             )
+          {
+            cpuLoad = (double)((double)(100 * runtime * count) / (double)((int64)RtmCan_MeasurementDuration_us - correction));
+          }
+          else
+          {
+            cpuLoad = (double)((double)(100 * runtime * count) / (double)(RtmCan_MeasurementDuration_us));
+          }
+        }
+      }
+
+      /* Cpu Load must be in range 0 to 100. */
+      if (cpuLoad > 100)
+      {
+        cpuLoad = 100;
+      }
+      else if (cpuLoad < 0)
+      {
+        cpuLoad = 0;
+      }
+
+      RtmCan_Measurements[mpIndex].MeasurementCpuLoad_Percent = cpuLoad;
+    }
+    else
+    {
+      if (RtmCan_LiveMeasurementActive == RTMCAN_FALSE)
+      {
+        if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+        {
+          write("RtmCan Warning @%lld: count of MP or measurement duration is 0.", timeNowInt64()/100);
+        }
+      }
+      RtmCan_Measurements[mpIndex].MeasurementCpuLoad_Percent = 0;
+    }
+  }
+
+  return cpuLoad;
+} /* _RtmCan_CalculateCpuLoad */
+
+
+/**********************************************************************************************************************
+  _RtmCan_GetOverheadForMP
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates the overhead of the requested MP.
+ *  \details      Gets the corresponding overhead runtime for the specified MP.
+ *  \param[in]    mpIndex                 The requested MP index.
+ *  \return       The corresponding overhead runtime.
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+double _RtmCan_GetOverheadForMP(dword mpIndex)
+{
+  double overhead;
+
+  overhead = 0.0;
+
+  switch(RtmCan_Measurements[mpIndex].MpType)
+  {
+    case(RTMCAN_MP_TYPE_GROSS_EXECUTIONTIME) :
+      if (RtmCan_Measurements[mpIndex].DisableInterrupts == RTMCAN_FALSE)
+      {
+        overhead = RtmCan_Measurements[0].MeasurementRuntime;
+      }
+      else
+      {
+        overhead = RtmCan_Measurements[1].MeasurementRuntime;
+      }
+      break;
+
+    case(RTMCAN_MP_TYPE_NET_EXECUTIONTIME) :
+      if (RtmCan_Measurements[mpIndex].DisableInterrupts == RTMCAN_FALSE)
+      {
+        overhead = RtmCan_Measurements[2].MeasurementRuntime;
+      }
+      else
+      {
+        overhead = RtmCan_Measurements[3].MeasurementRuntime;
+      }
+      break;
+
+    default :
+      if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+      {
+        write("RtmCan Error @%lld: MP %d has an invalid type.", timeNowInt64()/100, mpIndex);
+      }
+      break;
+  }
+
+  return overhead;
+} /* _RtmCan_GetOverheadForMP */
+
+
+/**********************************************************************************************************************
+  _RtmCan_CalculateRuntime
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates the runtime of the requested MP.
+ *  \details      The command defines what the Rtm has to do next.
+ *  \param[in]    mpIndex                 The requested MP index.
+ *  \return       The calculated runtime of the MP in us.
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+double _RtmCan_CalculateRuntime(dword mpIndex)
+{
+  double runtime, overhead;
+  dword count, ticks;
+
+  runtime = 0;
+
+  count = RtmCan_Measurements[mpIndex].MeasurementCount_current - RtmCan_Measurements[mpIndex].MeasurementCount_last;
+  ticks = RtmCan_Measurements[mpIndex].MeasurementTime_current - RtmCan_Measurements[mpIndex].MeasurementTime_last;
+
+  if ((count == 0) && (RtmCan_LiveMeasurementActive == RTMCAN_FALSE))
+  {
+    count = RtmCan_Measurements[mpIndex].MeasurementCount_current;
+    ticks = RtmCan_Measurements[mpIndex].MeasurementTime_current;
+  }
+
+  if (count != 0)
+  {
+    /* Calculate Runtime: */
+    runtime = (double)((((double)ticks/(double)count))/(double)RTMCAN_MEASUREMENT_FREQ_MS) * (double)1000.0; /* Average Runtime in us. */
+
+    /* Measurement correction - remove runtime of Rtm_Start-/Rtm_Stop-APIs: */
+    if (mpIndex >= RTMCAN_NUMBER_OF_OVERHEAD_MPS)
+    {
+      if (mpIndex != RTMCAN_INDEX_OF_CPU_LOAD)
+      {
+        overhead = _RtmCan_GetOverheadForMP(mpIndex);
+
+        if (overhead <= runtime)
+        {
+          runtime -= overhead;
+        }
+        else
+        {
+          runtime = 0;
+
+          if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Info @%lld: MP %d was executed but runtime was too short.", timeNowInt64()/100, mpIndex);
+          }
+        }
+      }
+    }
+
+    RtmCan_Measurements[mpIndex].MeasurementRuntime = (double)runtime;
+  }
+  else
+  {
+    RtmCan_Measurements[mpIndex].MeasurementRuntime = 0;
+  }
+
+  return runtime;
+} /* _RtmCan_CalculateRuntime */
+
+
+/**********************************************************************************************************************
+  _RtmCan_CalculateResults
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates the measurement results of all active MPs.
+ *  \details      Calculates the measurement results of all active MPs.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void _RtmCan_CalculateResults()
+{
+  dword i;
+  double res;
+
+  for (i = 0; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+  {
+    if (RtmCan_MeasurementSectionActive[i] == RTMCAN_MP_STATE_ACTIVE)
+    {
+      res = _RtmCan_CalculateRuntime(i);
+      _RtmCan_CalculateCpuLoad(i, res);
+    }
+  }
+} /* _RtmCan_CalculateResults */
+
+
+/**********************************************************************************************************************
+  _RtmCan_SetMinMaxRuntime
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Sets the min and max runtime of current MP to result struct.
+ *  \details      Calculates the minimum runtime of current MP.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          Min runtime is smaller than max runtime.
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void _RtmCan_SetMinMaxRuntime(struct RtmCan_ResultType result, dword mpIndex)
+{
+  double maxRuntime;
+  double minRuntime;
+  double overhead;
+
+  /* If the measurement point was never executed, min and max runtime must be zero. */ 
+  if ((RtmCan_Measurements[mpIndex].MeasurementCount_current - RtmCan_Measurements[mpIndex].MeasurementCount_Last) == 0)
+  {
+    minRuntime = 0;
+    maxRuntime = 0;
+  }
+  else
+  {
+    maxRuntime = (double)((double)(RtmCan_Measurements[mpIndex].MeasurementMax) / (double)RTMCAN_MEASUREMENT_FREQ_MS) * (double)1000;
+    minRuntime = (double)((double)(RtmCan_Measurements[mpIndex].MeasurementMin) / (double)RTMCAN_MEASUREMENT_FREQ_MS) * (double)1000;
+
+    overhead = _RtmCan_GetOverheadForMP(mpIndex);
+
+    if (maxRuntime >= overhead)
+    {
+      maxRuntime -= overhead;
+    }
+    else
+    {
+      maxRuntime = 0;
+    }
+
+    if (minRuntime >= overhead)
+    {
+      minRuntime -= overhead;
+    }
+    else
+    {
+      minRuntime = 0;
+    }
+  }
+
+  result.RtmCan_Result_MinRuntime_us = minRuntime;
+  result.RtmCan_Result_MaxRuntime_us = maxRuntime;
+} /* _RtmCan_SetMinMaxRuntime */
+
+
+/**********************************************************************************************************************
+  _RtmCan_SetResult
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Sets the measurement results of one MP to a result structure.
+ *  \details      Returns the structure containing the results.
+ *  \param[out]   result                  Pointer to struct, containing the measurement results of specified MP.
+ *  \param[in]    isInitResultRequested   If set to RTMCAN_TRUE, the struct members of result are set to initial
+ *                                          values.
+ *                                        If set to RTMCAN_FALSE, the reults of the specified MP are returned.
+ *  \param[in]    mpIndex                 The index of the specified MP.
+ *  \return       -
+ *  \pre          The index of MP must be in valid range (0 <= mpIndex < RTMCAN_MEASUREMENTS_COUNT).
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void _RtmCan_SetResult(struct RtmCan_ResultType result, enum RtmCan_Boolean isInitResultRequested, dword mpIndex)
+{
+  if (isInitResultRequested == RTMCAN_TRUE)
+  {
+    result.RtmCan_Result_ID = 0;
+    strncpy(result.RtmCan_Result_Name, "\0", 1);
+    strncpy(result.RtmCan_Result_Group, "\0", 1);
+    result.RtmCan_Result_MP_Type = RTMCAN_MP_TYPE_GROSS_EXECUTIONTIME;
+    result.RtmCan_Result_MinRuntime_us = 0;
+    result.RtmCan_Result_MaxRuntime_us = 0;
+    result.RtmCan_Result_AverageRuntime_us = 0;
+    result.RtmCan_Result_NumberOfExecution = 0;
+    result.RtmCan_Result_CpuLoad = 0;
+    result.RtmCan_Result_AssignedToCore = 0xFFFFFFFF;
+    result.RtmCan_Result_RelativeMax_percent = 0;
+    result.RtmCan_Result_RelativeRemaining_percent = 0;
+  }
+  else
+  {
+    result.RtmCan_Result_ID = mpIndex;
+    strncpy(result.RtmCan_Result_Name, RtmCan_Measurements[mpIndex].Name, strlen(RtmCan_Measurements[mpIndex].Name) + 1);
+    strncpy(result.RtmCan_Result_Group, RtmCan_Measurements[mpIndex].Group, strlen(RtmCan_Measurements[mpIndex].Group) + 1);
+    _RtmCan_SetMinMaxRuntime(result, mpIndex);
+    result.RtmCan_Result_MP_Type = RtmCan_Measurements[mpIndex].MpType; 
+    result.RtmCan_Result_AverageRuntime_us = RtmCan_Measurements[mpIndex].MeasurementRuntime;
+    result.RtmCan_Result_NumberOfExecution = RtmCan_Measurements[mpIndex].MeasurementCount_Current - RtmCan_Measurements[mpIndex].MeasurementCount_Last;
+    result.RtmCan_Result_CpuLoad = RtmCan_Measurements[mpIndex].MeasurementCpuLoad_Percent;
+    result.RtmCan_Result_MeasurementDuration_us = (qword)RtmCan_MeasurementDuration_us;
+    result.RtmCan_Result_AssignedToCore = RtmCan_Measurements[mpIndex].AssignedToCore;
+    if (RtmCan_Measurements[mpIndex].TargetRuntime > 0)
+    {
+      result.RtmCan_Result_RelativeMax_percent = (result.RtmCan_Result_MaxRuntime_us * 100) / RtmCan_Measurements[mpIndex].TargetRuntime;
+
+      if (result.RtmCan_Result_RelativeMax_percent >= 100)
+      {
+        result.RtmCan_Result_RelativeRemaining_percent = 0;
+      }
+      else
+      {
+        result.RtmCan_Result_RelativeRemaining_percent = 100 - result.RtmCan_Result_RelativeMax_percent;
+      }
+    }
+    else
+    {
+      result.RtmCan_Result_RelativeMax_percent = 0;
+    }
+  }
+} /* _RtmCan_SetResult */
+
+
+/**********************************************************************************************************************
+  _RtmCan_ReturnResultsByMPID
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Returns the results of one MP if the specified MP ID is in valid range.
+ *  \details      Calculates the measurement results of all active MPs.
+ *  \param[in]    measPointID             The index of the specified MP.
+ *  \param[out]   result                  Pointer to struct, containing the measurement results of specified MP.
+ *  \return       RTMCAN_E_OK             The request succeeded.
+ *  \return       RTMCAN_E_NO_MATCH_FOUND
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+enum RtmCan_ReturnValueType _RtmCan_ReturnResultsByMPID(dword measPointID, struct RtmCan_ResultType result)
+{
+  enum RtmCan_ReturnValueType retVal;
+
+  if ((measPointID < RTMCAN_MEASUREMENTS_COUNT) && (measPointID >= RTMCAN_NUMBER_OF_OVERHEAD_MPS))
+  {
+    _RtmCan_SetResult(result, RTMCAN_FALSE, measPointID);
+
+    retVal = RTMCAN_E_OK;
+  }
+  else
+  {
+    _RtmCan_SetResult(result, RTMCAN_TRUE, 0);
+
+    retVal = RTMCAN_E_NO_MATCH_FOUND;
+  }
+
+  return retVal;
+} /* _RtmCan_ReturnResultsByMPID */
+
+
+/**********************************************************************************************************************
+  _RtmCan_StartMeasurement
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Starts a runtime measurement.
+ *  \details      Sends firstly the measurement config array to ECU, then the Rtm_Cmd containing measurement mode and
+ *                measurement duration.
+ *  \param[in]    command                 The index of the specified MP.
+ *  \param[out]   timeToMeas              Pointer to struct, containing the measurement results of specified MP.
+ *  \return       -
+ *  \pre          The command must be
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+void _RtmCan_StartMeasurement(enum RtmCan_MeasurementCommandType command, dword timeToMeas)
+{
+  /* Transmit measurement config array with all active MPs. */
+  _RtmCan_TransmitCtrlArray(RTMCAN_FALSE);
+  _RtmCan_WaitForUpload(10000);
+
+  /* Transmit Rtm_Cmd containing measurement mode and measurement duration. */
+  _RtmCan_TransmitEcuCommand(_RtmCan_BuildEcuCommand(command, timeToMeas));
+
+  if ((timeToMeas / RTMCAN_MAINFUNCTIONCYCLETIME_MS) < 2)
+  {
+    RtmCan_StoppableMeasurementRunning = RTMCAN_TRUE;
+    RtmCan_MeasurementDuration_us = 0;
+  }
+  else
+  {
+    RtmCan_StoppableMeasurementRunning = RTMCAN_FALSE;
+    RtmCan_MeasurementDuration_us = timeToMeas * 1000; /* Convert from s to ms. */
+  }
+} /* _RtmCan_StartMeasurement */
+
+
+/**********************************************************************************************************************
+  _RtmCan_StartNextSerialMeasurement
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Starts the next measurement for the next active measurement point.
+ *  \details      Sets the next measurement point to active and starts serial measurement.
+ *  \param[in]    -
+ *  \return       RTMCAN_TRUE             The next measurement is started for the next measurement point.
+ *  \return       RTMCAN_FALSE            The measurement for the last active measurement point was already executed.
+ *                                        Thus, the serial measurement is finished.
+ *  \pre          Serial measurement is executed.
+ *  \synchronous  TRUE
+ *  \ingroup      Internal
+ *********************************************************************************************************************/
+enum RtmCan_Boolean _RtmCan_StartNextSerialMeasurement()
+{
+  enum RtmCan_Boolean nextMPstarted;
+  dword i;
+  dword activeMPIndex;
+  dword prevActiveMPIndex;
+
+  prevActiveMPIndex = RTMCAN_MEASUREMENTS_COUNT;
+  nextMPstarted = RTMCAN_FALSE;
+
+  for (i = 0; (i < RTMCAN_MEASUREMENTS_COUNT) && (nextMPstarted == RTMCAN_FALSE); i++)
+  {
+    if (RtmCan_MeasurementSectionActive[i] == RTMCAN_MP_STATE_ACTIVE)
+    {
+      prevActiveMPIndex = i;
+      RtmCan_MeasurementSectionActive[i] = RTMCAN_MP_STATE_INACTIVE;
+    }
+    if ((i > prevActiveMPIndex) /* A new MP has to be set active, not an old one. */
+         && (RtmCan_MeasurementSectionActive_Serial[i] == RTMCAN_MP_STATE_ACTIVE) /* The next active MP to be measured. */
+       )
+    {
+      nextMPstarted = RTMCAN_TRUE;
+
+      RtmCan_MeasurementSectionActive[i] = RTMCAN_MP_STATE_ACTIVE;
+
+      _RtmCan_ConfigureMeasurements();
+
+      _RtmCan_StartMeasurement(RTMCAN_CMD_SERIAL, (RtmCan_MeasurementDuration_us / 1000) /* Measurement duration in ms */);
+    }
+  }
+
+  /* If the last measurement point was already started. */
+  if (nextMPstarted == RTMCAN_FALSE)
+  {
+    /* Recover all active measurement points and initialize the recovery stack. */
+    for (i = 0; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+    {
+      RtmCan_MeasurementSectionActive[i] = RtmCan_MeasurementSectionActive_Serial[i];
+      RtmCan_MeasurementSectionActive_Serial[i] = RTMCAN_MP_STATE_INACTIVE;
+    }
+  }
+
+  return nextMPstarted;
+} /* _RtmCan_StartNextSerialMeasurement */
+
+/* <- INTERNAL HELPER APIs */
+/* ############################################################ */
+
+
+/* ############################################################ */
+/* CANOE CALLBACK APIs -> */
+
+/// @cond DEV
+
+/**********************************************************************************************************************
+  on preStart
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Initializes the RtmCan.
+ *  \details      Called by CANoe while start up of simulation. Initialized RtmCan.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          Called if value of Rtm_Resp is changed within ECU.
+ *  \pre          Called by CANoe, if the variable Rtm_Resp is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on preStart
+{
+  RtmCan_State = RTMCAN_STATE_UNINIT;
+  if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+  {
+    write("RtmCan Info @%lld: RtmCan_State == RTMCAN_STATE_UNINIT", timeNowInt64()/100);
+  }
+
+  _RtmCan_InitData();
+  _RtmCan_InitMeasurementPointState();
+  _RtmCan_InitMeasurementConfig();
+
+  RtmCan_State = RTMCAN_STATE_WAITFORACTION;
+  if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+  {
+    write("RtmCan Info @%lld: RtmCan_State == RTMCAN_STATE_WAITFORACTION", timeNowInt64()/100);
+  }
+} /* on preStart */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_CpuLoadTime
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Called by CANoe if the variable Rtm_CpuLoadTime is updated on ECU and Xcp event Rtm_Event is
+ *                  triggered.
+ *  \details      According variable access and Xcp event triggering takes place within Rtm_MainFunction.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          Called if value of Rtm_CpuLoadTime is changed within ECU.
+ *  \pre          Called by CANoe, if the variable Rtm_CpuLoadTime is mapped to DAQ-Event Rtm_Event.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_CpuLoadTime
+{
+  double result;
+
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    result = ((@sysvar::XCP::Rtm::Rtm_CpuLoadTime) / (double)((RTMCAN_MEASUREMENT_FREQ_MS * RTMCAN_MAINFUNCTIONCYCLETIME_MS) - @sysvar::XCP::Rtm::Rtm_MeasTimeCorrection)) *100;
+
+    if(result <= 100 && result >= 0)
+      sysSetVariableFloat("RtmLive", "Rtm_CPULoad", result);
+    else
+      sysSetVariableFloat("RtmLive", "Rtm_CPULoad", 0.0);
+
+    if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Info @%lld:", timeNowInt64()/100);
+      write(" - CPU load time: %d.", @sysvar::XCP::Rtm::Rtm_CpuLoadTime);
+      write(" - Measurement Time Correction: %d.", @sysvar::XCP::Rtm::Rtm_MeasTimeCorrection);
+      result = sysGetVariableFloat("RtmLive", "Rtm_CPULoad");
+      write(" - CPU load result: %g.", result);
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_CpuLoadTime */
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_AverageMainFunctionCycleTime
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Called by CANoe if the variable Rtm_AverageMainFunctionCycleTime is updated on ECU and Xcp event
+ *                Rtm_Evt is triggered.
+ *  \details      According variable access and Xcp event triggering takes place within Rtm_MainFunction.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          Called if value of Rtm_Resp is changed within ECU.
+ *  \pre          Called by CANoe, if the variable Rtm_Resp is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_AverageMainFunctionCycleTime
+{
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    RtmCan_AverageMainFunctionCycleTime = @sysvar::XCP::Rtm::Rtm_AverageMainFunctionCycleTime;
+    RtmCan_MeasurementDuration_us = ((RtmCan_AverageMainFunctionCycleTime * 1000) / RTMCAN_MEASUREMENT_FREQ_MS);
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_AverageMainFunctionCycleTime */
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Resp
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Called by CANoe if the variable Rtm_Resp is updated on ECU and Xcp event Rtm_Evt is triggered.
+ *  \details      According variable access and Xcp event triggering takes place within Rtm_MainFunction.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          Called if value of Rtm_Resp is changed within ECU.
+ *  \pre          Called by CANoe, if the variable Rtm_Resp is mapped to DAQ-Event Rtm_Evt.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Resp
+{
+  long controlArray[(RTMCAN_MEASUREMENTS_COUNT-1)/8+1];
+  dword i;
+  dword resp;
+  int uploadResult;
+
+  resp = @sysvar::XCP::Rtm::Rtm_Resp;
+
+  if ((resp & 0x60000000) == 0x60000000)
+  {
+    if (@sysvar::XCP::Rtm::Rtm_Cmd != 0x0)
+    {
+      @sysvar::XCP::Rtm::Rtm_Cmd = 0x0;
+    }
+    if (@sysvar::XCP::Rtm::Rtm_Resp != 0x0)
+    {
+      @sysvar::XCP::Rtm::Rtm_Resp = 0x0;
+    }
+
+    switch(RtmCan_GetRtmCanState())
+    {
+    case(RTMCAN_STATE_WAITFORACTION) :
+    case(RTMCAN_STATE_BUSY) :
+      break;
+
+    case(RTMCAN_STATE_MEASURING) :
+      if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+      {
+        if (RtmCan_StoppableMeasurementRunning == RTMCAN_FALSE)
+        {
+          if (RtmCan_LiveMeasurementCounter > 0)
+          {
+            RtmCan_LiveMeasurementCounter--;
+          }
+          else
+          {
+            RtmCan_LiveMeasurementActive = RTMCAN_FALSE;
+
+            if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+            {
+              write("RtmCan Info @%lld: Live Measurement has finished.", timeNowInt64()/100);
+            }
+
+            _RtmCan_StateTransition(RTMCAN_EVENT_ACTIONFINISHED);
+
+            /* Time limited live measurement finished. */
+            Appl_RtmCanRespReceived(RTMCAN_STATE_MEASURING);
+          }
+        }
+      }
+      else
+      {
+        if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+        {
+          write("RtmCan Info @%lld: Sending has finished.", timeNowInt64()/100); 
+        }
+        /* Turn off all measurement points in ECU: */
+        _RtmCan_TransmitCtrlArray(RTMCAN_TRUE);
+
+        if (RtmCan_StoppableMeasurementRunning == RTMCAN_TRUE)
+        {
+          /* Upload data for Measurement Duration calculation, if Endless Measurement */
+          xcpUpload("XCP::Rtm", "Rtm_AverageMainFunctionCycleTime");
+          _RtmCan_WaitForUpload(1000);
+
+          xcpUpload("XCP::Rtm", "Rtm_MainFunctionCounter");
+          _RtmCan_WaitForUpload(1000);
+
+          RtmCan_ExpectedUploads = RtmCan_ExpectedUploads + 2;
+        }
+        else
+        {
+          xcpUpload("XCP::Rtm", "Rtm_MeasTimeCorrection");
+          _RtmCan_WaitForUpload(1000);
+
+          RtmCan_ExpectedUploads++;
+        }
+
+        /* Request all results: */
+        for (i = 0; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+        {
+          if (RtmCan_MeasurementSectionActive[i] == RTMCAN_MP_STATE_ACTIVE)
+          {
+            long ret;
+            if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+            {
+              snprintf(RtmCan_XcpUploadVariable_time, elcount(RtmCan_XcpUploadVariable_time), "Rtm_Results_%i_::time", i );
+              snprintf(RtmCan_XcpUploadVariable_count, elcount(RtmCan_XcpUploadVariable_count), "Rtm_Results_%i_::count", i );
+
+              ret  = xcpUpload("XCP::Rtm", RtmCan_XcpUploadVariable_time);
+              _RtmCan_WaitForUpload(1000);
+              ret |= xcpUpload("XCP::Rtm", RtmCan_XcpUploadVariable_count);
+              _RtmCan_WaitForUpload(1000);
+
+              if (ret != 0)
+              {
+                if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+                {
+                  write("RtmCan Error @%lld: Error while result uploading!", timeNowInt64()/100);
+                }
+              }
+              else
+              {
+                RtmCan_ExpectedUploads += 2;
+              }
+            }
+            else
+            {
+              snprintf(RtmCan_XcpUploadVariable_time, elcount(RtmCan_XcpUploadVariable_time), "Rtm_Results_%i_::time", i );
+              snprintf(RtmCan_XcpUploadVariable_count, elcount(RtmCan_XcpUploadVariable_count), "Rtm_Results_%i_::count", i );
+              snprintf(RtmCan_XcpUploadVariable_max, elcount(RtmCan_XcpUploadVariable_max), "Rtm_Results_%i_::max", i );
+              snprintf(RtmCan_XcpUploadVariable_min, elcount(RtmCan_XcpUploadVariable_min), "Rtm_Results_%i_::min", i );
+
+              ret  = xcpUpload("XCP::Rtm", RtmCan_XcpUploadVariable_time);
+              _RtmCan_WaitForUpload(1000);
+              ret |= xcpUpload("XCP::Rtm", RtmCan_XcpUploadVariable_count);
+              _RtmCan_WaitForUpload(1000);
+              ret |= xcpUpload("XCP::Rtm", RtmCan_XcpUploadVariable_max);
+              _RtmCan_WaitForUpload(1000);
+              ret |= xcpUpload("XCP::Rtm", RtmCan_XcpUploadVariable_min);
+              _RtmCan_WaitForUpload(1000);
+
+              if (ret != 0)
+              {
+                if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+                {
+                  write("RtmCan Error @%lld: Error while result uploading! Maybe Rtm_Results[] sysvars not set in XCP/CCP.", timeNowInt64()/100);
+                }
+              }
+              else
+              {
+                RtmCan_ExpectedUploads += 4;
+              }
+            }
+          }
+        }
+
+        /* If trigger reading is requested, indicate this to upper layer. */
+        if ((resp & 0x80000000) == 0x80000000)
+        {
+          Appl_RtmCanTriggerReadingReceived();
+        }
+
+        _RtmCan_StateTransition(RTMCAN_EVENT_WAITINGFORUPLOAD);
+      }
+      break;
+
+    case(RTMCAN_STATE_CLEARRESULTS) :
+      _RtmCan_StateTransition(RTMCAN_EVENT_ACTIONFINISHED);
+
+      /* The clear request was executed successfully. */
+      Appl_RtmCanRespReceived(RTMCAN_STATE_CLEARRESULTS);
+      break;
+
+    default :
+      if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+      {
+        write("RtmCan Error @%lld: invalid state of RtmCan!", timeNowInt64()/100);
+      }
+      break;
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Resp */
+
+
+/**********************************************************************************************************************
+  OnXcpUpload
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Stores the results of all active measurement points to global struture array RtmCan_Measurements.
+ *  \details      Called by CANoe if the variable rtmNamespace::variable is updated with value from ECU.
+ *  \param[in]    rtmNamespace            The namespace of the updated system variable.
+ *  \param[in]    variable                The name of the updated system variable.
+ *  \param[in]    errorIndication         Indicates if an error occured while updating.
+ *  \return       -
+ *  \pre          Only called by CANoe.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+void OnXcpUpload(char rtmNamespace[], char variable[], long errorIndication)
+{
+  dword i;
+  long result;
+
+  if (RtmCan_LiveMeasurementActive == RTMCAN_FALSE)
+  {
+    long stringLength;
+
+    /* Reduce Bandwidth */
+    _RtmCan_WaitForUpload(10000);
+
+    if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Info @%lld: Upload succeeded for: %s::%s", timeNowInt64()/100, rtmNamespace, variable);
+    }
+
+    stringLength = strlen("XCP::Rtm");
+    /* If the rtmNamespace is not "XCP::Rtm" the xcp upload is not relevant for RtmCan. */
+    if (strlen(rtmNamespace) < stringLength)
+    {
+      if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+      {
+        write("RtmCan Info @%lld: OnXcpUpload: The system variable namespace does not fit.", timeNowInt64()/100);
+      }
+    }
+    else if (strncmp(rtmNamespace, "XCP::Rtm", stringLength) != 0)
+    {
+      if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+      {
+        write("RtmCan Info @%lld: OnXcpUpload: The system variable namespace does not fit.", timeNowInt64()/100);
+      }
+    }
+    else if (RtmCan_ExpectedUploads == 0)
+    {
+      if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+      {
+        write("RtmCan Error @%lld: More uploads than expected!", timeNowInt64()/100);
+      }
+    }
+    else
+    {
+      RtmCan_ExpectedUploads--;
+      if (RtmCan_ExpectedUploads == 0)
+      {
+        for (i = 0; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+        {
+          if (RtmCan_MeasurementSectionActive[i] == RTMCAN_MP_STATE_ACTIVE)
+          {
+            snprintf(RtmCan_XcpUploadVariable_time_receive, elcount(RtmCan_XcpUploadVariable_time_receive), "Rtm_Results_%i_::time", i );
+            snprintf(RtmCan_XcpUploadVariable_count_receive, elcount(RtmCan_XcpUploadVariable_count_receive), "Rtm_Results_%i_::count", i );
+            snprintf(RtmCan_XcpUploadVariable_max_receive, elcount(RtmCan_XcpUploadVariable_max_receive), "Rtm_Results_%i_::max", i );
+            snprintf(RtmCan_XcpUploadVariable_min_receive, elcount(RtmCan_XcpUploadVariable_min_receive), "Rtm_Results_%i_::min", i );
+
+            RtmCan_Measurements[i].MeasurementCount_current = SysGetVariableInt("XCP::Rtm", RtmCan_XcpUploadVariable_count_receive);
+            RtmCan_Measurements[i].MeasurementTime_current = SysGetVariableInt("XCP::Rtm", RtmCan_XcpUploadVariable_time_receive);
+            RtmCan_Measurements[i].MeasurementMax = SysGetVariableInt("XCP::Rtm", RtmCan_XcpUploadVariable_max_receive);
+            RtmCan_Measurements[i].MeasurementMin = SysGetVariableInt("XCP::Rtm", RtmCan_XcpUploadVariable_min_receive);
+
+            if (RtmCan_Measurements[i].MeasurementCount_current > 0)
+            {
+              if ((RtmCan_Measurements[i].MeasurementTime_current / RtmCan_Measurements[i].MeasurementCount_current) >  RtmCan_Measurements[i].MeasurementMax)
+              {
+                if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+                {
+                  write("RtmCan Info @%lld: OnXcpUpload: Average Runtime greater than Maximum Runtime!", timeNowInt64()/100);
+                }
+              }
+              if ((RtmCan_Measurements[i].MeasurementTime_current / RtmCan_Measurements[i].MeasurementCount_current) <  RtmCan_Measurements[i].MeasurementMin)
+              {
+                if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+                {
+                  write("RtmCan Info @%lld: OnXcpUpload: Average Runtime smaller than Minimum Runtime!", timeNowInt64()/100);
+                }
+              }
+            }
+
+            if (RtmCan_Measurements[i].IsLetMP)
+            {
+              RtmCan_Measurements[i].LetError = (enum RtmCan_LetErrorType)SysGetVariableInt("XCP::Rtm", RtmCan_Measurements[i].LetErrorVar);
+            }
+          }
+          /* Remove previous results of not executed MPs: */
+          else
+          {
+            /* Only delete old measurement results if serial measurement mode is *not* active. */
+            if (RtmCan_MeasurementSectionActive_Serial[0] == RTMCAN_MP_STATE_INACTIVE)
+            {
+              RtmCan_Measurements[i].MeasurementCount_current = 0;
+              RtmCan_Measurements[i].MeasurementTime_current = 0;
+              RtmCan_Measurements[i].MeasurementMax = 0;
+              RtmCan_Measurements[i].MeasurementMin = (dword)0xFFFFFFFF;
+              RtmCan_Measurements[i].LetError = RTMCAN_LET_ERROR_OK;
+            }
+          }
+        }
+
+        /* All measurement results are loaded successfully. */
+        if (RtmCan_StoppableMeasurementRunning == RTMCAN_TRUE)
+        {
+          RtmCan_AverageMainFunctionCycleTime = @sysvar::XCP::Rtm::Rtm_AverageMainFunctionCycleTime;
+          RtmCan_MainFunctionCounter = @sysvar::XCP::Rtm::Rtm_MainFunctionCounter;
+
+          /* Calculation of overall measurement duration in micro seconds. */
+          RtmCan_MeasurementDuration_us = (qword)((qword)RtmCan_AverageMainFunctionCycleTime * (qword)RtmCan_MainFunctionCounter);
+          RtmCan_MeasurementDuration_us = ((RtmCan_MeasurementDuration_us * 1000) / RTMCAN_MEASUREMENT_FREQ_MS); /* Measurement Duration in us. */
+        }
+
+        _RtmCan_CalculateResults();
+
+        /* If parallel measurement was active. */
+        if (RtmCan_MeasurementSectionActive_Serial[0] == RTMCAN_MP_STATE_INACTIVE)
+        {
+          /* The measurement is finished. */
+          _RtmCan_StateTransition(RTMCAN_EVENT_ACTIONFINISHED);
+
+          Appl_RtmCanMeasurementFinished(); /* Callback: this function must be provided by Application. */
+        }
+        /* Otherwise, serial measurement is active, thus activate next MP and start measurement. */
+        else
+        {
+          _RtmCan_StateTransition(RTMCAN_EVENT_MEASURING);
+
+          /* If the last active measurement point was already executed.  */
+          if (_RtmCan_StartNextSerialMeasurement() == RTMCAN_FALSE)
+          {
+            /* All serial measurements are executed and the measurement is finished. */
+            _RtmCan_StateTransition(RTMCAN_EVENT_ACTIONFINISHED);
+
+            Appl_RtmCanMeasurementFinished(); /* Callback: this function must be provided by Application. */
+          }
+        }
+      }
+    }
+  }
+} /* OnXcpUpload */
+
+/*   ############################################################ */
+/*   -> LIVE MEASUREMENT -> */
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_4_::time
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Appl_BackgroundTask (with ID 4).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if count is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_4_::time
+{
+  RtmCan_TimeCtr[4]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[4] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[4] == RtmCan_CountCtr[4])
+      {
+        RtmCan_Measurements[4].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_4_::count;
+        RtmCan_Measurements[4].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_4_::time;
+
+        if ( (RtmCan_Measurements[4].MeasurementTime_current != RtmCan_Measurements[4].MeasurementTime_last) ||
+             (RtmCan_Measurements[4].MeasurementCount_current != RtmCan_Measurements[4].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Appl_BackgroundTask_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[4].ID));
+          sysSetVariableFloat("RtmLive", "Appl_BackgroundTask_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[4].ID, RtmCan_Measurements[4].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[4].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_4_::time */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_4_::count
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Appl_BackgroundTask (with ID 4).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if time is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_4_::count
+{
+  RtmCan_CountCtr[4]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[4] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[4] == RtmCan_CountCtr[4])
+      {
+        RtmCan_Measurements[4].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_4_::count;
+        RtmCan_Measurements[4].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_4_::time;
+
+        if ( (RtmCan_Measurements[4].MeasurementTime_current != RtmCan_Measurements[4].MeasurementTime_last) ||
+             (RtmCan_Measurements[4].MeasurementCount_current != RtmCan_Measurements[4].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Appl_BackgroundTask_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[4].ID));
+          sysSetVariableFloat("RtmLive", "Appl_BackgroundTask_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[4].ID, RtmCan_Measurements[4].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[4].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_4_::count */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_5_::time
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Appl_IPC_Task (with ID 5).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if count is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_5_::time
+{
+  RtmCan_TimeCtr[5]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[5] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[5] == RtmCan_CountCtr[5])
+      {
+        RtmCan_Measurements[5].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_5_::count;
+        RtmCan_Measurements[5].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_5_::time;
+
+        if ( (RtmCan_Measurements[5].MeasurementTime_current != RtmCan_Measurements[5].MeasurementTime_last) ||
+             (RtmCan_Measurements[5].MeasurementCount_current != RtmCan_Measurements[5].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Appl_IPC_Task_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[5].ID));
+          sysSetVariableFloat("RtmLive", "Appl_IPC_Task_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[5].ID, RtmCan_Measurements[5].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[5].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_5_::time */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_5_::count
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Appl_IPC_Task (with ID 5).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if time is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_5_::count
+{
+  RtmCan_CountCtr[5]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[5] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[5] == RtmCan_CountCtr[5])
+      {
+        RtmCan_Measurements[5].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_5_::count;
+        RtmCan_Measurements[5].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_5_::time;
+
+        if ( (RtmCan_Measurements[5].MeasurementTime_current != RtmCan_Measurements[5].MeasurementTime_last) ||
+             (RtmCan_Measurements[5].MeasurementCount_current != RtmCan_Measurements[5].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Appl_IPC_Task_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[5].ID));
+          sysSetVariableFloat("RtmLive", "Appl_IPC_Task_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[5].ID, RtmCan_Measurements[5].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[5].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_5_::count */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_6_::time
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Appl_Task (with ID 6).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if count is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_6_::time
+{
+  RtmCan_TimeCtr[6]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[6] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[6] == RtmCan_CountCtr[6])
+      {
+        RtmCan_Measurements[6].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_6_::count;
+        RtmCan_Measurements[6].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_6_::time;
+
+        if ( (RtmCan_Measurements[6].MeasurementTime_current != RtmCan_Measurements[6].MeasurementTime_last) ||
+             (RtmCan_Measurements[6].MeasurementCount_current != RtmCan_Measurements[6].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Appl_Task_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[6].ID));
+          sysSetVariableFloat("RtmLive", "Appl_Task_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[6].ID, RtmCan_Measurements[6].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[6].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_6_::time */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_6_::count
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Appl_Task (with ID 6).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if time is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_6_::count
+{
+  RtmCan_CountCtr[6]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[6] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[6] == RtmCan_CountCtr[6])
+      {
+        RtmCan_Measurements[6].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_6_::count;
+        RtmCan_Measurements[6].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_6_::time;
+
+        if ( (RtmCan_Measurements[6].MeasurementTime_current != RtmCan_Measurements[6].MeasurementTime_last) ||
+             (RtmCan_Measurements[6].MeasurementCount_current != RtmCan_Measurements[6].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Appl_Task_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[6].ID));
+          sysSetVariableFloat("RtmLive", "Appl_Task_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[6].ID, RtmCan_Measurements[6].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[6].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_6_::count */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_7_::time
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Appl_Task_Communication (with ID 7).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if count is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_7_::time
+{
+  RtmCan_TimeCtr[7]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[7] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[7] == RtmCan_CountCtr[7])
+      {
+        RtmCan_Measurements[7].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_7_::count;
+        RtmCan_Measurements[7].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_7_::time;
+
+        if ( (RtmCan_Measurements[7].MeasurementTime_current != RtmCan_Measurements[7].MeasurementTime_last) ||
+             (RtmCan_Measurements[7].MeasurementCount_current != RtmCan_Measurements[7].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Appl_Task_Communication_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[7].ID));
+          sysSetVariableFloat("RtmLive", "Appl_Task_Communication_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[7].ID, RtmCan_Measurements[7].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[7].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_7_::time */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_7_::count
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Appl_Task_Communication (with ID 7).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if time is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_7_::count
+{
+  RtmCan_CountCtr[7]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[7] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[7] == RtmCan_CountCtr[7])
+      {
+        RtmCan_Measurements[7].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_7_::count;
+        RtmCan_Measurements[7].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_7_::time;
+
+        if ( (RtmCan_Measurements[7].MeasurementTime_current != RtmCan_Measurements[7].MeasurementTime_last) ||
+             (RtmCan_Measurements[7].MeasurementCount_current != RtmCan_Measurements[7].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Appl_Task_Communication_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[7].ID));
+          sysSetVariableFloat("RtmLive", "Appl_Task_Communication_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[7].ID, RtmCan_Measurements[7].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[7].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_7_::count */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_8_::time
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Appl_Task_Fast (with ID 8).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if count is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_8_::time
+{
+  RtmCan_TimeCtr[8]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[8] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[8] == RtmCan_CountCtr[8])
+      {
+        RtmCan_Measurements[8].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_8_::count;
+        RtmCan_Measurements[8].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_8_::time;
+
+        if ( (RtmCan_Measurements[8].MeasurementTime_current != RtmCan_Measurements[8].MeasurementTime_last) ||
+             (RtmCan_Measurements[8].MeasurementCount_current != RtmCan_Measurements[8].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Appl_Task_Fast_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[8].ID));
+          sysSetVariableFloat("RtmLive", "Appl_Task_Fast_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[8].ID, RtmCan_Measurements[8].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[8].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_8_::time */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_8_::count
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Appl_Task_Fast (with ID 8).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if time is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_8_::count
+{
+  RtmCan_CountCtr[8]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[8] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[8] == RtmCan_CountCtr[8])
+      {
+        RtmCan_Measurements[8].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_8_::count;
+        RtmCan_Measurements[8].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_8_::time;
+
+        if ( (RtmCan_Measurements[8].MeasurementTime_current != RtmCan_Measurements[8].MeasurementTime_last) ||
+             (RtmCan_Measurements[8].MeasurementCount_current != RtmCan_Measurements[8].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Appl_Task_Fast_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[8].ID));
+          sysSetVariableFloat("RtmLive", "Appl_Task_Fast_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[8].ID, RtmCan_Measurements[8].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[8].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_8_::count */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_9_::time
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Appl_Task_High_Prio (with ID 9).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if count is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_9_::time
+{
+  RtmCan_TimeCtr[9]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[9] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[9] == RtmCan_CountCtr[9])
+      {
+        RtmCan_Measurements[9].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_9_::count;
+        RtmCan_Measurements[9].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_9_::time;
+
+        if ( (RtmCan_Measurements[9].MeasurementTime_current != RtmCan_Measurements[9].MeasurementTime_last) ||
+             (RtmCan_Measurements[9].MeasurementCount_current != RtmCan_Measurements[9].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Appl_Task_High_Prio_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[9].ID));
+          sysSetVariableFloat("RtmLive", "Appl_Task_High_Prio_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[9].ID, RtmCan_Measurements[9].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[9].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_9_::time */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_9_::count
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Appl_Task_High_Prio (with ID 9).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if time is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_9_::count
+{
+  RtmCan_CountCtr[9]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[9] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[9] == RtmCan_CountCtr[9])
+      {
+        RtmCan_Measurements[9].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_9_::count;
+        RtmCan_Measurements[9].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_9_::time;
+
+        if ( (RtmCan_Measurements[9].MeasurementTime_current != RtmCan_Measurements[9].MeasurementTime_last) ||
+             (RtmCan_Measurements[9].MeasurementCount_current != RtmCan_Measurements[9].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Appl_Task_High_Prio_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[9].ID));
+          sysSetVariableFloat("RtmLive", "Appl_Task_High_Prio_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[9].ID, RtmCan_Measurements[9].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[9].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_9_::count */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_10_::time
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Appl_Task_Logging (with ID 10).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if count is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_10_::time
+{
+  RtmCan_TimeCtr[10]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[10] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[10] == RtmCan_CountCtr[10])
+      {
+        RtmCan_Measurements[10].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_10_::count;
+        RtmCan_Measurements[10].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_10_::time;
+
+        if ( (RtmCan_Measurements[10].MeasurementTime_current != RtmCan_Measurements[10].MeasurementTime_last) ||
+             (RtmCan_Measurements[10].MeasurementCount_current != RtmCan_Measurements[10].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Appl_Task_Logging_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[10].ID));
+          sysSetVariableFloat("RtmLive", "Appl_Task_Logging_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[10].ID, RtmCan_Measurements[10].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[10].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_10_::time */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_10_::count
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Appl_Task_Logging (with ID 10).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if time is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_10_::count
+{
+  RtmCan_CountCtr[10]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[10] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[10] == RtmCan_CountCtr[10])
+      {
+        RtmCan_Measurements[10].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_10_::count;
+        RtmCan_Measurements[10].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_10_::time;
+
+        if ( (RtmCan_Measurements[10].MeasurementTime_current != RtmCan_Measurements[10].MeasurementTime_last) ||
+             (RtmCan_Measurements[10].MeasurementCount_current != RtmCan_Measurements[10].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Appl_Task_Logging_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[10].ID));
+          sysSetVariableFloat("RtmLive", "Appl_Task_Logging_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[10].ID, RtmCan_Measurements[10].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[10].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_10_::count */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_11_::time
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point BSW_Task (with ID 11).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if count is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_11_::time
+{
+  RtmCan_TimeCtr[11]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[11] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[11] == RtmCan_CountCtr[11])
+      {
+        RtmCan_Measurements[11].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_11_::count;
+        RtmCan_Measurements[11].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_11_::time;
+
+        if ( (RtmCan_Measurements[11].MeasurementTime_current != RtmCan_Measurements[11].MeasurementTime_last) ||
+             (RtmCan_Measurements[11].MeasurementCount_current != RtmCan_Measurements[11].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "BSW_Task_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[11].ID));
+          sysSetVariableFloat("RtmLive", "BSW_Task_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[11].ID, RtmCan_Measurements[11].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[11].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_11_::time */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_11_::count
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point BSW_Task (with ID 11).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if time is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_11_::count
+{
+  RtmCan_CountCtr[11]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[11] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[11] == RtmCan_CountCtr[11])
+      {
+        RtmCan_Measurements[11].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_11_::count;
+        RtmCan_Measurements[11].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_11_::time;
+
+        if ( (RtmCan_Measurements[11].MeasurementTime_current != RtmCan_Measurements[11].MeasurementTime_last) ||
+             (RtmCan_Measurements[11].MeasurementCount_current != RtmCan_Measurements[11].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "BSW_Task_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[11].ID));
+          sysSetVariableFloat("RtmLive", "BSW_Task_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[11].ID, RtmCan_Measurements[11].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[11].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_11_::count */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_12_::time
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point IdleTask_OsCore0 (with ID 12).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if count is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_12_::time
+{
+  RtmCan_TimeCtr[12]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[12] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[12] == RtmCan_CountCtr[12])
+      {
+        RtmCan_Measurements[12].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_12_::count;
+        RtmCan_Measurements[12].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_12_::time;
+
+        if ( (RtmCan_Measurements[12].MeasurementTime_current != RtmCan_Measurements[12].MeasurementTime_last) ||
+             (RtmCan_Measurements[12].MeasurementCount_current != RtmCan_Measurements[12].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "IdleTask_OsCore0_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[12].ID));
+          sysSetVariableFloat("RtmLive", "IdleTask_OsCore0_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[12].ID, RtmCan_Measurements[12].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[12].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_12_::time */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_12_::count
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point IdleTask_OsCore0 (with ID 12).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if time is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_12_::count
+{
+  RtmCan_CountCtr[12]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[12] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[12] == RtmCan_CountCtr[12])
+      {
+        RtmCan_Measurements[12].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_12_::count;
+        RtmCan_Measurements[12].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_12_::time;
+
+        if ( (RtmCan_Measurements[12].MeasurementTime_current != RtmCan_Measurements[12].MeasurementTime_last) ||
+             (RtmCan_Measurements[12].MeasurementCount_current != RtmCan_Measurements[12].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "IdleTask_OsCore0_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[12].ID));
+          sysSetVariableFloat("RtmLive", "IdleTask_OsCore0_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[12].ID, RtmCan_Measurements[12].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[12].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_12_::count */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_13_::time
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Radar_Ctrl_Task (with ID 13).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if count is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_13_::time
+{
+  RtmCan_TimeCtr[13]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[13] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[13] == RtmCan_CountCtr[13])
+      {
+        RtmCan_Measurements[13].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_13_::count;
+        RtmCan_Measurements[13].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_13_::time;
+
+        if ( (RtmCan_Measurements[13].MeasurementTime_current != RtmCan_Measurements[13].MeasurementTime_last) ||
+             (RtmCan_Measurements[13].MeasurementCount_current != RtmCan_Measurements[13].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Radar_Ctrl_Task_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[13].ID));
+          sysSetVariableFloat("RtmLive", "Radar_Ctrl_Task_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[13].ID, RtmCan_Measurements[13].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[13].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_13_::time */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_13_::count
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Radar_Ctrl_Task (with ID 13).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if time is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_13_::count
+{
+  RtmCan_CountCtr[13]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[13] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[13] == RtmCan_CountCtr[13])
+      {
+        RtmCan_Measurements[13].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_13_::count;
+        RtmCan_Measurements[13].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_13_::time;
+
+        if ( (RtmCan_Measurements[13].MeasurementTime_current != RtmCan_Measurements[13].MeasurementTime_last) ||
+             (RtmCan_Measurements[13].MeasurementCount_current != RtmCan_Measurements[13].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Radar_Ctrl_Task_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[13].ID));
+          sysSetVariableFloat("RtmLive", "Radar_Ctrl_Task_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[13].ID, RtmCan_Measurements[13].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[13].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_13_::count */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_14_::time
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Rtm_CpuLoadMeasurement (with ID 14).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if count is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_14_::time
+{
+  RtmCan_TimeCtr[14]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[14] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[14] == RtmCan_CountCtr[14])
+      {
+        RtmCan_Measurements[14].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_14_::count;
+        RtmCan_Measurements[14].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_14_::time;
+
+        if ( (RtmCan_Measurements[14].MeasurementTime_current != RtmCan_Measurements[14].MeasurementTime_last) ||
+             (RtmCan_Measurements[14].MeasurementCount_current != RtmCan_Measurements[14].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Rtm_CpuLoadMeasurement_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[14].ID));
+          sysSetVariableFloat("RtmLive", "Rtm_CpuLoadMeasurement_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[14].ID, RtmCan_Measurements[14].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[14].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_14_::time */
+
+
+/**********************************************************************************************************************
+  on sysvar_update sysvar::XCP::Rtm::Rtm_Results_14_::count
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Calculates runtime and CPU load of measurement point Rtm_CpuLoadMeasurement (with ID 14).
+ *  \details      Called each Rtm_MainFunction-Cycle.
+ *  \param[in]    -
+ *  \return       -
+ *  \pre          New values are only calculated if time is already updated.
+ *  \pre          Called by CANoe, if measurement point is mapped to DAQ-Event Rtm_Evt.
+ *  \pre          Live measurement mode is active.
+ *  \synchronous  TRUE
+ *  \ingroup      Callback
+ *********************************************************************************************************************/
+on sysvar_update sysvar::XCP::Rtm::Rtm_Results_14_::count
+{
+  RtmCan_CountCtr[14]++;
+  if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+  {
+    if (RtmCan_MeasurementSectionActive[14] == RTMCAN_TRUE)
+    {
+      /* ESCAN00086290 */
+      if (RtmCan_TimeCtr[14] == RtmCan_CountCtr[14])
+      {
+        RtmCan_Measurements[14].MeasurementCount_current = @sysvar::XCP::Rtm::Rtm_Results_14_::count;
+        RtmCan_Measurements[14].MeasurementTime_current = @sysvar::XCP::Rtm::Rtm_Results_14_::time;
+
+        if ( (RtmCan_Measurements[14].MeasurementTime_current != RtmCan_Measurements[14].MeasurementTime_last) ||
+             (RtmCan_Measurements[14].MeasurementCount_current != RtmCan_Measurements[14].MeasurementCount_last) )
+        {
+          sysSetVariableFloat("RtmLive", "Rtm_CpuLoadMeasurement_runtime", _RtmCan_CalculateRuntime(RtmCan_Measurements[14].ID));
+          sysSetVariableFloat("RtmLive", "Rtm_CpuLoadMeasurement_cpuload", _RtmCan_CalculateCpuLoad(RtmCan_Measurements[14].ID, RtmCan_Measurements[14].MeasurementRuntime));
+
+          _RtmCan_StoreLastResults(RtmCan_Measurements[14].ID);
+        }
+      }
+    }
+  }
+} /* on sysvar_update sysvar::XCP::Rtm::Rtm_Results_14_::count */
+
+/*   <- LIVE MEASUREMENT */
+/*   ############################################################ */
+
+/// @endcond
+
+/* <- CANOE CALLBACK APIs */
+/* ############################################################ */
+
+
+/**********************************************************************************************************************
+ *  GLOBAL FUNCTIONS
+ *********************************************************************************************************************/
+
+/* ############################################################ */
+/* COMMON APIs -> */
+
+/**********************************************************************************************************************
+  RtmCan_GetRtmCanState
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Returns the current state of RtmCan.
+ *  \details      Returns the current state of RtmCan.
+ *  \param[in]    -
+ *  \return       RTMCAN_STATE_UNINIT        The RtmCan must be initialized.
+ *  \return       RTMCAN_STATE_WAITFORACTION The RtmCan is ready for action.
+ *  \return       RTMCAN_STATE_BUSY          The RtmCan is busy.
+ *  \return       RTMCAN_STATE_MEASURING       The RtmCan is measuring and sending the results.
+ *  \return       RTMCAN_STATE_CLEARRESULTS  The RtmCan is clears the measurement results on the ECU.
+ *  \pre          The RtmCan is not busy.
+ *  \synchronous  TRUE
+ *  \ingroup      External
+ *********************************************************************************************************************/
+enum RtmCan_StateType RtmCan_GetRtmCanState()
+{
+  return RtmCan_State;
+} /* RtmCan_GetRtmCanState */
+
+
+/**********************************************************************************************************************
+  RtmCan_GenerateReport
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Generates the requested report containing all active MPs.
+ *  \details      Creates *.csv reports.
+ *  \param[in]    reportVariant              Specifies which report type is generated.
+ *  \return       RTMCAN_E_OK                The report generation was successful.
+ *  \return       RTMCAN_E_INTERFACE_IS_BUSY The report generation was rejected because the RtmCan is busy.
+ *  \return       RTMCAN_E_INVALID_EVENT     RtmCan is in invalid state for this event.
+ *  \return       RTMCAN_E_INVALID_STATE     RtmCan is in invalid state.
+ *  \pre          The RtmCan is not busy.
+ *  \synchronous  TRUE
+ *  \ingroup      External
+ *********************************************************************************************************************/
+enum RtmCan_ReturnValueType RtmCan_GenerateReport(
+  enum RtmCan_ReportVariantType reportVariant,
+  enum RtmCan_Boolean intermediate)
+{
+  enum RtmCan_ReturnValueType retVal;
+  struct RtmCan_ResultType resultMP;
+  int i;
+  int j;
+  int precision;
+  enum RtmCan_Boolean proceedWritingCsv;
+  File resultCsv;
+  File runnableResultCsv;
+  File letCsv;
+  char lineBuffer[1024];
+  qword measDuration;
+
+  measDuration = 0;
+
+  /* Specify precision: */
+  precision = 2;
+
+  if ((RtmCan_GetRtmCanState() == RTMCAN_STATE_WAITFORACTION)
+   || (intermediate == RTMCAN_TRUE))
+  {
+    if (intermediate == RTMCAN_FALSE)
+    {
+      retVal = _RtmCan_StateTransition(RTMCAN_EVENT_GENERATEREPORT);
+    }
+
+    proceedWritingCsv = RTMCAN_TRUE;
+
+    if ((reportVariant == RTMCAN_REPORT_RUNNABLE_CSV) || (reportVariant == RTMCAN_REPORT_ALL))
+    {
+      char currentDateAndTime[64];
+      getLocalTimeString(currentDateAndTime);
+
+      str_replace(currentDateAndTime," ","_");
+      str_replace(currentDateAndTime,":","");
+
+      /* If trigger reading is active, generate report with time infix.
+       * Otherwise, generate default report without infix. */
+      if (intermediate == RTMCAN_TRUE)
+      {
+        Snprintf(lineBuffer, elCount(lineBuffer), "runnableReport_%s.csv", currentDateAndTime);
+      }
+      else
+      {
+        Snprintf(lineBuffer, elCount(lineBuffer), "runnableReport.csv");
+      }
+
+      /* generate RunnableReport for TA: */
+      runnableResultCsv.open(lineBuffer, 0, 0);
+
+      Snprintf(lineBuffer, elCount(lineBuffer), "application type;name;reference;order;read;write;avg. exec. Time [us];min. exec. time [us];max. exec. time [us]\n");
+      if (1 != runnableResultCsv.putString(lineBuffer, elcount(lineBuffer)))
+      {
+        proceedWritingCsv = RTMCAN_FALSE;
+      }
+      else
+      {
+        for (i = RTMCAN_NUMBER_OF_OVERHEAD_MPS; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+        {
+          _RtmCan_ReturnResultsByMPID(i, resultMP);
+
+          if (RtmCan_MeasurementSectionActive[i] == RTMCAN_TRUE)
+          {
+            if (RtmCan_Measurements[i].IsRunnableMP == RTMCAN_TRUE)
+            {
+              snprintf(lineBuffer, elCount(lineBuffer), "%s;%s;%s;%s;%s;%s;%.*f;%.*f;%.*f\n",
+                "Runnable",
+                resultMP.RtmCan_Result_Name,
+                "",
+                "",
+                "",
+                "",
+                precision, resultMP.RtmCan_Result_AverageRuntime_us,
+                precision, resultMP.RtmCan_Result_MinRuntime_us,
+                precision, resultMP.RtmCan_Result_MaxRuntime_us
+              );
+
+              str_replace(lineBuffer,".",",");
+              write(lineBuffer);
+              if (runnableResultCsv.putString(lineBuffer, elcount(lineBuffer)) != 1)
+              {
+                if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+                {
+                  write("RtmCan Error @%lld: Error writing .CSV-report", timeNowInt64()/100);
+                }
+
+                proceedWritingCsv = RTMCAN_FALSE;
+                i = RTMCAN_MEASUREMENTS_COUNT;
+              }
+            }
+
+            if (measDuration == 0)
+            {
+              measDuration = resultMP.RtmCan_Result_MeasurementDuration_us;
+            }
+          }
+        }
+      }
+      runnableResultCsv.close();
+    }
+
+    /* LET REPORT */
+    if ((reportVariant == RTMCAN_REPORT_LET_CSV) || (reportVariant == RTMCAN_REPORT_ALL))
+    {
+      char currentDateAndTime[64];
+      getLocalTimeString(currentDateAndTime);
+
+      str_replace(currentDateAndTime," ","_");
+      str_replace(currentDateAndTime,":","");
+
+      /* If trigger reading is active, generate report with time infix.
+       * Otherwise, generate default report without infix. */
+      if (intermediate == RTMCAN_TRUE)
+      {
+        Snprintf(lineBuffer, elCount(lineBuffer), "Report_LET_%s.csv", currentDateAndTime);
+      }
+      else
+      {
+        Snprintf(lineBuffer, elCount(lineBuffer), "Report_LET.csv");
+      }
+
+      /* Generate LET report: */
+      letCsv.open(lineBuffer, 0, 0);
+
+      proceedWritingCsv = RTMCAN_TRUE;
+
+      while (proceedWritingCsv == RTMCAN_TRUE)
+      {
+        Snprintf(lineBuffer, elCount(lineBuffer), "Measurement;Max (us);LET interval (us);Relative remaining (%%);LET Error\n");
+        if (1 != letCsv.putString(lineBuffer, elcount(lineBuffer)))
+        {
+          proceedWritingCsv = RTMCAN_FALSE;
+          continue;
+        }
+
+        for (i = RTMCAN_NUMBER_OF_OVERHEAD_MPS; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+        {
+          if ((RtmCan_MeasurementSectionActive[i] == RTMCAN_TRUE)
+           && (RtmCan_Measurements[i].IsLetMP == RTMCAN_TRUE)
+           && (RtmCan_Measurements[i].TargetRuntime > 0))
+          {
+            dword targetRuntime;
+            char mpType[50];
+            char letError[50];
+            _RtmCan_ReturnResultsByMPID(i, resultMP);
+
+            /* Prepare MP type as string. */
+            if (resultMP.RtmCan_Result_MP_Type == RTMCAN_MP_TYPE_GROSS_EXECUTIONTIME)
+            {
+              strncpy(mpType, "GrossExecutionTime", elcount(mpType));
+            }
+            else if (resultMP.RtmCan_Result_MP_Type == RTMCAN_MP_TYPE_FLAT_EXECUTIONTIME)
+            {
+              strncpy(mpType, "FlatExecutionTime", elcount(mpType));
+            }
+            else if (resultMP.RtmCan_Result_MP_Type == RTMCAN_MP_TYPE_NET_EXECUTIONTIME)
+            {
+              strncpy(mpType, "NetExecutionTime", elcount(mpType));
+            }
+            else
+            {
+              mpType[0] = '\0';
+            }
+
+            /* Prepare MP type as string. */
+            if (RtmCan_Measurements[i].LetError == RTMCAN_LET_ERROR_OK)
+            {
+              strncpy(letError, "RTMCAN_LET_ERROR_OK", elcount(letError));
+            }
+            else if (RtmCan_Measurements[i].LetError == RTMCAN_LET_ERROR_INTERVAL_EXCEEDED)
+            {
+              strncpy(letError, "RTMCAN_LET_ERROR_INTERVAL_EXCEEDED", elcount(letError));
+            }
+            else if (RtmCan_Measurements[i].LetError == RTMCAN_LET_ERROR_UNEXPECTED_RELEASE)
+            {
+              strncpy(letError, "RTMCAN_LET_ERROR_UNEXPECTED_RELEASE", elcount(letError));
+            }
+            else if (RtmCan_Measurements[i].LetError == RTMCAN_LET_ERROR_UNEXPECTED_TERMINATE)
+            {
+              strncpy(letError, "RTMCAN_LET_ERROR_UNEXPECTED_TERMINATE", elcount(letError));
+            }
+            else if (RtmCan_Measurements[i].LetError == RTMCAN_LET_ERROR_UNEXPECTED_RUNNABLE_EXECUTION)
+            {
+              strncpy(letError, "RTMCAN_LET_ERROR_UNEXPECTED_RUNNABLE_EXECUTION", elcount(letError));
+            }
+
+            targetRuntime = RtmCan_Measurements[i].TargetRuntime;
+
+            snprintf(lineBuffer, elCount(lineBuffer), "%s;%.*f;%i;%.*f;%s;\n",
+              resultMP.RtmCan_Result_Name,
+              precision, resultMP.RtmCan_Result_MaxRuntime_us,
+              targetRuntime,
+              1, resultMP.RtmCan_Result_RelativeRemaining_percent,
+              letError
+            );
+
+            if (measDuration == 0)
+            {
+              measDuration = resultMP.RtmCan_Result_MeasurementDuration_us;
+            }
+
+            str_replace(lineBuffer,".",",");
+            write(lineBuffer);
+            if (1 != letCsv.putString(lineBuffer, elcount(lineBuffer)))
+            {
+              if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+              {
+                write("RtmCan Error @%lld: Error writing .CSV-report", timeNowInt64()/100);
+              }
+
+              proceedWritingCsv = RTMCAN_FALSE;
+              i = RTMCAN_MEASUREMENTS_COUNT;
+            }
+          }
+        }
+        proceedWritingCsv = RTMCAN_FALSE;
+      }
+
+      letCsv.close();
+    }
+
+    /* OVERALL REPORT */
+    if ((reportVariant == RTMCAN_REPORT_OVERALL_CSV) || (reportVariant == RTMCAN_REPORT_ALL))
+    {
+      char currentDateAndTime[64];
+      getLocalTimeString(currentDateAndTime);
+
+      str_replace(currentDateAndTime," ","_");
+      str_replace(currentDateAndTime,":","");
+
+      /* If trigger reading is active, generate report with time infix.
+       * Otherwise, generate default report without infix. */
+      if (intermediate == RTMCAN_TRUE)
+      {
+        Snprintf(lineBuffer, elCount(lineBuffer), "report_%s.csv", currentDateAndTime);
+      }
+      else
+      {
+        Snprintf(lineBuffer, elCount(lineBuffer), "report.csv");
+      }
+
+      /* Generate results report: */
+      resultCsv.open(lineBuffer, 0, 0);
+
+      proceedWritingCsv = RTMCAN_TRUE;
+
+      while (proceedWritingCsv == RTMCAN_TRUE)
+      {
+        Snprintf(lineBuffer, elCount(lineBuffer), "Measurement;MeasurementGroup;MP Type;count;max (us);min (us);average (us);overall cpuload (%%);core ID;relative max (%%)\n");
+        if (1 != resultCsv.putString(lineBuffer, elcount(lineBuffer)))
+        {
+          proceedWritingCsv = RTMCAN_FALSE;
+          continue;
+        }
+
+        for (i = RTMCAN_NUMBER_OF_OVERHEAD_MPS; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+        {
+          if (RTMCAN_TRUE == RtmCan_MeasurementSectionActive[i])
+          {
+            char mpType[50];
+            _RtmCan_ReturnResultsByMPID(i, resultMP);
+
+            /* Prepare MP type as string. */
+            if (resultMP.RtmCan_Result_MP_Type == RTMCAN_MP_TYPE_GROSS_EXECUTIONTIME)
+            {
+              strncpy(mpType, "GrossExecutionTime", elcount(mpType));
+            }
+            else if (resultMP.RtmCan_Result_MP_Type == RTMCAN_MP_TYPE_FLAT_EXECUTIONTIME)
+            {
+              strncpy(mpType, "FlatExecutionTime", elcount(mpType));
+            }
+            else if (resultMP.RtmCan_Result_MP_Type == RTMCAN_MP_TYPE_NET_EXECUTIONTIME)
+            {
+              strncpy(mpType, "NetExecutionTime", elcount(mpType));
+            }
+            else
+            {
+              mpType[0] = '\0';
+            }
+
+            if (resultMP.RtmCan_Result_AssignedToCore < RTMCAN_NUMBER_OF_CORES)
+            {
+              if ((resultMP.RtmCan_Result_MP_Type == RTMCAN_MP_TYPE_GROSS_EXECUTIONTIME)
+               && (resultMP.RtmCan_Result_ID != RTMCAN_INDEX_OF_CPU_LOAD))
+              {
+                snprintf(lineBuffer, elCount(lineBuffer), "%s;%s;%s;%d;%.*f;%.*f;%.*f;%s;%d;%.*f;\n",
+                  resultMP.RtmCan_Result_Name,
+                  resultMP.RtmCan_Result_Group,
+                  mpType,
+                  resultMP.RtmCan_Result_NumberOfExecution,
+                  precision, resultMP.RtmCan_Result_MaxRuntime_us,
+                  precision, resultMP.RtmCan_Result_MinRuntime_us,
+                  precision, resultMP.RtmCan_Result_AverageRuntime_us,
+                  "-",
+                  resultMP.RtmCan_Result_AssignedToCore,
+                  1, resultMP.RtmCan_Result_RelativeMax_percent
+                );
+              }
+              else
+              {
+                snprintf(lineBuffer, elCount(lineBuffer), "%s;%s;%s;%d;%.*f;%.*f;%.*f;%.*f;%d;%.*f;\n",
+                  resultMP.RtmCan_Result_Name,
+                  resultMP.RtmCan_Result_Group,
+                  mpType,
+                  resultMP.RtmCan_Result_NumberOfExecution,
+                  precision, resultMP.RtmCan_Result_MaxRuntime_us,
+                  precision, resultMP.RtmCan_Result_MinRuntime_us,
+                  precision, resultMP.RtmCan_Result_AverageRuntime_us,
+                  1, resultMP.RtmCan_Result_CpuLoad,
+                  resultMP.RtmCan_Result_AssignedToCore,
+                  1, resultMP.RtmCan_Result_RelativeMax_percent
+                );
+              }
+            }
+            else
+            {
+              if ((resultMP.RtmCan_Result_MP_Type == RTMCAN_MP_TYPE_GROSS_EXECUTIONTIME)
+               && (resultMP.RtmCan_Result_ID != RTMCAN_INDEX_OF_CPU_LOAD))
+              {
+                snprintf(lineBuffer, elCount(lineBuffer), "%s;%s;%s;%d;%.*f;%.*f;%.*f;%s;%s;%.*f;\n",
+                  resultMP.RtmCan_Result_Name,
+                  resultMP.RtmCan_Result_Group,
+                  mpType,
+                  resultMP.RtmCan_Result_NumberOfExecution,
+                  precision, resultMP.RtmCan_Result_MaxRuntime_us,
+                  precision, resultMP.RtmCan_Result_MinRuntime_us,
+                  precision, resultMP.RtmCan_Result_AverageRuntime_us,
+                  "-",
+                  "-",
+                  1, resultMP.RtmCan_Result_RelativeMax_percent
+                );
+              }
+              else
+              {
+                snprintf(lineBuffer, elCount(lineBuffer), "%s;%s;%s;%d;%.*f;%.*f;%.*f;%.*f;%s;%.*f;\n",
+                  resultMP.RtmCan_Result_Name,
+                  resultMP.RtmCan_Result_Group,
+                  mpType,
+                  resultMP.RtmCan_Result_NumberOfExecution,
+                  precision, resultMP.RtmCan_Result_MaxRuntime_us,
+                  precision, resultMP.RtmCan_Result_MinRuntime_us,
+                  precision, resultMP.RtmCan_Result_AverageRuntime_us,
+                  1, resultMP.RtmCan_Result_CpuLoad,
+                  "-",
+                  1, resultMP.RtmCan_Result_RelativeMax_percent
+                );
+              }
+            }
+
+            if (measDuration == 0)
+            {
+              measDuration = resultMP.RtmCan_Result_MeasurementDuration_us;
+            }
+
+            str_replace(lineBuffer,".",",");
+            write(lineBuffer);
+            if (1 != resultCsv.putString(lineBuffer, elcount(lineBuffer)))
+            {
+              if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+              {
+                write("RtmCan Error @%lld: Error writing .CSV-report", timeNowInt64()/100);
+              }
+
+              proceedWritingCsv = RTMCAN_FALSE;
+              i = RTMCAN_MEASUREMENTS_COUNT;
+            }
+          }
+        }
+        proceedWritingCsv = RTMCAN_FALSE;
+      }
+
+      snprintf(lineBuffer, elCount(lineBuffer), "\nMeasurement Duration (us);%d;\n", (measDuration));
+
+      str_replace(lineBuffer,".",",");
+      write(lineBuffer);
+
+      if (1 != resultCsv.putString(lineBuffer, elcount(lineBuffer)))
+      {
+        if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+        {
+          write("RtmCan Error @%lld: Error writing .CSV-report", timeNowInt64()/100);
+        }
+
+        proceedWritingCsv = RTMCAN_FALSE;
+        i = RTMCAN_MEASUREMENTS_COUNT;
+      }
+
+      if (RtmCan_ActiveMeasurementMode == RTMCAN_MODE_SERIAL)
+      {
+        snprintf(lineBuffer, elCount(lineBuffer), "\nMeasurement Mode;RTMCAN_MODE_SERIAL;\n");
+      }
+      else if (RtmCan_ActiveMeasurementMode == RTMCAN_MODE_PARALLEL)
+      {
+        snprintf(lineBuffer, elCount(lineBuffer), "\nMeasurement Mode;RTMCAN_MODE_PARALLEL;\n");
+      }
+      else
+      {
+        snprintf(lineBuffer, elCount(lineBuffer), "\nMeasurement Mode;RTMCAN_MODE_LIVE;\n");
+      }
+
+      str_replace(lineBuffer,".",",");
+      write(lineBuffer);
+
+      if (1 != resultCsv.putString(lineBuffer, elcount(lineBuffer)))
+      {
+        if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+        {
+          write("RtmCan Error @%lld: Error writing .CSV-report", timeNowInt64()/100);
+        }
+
+        proceedWritingCsv = RTMCAN_FALSE;
+        i = RTMCAN_MEASUREMENTS_COUNT;
+      }
+
+      resultCsv.close();
+    }
+
+    if ((retVal == RTMCAN_E_OK)
+     && (intermediate == RTMCAN_FALSE))
+    {
+      retVal = _RtmCan_StateTransition(RTMCAN_EVENT_ACTIONFINISHED);
+    }
+  }
+  else
+  {
+    if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Warning @%lld: RtmCan_GenerateReport: failed to generate report because RtmCan is busy.", timeNowInt64()/100);
+    }
+    retVal = RTMCAN_E_INTERFACE_IS_BUSY;
+  }
+
+  return retVal;
+} /* RtmCan_GenerateReport */
+
+
+/**********************************************************************************************************************
+  RtmCan_GetMPResultByName
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Returns the results of one MP, identified by the MP's name.
+ *  \details      Searches for specified name in all measurement points.
+ *  \param[in]    measPointName              The name of the measurement point.
+ *  \param[out]   result                     A structure containing the results of the specified measurement point.
+ *  \return       RTMCAN_E_OK                The result request was successful.
+ *  \return       RTMCAN_E_INTERFACE_IS_BUSY The result request was rejected because the RtmCan is busy.
+ *  \return       RTMCAN_E_NO_MATCH_FOUND    The requested measurement point does not exist.
+ *  \pre          The RtmCan is not busy.
+ *  \synchronous  TRUE
+ *  \ingroup      External
+ *  \note         The names must be equal.
+ *********************************************************************************************************************/
+enum RtmCan_ReturnValueType RtmCan_GetMPResultByName(char measPointName[], struct RtmCan_ResultType result)
+{
+  enum RtmCan_ReturnValueType retVal;
+  enum RtmCan_Boolean ready;
+  dword i;
+  dword mpIndex;
+
+  mpIndex = 0;
+
+  /* If the RtmCan is in valid state: */
+  if (RtmCan_GetRtmCanState() == RTMCAN_STATE_WAITFORACTION)
+  {
+    _RtmCan_StateTransition(RTMCAN_EVENT_GETRESULT);
+    ready = RTMCAN_FALSE;
+
+    /* Look for measurement points with *measPointName in their name: */
+    for (i = RTMCAN_NUMBER_OF_OVERHEAD_MPS; (i < RTMCAN_MEASUREMENTS_COUNT) && (ready == RTMCAN_FALSE); i++)
+    {
+      /* If the specified name is equal to one registered measurement point: */
+      if (strlen(measPointName) == strlen(RtmCan_Measurements[i].Name))
+      {
+        if (strncmp(RtmCan_Measurements[i].Name, measPointName, strlen(measPointName)) == 0)
+        {
+          /* The search was successful. */
+          ready = RTMCAN_TRUE;
+          mpIndex = i;
+        }
+      }
+    }
+
+    /* If the measurement point was found: */
+    if (ready == RTMCAN_TRUE)
+    {
+      /* Set the according results. */
+      _RtmCan_SetResult(result, RTMCAN_FALSE, mpIndex);
+
+      retVal = RTMCAN_E_OK;
+    }
+    /* Otherwise, the specified measurement point name does not exist. */
+    else
+    {
+      _RtmCan_SetResult(result, RTMCAN_TRUE, 0);
+
+      retVal = RTMCAN_E_NO_MATCH_FOUND;
+    }
+
+    _RtmCan_StateTransition(RTMCAN_EVENT_ACTIONFINISHED);
+  }
+  /* Otherwise, RtmCan is busy. */
+  else
+  {
+    _RtmCan_SetResult(result, RTMCAN_TRUE, 0);
+
+    if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Warning @%lld: Get Results by name failed because RtmCan is busy.", timeNowInt64()/100);
+    }
+    retVal = RTMCAN_E_INTERFACE_IS_BUSY;
+  }
+
+  return retVal;
+} /* RtmCan_GetMPResultByName */
+
+
+/**********************************************************************************************************************
+  RtmCan_GetMPResultByID
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Returns the results of one MPs, identified by the MP's ID.
+ *  \details      Searches for specified ID in all measurement points.
+ *  \param[in]    measPointID                The ID of the measurement point.
+ *  \param[out]   result                     A structure containing the results of the specified measurement point.
+ *  \return       RTMCAN_E_OK                The result request was successful.
+ *  \return       RTMCAN_E_INTERFACE_IS_BUSY The result request was rejected because the RtmCan is busy.
+ *  \return       RTMCAN_E_NO_MATCH_FOUND    The requested measurement point does not exist.
+ *  \pre          The RtmCan is not busy.
+ *  \synchronous  TRUE
+ *  \ingroup      External
+ *********************************************************************************************************************/
+enum RtmCan_ReturnValueType RtmCan_GetMPResultByID(dword measPointID, struct RtmCan_ResultType result)
+{
+  enum RtmCan_ReturnValueType retVal;
+
+  /* If the RtmCan is in valid state: */
+  if (RtmCan_GetRtmCanState() == RTMCAN_STATE_WAITFORACTION)
+  {
+    _RtmCan_StateTransition(RTMCAN_EVENT_GETRESULT);
+
+    /* Get results of this measurement point if available. */
+    retVal = _RtmCan_ReturnResultsByMPID(measPointID, result);
+
+    _RtmCan_StateTransition(RTMCAN_EVENT_ACTIONFINISHED);
+  }
+  /* Otherwise, RtmCan is busy. */
+  else
+  {
+    _RtmCan_SetResult(result, RTMCAN_TRUE, 0);
+
+    if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Warning @%lld: Get Results by ID failed because RtmCan is busy.", timeNowInt64()/100);
+    }
+    retVal = RTMCAN_E_INTERFACE_IS_BUSY;
+  }
+
+  return retVal;
+} /* RtmCan_GetMPResultByID */
+
+
+
+/**********************************************************************************************************************
+  RtmCan_ResetRtmCanState
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Resets the RtmCan state.
+ *  \details      Searches for specified ID in all measurement points.
+ *  \param[in]    -
+ *  \return       RTMCAN_E_OK                The reset request was successful.
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      External
+ *********************************************************************************************************************/
+enum RtmCan_ReturnValueType RtmCan_ResetRtmCanState()
+{
+  /* If current state is sending and stoppable measurement is running: */
+  if (RtmCan_GetRtmCanState() == RTMCAN_STATE_MEASURING)
+  {
+    if (RtmCan_StoppableMeasurementRunning == RTMCAN_TRUE)
+    {
+      /* Send command to stop the measurement. */
+      _RtmCan_TransmitEcuCommand(_RtmCan_BuildEcuCommand(RTMCAN_CMD_STOP, 0));
+    }
+  }
+
+  _RtmCan_InitData();
+  _RtmCan_InitMeasurementPointState();
+  _RtmCan_InitMeasurementConfig();
+
+  RtmCan_State = RTMCAN_STATE_WAITFORACTION;
+
+  if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+  {
+    write("RtmCan Info @%lld: Reset the RtmCan State.", timeNowInt64()/100);
+    write("RtmCan_State == RTMCAN_STATE_WAITFORACTION");
+  }
+
+  return RTMCAN_E_OK;
+}
+
+
+/**********************************************************************************************************************
+  RtmCan_SetDebugLevel
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Sets the debug level system variable of RtmCan and Rtm_Canoe.
+ *  \details      Creates the system variable if the variable does not already exist.
+ *  \param[in]    debugLevel                 The new value for the Rtm_DebugLevel.
+ *  \return       RTMCAN_E_OK                The set of debug level was successful.
+ *  \pre          -
+ *  \synchronous  TRUE
+ *  \ingroup      External
+ *********************************************************************************************************************/
+enum RtmCan_ReturnValueType RtmCan_SetDebugLevel(enum RtmCan_DebugLevelType debugLevel)
+{
+  long val;
+
+  /* If system variable Rtm_DebugLevel does not exist: */
+  if (sysGetVariableInt("Rtm", "Rtm_DebugLevel", val) != 0)
+  {
+    /* Create variable and set to specified value. */
+    write("Define system variable Rtm_DebugLevel.");
+    SysDefineNamespace("Rtm");
+    sysDefineVariableInt("Rtm", "Rtm_DebugLevel", debugLevel);
+  }
+  /* Otherwise, set the new value to system variable. */
+  else
+  {
+    sysSetVariableInt("Rtm", "Rtm_DebugLevel", debugLevel);
+  }
+
+  if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+  {
+    write("RtmCan Info @%lld: System variable Rtm_DebugLevel set to new value %d.", timeNowInt64()/100, (int)debugLevel);
+  }
+
+  return RTMCAN_E_OK;
+} /* RtmCan_SetDebugLevel */
+
+/* <- COMMON APIs */
+/* ############################################################ */
+
+
+/* ############################################################ */
+/* MEASUREMENT CONTROL -> */
+
+/**********************************************************************************************************************
+  RtmCan_ClearResults
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Requests the deletion of all measurement results on the ECU.
+ *  \details      Clears all measurement results in RtmCan.
+ *  \param[in]    -
+ *  \return       RTMCAN_E_OK                The clearing of measurement results was requested successfully.
+ *  \return       RTMCAN_E_INTERFACE_IS_BUSY The clearing of measurement results was rejected because the RtmCan is
+ *                                           busy.
+ *  \return       RTMCAN_E_INVALID_EVENT     RtmCan is in invalid state for this event.
+ *  \return       RTMCAN_E_INVALID_STATE     RtmCan is in invalid state.
+ *  \pre          The RtmCan is not busy.
+ *  \synchronous  TRUE
+ *  \ingroup      External
+ *********************************************************************************************************************/
+enum RtmCan_ReturnValueType RtmCan_ClearResults()
+{
+  enum RtmCan_ReturnValueType retVal;
+
+  if (RtmCan_GetRtmCanState() == RTMCAN_STATE_WAITFORACTION)
+  {
+    if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Info @%lld: Clear measurement results on ECU and RtmCan.", timeNowInt64()/100);
+    }
+    _RtmCan_TransmitEcuCommand(_RtmCan_BuildEcuCommand(RTMCAN_CMD_CLEAR, 0));
+
+    _RtmCan_InitData();
+    retVal = _RtmCan_StateTransition(RTMCAN_EVENT_CLEARRESULTS);
+  }
+  else
+  {
+    if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Warning @%lld: Clear results failed because Rtm CANoe is busy.", timeNowInt64()/100);
+    }
+    retVal = RTMCAN_E_INTERFACE_IS_BUSY;
+  }
+
+  return retVal;
+} /* RtmCan_ClearResults */
+
+
+/**********************************************************************************************************************
+  RtmCan_ClearAll
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Requests the deletion of all measurement results on the ECU.
+ *  \details      Clears all measurement results in RtmCan.
+ *  \param[in]    -
+ *  \return       RTMCAN_E_OK                The clearing of measurement results was requested successfully.
+ *  \return       RTMCAN_E_INTERFACE_IS_BUSY The clearing of measurement results was rejected because the RtmCan is
+ *                                           busy.
+ *  \return       RTMCAN_E_INVALID_EVENT     RtmCan is in invalid state for this event.
+ *  \return       RTMCAN_E_INVALID_STATE     RtmCan is in invalid state.
+ *  \pre          The RtmCan is not busy.
+ *  \synchronous  TRUE
+ *  \ingroup      External
+ *********************************************************************************************************************/
+enum RtmCan_ReturnValueType RtmCan_ClearAll()
+{
+  enum RtmCan_ReturnValueType retVal;
+
+  if (RtmCan_GetRtmCanState() == RTMCAN_STATE_WAITFORACTION)
+  {
+    if (3 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Info @%lld: Clear results on ECU, on RtmCan and complete config in RtmCan.", timeNowInt64()/100);
+    }
+    _RtmCan_TransmitEcuCommand(_RtmCan_BuildEcuCommand(RTMCAN_CMD_CLEAR, 0));
+
+    _RtmCan_InitData();
+    _RtmCan_InitMeasurementPointState();
+    _RtmCan_InitMeasurementConfig();
+    retVal = _RtmCan_StateTransition(RTMCAN_EVENT_CLEARRESULTS);
+  }
+  else
+  {
+    if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Warning @%lld: Clear results failed because Rtm CANoe is busy.", timeNowInt64()/100);
+    }
+    retVal = RTMCAN_E_INTERFACE_IS_BUSY;
+  }
+
+  return retVal;
+} /* RtmCan_ClearAll */
+
+
+/**********************************************************************************************************************
+  RtmCan_StartMeasurement
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Starts the measurement of all activated MPs in the specified measurement mode.
+ *  \details      If the specified measurement duration is too short, it is set to 0 (endless measurement duration).
+ *  \param[in]    measMode                   The measurement mode (serial, parallel or live).
+ *  \param[in]    timeToMeas                 The measurement duration in milliseconds. If set to 0, endless
+ *                                           measurement is started.
+ *  \return       RTMCAN_E_OK                The start of new measurement was successful.
+ *  \return       RTMCAN_E_INTERFACE_IS_BUSY The start of new measurement was rejected because the RtmCan is busy.
+ *  \return       RTMCAN_E_INVALID_EVENT     RtmCan is in invalid state for this event.
+ *  \return       RTMCAN_E_INVALID_STATE     RtmCan is in invalid state.
+ *  \return       RTMCAN_E_NOT_AVAILABLE_WITH_16BIT_COUNTER The endless measurement mode is not available.
+ *  \return       RTMCAN_E_NOT_AVAILABLE_IN_MULTICORE_SYSTEM Live measurment is not available in multi core system.
+ *  \return       RTMCAN_E_NOT_SUPPORTED     Serial mode does not support endless measurement.
+ *  \pre          The RtmCan is not busy.
+ *  \synchronous  TRUE
+ *  \ingroup      External
+ *  \note         The combination serial measurement mode and endless measurement duration is not allowed.
+ *********************************************************************************************************************/
+enum RtmCan_ReturnValueType RtmCan_StartMeasurement(enum RtmCan_MeasurementModeType measMode, dword timeToMeas)
+{
+  enum RtmCan_ReturnValueType retVal;
+  enum RtmCan_MeasurementCommandType command;
+
+  /* If the RtmCan is in valid state: */
+  if (RtmCan_GetRtmCanState() == RTMCAN_STATE_WAITFORACTION)
+  {
+    long controlArray[(RTMCAN_MEASUREMENTS_COUNT-1)/8+1];
+    dword i;
+
+    /* If 16 bit counter is used and endless measurement mode is requested: */
+    if ((RTMCAN_32BIT_COUNTER == 0) && ((timeToMeas / RTMCAN_MAINFUNCTIONCYCLETIME_MS) < 2))
+    {
+      if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+      {
+        write("RtmCan Warning @%lld: Endless measurment cannot be started with 16 bit counter.", timeNowInt64()/100);
+      }
+      /* Invalid request because the measurement duration cannot be determined. */
+      retVal = RTMCAN_E_NOT_AVAILABLE_WITH_16BIT_COUNTER;
+    }
+    else
+    {
+      retVal = _RtmCan_StateTransition(RTMCAN_EVENT_MEASURING);
+
+      RtmCan_ActiveMeasurementMode = measMode;
+
+      /* Set the command according to specified measurement mode and measurement duration. */
+      if (measMode == RTMCAN_MODE_SERIAL)
+      {
+        command = RTMCAN_CMD_SERIAL;
+      }
+      else if (measMode == RTMCAN_MODE_PARALLEL)
+      {
+        command = RTMCAN_CMD_PARALLEL;
+      }
+      else if (measMode == RTMCAN_MODE_LIVE)
+      {
+        if (RTMCAN_MULTICORE_SUPPORT == 0)
+        {
+          command = RTMCAN_CMD_LIVE;
+
+          RtmCan_LiveMeasurementActive = RTMCAN_TRUE;
+
+          _RtmCan_CreateLiveMeasurementVariables();
+
+          /* If the measurement is *not* stoppable (time limited). */
+          if ((timeToMeas / RTMCAN_MAINFUNCTIONCYCLETIME_MS) >= 2)
+          {
+            RtmCan_LiveMeasurementCounter = (timeToMeas / RTMCAN_MAINFUNCTIONCYCLETIME_MS) - 1;
+          }
+        }
+        else
+        {
+          if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Warning @%lld: Live measurment is not available in multicore system.", timeNowInt64()/100);
+          }
+          retVal = RTMCAN_E_NOT_AVAILABLE_IN_MULTICORE_SYSTEM;
+          command = RTMCAN_CMD_NULL;
+
+          _RtmCan_StateTransition(RTMCAN_EVENT_ACTIONFINISHED);
+        }
+      }
+      else
+      {
+        if (1 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+        {
+          write("RtmCan Error @%lld: Invalid measurement mode passed.", timeNowInt64()/100);
+        }
+        command = RTMCAN_CMD_NULL;
+
+        _RtmCan_StateTransition(RTMCAN_EVENT_ACTIONFINISHED);
+      }
+
+      /* If new measurement is in mode SERIAL: */
+      if (measMode == RTMCAN_MODE_SERIAL)
+      {
+        /* If measurement duration is set to ENDLESS: */
+        if ((timeToMeas / RTMCAN_MAINFUNCTIONCYCLETIME_MS) < 2)
+        {
+          /* This configuration is not allowed! */
+          if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+          {
+            write("RtmCan Warning @%lld: Not supported measurement setting: Serial and endless is not allowed.", timeNowInt64()/100);
+          }
+
+          _RtmCan_StateTransition(RTMCAN_EVENT_ACTIONFINISHED);
+          retVal = RTMCAN_E_NOT_SUPPORTED;
+        }
+        /* Otherwise, store all active measurement points and set only first to active. */
+        else
+        {
+          for (i = 0; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+          {
+            RtmCan_MeasurementSectionActive_Serial[i] = RtmCan_MeasurementSectionActive[i];
+
+            if (i > 0)
+            {
+              RtmCan_MeasurementSectionActive[i] = RTMCAN_MP_STATE_INACTIVE;
+            }
+          }
+          _RtmCan_ConfigureMeasurements();
+
+          /* Start serial measurement for first active measurement point. */
+          _RtmCan_StartMeasurement(command, timeToMeas);
+        }
+      }
+      /* Otherwise, start parallel or live measurement. */
+      else
+      {
+        if (command != RTMCAN_CMD_NULL)
+        {
+          _RtmCan_StartMeasurement(command, timeToMeas);
+        }
+      }
+    }
+  }
+  /* Otherwise, RtmCan is busy. */
+  else
+  {
+    if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Warning @%lld: Starting failed because RtmCan is busy.", timeNowInt64()/100);
+    }
+    retVal = RTMCAN_E_INTERFACE_IS_BUSY;
+  }
+
+  return retVal;
+} /* RtmCan_StartMeasurement */
+
+
+/**********************************************************************************************************************
+  RtmCan_StopMeasurement
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Stops the current measurement if the measurement is stoppable.
+ *  \details      Sends stop command to ECU.
+ *  \param[in]    -
+ *  \return       RTMCAN_E_OK                        The stop of current measurement was successful.
+ *  \return       RTMCAN_E_INTERFACE_IS_BUSY         The stop of current measurement was rejected because the RtmCan
+ *                                                   is busy.
+ *  \return       RTMCAN_E_MEASUREMENT_NOT_STOPPABLE The stop of current measurement was rejected because the
+ *                                                   measurement is not stoppable.
+ *  \pre          The RtmCan is not busy.
+ *  \pre          The current measurement has endless measurement duration and is therefore stoppable.
+ *  \synchronous  TRUE
+ *  \ingroup      External
+ *********************************************************************************************************************/
+enum RtmCan_ReturnValueType RtmCan_StopMeasurement()
+{
+  enum RtmCan_ReturnValueType retVal;
+
+  /* If the RtmCan is in valid state: */
+  if (RtmCan_GetRtmCanState() == RTMCAN_STATE_MEASURING)
+  {
+    /* If the measurement is stoppable: */
+    if (RtmCan_StoppableMeasurementRunning == RTMCAN_TRUE)
+    {
+      retVal = RTMCAN_E_OK;
+
+      /* Send command to stop the measurement. */
+      _RtmCan_TransmitEcuCommand(_RtmCan_BuildEcuCommand(RTMCAN_CMD_STOP, 0));
+
+      /* If live measurement was active, set according flag to inactive. */
+      if (RtmCan_LiveMeasurementActive == RTMCAN_TRUE)
+      {
+        RtmCan_LiveMeasurementActive = RTMCAN_FALSE;
+
+        _RtmCan_StateTransition(RTMCAN_EVENT_ACTIONFINISHED);
+      }
+    }
+    else
+    {
+      /* The Measurement must not be stopped. */
+      retVal = RTMCAN_E_MEASUREMENT_NOT_STOPPABLE;
+    }
+  }
+  /* Otherwise, RtmCan is busy. */
+  else
+  {
+    if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Warning @%lld: Stop failed because measurement is not running.", timeNowInt64()/100);
+    }
+    retVal = RTMCAN_E_INTERFACE_IS_BUSY;
+  }
+
+  return retVal;
+} /* RtmCan_StopMeasurement */
+
+
+/**********************************************************************************************************************
+  RtmCan_SetMPStateAll
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Set states (active or inactive) of all measurement points.
+ *  \details      Set states (active or inactive) of all measurement points.
+ *  \param[in]    -
+ *  \return       RTMCAN_E_OK                The setting of new state was successful.
+ *  \return       RTMCAN_E_INTERFACE_IS_BUSY The setting of new state was rejected because the RtmCan is busy.
+ *  \pre          The RtmCan is not busy.
+ *  \synchronous  TRUE
+ *  \ingroup      External
+ *  \note         The first measurement points are reserved for overhead measurement, therefore they cannot be set to
+ *                inactive.
+ *********************************************************************************************************************/
+enum RtmCan_ReturnValueType RtmCan_SetMPStateAll(enum RtmCan_MeasurementStateType state)
+{
+  enum RtmCan_ReturnValueType retVal;
+  dword i;
+
+  /* If the RtmCan is in valid state: */
+  if (RtmCan_GetRtmCanState() == RTMCAN_STATE_WAITFORACTION)
+  {
+    _RtmCan_StateTransition(RTMCAN_EVENT_CHANGESTATE);
+
+    /* Set all measurement points to active. */
+    for (i = RTMCAN_NUMBER_OF_OVERHEAD_MPS; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+    {
+      RtmCan_MeasurementSectionActive[i] = state;
+    }
+
+    retVal = RTMCAN_E_OK;
+
+    _RtmCan_ConfigureMeasurements();
+
+    _RtmCan_StateTransition(RTMCAN_EVENT_ACTIONFINISHED);
+  }
+  /* Otherwise, RtmCan is busy. */
+  else
+  {
+    if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Warning @%lld: Set of all MP states failed because RtmCan is busy.", timeNowInt64()/100);
+    }
+    retVal = RTMCAN_E_INTERFACE_IS_BUSY;
+  }
+
+  return retVal;
+} /* RtmCan_SetMPStateAll */
+
+
+/**********************************************************************************************************************
+  RtmCan_SetMPStateGroup
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Set States (active or inactive) of all measurement points of one or more groups.
+ *  \details      Sets the state of one or more groups.
+ *  \param[in]    measPointGroupName         Name of the measurement group whose state has to be changed.
+ *  \param[in]    equal                      If set to true, the group name has to match completely. If set to false,
+ *                                             the group name has to contain the specified name.
+ *  \param[in]    state                      The new state of the measurement group(s).
+ *  \return       RTMCAN_E_OK                The setting of new state was successful.
+ *  \return       RTMCAN_E_INTERFACE_IS_BUSY The setting of new state was rejected because the RtmCan is busy.
+ *  \return       RTMCAN_E_NO_MATCH_FOUND    The setting of new state was rejected because no measurement point is
+ *                                             part of the specified measurement group.
+ *  \pre          The RtmCan is not busy.
+ *  \synchronous  TRUE
+ *  \ingroup      External
+ *  \note         Not matching measurement groups are ignored and therefore not set to the opposite state.
+ *********************************************************************************************************************/
+enum RtmCan_ReturnValueType RtmCan_SetMPStateGroup(char measPointGroupName[], enum RtmCan_Boolean equal, enum RtmCan_MeasurementStateType state)
+{
+  dword i;
+  enum RtmCan_ReturnValueType retVal;
+  enum RtmCan_Boolean ready;
+
+  /* If the RtmCan is in valid state: */
+  if (RtmCan_GetRtmCanState() == RTMCAN_STATE_WAITFORACTION)
+  {
+    _RtmCan_StateTransition(RTMCAN_EVENT_CHANGESTATE);
+
+    /* If the measurement group must match completely: */
+    if (equal == RTMCAN_TRUE)
+    {
+      ready = RTMCAN_FALSE;
+
+      /* Search for measurement points whose measurement group are matching and set their state to new value. */
+      for (i = RTMCAN_NUMBER_OF_OVERHEAD_MPS; (i < RTMCAN_MEASUREMENTS_COUNT); i++)
+      {
+        if (strlen(RtmCan_Measurements[i].Group) == strlen(measPointGroupName))
+        {
+          if (strncmp(RtmCan_Measurements[i].Group, measPointGroupName, strlen(measPointGroupName)) == 0)
+          {
+            RtmCan_MeasurementSectionActive[i] = state;
+            ready = RTMCAN_TRUE;
+          }
+        }
+      }
+    }
+    /* Otherwise, the specified measurement group name must be part of the registered measurement groups. */
+    else
+    {
+      /* Look for measurement points with *measPointGroupName in their group name and set their state to new value. */
+      for (i = RTMCAN_NUMBER_OF_OVERHEAD_MPS; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+      {
+        if (strstr(RtmCan_Measurements[i].Group, measPointGroupName) >= 0)
+        {
+          RtmCan_MeasurementSectionActive[i] = state;
+          ready = RTMCAN_TRUE;
+        }
+      }
+    }
+
+    if (ready == RTMCAN_TRUE)
+    {
+      retVal = RTMCAN_E_OK;
+    }
+    else
+    {
+      /* No matching measurement group was found. */
+      retVal = RTMCAN_E_NO_MATCH_FOUND;
+    }
+
+    _RtmCan_ConfigureMeasurements();
+
+    _RtmCan_StateTransition(RTMCAN_EVENT_ACTIONFINISHED);
+  }
+  /* Otherwise, RtmCan is busy. */
+  else
+  {
+    if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Warning @%lld: Set of all MP states of a group failed because RtmCan is busy.", timeNowInt64()/100);
+    }
+    retVal = RTMCAN_E_INTERFACE_IS_BUSY;
+  }
+
+  return retVal;
+} /* RtmCan_SetMPStateGroup */
+
+
+/**********************************************************************************************************************
+  RtmCan_SetMPState
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Set states (active or inactive) of one or more measurement points.
+ *  \details      Sets the state of one or more measurement points.
+ *  \param[in]    measPointName              Name of the measurement group whose state has to be changed.
+ *  \param[in]    equal                      If set to true, the MP name has to match completely. If set to false,
+ *                                             the MP name has to contain the specified name.
+ *  \param[in]    state                      The new state of the measurement group(s).
+ *  \return       RTMCAN_E_OK                The setting of new state was successful.
+ *  \return       RTMCAN_E_INTERFACE_IS_BUSY The setting of new state was rejected because the RtmCan is busy.
+ *  \return       RTMCAN_E_NO_MATCH_FOUND    The setting of new state was rejected because no measurement point has
+ *                                             the specified name.
+ *  \pre          The RtmCan is not busy.
+ *  \synchronous  TRUE
+ *  \ingroup      External
+ *  \note         Not matching measurement points are ignored and therefore not set to the opposite state.
+ *********************************************************************************************************************/
+enum RtmCan_ReturnValueType RtmCan_SetMPState(char measPointName[], enum RtmCan_Boolean equal, enum RtmCan_MeasurementStateType state)
+{
+  dword i;
+  enum RtmCan_ReturnValueType retVal;
+  enum RtmCan_Boolean ready;
+
+  /* If the RtmCan is in valid state: */
+  if (RtmCan_GetRtmCanState() == RTMCAN_STATE_WAITFORACTION)
+  {
+    _RtmCan_StateTransition(RTMCAN_EVENT_CHANGESTATE);
+
+    /* If the MP name must match completely: */
+    if (equal == RTMCAN_TRUE)
+    {
+      ready = RTMCAN_FALSE;
+
+      /* Search for the specified MP and set its state to new value. */
+      for (i = RTMCAN_NUMBER_OF_OVERHEAD_MPS; (i < RTMCAN_MEASUREMENTS_COUNT) && (ready == RTMCAN_FALSE); i++)
+      {
+        if (strlen(RtmCan_Measurements[i].Name) == strlen(measPointName))
+        {
+          if (strncmp(RtmCan_Measurements[i].Name, measPointName, strlen(measPointName)) == 0)
+          {
+            RtmCan_MeasurementSectionActive[i] = state;
+            ready = RTMCAN_TRUE;
+          }
+        }
+      }
+    }
+    /* Otherwise, the specified MP name must be part of the registered MPs. */
+    else
+    {
+      /* Look for measurement points with *measPointName in their name and set their state to the new value. */
+      for (i = RTMCAN_NUMBER_OF_OVERHEAD_MPS; i < RTMCAN_MEASUREMENTS_COUNT; i++)
+      {
+        if (strstr(RtmCan_Measurements[i].Name, measPointName) >= 0)
+        {
+          RtmCan_MeasurementSectionActive[i] = state;
+          ready = RTMCAN_TRUE;
+        }
+      }
+    }
+
+    if (ready == RTMCAN_TRUE)
+    {
+      retVal = RTMCAN_E_OK;
+    }
+    else
+    {
+      /* No matching MP was found. */
+      retVal = RTMCAN_E_NO_MATCH_FOUND;
+    }
+
+    _RtmCan_ConfigureMeasurements();
+
+    _RtmCan_StateTransition(RTMCAN_EVENT_ACTIONFINISHED);
+  }
+  /* Otherwise, RtmCan is busy. */
+  else
+  {
+    if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Warning @%lld: Set of MP state failed because RtmCan is busy.", timeNowInt64()/100);
+    }
+    retVal = RTMCAN_E_INTERFACE_IS_BUSY;
+  }
+
+  return retVal;
+} /* RtmCan_SetMPState */
+
+
+/**********************************************************************************************************************
+  RtmCan_SetMPStateByID
+**********************************************************************************************************************/
+/*!
+ *
+ *  \brief        Set states (active or inactive) of one measurement point.
+ *  \details      Sets the state of one measurement point, depending on specified MP ID.
+ *  \param[in]    measPointID                ID of the MP whose state has to be changed.
+ *  \param[in]    state                      The new state of the measurement group(s).
+ *  \return       RTMCAN_E_OK                The setting of new state was successful.
+ *  \return       RTMCAN_E_INTERFACE_IS_BUSY The setting of new state was rejected because the RtmCan is busy.
+ *  \return       RTMCAN_E_NO_MATCH_FOUND    The setting of new state was rejected because no measurement point has
+ *                                             the specified name.
+ *  \pre          The RtmCan is not busy.
+ *  \synchronous  TRUE
+ *  \ingroup      External
+ *  \note         Not matching measurement points are ignored and therefore not set to the opposite state.
+ *********************************************************************************************************************/
+enum RtmCan_ReturnValueType RtmCan_SetMPStateByID(dword measPointID, enum RtmCan_MeasurementStateType state)
+{
+  dword i;
+  enum RtmCan_ReturnValueType retVal;
+  enum RtmCan_Boolean ready;
+
+  /* If the RtmCan is in valid state: */
+  if (RtmCan_GetRtmCanState() == RTMCAN_STATE_WAITFORACTION)
+  {
+    _RtmCan_StateTransition(RTMCAN_EVENT_CHANGESTATE);
+
+    /* If specified measurement point ID is in valid range: */
+    if ((measPointID >= RTMCAN_NUMBER_OF_OVERHEAD_MPS) && (measPointID < RTMCAN_MEASUREMENTS_COUNT))
+    {
+           /* Set state of the according MP to new value. */
+           RtmCan_MeasurementSectionActive[measPointID] = state;
+           retVal = RTMCAN_E_OK;
+    }
+    /* Otherwise, no matching MP was found. */
+    else
+    {
+      retVal = RTMCAN_E_NO_MATCH_FOUND;
+    }
+
+    _RtmCan_ConfigureMeasurements();
+
+    _RtmCan_StateTransition(RTMCAN_EVENT_ACTIONFINISHED);
+
+  }
+  /* Otherwise, RtmCan is busy. */
+  else
+  {
+    if (2 <= SysGetVariableInt("Rtm", "Rtm_DebugLevel"))
+    {
+      write("RtmCan Warning @%lld: Set of MP state failed because RtmCan is busy.", timeNowInt64()/100);
+    }
+    retVal = RTMCAN_E_INTERFACE_IS_BUSY;
+  }
+
+  return retVal;
+} /* RtmCan_SetMPStateByID */
+
+/* <- Measurement Control */
+/* ############################################################ */
+
