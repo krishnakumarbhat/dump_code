@@ -1,0 +1,44 @@
+graph TD
+    subgraph "SIL Wrapper"
+        A[sil_wrapper.cpp] --> B[Before Tracker: StartPLPSync]
+        A --> C[After Tracker: DumpPLPData]
+    end
+
+    subgraph "plp_sync"
+        D[plp_iface.h] --> E[plp_iface.cpp]
+        E --> F[StartPLPSync API]
+        E --> G[DumpPLPData API]
+
+        H[plp_driver.h] --> I[plp_driver.cpp]
+        I --> J[SynchronizeWithTimestamp]
+        I --> K[ProcessBufferedData]
+        I --> L[SortAndFormatOutput]
+    end
+
+    subgraph "mdf_lib"
+        M[mdf_read.h] --> N[mdf_read.cpp]
+        N --> O[OpenMDFFile]
+        N --> P[ReadDataAtTimestamp]
+        N --> Q[ExtractCANMessages]
+    end
+
+    B --> F
+    C --> G
+    F --> J
+    G --> K
+    G --> L
+    J --> O
+    J --> P
+    J --> Q
+
+    R[Framework Timestamp] --> B
+    S[Tracker Output] --> C
+    C --> T[Synchronized DVL Payload]
+
+    classDef api fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef implementation fill:#bbf,stroke:#333,stroke-width:1px;
+    classDef external fill:#bfb,stroke:#333,stroke-width:1px;
+
+    class F,G api;
+    class J,K,L,O,P,Q implementation;
+    class R,S,T external;

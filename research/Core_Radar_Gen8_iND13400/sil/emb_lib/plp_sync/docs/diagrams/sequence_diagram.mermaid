@@ -1,0 +1,55 @@
+graph TD
+    A[Start PLP Task] --> B[VIGEM_READ Case]
+
+    subgraph "Initialization Phase"
+        B --> C{Check DGPS Decoding Enable?}
+        C -->|Yes| D[RT_Range_File_open]
+        C -->|No| E{Check PLP Algorithms Enable?}
+        D --> E
+        E -->|No| Z[End]
+        E -->|Yes| F[Set/Clear DGPS Enable Flag]
+        F --> G[Radar_plp_Synchronizer]
+    end
+
+    subgraph "Synchronization Process"
+        G --> H[Get Timestamp from Framework]
+        H --> I{Check Valid Path?}
+        I -->|No| Z
+        I -->|Yes| J{File Transition?}
+        J -->|Yes| K[Open_mdf4_Radar_input]
+        J -->|No| L{Valid Timestamp?}
+        K --> L
+        L -->|No| M[Report Error]
+        L -->|Yes| N[Read_Vigem_CANBus]
+        N --> O[Fetch_CAN_Msg]
+        O --> P{Enough Data Found?}
+        P -->|No| Q[Run_Splitfile_Resim]
+        P -->|Yes| R[Store CAN Data]
+        Q --> O
+        R --> S[reset_plp]
+        S --> T[Rewind MDF File]
+    end
+
+    subgraph "Tracker Processing"
+        T --> U[Tracker Runs]
+    end
+
+    subgraph "Output Processing"
+        U --> V[VIGEM_OUTPUT_SINK Case]
+        V --> W{PLP Successful?}
+        W -->|No| X[Report Error]
+        W -->|Yes| Y[PLP_output_logger]
+        Y --> AA[PLP_TS_Sort]
+        AA --> AB[Plp_sync_To_Udp]
+        AB --> Z[End PLP Task]
+        X --> Z
+    end
+
+    subgraph "Data Structures"
+        O --> DS1[plpCANInfo]
+        O --> DS2[plpCANInfo_repeated]
+        Y --> DS3[Output DVL Payload]
+    end
+
+    class DS1,DS2,DS3 dataStructure;
+    classDef dataStructure fill:#f9f,stroke:#333,stroke-width:2px;

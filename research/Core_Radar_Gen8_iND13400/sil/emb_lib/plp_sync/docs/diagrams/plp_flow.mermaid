@@ -1,0 +1,32 @@
+graph LR
+    subgraph "SIL Resim"
+        subgraph "sil_wrapper"
+            A[Before Tracker Run]
+            B[After Tracker Run]
+        end
+
+        subgraph "PLP Sync"
+            subgraph "plp_iface"
+                C[StartPLPSync]
+                D[DumpPLPData]
+            end
+
+            subgraph "plp_driver"
+                E[SynchronizeData]
+                F[WriteToOutputBuffer]
+            end
+        end
+
+        subgraph "mdf_read"
+            G[OpenMDFFile]
+            H[ReadDataAtTimestamp]
+        end
+    end
+
+    A -->C
+    C -->E
+    E -->G
+    E -->H
+
+    B -->D
+    D -->F
