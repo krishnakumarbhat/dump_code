@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00051.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="460388b7-0285-4cee-9cf4-d863fb172fd2">
+      <SHORT-NAME>indieSemi</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="c6c011a7-2766-4449-b02b-708523eb5d4f">
+          <SHORT-NAME>Crypto_ib_bswmd</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE UUID="20b97053-7720-4c4f-b23a-21dfbdbad3c2">
+              <SHORT-NAME>BswModuleDescriptions</SHORT-NAME>
+              <ELEMENTS>
+                <BSW-MODULE-DESCRIPTION UUID="4b58c7cf-6232-4662-a792-fb4f0eaa1a83">
+                  <SHORT-NAME>Crypto</SHORT-NAME>
+                  <PROVIDED-ENTRYS>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/indieSemi/Crypto_ib_bswmd/BswModuleDescriptions/Crypto_Virtual</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/indieSemi/Crypto_ib_bswmd/BswModuleDescriptions/Crypto_182_iND13400_MainFunction</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                  </PROVIDED-ENTRYS>
+                  <INTERNAL-BEHAVIORS>
+                    <BSW-INTERNAL-BEHAVIOR UUID="7abe233b-d105-4be6-b9da-6fd756993651">
+                      <SHORT-NAME>CryptoBehavior</SHORT-NAME>
+                      <EXCLUSIVE-AREAS>
+                        <EXCLUSIVE-AREA UUID="79dfa810-b930-4d5b-ae8a-0674f8376c5e">
+                          <SHORT-NAME>CRYPTO_EXCLUSIVE_AREA_0</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="c4331e3a-d63b-4794-a50e-713afd832d7d">
+                          <SHORT-NAME>CRYPTO_EXCLUSIVE_AREA_1</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                      </EXCLUSIVE-AREAS>
+                      <ENTITYS>
+                        <BSW-SCHEDULABLE-ENTITY UUID="67f278fa-d7a3-42fa-9892-269ab8da7b9c">
+                          <SHORT-NAME>Crypto_182_iND13400_MainFunction</SHORT-NAME>
+                          <CAN-ENTERS>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/indieSemi/Crypto_ib_bswmd/BswModuleDescriptions/Crypto/CryptoBehavior/CRYPTO_EXCLUSIVE_AREA_0</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/indieSemi/Crypto_ib_bswmd/BswModuleDescriptions/Crypto/CryptoBehavior/CRYPTO_EXCLUSIVE_AREA_1</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                          </CAN-ENTERS>
+                          <IMPLEMENTED-ENTRY-REF DEST="BSW-MODULE-ENTRY">/indieSemi/Crypto_ib_bswmd/BswModuleDescriptions/Crypto_182_iND13400_MainFunction</IMPLEMENTED-ENTRY-REF>
+                        </BSW-SCHEDULABLE-ENTITY>
+                      </ENTITYS>
+                      <EVENTS>
+                        <BSW-TIMING-EVENT UUID="4da46b49-3844-47d9-8afd-13ed1a89fe50">
+                          <SHORT-NAME>Crypto_182_iND13400_MainFunctionTimingEvent0</SHORT-NAME>
+                          <STARTS-ON-EVENT-REF DEST="BSW-SCHEDULABLE-ENTITY">/indieSemi/Crypto_ib_bswmd/BswModuleDescriptions/Crypto/CryptoBehavior/Crypto_182_iND13400_MainFunction</STARTS-ON-EVENT-REF>
+                          <PERIOD>0.01</PERIOD>
+                        </BSW-TIMING-EVENT>
+                      </EVENTS>
+                    </BSW-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </BSW-MODULE-DESCRIPTION>
+                <BSW-MODULE-ENTRY UUID="ed81f361-98b7-475b-96f2-ca91e13d734d">
+                  <SHORT-NAME>Crypto_Virtual</SHORT-NAME>
+                  <CALL-TYPE>REGULAR</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+                <BSW-MODULE-ENTRY UUID="23ec7fc2-3524-43b8-a5b4-71da00f73b8f">
+                  <SHORT-NAME>Crypto_182_iND13400_MainFunction</SHORT-NAME>
+                  <CALL-TYPE>SCHEDULED</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

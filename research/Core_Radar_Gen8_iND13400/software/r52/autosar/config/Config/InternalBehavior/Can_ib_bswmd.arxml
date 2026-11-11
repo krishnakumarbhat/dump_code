@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00051.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="460388b7-0285-4cee-9cf4-d863fb172fd2">
+      <SHORT-NAME>indieSemi</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="9e5b6374-3379-4c21-89cd-75f65ee813d1">
+          <SHORT-NAME>Can_ib_bswmd</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE UUID="b272cdd7-4fbb-42e4-8997-d36c0de6c165">
+              <SHORT-NAME>BswModuleDescriptions</SHORT-NAME>
+              <ELEMENTS>
+                <BSW-MODULE-DESCRIPTION UUID="5b304c52-294c-4335-ad90-324ccfafd5b6">
+                  <SHORT-NAME>Can</SHORT-NAME>
+                  <PROVIDED-ENTRYS>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/indieSemi/Can_ib_bswmd/BswModuleDescriptions/Can_MainFunction_Mode</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                  </PROVIDED-ENTRYS>
+                  <INTERNAL-BEHAVIORS>
+                    <BSW-INTERNAL-BEHAVIOR UUID="03964012-9637-4228-8539-17beb701f6f1">
+                      <SHORT-NAME>CanBehavior</SHORT-NAME>
+                      <EXCLUSIVE-AREAS>
+                        <EXCLUSIVE-AREA UUID="6b91587c-dc84-41c9-bdb8-6c9a503d2454">
+                          <SHORT-NAME>CAN_EXCLUSIVE_AREA_0</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="d6dd7bd5-9855-4709-84e8-84705169c427">
+                          <SHORT-NAME>CAN_EXCLUSIVE_AREA_1</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                      </EXCLUSIVE-AREAS>
+                      <ENTITYS>
+                        <BSW-SCHEDULABLE-ENTITY UUID="2da2f334-3c90-49da-9e2d-97fb66830ace">
+                          <SHORT-NAME>Can_MainFunction_Mode</SHORT-NAME>
+                          <CAN-ENTERS>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/indieSemi/Can_ib_bswmd/BswModuleDescriptions/Can/CanBehavior/CAN_EXCLUSIVE_AREA_0</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/indieSemi/Can_ib_bswmd/BswModuleDescriptions/Can/CanBehavior/CAN_EXCLUSIVE_AREA_1</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                          </CAN-ENTERS>
+                          <CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/indieSemi/Can_ib_bswmd/BswModuleDescriptions/Can/CanBehavior/CAN_EXCLUSIVE_AREA_0</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/indieSemi/Can_ib_bswmd/BswModuleDescriptions/Can/CanBehavior/CAN_EXCLUSIVE_AREA_1</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                          </CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                          <IMPLEMENTED-ENTRY-REF DEST="BSW-MODULE-ENTRY">/indieSemi/Can_ib_bswmd/BswModuleDescriptions/Can_MainFunction_Mode</IMPLEMENTED-ENTRY-REF>
+                        </BSW-SCHEDULABLE-ENTITY>
+                      </ENTITYS>
+                      <EVENTS>
+                        <BSW-TIMING-EVENT UUID="8ec4be85-f6ba-4c94-a43b-6dda362220a8">
+                          <SHORT-NAME>Can_MainFunction_ModeTimingEvent0</SHORT-NAME>
+                          <STARTS-ON-EVENT-REF DEST="BSW-SCHEDULABLE-ENTITY">/indieSemi/Can_ib_bswmd/BswModuleDescriptions/Can/CanBehavior/Can_MainFunction_Mode</STARTS-ON-EVENT-REF>
+                          <PERIOD>0.05</PERIOD>
+                        </BSW-TIMING-EVENT>
+                      </EVENTS>
+                    </BSW-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </BSW-MODULE-DESCRIPTION>
+                <BSW-MODULE-ENTRY UUID="172c03bd-4bad-4ab4-b250-4a2da59e374f">
+                  <SHORT-NAME>Can_MainFunction_Mode</SHORT-NAME>
+                  <CALL-TYPE>SCHEDULED</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

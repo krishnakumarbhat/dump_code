@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00053.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="ff55d029-386d-43a2-b3c2-dfef4c7a5e36">
+      <SHORT-NAME>MICROSAR</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="b6c5561a-0fab-4959-a547-fe9be078f9a1">
+          <SHORT-NAME>CanIf_ib_bswmd</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE UUID="51af07f3-2efd-433c-b9ca-1778688fd4c5">
+              <SHORT-NAME>BswModuleDescriptions</SHORT-NAME>
+              <ELEMENTS>
+                <BSW-MODULE-DESCRIPTION UUID="c770a5fa-631c-451d-a0f1-eb89da0ef3df">
+                  <SHORT-NAME>CanIf</SHORT-NAME>
+                  <PROVIDED-ENTRYS>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf_Virtual</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                  </PROVIDED-ENTRYS>
+                  <INTERNAL-BEHAVIORS>
+                    <BSW-INTERNAL-BEHAVIOR UUID="a73adb66-17c5-44bf-b5c4-ef7d6e7fcdb1">
+                      <SHORT-NAME>CanIf_Behavior</SHORT-NAME>
+                      <EXCLUSIVE-AREAS>
+                        <EXCLUSIVE-AREA UUID="47bb6178-e952-4afe-b498-f9e04c6d5481">
+                          <SHORT-NAME>CANIF_EXCLUSIVE_AREA_0</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="4207c30c-adbe-4865-bd4d-2df938c269d6">
+                          <SHORT-NAME>CANIF_EXCLUSIVE_AREA_1</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="78b0518b-79f5-4dbb-984a-71924cc0fb92">
+                          <SHORT-NAME>CANIF_EXCLUSIVE_AREA_2</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="4aeb7332-df7c-4b41-b147-a8a5375be91b">
+                          <SHORT-NAME>CANIF_EXCLUSIVE_AREA_3</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="0b2a5f28-68ff-4756-82b0-3104d639bf1a">
+                          <SHORT-NAME>CANIF_EXCLUSIVE_AREA_4</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="a55b9c03-50ee-47da-825b-37e5f06d8c96">
+                          <SHORT-NAME>CANIF_EXCLUSIVE_AREA_5</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="913f29fe-9804-4b3b-9563-d9259523ad20">
+                          <SHORT-NAME>CANIF_EXCLUSIVE_AREA_6</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="576e1c2e-5684-4ebd-a174-6b99d9ac4851">
+                          <SHORT-NAME>CANIF_EXCLUSIVE_AREA_7</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="4ee86af1-60cb-4988-8f85-1f6be993d651">
+                          <SHORT-NAME>CANIF_EXCLUSIVE_AREA_8</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="9d22c093-a605-414d-abf9-472acf9f91d7">
+                          <SHORT-NAME>CANIF_EXCLUSIVE_AREA_9</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                      </EXCLUSIVE-AREAS>
+                      <ENTITYS>
+                        <BSW-CALLED-ENTITY UUID="48dcd7a9-30e6-4230-ae89-b0c5e641f328">
+                          <SHORT-NAME>CanIf_Virtual</SHORT-NAME>
+                          <CAN-ENTERS>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_0</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_1</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_2</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_3</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_4</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_5</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_6</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_7</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_8</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_9</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                          </CAN-ENTERS>
+                          <CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_0</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_1</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_2</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_3</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_4</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_5</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_6</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_7</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_8</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf/CanIf_Behavior/CANIF_EXCLUSIVE_AREA_9</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                          </CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                          <IMPLEMENTED-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/CanIf_ib_bswmd/BswModuleDescriptions/CanIf_Virtual</IMPLEMENTED-ENTRY-REF>
+                        </BSW-CALLED-ENTITY>
+                      </ENTITYS>
+                    </BSW-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </BSW-MODULE-DESCRIPTION>
+                <BSW-MODULE-ENTRY UUID="7b4dfe41-7138-4f4a-bebb-10a47344a491">
+                  <SHORT-NAME>CanIf_Virtual</SHORT-NAME>
+                  <CALL-TYPE>REGULAR</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00051.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="460388b7-0285-4cee-9cf4-d863fb172fd2">
+      <SHORT-NAME>indieSemi</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="451d1dff-7979-4b26-ab4a-29ac12dfa8fe">
+          <SHORT-NAME>Adc_ib_bswmd</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE UUID="5e0245a0-5b17-433e-840d-2cb97b4fedf7">
+              <SHORT-NAME>BswModuleDescriptions</SHORT-NAME>
+              <ELEMENTS>
+                <BSW-MODULE-DESCRIPTION UUID="24f7c377-296d-4459-ba81-6279ec636dfa">
+                  <SHORT-NAME>Adc</SHORT-NAME>
+                  <PROVIDED-ENTRYS>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/indieSemi/Adc_ib_bswmd/BswModuleDescriptions/Adc_Virtual</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                  </PROVIDED-ENTRYS>
+                  <INTERNAL-BEHAVIORS>
+                    <BSW-INTERNAL-BEHAVIOR UUID="b3f5a357-99e8-4feb-a715-5b30aa25d98f">
+                      <SHORT-NAME>AdcBehavior</SHORT-NAME>
+                      <EXCLUSIVE-AREAS>
+                        <EXCLUSIVE-AREA UUID="57db9c12-29c9-4975-8029-e0a2aadbbdb8">
+                          <SHORT-NAME>ADC_EXCLUSIVE_AREA_0</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                      </EXCLUSIVE-AREAS>
+                      <ENTITYS>
+                        <BSW-CALLED-ENTITY UUID="c2914463-6ecb-48ff-9f4a-00f553af1267">
+                          <SHORT-NAME>Adc_Virtual</SHORT-NAME>
+                          <CAN-ENTERS>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/indieSemi/Adc_ib_bswmd/BswModuleDescriptions/Adc/AdcBehavior/ADC_EXCLUSIVE_AREA_0</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                          </CAN-ENTERS>
+                          <CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/indieSemi/Adc_ib_bswmd/BswModuleDescriptions/Adc/AdcBehavior/ADC_EXCLUSIVE_AREA_0</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                          </CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                          <IMPLEMENTED-ENTRY-REF DEST="BSW-MODULE-ENTRY">/indieSemi/Adc_ib_bswmd/BswModuleDescriptions/Adc_Virtual</IMPLEMENTED-ENTRY-REF>
+                        </BSW-CALLED-ENTITY>
+                      </ENTITYS>
+                    </BSW-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </BSW-MODULE-DESCRIPTION>
+                <BSW-MODULE-ENTRY UUID="af0d97d4-17ba-4b3f-bb59-5ddcaad0f935">
+                  <SHORT-NAME>Adc_Virtual</SHORT-NAME>
+                  <CALL-TYPE>REGULAR</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

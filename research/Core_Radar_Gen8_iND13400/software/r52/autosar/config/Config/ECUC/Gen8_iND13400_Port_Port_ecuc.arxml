@@ -1,0 +1,1485 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00053.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE>
+      <SHORT-NAME>ActiveEcuC</SHORT-NAME>
+      <ELEMENTS>
+        <ECUC-MODULE-CONFIGURATION-VALUES UUID="487a96c0-44cf-40c5-b229-a7eb3ffcdbe7">
+          <SHORT-NAME>Port</SHORT-NAME>
+          <ADMIN-DATA>
+            <SDGS>
+              <SDG GID="DV:CfgPostBuild">
+                <SD GID="DV:postBuildVariantSupport">false</SD>
+              </SDG>
+            </SDGS>
+          </ADMIN-DATA>
+          <DEFINITION-REF DEST="ECUC-MODULE-DEF">/indieSemi/Port</DEFINITION-REF>
+          <IMPLEMENTATION-CONFIG-VARIANT>VARIANT-PRE-COMPILE</IMPLEMENTATION-CONFIG-VARIANT>
+          <MODULE-DESCRIPTION-REF DEST="BSW-IMPLEMENTATION">/indieSemi/Port_Impl</MODULE-DESCRIPTION-REF>
+          <CONTAINERS>
+            <ECUC-CONTAINER-VALUE UUID="34f32402-05b2-4fc7-801b-69c977f4f838">
+              <SHORT-NAME>PortConfigSet</SHORT-NAME>
+              <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet</DEFINITION-REF>
+              <SUB-CONTAINERS>
+                <ECUC-CONTAINER-VALUE UUID="31c5753a-54d5-4bfc-abb2-f75699b98e08">
+                  <SHORT-NAME>PortContainer</SHORT-NAME>
+                  <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer</DEFINITION-REF>
+                  <PARAMETER-VALUES>
+                    <ECUC-NUMERICAL-PARAM-VALUE>
+                      <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortNumberOfPortPins</DEFINITION-REF>
+                      <VALUE>26</VALUE>
+                    </ECUC-NUMERICAL-PARAM-VALUE>
+                  </PARAMETER-VALUES>
+                  <SUB-CONTAINERS>
+                    <ECUC-CONTAINER-VALUE UUID="4e29c925-f327-41bf-8ebc-cecb9eb3be71">
+                      <SHORT-NAME>MARS_RESET_N</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_OUT</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>1</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="46268ba9-96a9-4eca-91f1-f99f39dce2a9">
+                      <SHORT-NAME>CANWK_EN</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>2</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="eb75d8d3-9af5-4f63-bc6c-5f4c9aed5ff0">
+                      <SHORT-NAME>ETH_IRQ</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>3</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_ETH</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="034fdc3b-9f8c-46d0-9f99-8113156127d0">
+                      <SHORT-NAME>MM_FRAME_START</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_OUT</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>4</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="274a8435-d6e5-4b41-84b6-9a569849facf">
+                      <SHORT-NAME>PIN_POSITION</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>5</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="d12e6acd-acae-402f-b40b-a9ec109429aa">
+                      <SHORT-NAME>UART_RX</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>6</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_UART</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="dea4766b-4b81-4604-9035-c8848b302409">
+                      <SHORT-NAME>I2CM_SCL</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_OUT</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>7</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_I2C</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>15</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="54dfc8fe-844e-4cc1-a445-25f61179437b">
+                      <SHORT-NAME>I2CM_SDA</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>8</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_I2C</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>15</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="465f66f3-770b-4397-b5a1-11aa01a467b0">
+                      <SHORT-NAME>GPIO8_DEBUG_DETECT</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>9</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_DOWN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="454a1452-c9ed-4509-92a3-ea1f1f3b9f69">
+                      <SHORT-NAME>GPIO9_TOD</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_OUT</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>10</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_HIGH</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="0c41580b-a926-4368-9980-75990e56be01">
+                      <SHORT-NAME>GPIO10_ERR_N</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>11</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="8eef70f0-5460-4042-8a48-66b6f2727cde">
+                      <SHORT-NAME>GPIO11_FPGA_RST_N</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>12</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="99ee57d1-2d83-43dd-979f-178defe934aa">
+                      <SHORT-NAME>GPIO12_HSD_FAULT</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>13</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="495fffdf-b08c-484c-95e8-021d92921529">
+                      <SHORT-NAME>GP_QSPI_D3</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>14</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_SPI</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="1781cab9-b392-481a-9b64-97d8d0966450">
+                      <SHORT-NAME>ENET_PHYRSTB</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_OUT</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>15</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_HIGH</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>15</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="c42ce253-37f6-49b7-80e8-b2e497e5a962">
+                      <SHORT-NAME>PWM_1</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_OUT</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>16</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_PWM</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>15</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="496b15aa-b185-4e7f-a0a8-0957af19d624">
+                      <SHORT-NAME>GPIO16_ERR_N_HSD_EN</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>17</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_HIGH</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="afc287df-e7a9-4983-b626-1978211fad51">
+                      <SHORT-NAME>POS_GND_EN</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_OUT</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>18</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_HIGH</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="bbf9a4b4-44eb-4b1f-88e0-302269a8b276">
+                      <SHORT-NAME>CAN0_RXD</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>19</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_CAN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>7</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="bc748862-4c0b-42f7-b123-2d00f15e174f">
+                      <SHORT-NAME>CAN0_TXD</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_OUT</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>20</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_CAN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>7</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="62faa9ed-1e9c-4a4c-87f0-94d5caad2b0d">
+                      <SHORT-NAME>CAN0_STDBY</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_OUT</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>21</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_CAN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="5cca23bd-6213-4b09-b51e-c51890a628c2">
+                      <SHORT-NAME>CAN1_RXD</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>22</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_CAN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>7</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="16cd578c-3650-448a-92c2-2b830f3b0925">
+                      <SHORT-NAME>CAN1_TXD</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_OUT</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>23</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_CAN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>7</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="22347c00-0e79-4e47-acb1-4f0e8f4f61ba">
+                      <SHORT-NAME>CAN1_STDBY</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_OUT</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>24</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_CAN</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="eb6f3889-f258-47ae-8d45-1ccdc93c261f">
+                      <SHORT-NAME>ETH_MDIO</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_OUT</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>25</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_ETH</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                    <ECUC-CONTAINER-VALUE UUID="6be4d8c1-de5f-4adf-af45-2d6407e298d1">
+                      <SHORT-NAME>ETH_MDC</SHORT-NAME>
+                      <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin</DEFINITION-REF>
+                      <PARAMETER-VALUES>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirection</DEFINITION-REF>
+                          <VALUE>PORT_PIN_OUT</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDirectionChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinId</DEFINITION-REF>
+                          <VALUE>26</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinInitialMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_ETH</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinLevelValue</DEFINITION-REF>
+                          <VALUE>PORT_PIN_LEVEL_LOW</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_MODE_DIO</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinModeChangeable</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinPullMode</DEFINITION-REF>
+                          <VALUE>PORT_PIN_PULL_NONE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-TEXTUAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinIrq</DEFINITION-REF>
+                          <VALUE>PORT_PIN_IRQ_DISABLE</VALUE>
+                        </ECUC-TEXTUAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-INTEGER-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinDriveStrength</DEFINITION-REF>
+                          <VALUE>0</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinReadback</DEFINITION-REF>
+                          <VALUE>true</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                        <ECUC-NUMERICAL-PARAM-VALUE>
+                          <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortConfigSet/PortContainer/PortPin/PortPinSchimtterTrigger</DEFINITION-REF>
+                          <VALUE>false</VALUE>
+                        </ECUC-NUMERICAL-PARAM-VALUE>
+                      </PARAMETER-VALUES>
+                    </ECUC-CONTAINER-VALUE>
+                  </SUB-CONTAINERS>
+                </ECUC-CONTAINER-VALUE>
+              </SUB-CONTAINERS>
+            </ECUC-CONTAINER-VALUE>
+            <ECUC-CONTAINER-VALUE UUID="cc59a125-5ae6-4bb7-adea-05cd298ce047">
+              <SHORT-NAME>PortGeneral</SHORT-NAME>
+              <DEFINITION-REF DEST="ECUC-PARAM-CONF-CONTAINER-DEF">/indieSemi/Port/PortGeneral</DEFINITION-REF>
+              <PARAMETER-VALUES>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortGeneral/PortDevErrorDetect</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortGeneral/PortSetPinDirectionApi</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortGeneral/PortSetPinModeApi</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortGeneral/PortVersionInfoApi</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-TEXTUAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-ENUMERATION-PARAM-DEF">/indieSemi/Port/PortGeneral/PortHardwareVariant</DEFINITION-REF>
+                  <VALUE>PORT_B0_HARDWARE_VARIANT</VALUE>
+                </ECUC-TEXTUAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortGeneral/PortSafetyEnable</DEFINITION-REF>
+                  <VALUE>false</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+                <ECUC-TEXTUAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-FUNCTION-NAME-DEF">/indieSemi/Port/PortGeneral/PortSafetyUserCallout</DEFINITION-REF>
+                  <VALUE>NULL_PTR</VALUE>
+                </ECUC-TEXTUAL-PARAM-VALUE>
+                <ECUC-NUMERICAL-PARAM-VALUE>
+                  <DEFINITION-REF DEST="ECUC-BOOLEAN-PARAM-DEF">/indieSemi/Port/PortGeneral/PortEnableInitCheck</DEFINITION-REF>
+                  <VALUE>true</VALUE>
+                </ECUC-NUMERICAL-PARAM-VALUE>
+              </PARAMETER-VALUES>
+            </ECUC-CONTAINER-VALUE>
+          </CONTAINERS>
+        </ECUC-MODULE-CONFIGURATION-VALUES>
+      </ELEMENTS>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

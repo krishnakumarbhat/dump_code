@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00049.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="ff55d029-386d-43a2-b3c2-dfef4c7a5e36">
+      <SHORT-NAME>MICROSAR</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="87026f11-d4d5-4ae5-abb2-1af91328e321">
+          <SHORT-NAME>EthTSyn_ib_bswmd</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE UUID="da9bed51-6dc4-492e-89c4-21055613be84">
+              <SHORT-NAME>BswModuleDescriptions</SHORT-NAME>
+              <ELEMENTS>
+                <BSW-MODULE-DESCRIPTION UUID="a8998e5c-37b8-461e-bf04-5d822f6d53d0">
+                  <SHORT-NAME>EthTSyn</SHORT-NAME>
+                  <PROVIDED-ENTRYS>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/EthTSyn_ib_bswmd/BswModuleDescriptions/EthTSyn_MainFunction</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                  </PROVIDED-ENTRYS>
+                  <INTERNAL-BEHAVIORS>
+                    <BSW-INTERNAL-BEHAVIOR UUID="f89c48c5-25eb-4dc1-a729-5dd69027705e">
+                      <SHORT-NAME>EthTSynBehavior</SHORT-NAME>
+                      <EXCLUSIVE-AREAS>
+                        <EXCLUSIVE-AREA UUID="4361f62d-547b-433a-a6ad-dad763d2b084">
+                          <SHORT-NAME>ETHTSYN_EXCLUSIVE_AREA_RX</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Exclusive area to ensure consistency of global RAM variables by protection against Rx interrupts.</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="33d99b74-ac33-47ca-abb9-ee4c70550c87">
+                          <SHORT-NAME>ETHTSYN_EXCLUSIVE_AREA_TX</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Exclusive area to ensure consistency of global RAM variables by protection against Tx interrupts.</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="0cf02b5d-e980-4391-896a-1566517d48c7">
+                          <SHORT-NAME>ETHTSYN_EXCLUSIVE_AREA_LINK_STATE</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Exclusive area to ensure consistency of global RAM variables by protection against link state change interrupts.</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="f7ad1b1a-b979-4eb8-96f0-1391965722a5">
+                          <SHORT-NAME>ETHTSYN_EXCLUSIVE_AREA_0</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Exclusive area to ensure consistency of global RAM variables by protection against Rx, Tx and link state change interrupts.</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="27c77b94-7098-4314-8938-a62a421b9050">
+                          <SHORT-NAME>ETHTSYN_EXCLUSIVE_AREA_GET_TS</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Exclusive area used to minimize delays when retrieving timestamps.</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                      </EXCLUSIVE-AREAS>
+                      <ENTITYS>
+                        <BSW-SCHEDULABLE-ENTITY UUID="ab5678f9-420c-4878-b300-33977c6f819a">
+                          <SHORT-NAME>EthTSyn_MainFunction</SHORT-NAME>
+                          <CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/EthTSyn_ib_bswmd/BswModuleDescriptions/EthTSyn/EthTSynBehavior/ETHTSYN_EXCLUSIVE_AREA_RX</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/EthTSyn_ib_bswmd/BswModuleDescriptions/EthTSyn/EthTSynBehavior/ETHTSYN_EXCLUSIVE_AREA_TX</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/EthTSyn_ib_bswmd/BswModuleDescriptions/EthTSyn/EthTSynBehavior/ETHTSYN_EXCLUSIVE_AREA_LINK_STATE</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/EthTSyn_ib_bswmd/BswModuleDescriptions/EthTSyn/EthTSynBehavior/ETHTSYN_EXCLUSIVE_AREA_0</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/EthTSyn_ib_bswmd/BswModuleDescriptions/EthTSyn/EthTSynBehavior/ETHTSYN_EXCLUSIVE_AREA_GET_TS</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                          </CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                          <IMPLEMENTED-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/EthTSyn_ib_bswmd/BswModuleDescriptions/EthTSyn_MainFunction</IMPLEMENTED-ENTRY-REF>
+                        </BSW-SCHEDULABLE-ENTITY>
+                      </ENTITYS>
+                      <EVENTS>
+                        <BSW-TIMING-EVENT UUID="6bce4f73-bd82-408a-a4b0-bee1bf58309c">
+                          <SHORT-NAME>EthTSyn_MainFunctionTimingEvent0</SHORT-NAME>
+                          <STARTS-ON-EVENT-REF DEST="BSW-SCHEDULABLE-ENTITY">/MICROSAR/EthTSyn_ib_bswmd/BswModuleDescriptions/EthTSyn/EthTSynBehavior/EthTSyn_MainFunction</STARTS-ON-EVENT-REF>
+                          <PERIOD>0.01</PERIOD>
+                        </BSW-TIMING-EVENT>
+                      </EVENTS>
+                    </BSW-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </BSW-MODULE-DESCRIPTION>
+                <BSW-MODULE-ENTRY UUID="9ee648c1-69fd-4f4d-ae3d-ec123cf38107">
+                  <SHORT-NAME>EthTSyn_MainFunction</SHORT-NAME>
+                  <CALL-TYPE>SCHEDULED</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

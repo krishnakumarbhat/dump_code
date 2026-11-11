@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00053.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="ff55d029-386d-43a2-b3c2-dfef4c7a5e36">
+      <SHORT-NAME>MICROSAR</SHORT-NAME>
+      <ELEMENTS>
+        <BSW-IMPLEMENTATION UUID="b484d690-bf7b-4b49-8cc0-23ce231b62c3">
+          <SHORT-NAME>ComM_Impl</SHORT-NAME>
+          <PROGRAMMING-LANGUAGE>C</PROGRAMMING-LANGUAGE>
+          <RESOURCE-CONSUMPTION UUID="9b1e90d1-1520-46bd-beff-9647d1045cb0">
+            <SHORT-NAME>ResourceConsumption</SHORT-NAME>
+            <MEMORY-SECTIONS>
+              <MEMORY-SECTION UUID="86abb14c-2589-4fa7-b441-bbc0aee89396">
+                <SHORT-NAME>VAR_SAVED_ZONE0_8</SHORT-NAME>
+                <ALIGNMENT>8</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_SAVED_ZONE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="846143d8-c177-4c51-953b-4176f98d2684">
+                <SHORT-NAME>VAR_NOCACHE_CLEARED_UNSPECIFIED</SHORT-NAME>
+                <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="485dc5a4-6db6-4732-bba4-e19845e69cfd">
+                <SHORT-NAME>VAR_FAST_INIT_64</SHORT-NAME>
+                <ALIGNMENT>64</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="9c22bef4-9579-43a3-be09-64c068c20124">
+                <SHORT-NAME>VAR_FAST_CLEARED_UNSPECIFIED</SHORT-NAME>
+                <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="cae5b993-7bc1-4afe-a8b9-57f52ffcf018">
+                <SHORT-NAME>VAR_NO_INIT_8</SHORT-NAME>
+                <ALIGNMENT>8</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="a4003364-6946-4fee-9efe-3ab1de05d1dc">
+                <SHORT-NAME>VAR_NOCACHE_CLEARED_16</SHORT-NAME>
+                <ALIGNMENT>16</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="864d29c6-034b-4583-9b07-be347808e466">
+                <SHORT-NAME>VAR_NO_INIT_16</SHORT-NAME>
+                <ALIGNMENT>16</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="a95620b4-a4bc-4daa-89ef-56ed36ad3113">
+                <SHORT-NAME>VAR_SAVED_ZONE0_16</SHORT-NAME>
+                <ALIGNMENT>16</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_SAVED_ZONE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="acb0a5e0-c484-45e1-a64b-88fda8bdb965">
+                <SHORT-NAME>CONST_16</SHORT-NAME>
+                <ALIGNMENT>16</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/CONST</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="717f17d4-11b5-4e2a-8aea-b259d57f30d9">
+                <SHORT-NAME>VAR_SAVED_ZONE0_BOOLEAN</SHORT-NAME>
+                <ALIGNMENT>BOOLEAN</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_SAVED_ZONE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="ad1487e0-01f4-4713-9ab1-4da36dfb7e16">
+                <SHORT-NAME>VAR_FAST_CLEARED_8</SHORT-NAME>
+                <ALIGNMENT>8</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="307b5319-adbd-46a7-b6f8-3697c5647f4d">
+                <SHORT-NAME>CODE</SHORT-NAME>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/CODE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="bd0b592a-c619-49b0-a670-fc8a76007d82">
+                <SHORT-NAME>VAR_NOCACHE_SAVED_ZONE0_8</SHORT-NAME>
+                <ALIGNMENT>8</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_SAVED_ZONE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="be870f9d-e699-4c35-b60c-767cabb87851">
+                <SHORT-NAME>CONST_64</SHORT-NAME>
+                <ALIGNMENT>64</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/CONST</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="5dace9c2-e3ad-44ef-a420-3909fc3a945b">
+                <SHORT-NAME>VAR_NOCACHE_CLEARED_8</SHORT-NAME>
+                <ALIGNMENT>8</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="ffb60814-188d-4183-999b-d611ed0e165b">
+                <SHORT-NAME>VAR_CLEARED_16</SHORT-NAME>
+                <ALIGNMENT>16</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="80cb15b8-3e1e-45fe-9d9f-9d3232d1ea22">
+                <SHORT-NAME>VAR_NOCACHE_CLEARED_BOOLEAN</SHORT-NAME>
+                <ALIGNMENT>BOOLEAN</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="daee3810-1af7-426d-9b17-5db3eceeafd3">
+                <SHORT-NAME>VAR_FAST_NO_INIT_16</SHORT-NAME>
+                <ALIGNMENT>16</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="f13f3eac-56fe-4b51-9651-8c1b592d3cc4">
+                <SHORT-NAME>VAR_NO_INIT_64</SHORT-NAME>
+                <ALIGNMENT>64</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="d0ffc6a2-d81e-407f-ae8a-a44d08819698">
+                <SHORT-NAME>VAR_NOCACHE_CLEARED_64</SHORT-NAME>
+                <ALIGNMENT>64</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="acf2fb28-63d8-41ff-ad46-e8cff6288aa9">
+                <SHORT-NAME>VAR_NOCACHE_INIT_32</SHORT-NAME>
+                <ALIGNMENT>32</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="23c2c59d-65d6-4383-9ff0-775e9673e5cc">
+                <SHORT-NAME>VAR_FAST_INIT_32</SHORT-NAME>
+                <ALIGNMENT>32</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="39753f46-4762-4044-95da-aa46b51e9b67">
+                <SHORT-NAME>VAR_NOCACHE_SAVED_ZONE0_16</SHORT-NAME>
+                <ALIGNMENT>16</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_SAVED_ZONE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="cc142bdb-ea73-4d44-bd15-cf6c876ba3c0">
+                <SHORT-NAME>VAR_NO_INIT_UNSPECIFIED</SHORT-NAME>
+                <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="d7ea94f4-f16f-44bb-ae14-b5af84cc08f8">
+                <SHORT-NAME>VAR_CLEARED_8</SHORT-NAME>
+                <ALIGNMENT>8</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="e4173e79-6fd7-4221-b508-21b6bbce058f">
+                <SHORT-NAME>VAR_FAST_CLEARED_16</SHORT-NAME>
+                <ALIGNMENT>16</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="dad93149-263e-4c57-9c16-aed5b12b96ea">
+                <SHORT-NAME>VAR_NOCACHE_INIT_8</SHORT-NAME>
+                <ALIGNMENT>8</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="91b43687-8cf5-4753-b91f-0cef8f9307d1">
+                <SHORT-NAME>CONST_UNSPECIFIED</SHORT-NAME>
+                <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/CONST</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="53f1b5cb-1444-4798-b7fc-bfb9dbfe72fe">
+                <SHORT-NAME>VAR_NOCACHE_NO_INIT_32</SHORT-NAME>
+                <ALIGNMENT>32</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="5fb55830-20b9-42ea-b6c4-8852118db30a">
+                <SHORT-NAME>CONST_32</SHORT-NAME>
+                <ALIGNMENT>32</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/CONST</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="f0814727-18ca-4977-ab44-76600165d87b">
+                <SHORT-NAME>VAR_FAST_CLEARED_64</SHORT-NAME>
+                <ALIGNMENT>64</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="0f542814-d911-43d4-ba33-93abf9110d78">
+                <SHORT-NAME>VAR_INIT_32</SHORT-NAME>
+                <ALIGNMENT>32</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="cc09cd0d-14e7-402e-880d-200b80a08a52">
+                <SHORT-NAME>VAR_FAST_NO_INIT_64</SHORT-NAME>
+                <ALIGNMENT>64</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="e8659253-b3fe-46d5-9f60-5066b91620f2">
+                <SHORT-NAME>VAR_INIT_8</SHORT-NAME>
+                <ALIGNMENT>8</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="9307d660-4b80-4fe3-992d-c8fd58a6bef4">
+                <SHORT-NAME>VAR_CLEARED_64</SHORT-NAME>
+                <ALIGNMENT>64</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="a2ae9784-83be-4ad9-ae08-96ae69fc5bbc">
+                <SHORT-NAME>VAR_NO_INIT_32</SHORT-NAME>
+                <ALIGNMENT>32</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="fb89916e-c5f9-4663-a575-73da2739f71a">
+                <SHORT-NAME>VAR_NOCACHE_INIT_64</SHORT-NAME>
+                <ALIGNMENT>64</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="a73bf6cd-b686-430e-a7ae-94787c368062">
+                <SHORT-NAME>VAR_NOCACHE_CLEARED_32</SHORT-NAME>
+                <ALIGNMENT>32</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="0d4752e6-fcf7-4c09-8ae7-e1a05f29eb46">
+                <SHORT-NAME>VAR_NOCACHE_INIT_BOOLEAN</SHORT-NAME>
+                <ALIGNMENT>BOOLEAN</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="63cbd30f-7ef4-4af0-b3e8-433d4bfbc974">
+                <SHORT-NAME>VAR_FAST_NO_INIT_BOOLEAN</SHORT-NAME>
+                <ALIGNMENT>BOOLEAN</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="ce55d702-4460-4caf-9c56-fa632f718ac0">
+                <SHORT-NAME>VAR_SAVED_ZONE0_32</SHORT-NAME>
+                <ALIGNMENT>32</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_SAVED_ZONE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="8fe1a29c-b362-4572-9a90-44706b2bb4ee">
+                <SHORT-NAME>VAR_FAST_CLEARED_BOOLEAN</SHORT-NAME>
+                <ALIGNMENT>BOOLEAN</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="1b267c1a-3ac3-419f-a52e-db59f24609e3">
+                <SHORT-NAME>VAR_SAVED_ZONE0_UNSPECIFIED</SHORT-NAME>
+                <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_SAVED_ZONE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="efbec356-d61c-45d5-94de-98b9096a31a9">
+                <SHORT-NAME>VAR_CLEARED_BOOLEAN</SHORT-NAME>
+                <ALIGNMENT>BOOLEAN</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="c3f947ab-9048-491b-838d-a93644db2c7b">
+                <SHORT-NAME>VAR_NOCACHE_SAVED_ZONE0_64</SHORT-NAME>
+                <ALIGNMENT>64</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_SAVED_ZONE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="a79e6dfb-975f-4b86-933a-ebd16a47b2c2">
+                <SHORT-NAME>VAR_NO_INIT_BOOLEAN</SHORT-NAME>
+                <ALIGNMENT>BOOLEAN</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="328468b9-6e39-4d8f-a381-e5105d9f55f4">
+                <SHORT-NAME>VAR_NOCACHE_NO_INIT_64</SHORT-NAME>
+                <ALIGNMENT>64</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="691264b5-9b9b-4357-90f8-49eb87d9da08">
+                <SHORT-NAME>VAR_FAST_CLEARED_32</SHORT-NAME>
+                <ALIGNMENT>32</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="5391ae0e-afa2-450a-8e1c-c88a91f5bcbe">
+                <SHORT-NAME>VAR_NOCACHE_NO_INIT_UNSPECIFIED</SHORT-NAME>
+                <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="c9ef3ab4-19a7-4cd6-a426-91d477536b55">
+                <SHORT-NAME>VAR_INIT_64</SHORT-NAME>
+                <ALIGNMENT>64</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="7ce5edce-7bab-48d9-8098-9a9c30b2d121">
+                <SHORT-NAME>VAR_NOCACHE_SAVED_ZONE0_BOOLEAN</SHORT-NAME>
+                <ALIGNMENT>BOOLEAN</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_SAVED_ZONE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="57929d57-02ab-470a-a2af-886b4ce2baab">
+                <SHORT-NAME>VAR_CLEARED_UNSPECIFIED</SHORT-NAME>
+                <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="f8247c19-afc4-43df-8645-15e4bbb90acf">
+                <SHORT-NAME>VAR_INIT_UNSPECIFIED</SHORT-NAME>
+                <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="527a31e0-f1b3-4332-87c9-b7ebfc568f92">
+                <SHORT-NAME>CONST_8</SHORT-NAME>
+                <ALIGNMENT>8</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/CONST</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="55cdc0ce-3d24-4034-9321-acd50c0d6671">
+                <SHORT-NAME>VAR_NOCACHE_SAVED_ZONE0_UNSPECIFIED</SHORT-NAME>
+                <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_SAVED_ZONE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="04bdbed8-6d6f-48f5-b9a8-d25a0fb1991c">
+                <SHORT-NAME>VAR_FAST_NO_INIT_32</SHORT-NAME>
+                <ALIGNMENT>32</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="59fe44d6-7fbd-4622-9cb8-599063829bb8">
+                <SHORT-NAME>VAR_CLEARED_32</SHORT-NAME>
+                <ALIGNMENT>32</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_CLEARED</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="0f35fa5e-f9e5-41c7-9585-219e7b1f79ce">
+                <SHORT-NAME>VAR_NOCACHE_NO_INIT_BOOLEAN</SHORT-NAME>
+                <ALIGNMENT>BOOLEAN</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="3fcdc55e-b463-4287-b361-6cab02e07773">
+                <SHORT-NAME>VAR_INIT_BOOLEAN</SHORT-NAME>
+                <ALIGNMENT>BOOLEAN</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="75f9e0a5-ae6c-4944-ae5b-092682297417">
+                <SHORT-NAME>VAR_NOCACHE_INIT_UNSPECIFIED</SHORT-NAME>
+                <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="a3b09c74-31a2-485d-8836-10928a07cfb7">
+                <SHORT-NAME>VAR_FAST_INIT_UNSPECIFIED</SHORT-NAME>
+                <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="581b444b-154c-450e-9ca2-88532b621c32">
+                <SHORT-NAME>VAR_FAST_NO_INIT_8</SHORT-NAME>
+                <ALIGNMENT>8</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="ad7ae45d-e88d-4b3d-b4be-562106c7a835">
+                <SHORT-NAME>VAR_FAST_INIT_8</SHORT-NAME>
+                <ALIGNMENT>8</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="e797882f-00ac-4d3c-920d-770a8e580451">
+                <SHORT-NAME>VAR_NOCACHE_INIT_16</SHORT-NAME>
+                <ALIGNMENT>16</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="edc76bc5-9a54-4994-8a8f-30b1f0badb86">
+                <SHORT-NAME>VAR_FAST_NO_INIT_UNSPECIFIED</SHORT-NAME>
+                <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="2a71fd1a-47f1-4d11-9679-19ce6239c446">
+                <SHORT-NAME>VAR_SAVED_ZONE0_64</SHORT-NAME>
+                <ALIGNMENT>64</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_SAVED_ZONE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="9d353fe0-528f-4880-b371-24acd9265f3e">
+                <SHORT-NAME>VAR_FAST_INIT_BOOLEAN</SHORT-NAME>
+                <ALIGNMENT>BOOLEAN</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="3483a94f-951f-48bc-a41f-84ee8462439e">
+                <SHORT-NAME>VAR_FAST_INIT_16</SHORT-NAME>
+                <ALIGNMENT>16</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_FAST_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="3f9652b0-adc2-4559-ae3f-e27633f72dda">
+                <SHORT-NAME>VAR_NOCACHE_NO_INIT_8</SHORT-NAME>
+                <ALIGNMENT>8</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="575ab122-7290-4a15-9b36-3851bfdfe78d">
+                <SHORT-NAME>CONST_BOOLEAN</SHORT-NAME>
+                <ALIGNMENT>BOOLEAN</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/CONST</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="79706939-af1f-41b0-85dd-a423ea920495">
+                <SHORT-NAME>VAR_NOCACHE_SAVED_ZONE0_32</SHORT-NAME>
+                <ALIGNMENT>32</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_SAVED_ZONE</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="17529094-ab23-422c-ad34-6208ac500159">
+                <SHORT-NAME>VAR_INIT_16</SHORT-NAME>
+                <ALIGNMENT>16</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+              <MEMORY-SECTION UUID="585e9b29-d573-4f68-a6de-c39e34e4c3dc">
+                <SHORT-NAME>VAR_NOCACHE_NO_INIT_16</SHORT-NAME>
+                <ALIGNMENT>16</ALIGNMENT>
+                <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/MICROSAR_MemMap/SwAddrMethods/VAR_NOCACHE_NO_INIT</SW-ADDRMETHOD-REF>
+              </MEMORY-SECTION>
+            </MEMORY-SECTIONS>
+          </RESOURCE-CONSUMPTION>
+          <SW-VERSION>18.02.01</SW-VERSION>
+          <USED-CODE-GENERATOR>DaVinci Configurator</USED-CODE-GENERATOR>
+          <VENDOR-ID>30</VENDOR-ID>
+          <AR-RELEASE-VERSION>4.00.03</AR-RELEASE-VERSION>
+        </BSW-IMPLEMENTATION>
+      </ELEMENTS>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="60cfdb17-36d2-43bd-9894-dd6ef66500e1">
+          <SHORT-NAME>ComM_ib_bswmd</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE UUID="d6c89369-410a-413e-b7b9-9034d3e83aa9">
+              <SHORT-NAME>BswModuleDescriptions</SHORT-NAME>
+              <ELEMENTS>
+                <BSW-MODULE-DESCRIPTION UUID="9fe52667-663e-4fdf-9350-4a6c2cda26a3">
+                  <SHORT-NAME>ComM</SHORT-NAME>
+                  <PROVIDED-ENTRYS>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM_MainFunction_0</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM_MainFunction_1</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM_MainFunction_2</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                  </PROVIDED-ENTRYS>
+                  <INTERNAL-BEHAVIORS>
+                    <BSW-INTERNAL-BEHAVIOR UUID="da725719-70f8-463c-8a00-94f271f37bd2">
+                      <SHORT-NAME>ComMBehavior</SHORT-NAME>
+                      <EXCLUSIVE-AREAS>
+                        <EXCLUSIVE-AREA UUID="57dbe512-6166-4e95-abaf-2531ed6e6728">
+                          <SHORT-NAME>COMM_EXCLUSIVE_AREA_0</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="58aa8447-7536-470b-a686-2a2e562a96e8">
+                          <SHORT-NAME>COMM_EXCLUSIVE_AREA_1</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="50942fad-4f12-4cef-bba3-652a5acdb05a">
+                          <SHORT-NAME>COMM_EXCLUSIVE_AREA_2</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">This exclusive area is only used in case of multi-partition. It must be configured as a spinlock to allow access to some variables simultaneously from multiple cores.</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="8948efbd-ecdf-475d-9cc6-574df9067e3e">
+                          <SHORT-NAME>COMM_EXCLUSIVE_AREA_3</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">This exclusive area is only used in case of multi-partition. It must be configured as a spinlock to allow access to some variables simultaneously from multiple cores.</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="c548f019-4869-4e26-adab-9734bbfc7fbd">
+                          <SHORT-NAME>COMM_EXCLUSIVE_AREA_4</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">This exclusive area is only used in case of multi-partition. It must be configured as a spinlock to allow access to some variables simultaneously from multiple cores.</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="87f4ffc2-891a-4213-b5cd-ced792f616ae">
+                          <SHORT-NAME>COMM_EXCLUSIVE_AREA_5</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">This exclusive area is only used in case of multi-partition. It must be configured as a spinlock to allow access to some variables simultaneously from multiple cores.</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                      </EXCLUSIVE-AREAS>
+                      <ENTITYS>
+                        <BSW-SCHEDULABLE-ENTITY UUID="0ea4486e-f526-48f2-b88d-10c0afa4dd21">
+                          <SHORT-NAME>ComM_MainFunction_1</SHORT-NAME>
+                          <CAN-ENTERS>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_0</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_1</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_2</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_3</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_4</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_5</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                          </CAN-ENTERS>
+                          <CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_0</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_1</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_2</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_3</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_4</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_5</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                          </CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                          <IMPLEMENTED-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM_MainFunction_1</IMPLEMENTED-ENTRY-REF>
+                        </BSW-SCHEDULABLE-ENTITY>
+                        <BSW-SCHEDULABLE-ENTITY UUID="d3eb7646-8e83-46d9-9f13-3342f3f8ded4">
+                          <SHORT-NAME>ComM_MainFunction_0</SHORT-NAME>
+                          <CAN-ENTERS>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_0</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_1</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_2</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_3</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_4</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_5</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                          </CAN-ENTERS>
+                          <CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_0</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_1</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_2</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_3</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_4</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_5</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                          </CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                          <IMPLEMENTED-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM_MainFunction_0</IMPLEMENTED-ENTRY-REF>
+                        </BSW-SCHEDULABLE-ENTITY>
+                        <BSW-SCHEDULABLE-ENTITY UUID="0369ba0b-1152-4aa9-8cef-b02b99746bf4">
+                          <SHORT-NAME>ComM_MainFunction_2</SHORT-NAME>
+                          <CAN-ENTERS>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_0</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_1</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_2</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_3</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_4</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_5</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                          </CAN-ENTERS>
+                          <CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_0</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_1</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_2</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_3</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_4</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/COMM_EXCLUSIVE_AREA_5</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                          </CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                          <IMPLEMENTED-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM_MainFunction_2</IMPLEMENTED-ENTRY-REF>
+                        </BSW-SCHEDULABLE-ENTITY>
+                      </ENTITYS>
+                      <EVENTS>
+                        <BSW-TIMING-EVENT UUID="bb307f67-1190-4367-8564-c09974fa194e">
+                          <SHORT-NAME>ComM_MainFunction_1TimingEvent0</SHORT-NAME>
+                          <STARTS-ON-EVENT-REF DEST="BSW-SCHEDULABLE-ENTITY">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/ComM_MainFunction_1</STARTS-ON-EVENT-REF>
+                          <PERIOD>0.02</PERIOD>
+                        </BSW-TIMING-EVENT>
+                        <BSW-TIMING-EVENT UUID="d8de731b-8001-4007-b615-7b769b72b8ef">
+                          <SHORT-NAME>ComM_MainFunction_0TimingEvent0</SHORT-NAME>
+                          <STARTS-ON-EVENT-REF DEST="BSW-SCHEDULABLE-ENTITY">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/ComM_MainFunction_0</STARTS-ON-EVENT-REF>
+                          <PERIOD>0.02</PERIOD>
+                        </BSW-TIMING-EVENT>
+                        <BSW-TIMING-EVENT UUID="283911cb-ff7d-4fb7-89dd-12408966b074">
+                          <SHORT-NAME>ComM_MainFunction_2TimingEvent0</SHORT-NAME>
+                          <STARTS-ON-EVENT-REF DEST="BSW-SCHEDULABLE-ENTITY">/MICROSAR/ComM_ib_bswmd/BswModuleDescriptions/ComM/ComMBehavior/ComM_MainFunction_2</STARTS-ON-EVENT-REF>
+                          <PERIOD>0.02</PERIOD>
+                        </BSW-TIMING-EVENT>
+                      </EVENTS>
+                    </BSW-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </BSW-MODULE-DESCRIPTION>
+                <BSW-MODULE-ENTRY UUID="f2ef9627-6550-4d3e-8906-80013a3cfae8">
+                  <SHORT-NAME>ComM_MainFunction_0</SHORT-NAME>
+                  <CALL-TYPE>SCHEDULED</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+                <BSW-MODULE-ENTRY UUID="ec844e81-691c-432b-b133-79fe9de7fd1c">
+                  <SHORT-NAME>ComM_MainFunction_1</SHORT-NAME>
+                  <CALL-TYPE>SCHEDULED</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+                <BSW-MODULE-ENTRY UUID="39b0c214-8536-44df-9403-c0b57962807f">
+                  <SHORT-NAME>ComM_MainFunction_2</SHORT-NAME>
+                  <CALL-TYPE>SCHEDULED</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

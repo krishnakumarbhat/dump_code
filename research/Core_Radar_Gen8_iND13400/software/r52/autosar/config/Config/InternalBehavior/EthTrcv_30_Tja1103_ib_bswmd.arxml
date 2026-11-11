@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00053.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="ff55d029-386d-43a2-b3c2-dfef4c7a5e36">
+      <SHORT-NAME>MICROSAR</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="7413c1c0-bc33-48b1-bf40-a0f8890bc023">
+          <SHORT-NAME>EthTrcv_30_Tja1103_ib_bswmd</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE UUID="9d114d8f-e450-4181-ad5f-ef63a3c6b924">
+              <SHORT-NAME>BswModuleDescriptions</SHORT-NAME>
+              <ELEMENTS>
+                <BSW-MODULE-DESCRIPTION UUID="779ac38e-db88-4f67-adc6-deaa2138c104">
+                  <SHORT-NAME>EthTrcv</SHORT-NAME>
+                  <PROVIDED-ENTRYS>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/EthTrcv_30_Tja1103_ib_bswmd/BswModuleDescriptions/EthTrcv_30_Tja1103_MainFunction</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                  </PROVIDED-ENTRYS>
+                  <INTERNAL-BEHAVIORS>
+                    <BSW-INTERNAL-BEHAVIOR UUID="325800db-182d-42d3-add0-a2c0ecc25a22">
+                      <SHORT-NAME>EthTrcv_30_Tja1103Behavior</SHORT-NAME>
+                      <EXCLUSIVE-AREAS>
+                        <EXCLUSIVE-AREA UUID="6fe35830-1f6f-445a-9b30-a0c4234db53c">
+                          <SHORT-NAME>ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_CL45</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="08145dc5-699b-4308-b024-ae3823b0acb5">
+                          <SHORT-NAME>ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_MACSEC</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="13742dd4-1a02-4ed7-bff7-d1cbfce8fee6">
+                          <SHORT-NAME>ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_MACSEC32</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="eba27de9-e43e-456d-a5d7-59282ad737e5">
+                          <SHORT-NAME>ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_MACSEC64</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="9645314a-ea1c-4bf6-871e-8bbdfa663904">
+                          <SHORT-NAME>ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_DIAGNOSTICS</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="d3ccbfec-6bc2-4787-80df-25989c5c3f85">
+                          <SHORT-NAME>ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_MODE</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="9bb78f16-73de-4f4b-be7b-d81a81ed9ffb">
+                          <SHORT-NAME>ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_LINK</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="6079b6cf-dd47-4463-9105-8eb6231fa4cb">
+                          <SHORT-NAME>ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_HWINIT</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="0f749147-c7a5-4edc-a1aa-fcfe4e4978ca">
+                          <SHORT-NAME>ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_AUTONEG</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="663522e9-de65-4895-97ac-8ede66c023f2">
+                          <SHORT-NAME>ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_WAKEUP</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                      </EXCLUSIVE-AREAS>
+                      <ENTITYS>
+                        <BSW-SCHEDULABLE-ENTITY UUID="32cb7fb5-3b86-473f-ac81-96e6747711f8">
+                          <SHORT-NAME>EthTrcv_30_Tja1103_MainFunction</SHORT-NAME>
+                          <CAN-ENTERS>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/EthTrcv_30_Tja1103_ib_bswmd/BswModuleDescriptions/EthTrcv/EthTrcv_30_Tja1103Behavior/ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_CL45</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/EthTrcv_30_Tja1103_ib_bswmd/BswModuleDescriptions/EthTrcv/EthTrcv_30_Tja1103Behavior/ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_MACSEC</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/EthTrcv_30_Tja1103_ib_bswmd/BswModuleDescriptions/EthTrcv/EthTrcv_30_Tja1103Behavior/ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_MACSEC32</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/EthTrcv_30_Tja1103_ib_bswmd/BswModuleDescriptions/EthTrcv/EthTrcv_30_Tja1103Behavior/ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_MACSEC64</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/EthTrcv_30_Tja1103_ib_bswmd/BswModuleDescriptions/EthTrcv/EthTrcv_30_Tja1103Behavior/ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_DIAGNOSTICS</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/EthTrcv_30_Tja1103_ib_bswmd/BswModuleDescriptions/EthTrcv/EthTrcv_30_Tja1103Behavior/ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_MODE</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/EthTrcv_30_Tja1103_ib_bswmd/BswModuleDescriptions/EthTrcv/EthTrcv_30_Tja1103Behavior/ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_LINK</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/EthTrcv_30_Tja1103_ib_bswmd/BswModuleDescriptions/EthTrcv/EthTrcv_30_Tja1103Behavior/ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_HWINIT</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/EthTrcv_30_Tja1103_ib_bswmd/BswModuleDescriptions/EthTrcv/EthTrcv_30_Tja1103Behavior/ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_AUTONEG</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                            <EXCLUSIVE-AREA-REF-CONDITIONAL>
+                              <EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/MICROSAR/EthTrcv_30_Tja1103_ib_bswmd/BswModuleDescriptions/EthTrcv/EthTrcv_30_Tja1103Behavior/ETHTRCV_30_TJA1103_EXCLUSIVE_AREA_WAKEUP</EXCLUSIVE-AREA-REF>
+                            </EXCLUSIVE-AREA-REF-CONDITIONAL>
+                          </CAN-ENTERS>
+                          <IMPLEMENTED-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/EthTrcv_30_Tja1103_ib_bswmd/BswModuleDescriptions/EthTrcv_30_Tja1103_MainFunction</IMPLEMENTED-ENTRY-REF>
+                        </BSW-SCHEDULABLE-ENTITY>
+                      </ENTITYS>
+                      <EVENTS>
+                        <BSW-TIMING-EVENT UUID="0fcd3239-7b90-4489-80c4-a600f9432951">
+                          <SHORT-NAME>EthTrcv_30_Tja1103_MainFunctionTimingEvent0</SHORT-NAME>
+                          <STARTS-ON-EVENT-REF DEST="BSW-SCHEDULABLE-ENTITY">/MICROSAR/EthTrcv_30_Tja1103_ib_bswmd/BswModuleDescriptions/EthTrcv/EthTrcv_30_Tja1103Behavior/EthTrcv_30_Tja1103_MainFunction</STARTS-ON-EVENT-REF>
+                          <PERIOD>1</PERIOD>
+                        </BSW-TIMING-EVENT>
+                      </EVENTS>
+                    </BSW-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </BSW-MODULE-DESCRIPTION>
+                <BSW-MODULE-ENTRY UUID="da66db7f-4bf1-4b4e-a95d-cf020f5327cc">
+                  <SHORT-NAME>EthTrcv_30_Tja1103_MainFunction</SHORT-NAME>
+                  <CALL-TYPE>SCHEDULED</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>
