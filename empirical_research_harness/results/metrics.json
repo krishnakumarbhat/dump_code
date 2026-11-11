@@ -1,0 +1,1696 @@
+{
+  "generated": "2026-10-23 15:43:39",
+  "seeds": [
+    0
+  ],
+  "elapsed_s": 20.51168990135193,
+  "concepts": [
+    {
+      "id": 1,
+      "title": "Track-Conditioned Residual Beat Estimator",
+      "source": "gen_research/Core_Radar_Gen8_iND13400/software/bbe32/src/residual_track_ifc.c",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "range_rmse_m_hi_snr": 0.004080715352123262,
+          "range_rmse_m_sweep_mean": 0.35142844327259726,
+          "range_rmse_m_worst_snr": 1.5491902931347787,
+          "real_mults": 252,
+          "samples_consumed": 64,
+          "mults_per_sample": 3.9375,
+          "curvature_available": 0
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "range_rmse_m_hi_snr": 0.0696436318099049,
+          "range_rmse_m_sweep_mean": 0.56191903187501,
+          "range_rmse_m_worst_snr": 1.4063399277597888,
+          "real_mults": 192,
+          "samples_consumed": 64,
+          "mults_per_sample": 3.0,
+          "curvature_available": 1
+        }
+      },
+      "figures": [],
+      "notes": "Both estimators run on the same complex beat fixture (r_true=1.00 m, f_b=667.1 kHz, fs=10 MHz). Baseline consumes the full 64-sample window in one lag-1 accumulation; A-PRISM consumes 16 independent 4-sample cubic stencils (prior increment = 0, inside the +-0.5 cycle unwrap band) and averages their centre-increment output. Multiplication counts are the kernel-returned n_mult values, not assumed constants. A-PRISM additionally emits curvature (g_h2) and jerk (l_h3), which the lag-1 estimator cannot produce.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "range_rmse_m_hi_snr": 0.004080715352123262,
+            "range_rmse_m_sweep_mean": 0.35142844327259726,
+            "range_rmse_m_worst_snr": 1.5491902931347787,
+            "real_mults": 252,
+            "samples_consumed": 64,
+            "mults_per_sample": 3.9375,
+            "curvature_available": 0
+          },
+          "aprism": {
+            "range_rmse_m_hi_snr": 0.0696436318099049,
+            "range_rmse_m_sweep_mean": 0.56191903187501,
+            "range_rmse_m_worst_snr": 1.4063399277597888,
+            "real_mults": 192,
+            "samples_consumed": 64,
+            "mults_per_sample": 3.0,
+            "curvature_available": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "3-Product Cubic-Exact Residual Stencil",
+      "source": "gen_research/Core_Radar_Gen8_iND13400/software/bbe32/src/residual_track_ifc.c",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "increment_rmse_rad": 0.39929447732536205,
+          "increment_rmse_rad_mean": 0.22229774028730503,
+          "curvature_rmse_rad": 0.1,
+          "curvature_equiv_mps2": 8.0,
+          "real_mults": 60,
+          "points_used": 16
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "increment_rmse_rad": 0.0163627080787582,
+          "increment_rmse_rad_mean": 0.01765054936160371,
+          "curvature_rmse_rad": 0.013258121627536118,
+          "curvature_equiv_mps2": 1.0606497302028894,
+          "real_mults": 12,
+          "points_used": 4
+        }
+      },
+      "figures": [],
+      "notes": "Fixture: x[n]=exp(j(a0*n+0.5*k*n^2)) with a0=0.40 rad/sample and k=0.0125 rad/sample^2 per m/s^2 (calibration chosen so the curvature is resolvable at the stencil quantisation; the trend, not the absolute scale, is the claim). The baseline reports the window-mean increment (8 samples stale at n_win=16) and has no g_h2 output; the cubic-4 stencil recovers the centre increment and curvature, then extrapolates 2 samples to the newest increment. Multiplication counts are kernel-returned n_mult.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "increment_rmse_rad": 0.39929447732536205,
+            "increment_rmse_rad_mean": 0.22229774028730503,
+            "curvature_rmse_rad": 0.1,
+            "curvature_equiv_mps2": 8.0,
+            "real_mults": 60,
+            "points_used": 16
+          },
+          "aprism": {
+            "increment_rmse_rad": 0.0163627080787582,
+            "increment_rmse_rad_mean": 0.01765054936160371,
+            "curvature_rmse_rad": 0.013258121627536118,
+            "curvature_equiv_mps2": 1.0606497302028894,
+            "real_mults": 12,
+            "points_used": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Range-Adaptive Dual-Loop Clutter CFAR",
+      "source": "gen_research/Core_Radar_Gen8_iND13400/software/bbe32/rdd_proc/imp/src/appl_cfar_ifc.c",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "weak_target_recall": 0.0,
+          "false_alarms_per_column": 0.10625,
+          "threshold_lift_db": 0.0,
+          "floor_rmse_db": 7.893498111447687
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "weak_target_recall": 1.0,
+          "false_alarms_per_column": 0.13125,
+          "threshold_lift_db": -25.37355005425166,
+          "floor_rmse_db": 0.022932238113091783
+        }
+      },
+      "figures": [],
+      "notes": "CFAR runs along range (each doppler column is one 'row'), pfa=1e-4, 9 reference cells + 1 guard. BASELINE uses alpha_ca*mean(all refs); A-PRISM excludes tracker-occupied cells from the reference set, seeds the dual-loop floor EMA (lambda=0.02) and lets aprism_cfar_overlay apply the BLUE/CA alpha ratio to the per-cell threshold. The wall skirt raises the baseline reference mean so the weak target is masked; the occupancy mask keeps it below threshold. Targets are injected at explicit range bins because signals.range_doppler_map's r^-4 weight underflows beyond ~0.3 m. Recall is the detection of the weak target cell (bin 111, doppler 16) over 5 seeds; FA counts threshold crossings in the quiet band (outside the wall +-7 bins and the target +-4 bins) per doppler column; the lift is measured at the target cell; floor RMSE compares the row mean (baseline) and the dual-loop EMA state (A-PRISM, unclamped) against the map median.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "weak_target_recall": 0.0,
+            "false_alarms_per_column": 0.10625,
+            "threshold_lift_db": 0.0,
+            "floor_rmse_db": 7.893498111447687
+          },
+          "aprism": {
+            "weak_target_recall": 1.0,
+            "false_alarms_per_column": 0.13125,
+            "threshold_lift_db": -25.37355005425166,
+            "floor_rmse_db": 0.022932238113091783
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Occupancy-BLUE CFAR with Pfa control",
+      "source": "gen_research/Core_Radar_Gen8_iND13400/software/bbe32/rdd_proc/imp/src/appl_adaptive_cfar.c",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "pfa_at_operating_point": 0.0,
+          "weak_target_recall": 0.4726735598227474,
+          "auc": 0.9988429720240288,
+          "alpha": 5.3363429146131836,
+          "alpha_ratio": 1.0,
+          "beta_entropy": 0.17328679513998632
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "pfa_at_operating_point": 0.0035551041137633316,
+          "weak_target_recall": 0.9236829148202855,
+          "auc": 0.998954998938495,
+          "alpha": 6.86859719010444,
+          "alpha_ratio": 1.2871356470168531,
+          "beta_entropy": 2.292180233149633
+        }
+      },
+      "figures": [],
+      "notes": "16 reference cells, 5 of them tracker-occupied (pi=0.85, snr=3). alpha_BLUE solves sum ln(1+a*beta_i) = -ln(pfa) via aprism_alpha_for_pfa; alpha_CA = n*(pfa^(-1/n)-1). The detector statistic is CUT/reference-mean (baseline) vs CUT/(beta.ref) (A-PRISM), swept over the same 4000 synthetic rows with exponential clutter. Both operating points are targeted at pfa=1e-4; the realised Pfa is measured, not assumed.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "pfa_at_operating_point": 0.0,
+            "weak_target_recall": 0.4726735598227474,
+            "auc": 0.9988429720240288,
+            "alpha": 5.3363429146131836,
+            "alpha_ratio": 1.0,
+            "beta_entropy": 0.17328679513998632
+          },
+          "aprism": {
+            "pfa_at_operating_point": 0.0035551041137633316,
+            "weak_target_recall": 0.9236829148202855,
+            "auc": 0.998954998938495,
+            "alpha": 6.86859719010444,
+            "alpha_ratio": 1.2871356470168531,
+            "beta_entropy": 2.292180233149633
+          }
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Priority-Ranked CDC Urban Packing",
+      "source": "gen_research/Core_Radar_Gen8_iND13400/software/bbe32/src/cdc_priority.c + cdc_packing.c",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "near_retention_top16": 0.3,
+          "near_retention_top8": 0.1,
+          "far_clutter_top16": 10,
+          "spearman_vs_original": 1.0,
+          "kendall_vs_original": 1.0,
+          "count_changed": 0
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "near_retention_top16": 0.75,
+          "near_retention_top8": 0.4,
+          "far_clutter_top16": 1,
+          "spearman_vs_original": -0.2898686679174485,
+          "kendall_vs_original": -0.19487179487179487,
+          "count_changed": 0,
+          "oracle_retention_top16": 0.75
+        }
+      },
+      "figures": [],
+      "notes": "20 near-weak pedestrians (5-20 m, 6-12 dB) and 20 far-strong clutter returns (50-80 m, 14-22 dB) in random original order. A-PRISM scores 10^(SNR/10)/r^2 and applies cdc_select_top_k; the emitted count is unchanged (K), only the membership/order changes. MEASURED CAVEAT: as mirrored, cdc_select_top_k only sorts the first K entries (its inner loop is bounded by K), so it can never promote a detection from position >= K; near-field retention therefore does not improve and the emitted order is a permutation of the leading K block. The dotted 'global score sort' trace is a diagnostic (argsort of the same scores) showing what the concept would retain if the selection scanned all N entries; it is not part of the A/B claim.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "near_retention_top16": 0.3,
+            "near_retention_top8": 0.1,
+            "far_clutter_top16": 10,
+            "spearman_vs_original": 1.0,
+            "kendall_vs_original": 1.0,
+            "count_changed": 0
+          },
+          "aprism": {
+            "near_retention_top16": 0.75,
+            "near_retention_top8": 0.4,
+            "far_clutter_top16": 1,
+            "spearman_vs_original": -0.2898686679174485,
+            "kendall_vs_original": -0.19487179487179487,
+            "count_changed": 0,
+            "oracle_retention_top16": 0.75
+          }
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Closed-Form Specular Contact Inversion",
+      "source": "gen_research/Core_Radar_Gen8_iND13400/software/bbe32/dyn_alignment/ghost_calib.c",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "contact_rmse_m": 13.574664322072335,
+          "valid_rate": 0.0,
+          "algebraic_steps": 1,
+          "newton_iterations": 1.0,
+          "newton_residual_m": 4.6543965263131565e-16,
+          "newton_iterations_bistatic": 5.0,
+          "newton_residual_bistatic_m": 1.3792386036689445e-15
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "contact_rmse_m": 2.3354300679970385e-15,
+          "valid_rate": 1.0,
+          "algebraic_steps": 1,
+          "newton_iterations": 0,
+          "newton_residual_m": 0.0,
+          "newton_iterations_bistatic": 0,
+          "newton_residual_bistatic_m": 0.0,
+          "ell_over_2r": 1.058526003717648
+        }
+      },
+      "figures": [],
+      "notes": "Fixture: back wall at 1.5x the target range on the sensor axis, so the bistatic path ell=|mirror| is ~2r (mean measured ell/2r is in the metrics). BASELINE feeds the direct-path measurement (ell=|p-s|): ghost_inverse_contact refuses it (ell^2 <= |d|^2), so a Newton iteration on F(t)=|p-(s+tu)|-(ell-t) is run instead. It converges immediately to the trivial root t=0 (contact at the sensor), which is why its contact RMSE equals the target range while its residual is ~0: the iterative path is degenerate, not merely slow. The same Newton run on the bistatic ell needs the reported iterations to reach the closed-form answer. A-PRISM's contact point is the ray foot q, and its RMSE is ~machine precision: the closed form solves the specular (ellipsoid/ray) condition algebraically in 1 step, with 0 iterations.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "contact_rmse_m": 13.574664322072335,
+            "valid_rate": 0.0,
+            "algebraic_steps": 1,
+            "newton_iterations": 1.0,
+            "newton_residual_m": 4.6543965263131565e-16,
+            "newton_iterations_bistatic": 5.0,
+            "newton_residual_bistatic_m": 1.3792386036689445e-15
+          },
+          "aprism": {
+            "contact_rmse_m": 2.3354300679970385e-15,
+            "valid_rate": 1.0,
+            "algebraic_steps": 1,
+            "newton_iterations": 0,
+            "newton_residual_m": 0.0,
+            "newton_iterations_bistatic": 0,
+            "newton_residual_bistatic_m": 0.0,
+            "ell_over_2r": 1.058526003717648
+          }
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Dual-Horizon Fast Dynamic Alignment K_DA",
+      "source": "gen_research/Core_Radar_Gen8_iND13400/software/bbe32/dyn_alignment/dyn_align_wrapper.c",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "frames_to_lock": 653,
+          "locked": 1,
+          "updates_budget": 400,
+          "final_abs_err_deg": 0.1685255581462269,
+          "gain_at_frame_10": 0.0025
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "frames_to_lock": 313,
+          "locked": 1,
+          "updates_budget": 50,
+          "final_abs_err_deg": 0.1569986901937124,
+          "gain_at_frame_10": 0.022828482987029955
+        }
+      },
+      "figures": [],
+      "notes": "Boresight error starts at 1.2 deg and is driven to zero by err <- err - K*err + N(0,0.02 deg). BASELINE holds the conservative startup deadband (gain=K_SLOW=0.0025) for the full 400 update frames reported by baseline_da_update_counts; A-PRISM caps the schedule at the 50 updates returned by aprism_da_update_counts and applies da_dual_horizon_gain from frame 1. Lock is da_lock_detect(err, 0.05 deg, hold, 10) - frames are counted, not assumed.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "frames_to_lock": 653,
+            "locked": 1,
+            "updates_budget": 400,
+            "final_abs_err_deg": 0.1685255581462269,
+            "gain_at_frame_10": 0.0025
+          },
+          "aprism": {
+            "frames_to_lock": 313,
+            "locked": 1,
+            "updates_budget": 50,
+            "final_abs_err_deg": 0.1569986901937124,
+            "gain_at_frame_10": 0.022828482987029955
+          }
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Preflight DA Header Seeding",
+      "source": "gen_research/core-resim-dc-emb-library/DC_SIL/sil_wrappers/Tracker_VariantA_Wrapper.cpp",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "initial_angle_error_deg": 1.8890030952765677,
+          "frames_to_converge": 36,
+          "seed_rmse_deg": 2.0988923280850753,
+          "accepted_rate": 0.0,
+          "accepted_headers": 0,
+          "transport_scale": 0.0174532925
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "initial_angle_error_deg": 1.256668176526672,
+          "frames_to_converge": 29,
+          "frames_to_converge_clean": 3,
+          "seed_rmse_deg": 1.4465499591702735,
+          "accepted_rate": 0.765,
+          "accepted_headers": 306,
+          "transport_scale": 0.0174532925
+        }
+      },
+      "figures": [],
+      "notes": "Tracker update az += 0.10*(az_true-az) per frame; convergence is |error|<=0.05 deg. BASELINE passes qf=0 so preflight_seed returns the cold-start static fallback (-1.145, -0.018) deg (measured initial error 1.889 deg). A-PRISM passes the header in radians; the mirror's guard accepts when |az|<=5 deg, |el|<=2 deg and qf>0. NOTE the mirror's transport is off by DEG2RAD (it returns rad*0.0174533 where the production hook stores degrees and the C++ wrapper applies kDeg2Rad once); the measured transport scale is reported and the inverse is applied so the seed error reflects the production path. Acceptance is measured over 400 noisy headers (az sigma 1.5 deg, el sigma 0.6 deg, qf ~ U(-0.2,1.4)); rejections are detected by the exact fallback value. The population-mean metrics show the honest consequence: a header that is 1.4 deg off truth only saves a few frames, so the win scales with header quality - the (0.2 deg) clean-seed curve is reported separately and is not the headline.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "initial_angle_error_deg": 1.8890030952765677,
+            "frames_to_converge": 36,
+            "seed_rmse_deg": 2.0988923280850753,
+            "accepted_rate": 0.0,
+            "accepted_headers": 0,
+            "transport_scale": 0.0174532925
+          },
+          "aprism": {
+            "initial_angle_error_deg": 1.256668176526672,
+            "frames_to_converge": 29,
+            "frames_to_converge_clean": 3,
+            "seed_rmse_deg": 1.4465499591702735,
+            "accepted_rate": 0.765,
+            "accepted_headers": 306,
+            "transport_scale": 0.0174532925
+          }
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "IMM Acceleration Gating (REFUTED BASELINE)",
+      "source": "synthesised 3-mode IMM (no implementation exists in core-resim-dc-emb-library or Core_Radar_Gen8_iND13400)",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "mode_switch_latency_frames": 6,
+          "recall_at_onset": 0.6,
+          "false_associations_per_frame": 5.1,
+          "track_err_rmse_m": 2.7585288814093922,
+          "gate": 9.21
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "mode_switch_latency_frames": 6,
+          "recall_at_onset": 1.0,
+          "false_associations_per_frame": 5.95,
+          "track_err_rmse_m": 1.2625973718041565,
+          "gate": 15.261831481358417
+        }
+      },
+      "figures": [],
+      "notes": "NO IMM implementation was found in either tree: Core_Radar_Gen8_iND13400/APRISM_LANDING.md row 22 records 'N15 IMM (55)' as REFUTED / 'documented, no code' and the repo-wide grep for IMM only hits pugixml docs. The 3-mode (CV, CA+, CA-) IMM used here is therefore synthesised for this comparison: fixed acceleration covariance q=1.2, transition matrix 0.92 diagonal, +-2.5 m/s^2 model bias, sigma_z=0.6 m, dt=0.1 s, an 8 m/s^2 cut-in at frame 40 lasting 24 frames. BASELINE gates with the fixed 9.21 chi-square threshold (baseline_gamma) and coasts (predict-only) on rejection; A-PRISM uses adaptive_gamma(a_norm, innov_e) capped at 40. The A-PRISM gate admits the man\u0153uvre measurement, so its recall recovers at the cost of the reported extra false associations on 40 uniform clutter candidates per frame - a measured trade, not a free win.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "mode_switch_latency_frames": 6,
+            "recall_at_onset": 0.6,
+            "false_associations_per_frame": 5.1,
+            "track_err_rmse_m": 2.7585288814093922,
+            "gate": 9.21
+          },
+          "aprism": {
+            "mode_switch_latency_frames": 6,
+            "recall_at_onset": 1.0,
+            "false_associations_per_frame": 5.95,
+            "track_err_rmse_m": 1.2625973718041565,
+            "gate": 15.261831481358417
+          }
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Kinematics-Aware Adaptive Gating",
+      "source": "core-resim-dc-emb-library/Application/F360Tracker/F360TrackerLib/Fusion360/detection_to_track_association/source/f360_determine_association_hypothesis.cpp",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "recall_true_association": 0.38333333333333336,
+          "false_assoc_per_frame": 0.575,
+          "mean_gamma": 9.210000000000004,
+          "widen_at_cut_in_onset": 1.0
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "recall_true_association": 0.4,
+          "false_assoc_per_frame": 1.0083333333333333,
+          "mean_gamma": 30.329941457243066,
+          "widen_at_cut_in_onset": 3.232397876598759
+        }
+      },
+      "figures": [],
+      "notes": "Target flies at 25 m/s then cuts in at 6 m/s^2 for 25 frames. A constant-velocity predictor makes the normalized innovation e grow during the cut-in. Gate half-width = sqrt(gamma)*sigma_z. BASELINE holds gamma=9.21 (half-width 1.52 m) and loses the association; A-PRISM widens with a_norm=|a|/3.0 and innov_e, measured widen at onset 3.23x. Clutter false associations are counted inside the gate per frame (measured, not assumed).",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "recall_true_association": 0.38333333333333336,
+            "false_assoc_per_frame": 0.575,
+            "mean_gamma": 9.210000000000004,
+            "widen_at_cut_in_onset": 1.0
+          },
+          "aprism": {
+            "recall_true_association": 0.4,
+            "false_assoc_per_frame": 1.0083333333333333,
+            "mean_gamma": 30.329941457243066,
+            "widen_at_cut_in_onset": 3.232397876598759
+          }
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Distribution-Free Conformal Gating",
+      "source": "core-resim-dc-emb-library/Application/F360Tracker/F360TrackerLib/Fusion360/detection_to_track_association/source/f360_determine_association_hypothesis.cpp (conformal quantile implemented in-harness; not present upstream)",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "actual_coverage_nominal_95": 0.9832,
+          "threshold_m": 13.092650422090752,
+          "false_accept_rate_tail": 0.8349705304518664,
+          "nominal_level": 0.95
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "actual_coverage_nominal_95": 0.9446,
+          "threshold_m": 4.5323999313176655,
+          "false_accept_rate_tail": 0.45579567779960706,
+          "nominal_level": 0.95
+        }
+      },
+      "figures": [],
+      "notes": "Innovations drawn from 90%% N(0,1) + 10%% Student-t(2)*6 heavy-tail mixture. BASELINE uses the adaptive_gamma threshold 9.21 scaled by the measured innovation std (Gaussian assumption); A-PRISM uses the empirical 0.95 quantile of calibration magnitudes (distribution-free conformal). Actual coverage and tail false-accept rate are measured on an independent test set.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "actual_coverage_nominal_95": 0.9832,
+            "threshold_m": 13.092650422090752,
+            "false_accept_rate_tail": 0.8349705304518664,
+            "nominal_level": 0.95
+          },
+          "aprism": {
+            "actual_coverage_nominal_95": 0.9446,
+            "threshold_m": 4.5323999313176655,
+            "false_accept_rate_tail": 0.45579567779960706,
+            "nominal_level": 0.95
+          }
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "title": "Contamination-Budgeted Frozen Rank Gate",
+      "source": "core-resim-dc-emb-library/Application/F360Tracker/F360TrackerLib/Fusion360/include/aprism_ot_hooks.h",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "max_gate_width": 3.727272727272727,
+          "min_gate_width": 1.0,
+          "bounded": 0.0,
+          "frames_to_recover": 5.0,
+          "mean_width_during_burst": 3.727272727272727
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "max_gate_width": 1.0,
+          "min_gate_width": 0.2,
+          "bounded": 1.0,
+          "frames_to_recover": 0.0,
+          "mean_width_during_burst": 1.0
+        }
+      },
+      "figures": [],
+      "notes": "Six-sample bridge-glint burst with d^2 > 100. BASELINE sliding-window width = 1 + 5*contaminated_fraction over an 11-sample window; it blows up during the burst and needs a fully clean window to recover. A-PRISM rank_gate_apply(ver=1, factor=0.2, qneed=2) collapses the width to 0.2 after two consecutive confident samples and stays bounded (max 1.0). All widths measured by executing rank_gate_apply.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "max_gate_width": 3.727272727272727,
+            "min_gate_width": 1.0,
+            "bounded": 0.0,
+            "frames_to_recover": 5.0,
+            "mean_width_during_burst": 3.727272727272727
+          },
+          "aprism": {
+            "max_gate_width": 1.0,
+            "min_gate_width": 0.2,
+            "bounded": 1.0,
+            "frames_to_recover": 0.0,
+            "mean_width_during_burst": 1.0
+          }
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "title": "Doppler-Invariant Ghost Disambiguation",
+      "source": "core-resim-dc-emb-library/Application/F360Tracker/F360TrackerLib/Fusion360/track_validity/source/f360_detect_multipath.cpp",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "false_accept_rate_decoy": 0.9976666666666667,
+          "recall_true": 0.9976666666666667,
+          "separation_sigma": 0.0,
+          "gate_bound_mps": 9.0,
+          "roc_auc": 0.5
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "false_accept_rate_decoy": 0.0,
+          "recall_true": 1.0,
+          "separation_sigma": 7.499518825556917,
+          "gate_bound_mps": 15.0,
+          "roc_auc": 1.0
+        }
+      },
+      "figures": [],
+      "notes": "Sensor at origin, target at (100, 0) m moving at 20 m/s, roadside sign at x=150 m. The ghost carries the true-path Doppler (20 m/s) but arrives from the mirrored direction u_g=(-1,0). BASELINE gates with the direct direction u_t=(1,0) so the ghost residual is ~0 and it is accepted (FA~1); A-PRISM gates with u_g so the ghost residual is ~40 m/s and is rejected (FA~0). Separation in sigma units is measured from the executed residuals.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "false_accept_rate_decoy": 0.9976666666666667,
+            "recall_true": 0.9976666666666667,
+            "separation_sigma": 0.0,
+            "gate_bound_mps": 9.0,
+            "roc_auc": 0.5
+          },
+          "aprism": {
+            "false_accept_rate_decoy": 0.0,
+            "recall_true": 1.0,
+            "separation_sigma": 7.499518825556917,
+            "gate_bound_mps": 15.0,
+            "roc_auc": 1.0
+          }
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "title": "Rank-1 Specular Invariant and Bearing Fix",
+      "source": "core-resim-dc-emb-library/Application/F360Tracker/F360TrackerLib/Fusion360/track_validity/source/f360_detect_multipath.cpp + f360_determine_reflected_obj.cpp",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "residual_H1_m": 0.027355897472605088,
+          "residual_H2_m": 41.38445702342612,
+          "selected_residual_m": 41.38445702342612,
+          "selected_bearing_err_deg": 29.98041360209899,
+          "selected_lateral_m": 39.97597826875069,
+          "correct_selection": 0.0,
+          "gate_pass_H1": 1.0,
+          "gate_pass_H2": 0.0
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "residual_H1_m": 0.027355897472605088,
+          "residual_H2_m": 41.38445702342612,
+          "selected_residual_m": 0.027355897472605088,
+          "selected_bearing_err_deg": 0.019586397901008468,
+          "selected_lateral_m": 0.02734754048942989,
+          "correct_selection": 1.0,
+          "gate_pass_H1": 1.0,
+          "gate_pass_H2": 0.0
+        }
+      },
+      "figures": [],
+      "notes": "Sensor at origin, SEP tangent normal at 30 deg, mirror at d=40 m. Truth is the target-mirror ray (+theta=15 deg): detection p = 2*d*n1 so rank1_residual(H1) ~ 0 while residual(H2) = 4*d*sin(theta) ~ 41 m >> RANK1_TOL=1.0 m. BASELINE (legacy sensor-mirror preference) selects H2 and accepts the ghost; A-PRISM's rank-1 invariant selects H1 and rejects the ghost. Residuals, bearing and lateral errors are measured from the executed kernels.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "residual_H1_m": 0.027355897472605088,
+            "residual_H2_m": 41.38445702342612,
+            "selected_residual_m": 41.38445702342612,
+            "selected_bearing_err_deg": 29.98041360209899,
+            "selected_lateral_m": 39.97597826875069,
+            "correct_selection": 0.0,
+            "gate_pass_H1": 1.0,
+            "gate_pass_H2": 0.0
+          },
+          "aprism": {
+            "residual_H1_m": 0.027355897472605088,
+            "residual_H2_m": 41.38445702342612,
+            "selected_residual_m": 0.027355897472605088,
+            "selected_bearing_err_deg": 0.019586397901008468,
+            "selected_lateral_m": 0.02734754048942989,
+            "correct_selection": 1.0,
+            "gate_pass_H1": 1.0,
+            "gate_pass_H2": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "title": "Virtual Aperture Specular Tracking",
+      "source": "core-resim-dc-emb-library/Application/F360Tracker/F360TrackerLib/Fusion360/measurement_update_tracks/source/f360_msmt_update_obj_trks_cca_moveable.cpp",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "position_rmse_m": 22.979630270559436,
+          "p_eig_min_m2": 2.168142161839221,
+          "p_eig_max_m2": 2860.965022375006,
+          "semi_major_m": 53.48798951517065
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "position_rmse_m": 1.2102666023474993,
+          "p_eig_min_m2": 2.150862806879616,
+          "p_eig_max_m2": 2.5030277452741005,
+          "semi_major_m": 1.5820959974900703,
+          "rmse_improvement_pct": 94.7333068979006
+        }
+      },
+      "figures": [],
+      "notes": "Eye 1 at the origin measures vx only (H=[0,1,0,0,0,0]); with the cross-track velocity init wrong (0 vs true 4 m/s) the monostatic tracker cannot observe vy so y drifts. A-PRISM adds eye 2 at the mirrored sensor position virtual_sensor(0,1,100)=(0,200) m with a second range-rate measurement whose covariance row is inflated with reff_inflate. Position RMSE and the steady-state position-block eigenvalues of P are measured from the executed kalman_update.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "position_rmse_m": 22.979630270559436,
+            "p_eig_min_m2": 2.168142161839221,
+            "p_eig_max_m2": 2860.965022375006,
+            "semi_major_m": 53.48798951517065
+          },
+          "aprism": {
+            "position_rmse_m": 1.2102666023474993,
+            "p_eig_min_m2": 2.150862806879616,
+            "p_eig_max_m2": 2.5030277452741005,
+            "semi_major_m": 1.5820959974900703,
+            "rmse_improvement_pct": 94.7333068979006
+          }
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "title": "Spectral Entropy Covariance Scaling",
+      "source": "core-resim-dc-emb-library/Application/F360Tracker/F360TrackerLib/Fusion360/measurement_update_tracks/source/f360_msmt_update_support_functions_ctca.cpp",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "mean_R_spray": 0.2,
+          "rmse_spray": 1.7258871638834976,
+          "rmse_after": 1.0027501206352754,
+          "mean_entropy_spray": 2.0520563922890203
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "mean_R_spray": 14.044355496232754,
+          "rmse_spray": 1.2603716706312125,
+          "rmse_after": 0.5930810238593305,
+          "mean_entropy_spray": 2.0520563922890203
+        }
+      },
+      "figures": [],
+      "notes": "Tire spray raises measurement entropy H(t) via a (1-w)*N(0,0.3^2) + w*N(0,8^2) mixture with w ramping to 0.85 during the spray window. Covariance R_true = r0*exp(beta*H/snr) drives the measurement noise. BASELINE holds fixed R=r0 (underestimates spray noise); A-PRISM uses R(t)=entropy_scale(r0,H,snr,beta) via ctca_covariance/entropy_scale. Position RMSE during vs after spray is measured.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "mean_R_spray": 0.2,
+            "rmse_spray": 1.7258871638834976,
+            "rmse_after": 1.0027501206352754,
+            "mean_entropy_spray": 2.0520563922890203
+          },
+          "aprism": {
+            "mean_R_spray": 14.044355496232754,
+            "rmse_spray": 1.2603716706312125,
+            "rmse_after": 0.5930810238593305,
+            "mean_entropy_spray": 2.0520563922890203
+          }
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "title": "Tangent-Mirror Hermite Linearization",
+      "source": "core-resim-dc-emb-library/Application/F360Tracker/F360TrackerLib/Fusion360/track_validity/source/f360_is_reflective_guardrail_track.cpp",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "rmse_m": 5.7133372617991744,
+          "max_err_m": 13.929480366308269,
+          "points_rejected": 0,
+          "coverage_frac": 1.0
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "rmse_m": 0.17335650846087866,
+          "max_err_m": 0.5812576936597871,
+          "points_rejected": 4,
+          "coverage_frac": 0.925
+        }
+      },
+      "figures": [],
+      "notes": "Clothoid-like off-ramp barrier y = 0.006*x^3 over x in [0, 20] m with noisy samples. BASELINE fits a single line (poor for the cubic curve). A-PRISM fits a 2-point cubic Hermite per segment via hermite_solve2 and drops segments whose |slope| exceeds 2*k_max*rho_max = 6.0 via curvature_ok. Reconstruction RMSE, max error and rejected-point count are measured from the executed kernels.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "rmse_m": 5.7133372617991744,
+            "max_err_m": 13.929480366308269,
+            "points_rejected": 0,
+            "coverage_frac": 1.0
+          },
+          "aprism": {
+            "rmse_m": 0.17335650846087866,
+            "max_err_m": 0.5812576936597871,
+            "points_rejected": 4,
+            "coverage_frac": 0.925
+          }
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "title": "XOR Sentinel Contract",
+      "source": "core-resim-dc-emb-library/Application/F360Tracker/F360TrackerLib/Fusion360/track_validity/source/f360_track_validity.cpp",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "false_suppressions": 5.0,
+          "true_suppressions": 1.0,
+          "sentinel_respected": 0.0,
+          "xor_benign_flags": 0.0
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "false_suppressions": 0.0,
+          "true_suppressions": 1.0,
+          "sentinel_respected": 1.0,
+          "xor_benign_flags": 0.0
+        }
+      },
+      "figures": [],
+      "notes": "Frames 0-7 are benign single bounces, frame 8 is a genuine double-bounce ghost (sets the mirror_prob=-1.0 sentinel), frames 9-24 are benign again. BASELINE uses a plain threshold (mirror_prob<0.5) and falsely suppresses 5 benign frames; A-PRISM uses the XOR sentinel FSM which latches -1.0 only on the genuine ghost, so benign events are never suppressed and the sentinel is respected after the ghost. xor_sentinel is evaluated per frame; benign frames flagged by naive XOR but correctly not suppressed by the FSM are counted.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "false_suppressions": 5.0,
+            "true_suppressions": 1.0,
+            "sentinel_respected": 0.0,
+            "xor_benign_flags": 0.0
+          },
+          "aprism": {
+            "false_suppressions": 0.0,
+            "true_suppressions": 1.0,
+            "sentinel_respected": 1.0,
+            "xor_benign_flags": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "title": "Asynchronous Satellite Yaw Extrapolation",
+      "source": "core-resim-dc-emb-library/DC_SIL/sil_wrappers/sil_wrapper.cpp",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "rmse_mean_m": 4.678770462896768,
+          "rmse_at_max_omega_m": 7.129789496601135,
+          "smear_mean_m": 4.663543530459797
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "rmse_mean_m": 0.4940703239902351,
+          "rmse_at_max_omega_m": 0.4591658338036786,
+          "smear_mean_m": 0.6262953885207881
+        }
+      },
+      "figures": [],
+      "notes": "Two reports of one target separated by dt=0.08 s with mounting yaw rate omega swept in [0.1,0.6] rad/s; 60 noisy trials per omega. BASELINE reads the second report as-is; A-PRISM applies kernels.deskew.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "rmse_mean_m": 4.678770462896768,
+            "rmse_at_max_omega_m": 7.129789496601135,
+            "smear_mean_m": 4.663543530459797
+          },
+          "aprism": {
+            "rmse_mean_m": 0.4940703239902351,
+            "rmse_at_max_omega_m": 0.4591658338036786,
+            "smear_mean_m": 0.6262953885207881
+          }
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "title": "Yaw-Free Timestamp and Doppler Bias Separation",
+      "source": "core-resim-dc-emb-library/.../dyn_alignment/ghost_calib.c (ClockTau1/ClockTauBias2) + sil_wrapper.cpp",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "tau_rmse_at_max_yaw": 0.1922929977479172,
+          "tau_rmse_mean": 0.09617548260808172,
+          "b_estimate_mean": 0.8424673965205932,
+          "normal_matrix_cond": Infinity
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "tau_rmse_at_max_yaw": 0.00031553774491524777,
+          "tau_rmse_mean": 0.00034571210955667057,
+          "b_estimate_mean": 0.060080876138552605,
+          "normal_matrix_cond": 4.718330020750286
+        }
+      },
+      "figures": [],
+      "notes": "Generative model y_i = a_i*tau + r_i*b with b = yaw-induced Doppler bias; BASELINE solves tau from one target (ClockTau1) and is biased by (r1/a1)*b; A-PRISM runs ClockTauBias2 joint solve. Condition numbers are measured with numpy.linalg.cond on the actual normal matrices.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "tau_rmse_at_max_yaw": 0.1922929977479172,
+            "tau_rmse_mean": 0.09617548260808172,
+            "b_estimate_mean": 0.8424673965205932,
+            "normal_matrix_cond": Infinity
+          },
+          "aprism": {
+            "tau_rmse_at_max_yaw": 0.00031553774491524777,
+            "tau_rmse_mean": 0.00034571210955667057,
+            "b_estimate_mean": 0.060080876138552605,
+            "normal_matrix_cond": 4.718330020750286
+          }
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "title": "Cross-Satellite Relative Yaw Cancellation",
+      "source": "core-resim-dc-emb-library/.../dyn_alignment/ghost_calib.c (GhostEstimateYaw, GhostCertify)",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "rel_yaw_err_mean_deg": 7.087972014672485,
+          "rel_yaw_err_max_deg": 8.535856534651662,
+          "cert_valid": true
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "rel_yaw_err_mean_deg": 0.2671618361892969,
+          "rel_yaw_err_max_deg": 0.4721431620367646,
+          "corr_peak_coherence": 0.9976927759883819,
+          "corr_peak_err_deg": 0.26716183618929695,
+          "cert_e_rel_deg": 0.6139617239397425,
+          "cert_e_i_deg": 0.019498053392480327,
+          "cert_e_j_deg": 0.6334597773322228
+        }
+      },
+      "figures": [],
+      "notes": "Direct/ghost complex vectors of one specular target; absolute mounting yaw swept +/-45 deg while the relative yaw is fixed. A-PRISM error stays flat (common-mode cancellation in GhostEstimateYaw); baseline uses a linearised absolute-amplitude inversion and drifts. Bounds from GhostCertify with measured lmin/cmax.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "rel_yaw_err_mean_deg": 7.087972014672485,
+            "rel_yaw_err_max_deg": 8.535856534651662,
+            "cert_valid": true
+          },
+          "aprism": {
+            "rel_yaw_err_mean_deg": 0.2671618361892969,
+            "rel_yaw_err_max_deg": 0.4721431620367646,
+            "corr_peak_coherence": 0.9976927759883819,
+            "corr_peak_err_deg": 0.26716183618929695,
+            "cert_e_rel_deg": 0.6139617239397425,
+            "cert_e_i_deg": 0.019498053392480327,
+            "cert_e_j_deg": 0.6334597773322228
+          }
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "title": "155-Scan Fleet Replay Verification",
+      "source": "core-resim-dc-emb-library/DC_SIL/sil_wrappers/Tracker_VariantA_Wrapper.cpp",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "total_detections": 49388,
+          "false_associations": 191,
+          "true_associations_retained": 880,
+          "ghosts_assimilated": 0,
+          "id_switches": 247
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "total_detections": 49388,
+          "false_associations": 64,
+          "false_associations_blocked": 169,
+          "true_associations_retained": 915,
+          "ghosts_assimilated": 930,
+          "id_switches": 90
+        }
+      },
+      "figures": [],
+      "notes": "Fleet replay of 155 scans, 8 targets, 6 ghosts/scan, 300 clutter/scan = 49388 actual detections (pre-generated once; both pipelines process bit-identical inputs). Each ghost swamps its victim's direct return on 30% of scans (multipath masking). BASELINE: fixed gamma, no rank gate, no XOR sentinel. A-PRISM: adaptive_gamma (normalised-innovation input) + rank_gate_apply + XOR sentinel via TrackValidityFSM and DetSidecar; blocked = baseline false associations that A-PRISM did not reproduce.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "total_detections": 49388,
+            "false_associations": 191,
+            "true_associations_retained": 880,
+            "ghosts_assimilated": 0,
+            "id_switches": 247
+          },
+          "aprism": {
+            "total_detections": 49388,
+            "false_associations": 64,
+            "false_associations_blocked": 169,
+            "true_associations_retained": 915,
+            "ghosts_assimilated": 930,
+            "id_switches": 90
+          }
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "title": "4D Doppler-RadarSplat Simulation",
+      "source": "algorithm-level research concept (no upstream C kernel found)",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "range_align_err_m": 37.61370511348844,
+          "vel_align_err_mps": 7.599999691812654,
+          "final_loss": 107262938.04532765,
+          "iterations": 1534
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "range_align_err_m": 0.0008074163549309787,
+          "vel_align_err_mps": 0.0014629510707759863,
+          "final_loss": 242.37216658028694,
+          "iterations": 1528
+        }
+      },
+      "figures": [],
+      "notes": "NO upstream C kernel was found: this is an algorithm-level A/B, not a firmware-verified one. Differentiable monostatic range-Doppler primitive with R^-4 spreading loss; BASELINE aligns on magnitude only (free amplitude), A-PRISM aligns with the R^-4 loss-weighted centroid/gradient.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "range_align_err_m": 37.61370511348844,
+            "vel_align_err_mps": 7.599999691812654,
+            "final_loss": 107262938.04532765,
+            "iterations": 1534
+          },
+          "aprism": {
+            "range_align_err_m": 0.0008074163549309787,
+            "vel_align_err_mps": 0.0014629510707759863,
+            "final_loss": 242.37216658028694,
+            "iterations": 1528
+          }
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "title": "Associative Parallel Prefix-Scan Kalman Filter",
+      "source": "algorithm-level research concept (no upstream C kernel found)",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "serial_depth": 50000,
+          "tree_levels": 0,
+          "span_reduction_factor": 1.0,
+          "max_abs_diff": 2.091837814077735e-11,
+          "max_rel_diff": 8.36746829092136e-16,
+          "steps": 50000
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "serial_depth": 50000,
+          "tree_levels": 32,
+          "span_reduction_factor": 1562.5,
+          "max_abs_diff": 2.091837814077735e-11,
+          "max_rel_diff": 8.36746829092136e-16,
+          "steps": 50000
+        }
+      },
+      "figures": [],
+      "notes": "NO upstream C kernel was found: algorithm-level A/B, not firmware-verified. Serial Kalman predict/update chain over N=50,000 logical steps (affine operators from a forward Riccati pass) vs a Blelloch up-sweep/down-sweep associative prefix scan; tree levels are COUNTED from the scan loops. Equivalence asserted at runtime (max abs diff reported).",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "serial_depth": 50000,
+            "tree_levels": 0,
+            "span_reduction_factor": 1.0,
+            "max_abs_diff": 2.091837814077735e-11,
+            "max_rel_diff": 8.36746829092136e-16,
+            "steps": 50000
+          },
+          "aprism": {
+            "serial_depth": 50000,
+            "tree_levels": 32,
+            "span_reduction_factor": 1562.5,
+            "max_abs_diff": 2.091837814077735e-11,
+            "max_rel_diff": 8.36746829092136e-16,
+            "steps": 50000
+          }
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "title": "Ghost-Conditioned Target Augmentation",
+      "source": "core-resim-dc-emb-library/.../Fusion360/track_validity/source/f360_detect_multipath.cpp",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "roc_auc": 0.28209375,
+          "pr_auc": 0.4420308544847668,
+          "false_alarm_rate": 0.0225,
+          "n_detections": 800
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "roc_auc": 0.9999812499999999,
+          "pr_auc": 0.998731366430873,
+          "false_alarm_rate": 0.0,
+          "n_detections": 800
+        }
+      },
+      "figures": [],
+      "notes": "400 near low-power targets + 400 far strong ghosts. BASELINE scores by raw power (ghosts dominate). A-PRISM applies near-far power normalisation and augments with ghost-conditioned negatives using rank1_residual, doppler_gate and TrackValidityFSM (ROC/PR from concept_api.roc_curve).",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "roc_auc": 0.28209375,
+            "pr_auc": 0.4420308544847668,
+            "false_alarm_rate": 0.0225,
+            "n_detections": 800
+          },
+          "aprism": {
+            "roc_auc": 0.9999812499999999,
+            "pr_auc": 0.998731366430873,
+            "false_alarm_rate": 0.0,
+            "n_detections": 800
+          }
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "title": "Nonlinear Parallel Gram-Lifted State Space",
+      "source": "algorithm-level research concept (no upstream C kernel found)",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "closure_residual_max": 3.9234742518561916,
+          "closure_residual_rms": 0.19622817903848733,
+          "state_dimension": 5
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "closure_residual_max": 0.0009741658321900104,
+          "closure_residual_rms": 0.00018256703821281512,
+          "lifting_dimension": 8,
+          "gram_condition_number": 5666483169.995638
+        }
+      },
+      "figures": [],
+      "notes": "NO upstream C kernel was found: algorithm-level A/B, not firmware-verified. Constant-turn-rate model whose speed squared vx^2+vy^2 is a quadratic invariant measured directly. BASELINE linear-EKF linearises the invariant (nonzero closure); A-PRISM lifts the quadratic monomials into an 8-dim Gram state so the update closes linearly. Closure = |z - h(state)| after the update, measured on both filters over 400 steps.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "closure_residual_max": 3.9234742518561916,
+            "closure_residual_rms": 0.19622817903848733,
+            "state_dimension": 5
+          },
+          "aprism": {
+            "closure_residual_max": 0.0009741658321900104,
+            "closure_residual_rms": 0.00018256703821281512,
+            "lifting_dimension": 8,
+            "gram_condition_number": 5666483169.995638
+          }
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "title": "Guarded Error-Transfer Replay Certificates",
+      "source": "core-resim-dc-emb-library/.../dyn_alignment/ghost_calib.c (GhostCertify) + replay",
+      "baseline": {
+        "label": "BASELINE (feature OFF)",
+        "metrics": {
+          "certified_e_rel_deg": 0.5983585553726423,
+          "certified_e_i_deg": 0.018965766143264465,
+          "certified_e_j_deg": 0.6173243215159068,
+          "guard_radius_mean_m": 0.0,
+          "id_changed_frames": 108,
+          "id_equivalent_frames": 252,
+          "violations_outside_guard": 108
+        }
+      },
+      "aprism": {
+        "label": "A-PRISM (feature ON)",
+        "metrics": {
+          "certified_e_rel_deg": 0.5983585553726423,
+          "certified_e_i_deg": 0.018965766143264465,
+          "certified_e_j_deg": 0.6173243215159068,
+          "guard_radius_mean_m": 1.5496996402090442,
+          "guard_covered_fraction": 0.8305555555555556,
+          "id_changed_frames": 0,
+          "id_equivalent_frames": 360,
+          "violations_outside_guard": 0,
+          "violations_when_guard_exceeded": 17
+        }
+      },
+      "figures": [],
+      "notes": "Replay split into two shards over 360 frames. Guard radius h_k = GhostCertify angular bound (eps=1e-3, measured lmin/cmax) x lever x adaptive_gamma gate gain. BASELINE has no guard (h=0): every shard decision change is a violation. A-PRISM locks frames inside h_k; 17 empirical violations occur when the injected error deliberately exceeds the guard.",
+      "per_seed": [
+        {
+          "seed": 0,
+          "baseline": {
+            "certified_e_rel_deg": 0.5983585553726423,
+            "certified_e_i_deg": 0.018965766143264465,
+            "certified_e_j_deg": 0.6173243215159068,
+            "guard_radius_mean_m": 0.0,
+            "id_changed_frames": 108,
+            "id_equivalent_frames": 252,
+            "violations_outside_guard": 108
+          },
+          "aprism": {
+            "certified_e_rel_deg": 0.5983585553726423,
+            "certified_e_i_deg": 0.018965766143264465,
+            "certified_e_j_deg": 0.6173243215159068,
+            "guard_radius_mean_m": 1.5496996402090442,
+            "guard_covered_fraction": 0.8305555555555556,
+            "id_changed_frames": 0,
+            "id_equivalent_frames": 360,
+            "violations_outside_guard": 0,
+            "violations_when_guard_exceeded": 17
+          }
+        }
+      ]
+    }
+  ],
+  "failures": [],
+  "artifacts": {
+    "1": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_01_c1_rmse_snr.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_01_c1_rmse_snr.png",
+        "error": null,
+        "title": "Range RMSE vs SNR"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_01_c1_mults.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_01_c1_mults.png",
+        "error": null,
+        "title": "Measured real multiplication count"
+      }
+    ],
+    "2": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_02_c2_accel.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_02_c2_accel.png",
+        "error": null,
+        "title": "Increment and curvature error vs acceleration"
+      }
+    ],
+    "3": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_03_c3_surface.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_03_c3_surface.png",
+        "error": null,
+        "title": "3D RD surface with wall + weak target"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_03_c3_slice.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_03_c3_slice.png",
+        "error": null,
+        "title": "Range slice with BEFORE/AFTER thresholds"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_03_c3_lift.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_03_c3_lift.png",
+        "error": null,
+        "title": "Threshold lift and floor RMSE"
+      }
+    ],
+    "4": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_04_c4_weights.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_04_c4_weights.png",
+        "error": null,
+        "title": "BLUE cell weights"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_04_c4_roc.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_04_c4_roc.png",
+        "error": null,
+        "title": "ROC with Pfa-controlled operating point"
+      }
+    ],
+    "5": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_05_c5_score.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_05_c5_score.png",
+        "error": null,
+        "title": "Priority score vs range by class"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_05_c5_retention.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_05_c5_retention.png",
+        "error": null,
+        "title": "Near-field retention per K"
+      }
+    ],
+    "6": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_06_c6_geometry.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_06_c6_geometry.png",
+        "error": null,
+        "title": "Specular geometry schematic"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_06_c6_rmse.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_06_c6_rmse.png",
+        "error": null,
+        "title": "Contact RMSE vs range"
+      }
+    ],
+    "7": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_07_c7_gain.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_07_c7_gain.png",
+        "error": null,
+        "title": "K_DA gain schedule"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_07_c7_error.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_07_c7_error.png",
+        "error": null,
+        "title": "Boresight error and lock markers"
+      }
+    ],
+    "8": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_08_c8_error.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_08_c8_error.png",
+        "error": null,
+        "title": "Angle error vs frame"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_08_c8_accept.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_08_c8_accept.png",
+        "error": null,
+        "title": "Header acceptance histogram"
+      }
+    ],
+    "9": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_09_c9_modes.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_09_c9_modes.png",
+        "error": null,
+        "title": "IMM mode probabilities"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_09_c9_recall.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_09_c9_recall.png",
+        "error": null,
+        "title": "Recall and false associations"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_09_c9_gate.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_09_c9_gate.png",
+        "error": null,
+        "title": "Gate width vs frame"
+      }
+    ],
+    "10": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_10_c10_width.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_10_c10_width.png",
+        "error": null,
+        "title": "Gate half-width vs time"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_10_c10_outcome.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_10_c10_outcome.png",
+        "error": null,
+        "title": "Recall and false associations"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_10_c10_innov.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_10_c10_innov.png",
+        "error": null,
+        "title": "Innovation vs time with gate thresholds"
+      }
+    ],
+    "11": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_11_c11_dist.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_11_c11_dist.png",
+        "error": null,
+        "title": "Innovation magnitude distribution with both gates"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_11_c11_coverage.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_11_c11_coverage.png",
+        "error": null,
+        "title": "Actual coverage vs nominal level"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_11_c11_hist.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_11_c11_hist.png",
+        "error": null,
+        "title": "Histogram with gate thresholds"
+      }
+    ],
+    "12": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_12_c12_width.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_12_c12_width.png",
+        "error": null,
+        "title": "Gate width vs frame"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_12_c12_d2.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_12_c12_d2.png",
+        "error": null,
+        "title": "Squared innovation with burst markers"
+      }
+    ],
+    "13": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_13_c13_resid.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_13_c13_resid.png",
+        "error": null,
+        "title": "Radial Doppler residual distributions"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_13_c13_outcome.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_13_c13_outcome.png",
+        "error": null,
+        "title": "False accept vs recall"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_13_c13_roc.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_13_c13_roc.png",
+        "error": null,
+        "title": "ROC separability"
+      }
+    ],
+    "14": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_14_c14_geom.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_14_c14_geom.png",
+        "error": null,
+        "title": "Specular geometry scatter"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_14_c14_bearing.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_14_c14_bearing.png",
+        "error": null,
+        "title": "Bearing error per hypothesis"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_14_c14_resid.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_14_c14_resid.png",
+        "error": null,
+        "title": "Rank-1 residual per hypothesis"
+      }
+    ],
+    "15": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_15_c15_track.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_15_c15_track.png",
+        "error": null,
+        "title": "Track plane with error ellipses"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_15_c15_rmse.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_15_c15_rmse.png",
+        "error": null,
+        "title": "Position RMSE vs range"
+      }
+    ],
+    "16": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_16_c16_entropy.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_16_c16_entropy.png",
+        "error": null,
+        "title": "Entropy and covariance vs time"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_16_c16_rmse.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_16_c16_rmse.png",
+        "error": null,
+        "title": "Position RMSE vs time"
+      }
+    ],
+    "17": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_17_c17_geom.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_17_c17_geom.png",
+        "error": null,
+        "title": "Barrier: true vs planar vs Hermite"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_17_c17_error.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_17_c17_error.png",
+        "error": null,
+        "title": "Reconstruction error vs arclength"
+      }
+    ],
+    "18": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_18_c18_prob.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_18_c18_prob.png",
+        "error": null,
+        "title": "mirror_prob vs frame with sentinel"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_18_c18_state.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_18_c18_state.png",
+        "error": null,
+        "title": "Suppression state timeline"
+      }
+    ],
+    "19": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_19_rmse_vs_yaw.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_19_rmse_vs_yaw.png",
+        "error": null,
+        "title": "RMSE vs yaw rate"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_19_scatter.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_19_scatter.png",
+        "error": null,
+        "title": "Two desynchronised position clouds"
+      }
+    ],
+    "20": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_20_tau_err.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_20_tau_err.png",
+        "error": null,
+        "title": "tau error vs yaw"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_20_cond.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_20_cond.png",
+        "error": null,
+        "title": "observability"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_20_scatter.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_20_scatter.png",
+        "error": null,
+        "title": "estimate scatter"
+      }
+    ],
+    "21": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_21_peak.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_21_peak.png",
+        "error": null,
+        "title": "correlation phase peak"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_21_flat.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_21_flat.png",
+        "error": null,
+        "title": "error vs mounting yaw"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_21_cert.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_21_cert.png",
+        "error": null,
+        "title": "certificate vs eps"
+      }
+    ],
+    "22": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_22_curves.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_22_curves.png",
+        "error": null,
+        "title": "replay curves"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_22_summary.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_22_summary.png",
+        "error": null,
+        "title": "bar summary"
+      }
+    ],
+    "23": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_23_rd.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_23_rd.png",
+        "error": null,
+        "title": "RD heatmap + estimates"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_23_loss.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_23_loss.png",
+        "error": null,
+        "title": "loss vs iteration"
+      }
+    ],
+    "24": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_24_depth.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_24_depth.png",
+        "error": null,
+        "title": "depth diagram"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_24_equiv.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_24_equiv.png",
+        "error": null,
+        "title": "equivalence error"
+      }
+    ],
+    "25": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_25_pr.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_25_pr.png",
+        "error": null,
+        "title": "precision-recall"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_25_hist.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_25_hist.png",
+        "error": null,
+        "title": "power normalisation"
+      }
+    ],
+    "26": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_26_closure.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_26_closure.png",
+        "error": null,
+        "title": "closure residual vs time"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_26_gram.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_26_gram.png",
+        "error": null,
+        "title": "Gram matrix heatmap"
+      }
+    ],
+    "27": [
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_27_guard.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_27_guard.png",
+        "error": null,
+        "title": "guard radius vs frame"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_27_cert.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_27_cert.png",
+        "error": null,
+        "title": "certificate vs eps"
+      },
+      {
+        "html": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\html\\concept_27_equiv.html",
+        "png": "C:\\Users\\ouymc2\\Desktop\\gen_research\\empirical_research_harness\\results\\png\\concept_27_equiv.png",
+        "error": null,
+        "title": "equivalence scatter"
+      }
+    ]
+  }
+}
