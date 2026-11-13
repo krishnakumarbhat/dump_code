@@ -83,3 +83,6 @@ empirical_research_harness/benchmarks/hdf_track_out/json/
 
 # end-to-end KPI run artifacts (regenerate with _kpi_worker.py)
 ALL_KPI/edge_hdf_test/out_e2e*/
+
+# AGENT NOTE: credentials - never commit
+research/Core_Radar_Gen8_iND13400/.env
