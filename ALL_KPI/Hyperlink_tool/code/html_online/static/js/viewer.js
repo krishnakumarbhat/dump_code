@@ -1265,7 +1265,11 @@ function displayRemoteLogs() {
     status.className = 'remote-log-status';
     status.textContent = log.saved
       ? 'Already saved to your stream list'
-      : (log.html_missing || log.video_missing ? 'Single media: add downloads available files only' : (log.has_overlay ? 'Ready to add with overlay' : 'Ready to add'));
+      : (log.downloaded
+        ? 'Downloaded to local cache'
+        : (log.html_missing || log.video_missing
+          ? 'Single media: add downloads available files only'
+          : (log.has_overlay ? 'Ready to add with overlay' : 'Ready to add')));
 
     body.appendChild(title);
     body.appendChild(path);
@@ -1277,11 +1281,14 @@ function displayRemoteLogs() {
 
     const actionButton = document.createElement('button');
     actionButton.type = 'button';
-    actionButton.className = 'remote-log-action' + (log.saved ? ' open' : ' add');
-    actionButton.textContent = log.saved ? 'Open' : 'Add';
-    actionButton.addEventListener('click', async function () {
-      await downloadLog(key);
-    });
+    actionButton.className = 'remote-log-action' + (log.saved || log.downloaded ? ' open' : ' add');
+    actionButton.textContent = log.saved ? 'Open' : (log.downloaded ? 'Added' : 'Add');
+    actionButton.disabled = Boolean(log.downloaded);
+    if (!log.downloaded) {
+      actionButton.addEventListener('click', async function () {
+        await downloadLog(key);
+      });
+    }
 
     actions.appendChild(actionButton);
     item.appendChild(body);
@@ -1354,13 +1361,19 @@ async function downloadLog(key) {
       log.saved = true;
       log.cached = true;
       log.saved_id = data.saved_id;
-      await loadMappings();
       displayRemoteLogs();
+      await loadMappings();
       if (mappings[String(data.saved_id)]) {
         await updateScenario(String(data.saved_id));
       }
-    } else if (log.html_missing || log.video_missing) {
-      await loadMappings();
+    } else {
+      // Single-media adds are downloaded successfully but intentionally do
+      // not create a saved pair. Reflect success before rebuilding mappings.
+      log.downloaded = true;
+      displayRemoteLogs();
+      if (log.html_missing || log.video_missing) {
+        await loadMappings();
+      }
     }
     showClusterMessage(data.message || 'Added to your stream list.', 'success');
   } catch (error) {
