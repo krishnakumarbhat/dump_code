@@ -1518,13 +1518,12 @@ def _hyperlink_upsert_saved_pair(*, key: str, html_path: str, video_path: str, o
     saved_pair = query.first()
 
     if saved_pair is None:
-        stored_html_folder = folder_name or key
         saved_pair = HyperlinkSavedPair(
             user_id=user_id,
             owner_net_id=owner_net_id,
-            label=folder_name or key,
+            label=folder_name or os.path.basename(video_path) or key,
             pair_key=key,
-            html_folder=folder_name or key,
+            html_folder=folder_name,
             video_name=video_name,
             overlay_name=overlay_name or None,
             remote_html_path=html_path or '',
@@ -1549,6 +1548,46 @@ def _hyperlink_upsert_saved_pair(*, key: str, html_path: str, video_path: str, o
     db.session.add(saved_pair)
     db.session.commit()
     return saved_pair
+
+
+def _hyperlink_saved_entry(saved_pair: HyperlinkSavedPair) -> dict:
+    """Purpose: index one saved item, not the entire cache. Inputs: saved row. Outputs: viewer entry."""
+    _, html_dir, video_dir = _hyperlink_get_user_dirs()
+    video_name = (saved_pair.video_name or '').replace('\\', '/')
+    overlay_name = (saved_pair.overlay_name or '').replace('\\', '/')
+    html_files, images = [], {}
+    if saved_pair.html_folder:
+        folder = os.path.join(html_dir, saved_pair.html_folder)
+        for root, _, files in os.walk(folder):
+            for name in files:
+                relative = os.path.relpath(os.path.join(root, name), html_dir).replace('\\', '/')
+                url = '/hyperlink/data/html/' + relative
+                if name.lower().endswith(('.html', '.htm')):
+                    html_files.append(url)
+                if name.lower().endswith('.png'):
+                    position = next((p for p in ('FL', 'FR', 'RL', 'RR', 'FC') if os.path.basename(root).upper() == p or p.lower() in name.lower()), None)
+                    if position:
+                        sensor = next((s for s in ('range', 'velocity', 'rangerate', 'doppler', 'azimuth', 'elevation', 'snr', 'rcs') if s in name.lower()), 'other')
+                        images.setdefault(sensor, {})[position] = url
+    return {
+        'saved_id': saved_pair.id, 'saved_key': saved_pair.pair_key,
+        'saved_label': saved_pair.label, 'html_folder': saved_pair.html_folder,
+        'html_files': sorted(html_files), 'images': images,
+        'html_missing': not bool(saved_pair.remote_html_path),
+        'video_missing': not bool(saved_pair.remote_video_path),
+        'video': '/hyperlink/data/video/' + video_name if video_name else '',
+        'video_cache_name': video_name, 'video_name': os.path.basename(video_name),
+        'cached_video': bool(video_name and os.path.isfile(os.path.join(video_dir, video_name))),
+        'overlay_video': '/hyperlink/data/video/' + overlay_name if overlay_name else '',
+        'overlay_video_name': overlay_name, 'has_overlay': bool(overlay_name),
+        'overlay_cached': bool(overlay_name and os.path.isfile(os.path.join(video_dir, overlay_name))),
+        'remote_html_path': saved_pair.remote_html_path, 'remote_video_path': saved_pair.remote_video_path,
+        'remote_overlay_path': saved_pair.remote_overlay_path or '',
+        'comment_path': '', 'comment_content': '',
+        'cached': _hyperlink_saved_pair_cached(saved_pair),
+        'saved_at': saved_pair.created_at.isoformat() if saved_pair.created_at else None,
+        'last_used_at': saved_pair.last_used_at.isoformat() if saved_pair.last_used_at else None,
+    }
 
 
 def _hyperlink_cluster_host(cluster_name: str):
@@ -2523,8 +2562,10 @@ def _hyperlink_sftp_download_dir(sftp, remote_dir: str, local_dir: str) -> int:
     os.makedirs(local_dir, exist_ok=True)
     try:
         entries = sftp.listdir_attr(remote_dir)
-    except (OSError, IOError):
-        return 1
+    except (OSError, IOError) as exc:
+        if getattr(exc, 'errno', None) == 13:
+            return 1
+        raise
     skipped = 0
     for attr in entries:
         r = remote_dir.rstrip('/') + '/' + attr.filename
@@ -2533,21 +2574,47 @@ def _hyperlink_sftp_download_dir(sftp, remote_dir: str, local_dir: str) -> int:
             skipped += _hyperlink_sftp_download_dir(sftp, r, local_path)
         else:
             try:
-                os.makedirs(os.path.dirname(local_path), exist_ok=True)
-                sftp.get(r, local_path)
-            except (OSError, IOError):
-                skipped += 1
+                if not _hyperlink_sftp_download_file(sftp, r, local_path):
+                    skipped += 1
+            except (OSError, IOError) as exc:
+                if getattr(exc, 'errno', None) == 13:
+                    skipped += 1
+                else:
+                    raise
     return skipped
 
 
 def _hyperlink_sftp_download_file(sftp, remote_path: str, local_path: str) -> bool:
-    """Download one readable remote file; false means an ACL/read denial."""
+    """Purpose: atomically cache a complete file. Inputs: SFTP/source/destination. Outputs: readable flag."""
+    import inspect
+    import tempfile
+    temporary = ''
     try:
         os.makedirs(os.path.dirname(local_path), exist_ok=True)
-        sftp.get(remote_path, local_path)
+        remote = sftp.stat(remote_path) if hasattr(sftp, 'stat') else None
+        if remote and os.path.isfile(local_path):
+            local = os.stat(local_path)
+            if local.st_size == remote.st_size and int(local.st_mtime) == int(remote.st_mtime):
+                return True
+        fd, temporary = tempfile.mkstemp(prefix='.hyperlink-', suffix='.part', dir=os.path.dirname(local_path))
+        os.close(fd)
+        options = {}
+        if 'max_concurrent_prefetch_requests' in inspect.signature(sftp.get).parameters:
+            options['max_concurrent_prefetch_requests'] = 32
+        sftp.get(remote_path, temporary, **options)
+        if remote and os.path.getsize(temporary) != remote.st_size:
+            raise IOError('Incomplete media transfer; retry Add')
+        if remote:
+            os.utime(temporary, (remote.st_mtime, remote.st_mtime))
+        os.replace(temporary, local_path)
         return True
-    except (OSError, IOError):
-        return False
+    except (OSError, IOError) as exc:
+        if getattr(exc, 'errno', None) == 13:
+            return False
+        raise
+    finally:
+        if temporary and os.path.exists(temporary):
+            os.remove(temporary)
 
 
 def _hyperlink_safe_component(value: str) -> str:
@@ -2689,7 +2756,7 @@ def hyperlink_cluster_scan_logs():
             video_name = os.path.basename(remote_video_path) if remote_video_path else ''
             video_relpath = posixpath.relpath(remote_video_path, video_path) if remote_video_path and video_path else ''
             video_cache_name = video_relpath
-            saved_pair = saved_pairs.get((remote_html_path, remote_video_path)) if remote_html_path and remote_video_path else None
+            saved_pair = saved_pairs.get((remote_html_path, remote_video_path))
             saved_overlay_name = ''
             saved_overlay_path = ''
             if saved_pair is not None:
@@ -2772,7 +2839,14 @@ def hyperlink_cluster_download_log():
     if sftp is None:
         return jsonify({'success': False, 'error': 'Not connected'}), 400
 
+    transfer_sftp = None
+    started = time.perf_counter()
     try:
+        # Paramiko SFTP channels are not safe for concurrent scan/download requests.
+        if sess.get('ssh') is not None:
+            transfer_sftp = sess['ssh'].open_sftp()
+            transfer_sftp.get_channel().settimeout(45)
+            sftp = transfer_sftp
         output_root, html_dir, video_dir = _hyperlink_get_user_dirs()
         folder_name = _hyperlink_safe_component(html_path) if html_path else ''
         local_html_folder = os.path.join(html_dir, folder_name) if folder_name else ''
@@ -2790,6 +2864,7 @@ def hyperlink_cluster_download_log():
         skipped_html = _hyperlink_sftp_download_dir(sftp, html_path, local_html_folder) if html_path else 0
         if video_path:
             if not _hyperlink_sftp_download_file(sftp, video_path, local_video_file):
+                _HYPERLINK_PROGRESS[user_key] = {'active': False, 'phase': 'error', 'message': 'Video permission denied'}
                 return jsonify({
                     'success': False,
                     'error': 'Permission denied reading the selected video. The video folder is visible but this file is not readable by your cluster account.',
@@ -2802,24 +2877,18 @@ def hyperlink_cluster_download_log():
             if not _hyperlink_sftp_download_file(sftp, overlay_path, local_overlay_file):
                 overlay_name = ''
 
-        if not html_path or not video_path:
-            _HYPERLINK_PROGRESS[user_key] = {'active': False, 'phase': 'complete', 'message': 'Downloaded available media'}
-            _HYPERLINK_MAPPING_CACHE.pop(_hyperlink_cache_user_key(), None)
-            message = 'Downloaded available media'
-            if skipped_html:
-                message += f'; skipped {skipped_html} unreadable HTML path(s) (permission denied)'
-            return jsonify({'success': True, 'message': message, 'skipped_html': skipped_html, 'output_root': output_root})
-
-        _HYPERLINK_PROGRESS[user_key] = {'active': False, 'phase': 'complete', 'message': 'Done'}
         saved_pair = _hyperlink_upsert_saved_pair(
             key=key,
             html_path=html_path,
             video_path=video_path,
-            overlay_path=overlay_path,
+            overlay_path=overlay_path if overlay_name else '',
             output_root=output_root,
             video_cache_name=video_cache_name,
         )
         _HYPERLINK_MAPPING_CACHE.pop(_hyperlink_cache_user_key(), None)
+        _HYPERLINK_PROGRESS[user_key] = {'active': False, 'phase': 'complete', 'message': 'Added to stream'}
+        entry = _hyperlink_saved_entry(saved_pair)
+        logger.info('Hyperlink add saved_id=%s completed in %.3fs', saved_pair.id, time.perf_counter() - started)
 
         message = 'Added to stream'
         if skipped_html:
@@ -2830,12 +2899,14 @@ def hyperlink_cluster_download_log():
             'message': message,
             'key': str(saved_pair.id),
             'saved_id': saved_pair.id,
+            'entry': entry,
             'skipped_html': skipped_html,
             'overlay_name': overlay_name,
             'overlay_path': overlay_path,
             'output_root': output_root,
         })
     except Exception as e:
+        db.session.rollback()
         if user_key:
             _HYPERLINK_PROGRESS[user_key] = {'active': False, 'phase': 'error', 'message': str(e)}
         if getattr(e, 'errno', None) == 13 or 'permission denied' in str(e).lower():
@@ -2845,6 +2916,12 @@ def hyperlink_cluster_download_log():
                 'errno': 13,
             }), 403
         return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        if transfer_sftp is not None:
+            try:
+                transfer_sftp.close()
+            except Exception:
+                logger.warning('Could not close Hyperlink transfer channel', exc_info=True)
 
 
 @app.route('/hyperlink/api/saved-logs/<int:saved_id>/overlay', methods=['POST'])

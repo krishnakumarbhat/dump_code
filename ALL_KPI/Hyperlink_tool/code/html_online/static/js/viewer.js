@@ -15,6 +15,7 @@ let savedRailOpen = true;
 let toastTimer = null;
 let clusterStatusState = null;
 let clusterStatusRequest = null;
+let mappingRevision = 0;
 const videoLoadState = {
   primary: { token: 0, blobUrl: null },
   overlay: { token: 0, blobUrl: null },
@@ -64,21 +65,42 @@ document.addEventListener('DOMContentLoaded', async function () {
   setupEventListeners();
   // These endpoints are independent. Parallel startup saves two round trips on
   // high-latency/mobile links before the saved-log list becomes usable.
-  await Promise.all([loadVlmStatus(), loadMappings(), checkClusterStatus()]);
+  await Promise.allSettled([loadVlmStatus(), loadMappings(), checkClusterStatus()]);
 });
 
-async function loadMappings(preferredKey) {
+async function fetchJson(path, options, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(function () { controller.abort(); }, timeoutMs || 30000);
   try {
-    const resp = await fetch(apiPath('api/mappings'));
-    const data = await resp.json();
-    if (data.success) {
-      mappings = data.mappings || {};
-    } else {
-      mappings = {};
+    const response = await fetch(apiPath(path), { ...options, signal: controller.signal, cache: 'no-store' });
+    const data = await response.json();
+    if (!response.ok || !data.success) {
+      throw new Error(data.error || 'Request failed (HTTP ' + response.status + ')');
     }
+    return data;
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      throw new Error('Server took too long. Reload Saved Logs before retrying; the server may still finish the add.');
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function loadMappings(preferredKey) {
+  const revision = ++mappingRevision;
+  try {
+    const data = await fetchJson('api/mappings');
+    if (revision !== mappingRevision) return;
+    if (!data.mappings || typeof data.mappings !== 'object' || Array.isArray(data.mappings)) {
+      throw new Error('Invalid saved-list response');
+    }
+    mappings = data.mappings;
   } catch (error) {
     console.error('Failed to load mappings:', error);
-    mappings = {};
+    showNotification('Saved Logs could not refresh: ' + error.message, 'error');
+    throw error;
   }
 
   const keys = Object.keys(mappings);
@@ -425,9 +447,8 @@ function loadVideoIntoPlayer(video, entry, label, options) {
   const slot = (options && options.slot) || 'primary';
   const infoId = (options && options.infoId) || 'videoInfo';
   const urlKey = (options && options.urlKey) || 'video';
-  const nameKey = (options && options.nameKey) || 'video_name';
   const state = getVideoState(slot);
-  const loadToken = ++state.token;
+  ++state.token;
   clearVideoBlobUrl(slot);
   video.pause();
   video.removeAttribute('src');
@@ -439,10 +460,7 @@ function loadVideoIntoPlayer(video, entry, label, options) {
   video.preload = 'metadata';
   video.src = entry[urlKey];
   video.load();
-  if (loadToken === state.token) {
-    // Let the media element perform the single required metadata/range request.
-    videoInfo.textContent = entry[nameKey] || label;
-  }
+  // Keep Loading visible until onloadedmetadata/onerror confirms the outcome.
 }
 
 async function deleteSavedLog(savedId) {
@@ -675,13 +693,16 @@ async function loadExistingComment(entry) {
   }
 
   commentPath.textContent = entry.comment_path || '';
+  commentBox.value = entry.comment_content || '';
+  commentBox.readOnly = true;
+  if (!entry.comment_path) return;
   try {
-    const resp = await fetch(apiPath('api/get-comment'), {
+    const data = await fetchJson('api/get-comment', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ path: entry.comment_path })
     });
-    const data = await resp.json();
+    if (mappings[currentKey] !== entry) return;
     commentBox.value = data.success ? (data.content || '') : (entry.comment_content || '');
   } catch (error) {
     commentBox.value = entry.comment_content || '';
@@ -1281,14 +1302,11 @@ function displayRemoteLogs() {
 
     const actionButton = document.createElement('button');
     actionButton.type = 'button';
-    actionButton.className = 'remote-log-action' + (log.saved || log.downloaded ? ' open' : ' add');
-    actionButton.textContent = log.saved ? 'Open' : (log.downloaded ? 'Added' : 'Add');
-    actionButton.disabled = Boolean(log.downloaded);
-    if (!log.downloaded) {
-      actionButton.addEventListener('click', async function () {
-        await downloadLog(key);
-      });
-    }
+    actionButton.className = 'remote-log-action' + (log.saved ? ' open' : ' add');
+    actionButton.textContent = log.saved ? 'Open' : 'Add';
+    actionButton.addEventListener('click', async function () {
+      await downloadLog(key);
+    });
 
     actions.appendChild(actionButton);
     item.appendChild(body);
@@ -1322,11 +1340,14 @@ async function downloadLog(key) {
   }
 
   if (log.saved && log.saved_id) {
-    await loadMappings(log.saved_id);
-    if (mappings[String(log.saved_id)]) {
+    try {
+      document.getElementById('savedSearchInput').value = '';
+      if (!mappings[String(log.saved_id)]) await loadMappings(log.saved_id);
+      if (!mappings[String(log.saved_id)]) throw new Error('Saved item missing; retry Add.');
+      void updateScenario(String(log.saved_id)).catch(function (error) { showNotification(error.message, 'error'); });
       closeClusterModal();
-    } else {
-      showClusterMessage('Saved stream ' + log.saved_id + ' is not in the viewer mapping. Reload the stream list and try again.', 'error');
+    } catch (error) {
+      showClusterMessage(error.message, 'error');
     }
     return;
   }
@@ -1340,7 +1361,7 @@ async function downloadLog(key) {
 
   showLoading('Adding ' + (log.name || key) + '...');
   try {
-    const resp = await fetch(apiPath('api/cluster/download-log'), {
+    const data = await fetchJson('api/cluster/download-log', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1351,31 +1372,28 @@ async function downloadLog(key) {
         overlay_path: log.overlay_path || '',
         output_path: document.getElementById('outputPathInput').value.trim(),
       })
-    });
-    const data = await resp.json();
-    hideLoading();
-    if (!data.success) {
-      throw new Error(data.error || 'Add failed');
-    }
-    if (data.saved_id) {
-      log.saved = true;
-      log.cached = true;
-      log.saved_id = data.saved_id;
-      displayRemoteLogs();
-      await loadMappings();
-      if (mappings[String(data.saved_id)]) {
-        await updateScenario(String(data.saved_id));
-      }
+    }, 120000);
+    if (!data.saved_id) throw new Error('Media downloaded but not saved to the list. Reload the page and retry Add.');
+    const savedKey = String(data.saved_id);
+    document.getElementById('savedSearchInput').value = '';
+    if (data.entry && String(data.entry.saved_id) === savedKey) {
+      ++mappingRevision; // An older startup/refresh response must not erase this add.
+      mappings[savedKey] = data.entry;
     } else {
-      // Single-media adds are downloaded successfully but intentionally do
-      // not create a saved pair. Reflect success before rebuilding mappings.
-      log.downloaded = true;
-      displayRemoteLogs();
-      if (log.html_missing || log.video_missing) {
-        await loadMappings();
-      }
+      await loadMappings(savedKey);
     }
+    if (!mappings[savedKey]) throw new Error('Saved, but list refresh failed. Reload Saved Logs before retrying.');
+    currentKey = savedKey;
+    renderSavedList();
+    log.saved = true;
+    log.cached = true;
+    log.saved_id = data.saved_id;
+    displayRemoteLogs();
+    setSavedRailOpen(true);
+    hideLoading();
     showClusterMessage(data.message || 'Added to your stream list.', 'success');
+    // Saving/list insertion is complete; comment/media loading must not block Add.
+    void updateScenario(savedKey).catch(function (error) { showNotification('Saved; preview error: ' + error.message, 'error'); });
   } catch (error) {
     hideLoading();
     if (actionButton) {
