@@ -62,9 +62,9 @@ function getMappingEntries() {
 document.addEventListener('DOMContentLoaded', async function () {
   initializeUI();
   setupEventListeners();
-  await loadVlmStatus();
-  await loadMappings();
-  await checkClusterStatus();
+  // These endpoints are independent. Parallel startup saves two round trips on
+  // high-latency/mobile links before the saved-log list becomes usable.
+  await Promise.all([loadVlmStatus(), loadMappings(), checkClusterStatus()]);
 });
 
 async function loadMappings(preferredKey) {
@@ -421,17 +421,7 @@ function setOverlayPanelVisible(isVisible) {
   panel.classList.toggle('hidden', !isVisible);
 }
 
-async function probeVideoRange(url) {
-  const response = await fetch(url, {
-    headers: { Range: 'bytes=0-1' },
-    credentials: 'same-origin',
-  });
-  if (!response.ok && response.status !== 206) {
-    throw new Error('Video probe failed with status ' + response.status);
-  }
-}
-
-async function loadVideoIntoPlayer(video, entry, label, options) {
+function loadVideoIntoPlayer(video, entry, label, options) {
   const slot = (options && options.slot) || 'primary';
   const infoId = (options && options.infoId) || 'videoInfo';
   const urlKey = (options && options.urlKey) || 'video';
@@ -446,20 +436,12 @@ async function loadVideoIntoPlayer(video, entry, label, options) {
   const videoInfo = document.getElementById(infoId);
   videoInfo.textContent = 'Loading video...';
 
-  try {
-    video.preload = 'metadata';
-    video.src = entry[urlKey];
-    video.load();
-    await probeVideoRange(entry[urlKey]);
-    if (loadToken === state.token) {
-      videoInfo.textContent = entry[nameKey] || label;
-    }
-  } catch (error) {
-    if (loadToken !== state.token) {
-      return;
-    }
-    console.error('Video blob preload failed:', error);
-    videoInfo.textContent = 'Video could not be loaded';
+  video.preload = 'metadata';
+  video.src = entry[urlKey];
+  video.load();
+  if (loadToken === state.token) {
+    // Let the media element perform the single required metadata/range request.
+    videoInfo.textContent = entry[nameKey] || label;
   }
 }
 

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>Hyperlink Stream</title>
+  <link rel='stylesheet' href='/static/css/viewer.css?v=20260429h'>
+  <link rel='stylesheet' href='/static/css/cluster.css?v=20260429h'>
+</head>
+<body>
+  <div class='page'>
+    <button id='savedRailToggle' class='saved-rail-toggle' type='button' aria-controls='savedRail' aria-expanded='true' title='Toggle stream list'>📎</button>
+
+    <aside id='savedRail' class='saved-rail'>
+      <div class='saved-rail-header'>
+        <div>
+          <div class='saved-rail-eyebrow'>Stream</div>
+          <h2>Saved Logs</h2>
+        </div>
+        <button id='savedRailClose' class='saved-rail-close' type='button' aria-label='Hide stream list'>×</button>
+      </div>
+      <div class='saved-search-wrap'>
+        <input id='savedSearchInput' class='saved-search' type='search' placeholder='Search log names'>
+      </div>
+      <div id='savedList' class='saved-list'>
+        <div class='saved-empty'>No saved logs yet.</div>
+      </div>
+      <button id='savedRailResizeHandle' class='saved-rail-resize-handle' type='button' aria-label='Resize saved log list' aria-orientation='vertical' tabindex='0'></button>
+    </aside>
+
+    <div class='main-shell'>
+      <div class='toolbar'>
+        <div class='toolbar-title'>
+          <span class='toolbar-eyebrow'>Hyperlink Stream</span>
+          <span id='logNameDisplay' class='log-name-display'>No stream selected</span>
+          <span id='toolbarMeta' class='toolbar-meta'>Scan matching HTML and video paths, then add the logs you want to keep.</span>
+        </div>
+        <div class='toolbar-spacer'></div>
+        <button id='goOnlineBtn' class='online-btn' type='button'>
+          <span>⬈</span> Stream
+        </button>
+      </div>
+
+      <div class='layout'>
+        <div class='left-column'>
+          <div class='box video-box'>
+            <button class='expand-btn' type='button'>⛶</button>
+            <div id='videoStage' class='video-stage'>
+              <div class='video-panel'>
+                <div class='video-panel-header'>Primary Video</div>
+                <video id='videoPlayer' controls playsinline preload='metadata'></video>
+                <div id='videoInfo' class='video-info no-data'>No video</div>
+              </div>
+              <div id='overlayVideoPanel' class='video-panel hidden'>
+                <div class='video-panel-header'>Overlay Video</div>
+                <video id='overlayVideoPlayer' controls playsinline preload='metadata'></video>
+                <div id='overlayVideoInfo' class='video-info no-data'>No overlay</div>
+              </div>
+            </div>
+          </div>
+
+          <div class='box text-box'>
+            <button class='expand-btn' type='button'>⛶</button>
+            <textarea id='commentBox' readonly placeholder='No comments available'></textarea>
+            <div class='text-actions'>
+              <span id='commentPath' class='text-path'></span>
+              <div class='text-buttons'>
+                <button id='generateVlmBtn' type='button'>Generate Summary</button>
+                <button id='editCommentBtn' type='button'>Edit</button>
+                <button id='saveCommentBtn' type='button'>Save</button>
+              </div>
+            </div>
+            <div id='vlmStatus' class='vlm-status' aria-live='polite'></div>
+          </div>
+        </div>
+
+        <div class='right-column'>
+          <div class='box image-box'>
+            <button class='expand-btn' type='button'>⛶</button>
+            <div class='image-header'>
+              <label for='sensorFilter'>Sensor</label>
+              <select id='sensorFilter'>
+                <option value='all'>All</option>
+              </select>
+            </div>
+            <div id='sensorGrid' class='sensor-grid'></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button id='openHtmlBtn' class='open-html-btn' type='button'>
+      <span>📄</span> Open HTML Report
+    </button>
+  </div>
+
+  <div id='imageModal' class='image-modal'>
+    <span class='image-modal-close'>&times;</span>
+    <span class='image-modal-nav prev'>❮</span>
+    <img src='' alt='Full size image'>
+    <span class='image-modal-nav next'>❯</span>
+    <div class='image-modal-info'></div>
+  </div>
+
+  <div id='clusterModal' class='modal-overlay'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h2>Stream</h2>
+        <span id='clusterModalClose' class='modal-close'>&times;</span>
+      </div>
+
+      <div class='cluster-tabs'>
+        <button id='modeStreamBtn' class='cluster-tab active' type='button'>Stream</button>
+        <button id='modeLocalBtn' class='cluster-tab' type='button'>Upload</button>
+      </div>
+
+      <div class='connection-status'>
+        <span id='statusDot' class='status-dot disconnected'></span>
+        <span id='statusText'>Ready to scan</span>
+      </div>
+
+      <div id='clusterMessage' class='cluster-message' style='display: none;'></div>
+
+      <div id='clusterPanel' class='cluster-panel active'>
+        <div class='connection-form stream-form'>
+          <div class='form-group'>
+            <label for='remoteHtmlPathInput'>HTML Path <span class='field-optional'>Optional</span></label>
+            <input type='text' id='remoteHtmlPathInput' placeholder='Optional: /mnt/.../HTMLoutput'>
+          </div>
+          <div class='form-group'>
+            <label for='remoteVideoPathInput'>Video Path <span class='field-optional'>Optional</span></label>
+            <input type='text' id='remoteVideoPathInput' placeholder='Optional: /mnt/.../VIDEO/out_jpeg'>
+          </div>
+          <div class='form-group'>
+            <label for='remoteOverlayPathInput'>Video Overlay Path <span class='field-optional'>Optional</span></label>
+            <input type='text' id='remoteOverlayPathInput' placeholder='/net/.../new_db/video_overlay'>
+          </div>
+          <input type='hidden' id='outputPathInput' value=''>
+          <input type='hidden' id='netIdInput' value=''>
+          <div class='form-actions'>
+            <button id='clusterScanBtn' class='btn-primary' type='button'>
+              <span class='btn-icon'>🔍</span> Scan Logs
+            </button>
+            <button id='clusterResetBtn' class='btn-secondary' type='button'>Reset Session</button>
+          </div>
+        </div>
+
+        <div id='clusterCredentialsRow' class='auth-sheet' style='display: none;'>
+          <div class='auth-sheet-header'>
+            <strong>Authenticate</strong>
+            <span id='authNetIdDisplay' class='auth-net-id'></span>
+          </div>
+          <div class='form-group'>
+            <label for='passwordInput'>Cluster Password</label>
+            <div class='password-wrapper'>
+              <input type='password' id='passwordInput' placeholder='Enter your cluster password'>
+              <button id='togglePasswordBtn' type='button' class='toggle-password'>👁</button>
+            </div>
+          </div>
+          <div class='form-actions'>
+            <button id='clusterAuthBtn' class='btn-secondary' type='button'>Continue</button>
+            <button id='clusterAuthCancelBtn' class='btn-secondary btn-ghost' type='button'>Cancel</button>
+          </div>
+        </div>
+
+        <div id='remoteLogsSection' class='remote-logs-section' style='display: none;'>
+          <h3 id='remoteLogsHeading'>Matching Pairs</h3>
+          <div id='remoteLogsList' class='remote-logs-list'></div>
+        </div>
+      </div>
+
+      <div id='localPanel' class='cluster-panel'>
+        <div class='connection-form'>
+          <div class='form-group'>
+            <label for='localHtmlFolderInput'>Local HTML Folder</label>
+            <input type='file' id='localHtmlFolderInput' webkitdirectory directory multiple>
+          </div>
+          <div class='form-group'>
+            <label for='localVideoFilesInput'>Local Video File(s)</label>
+            <input type='file' id='localVideoFilesInput' multiple accept='video/*'>
+          </div>
+          <div class='form-group'>
+            <label for='localOutputPathInput'>Upload To</label>
+            <input type='text' id='localOutputPathInput' placeholder='Leave empty to use the default cache'>
+          </div>
+          <div class='form-actions'>
+            <button id='localUploadBtn' class='btn-primary' type='button'>Upload</button>
+          </div>
+        </div>
+      </div>
+
+      <div id='loadingOverlay' class='loading-overlay' style='display: none;'>
+        <div class='loading-spinner'></div>
+        <div id='loadingText' class='loading-text'>Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src='/static/js/viewer.js?v=20261113_mobile_fast'></script>
+</body>
+</html>
