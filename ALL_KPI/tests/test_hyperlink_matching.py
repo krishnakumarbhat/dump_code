@@ -249,6 +249,47 @@ def test_hyperlink_video_route_resolves_and_serves_nested_cache_path(monkeypatch
     assert response.status_code == 200
     assert response.data == b'video-bytes'
 
+    ranged = main.app.test_client().get(
+        '/hyperlink/data/video/session/g02/bus91100/bus91100.mp4',
+        headers={'Range': 'bytes=1-3'},
+    )
+    assert ranged.status_code == 206
+    assert ranged.data == b'ide'
+    assert ranged.headers['Content-Range'] == 'bytes 1-3/11'
+
+
+def test_hyperlink_video_large_open_range_is_bounded(monkeypatch, tmp_path):
+    from main_html import app as main
+
+    video_root = tmp_path / 'video'
+    path = video_root / 'large.mp4'
+    path.parent.mkdir(parents=True)
+    path.write_bytes(b'x' * (1024 * 1024))
+    monkeypatch.setattr(main, '_hyperlink_get_user_dirs', lambda: (str(tmp_path), str(tmp_path / 'html'), str(video_root)))
+    response = main.app.test_client().get('/hyperlink/data/video/large.mp4', headers={'Range': 'bytes=0-'})
+
+    assert response.status_code == 206
+    assert len(response.data) == 256 * 1024
+    assert response.headers['Content-Range'] == 'bytes 0-262143/1048576'
+    assert response.headers['Content-Length'] == str(256 * 1024)
+
+
+def test_hyperlink_video_chunk_returns_200(monkeypatch, tmp_path):
+    from main_html import app as main
+
+    video_root = tmp_path / 'video'
+    path = video_root / 'movie.mp4'
+    path.parent.mkdir(parents=True)
+    path.write_bytes(b'video-bytes')
+    monkeypatch.setattr(main, '_hyperlink_get_user_dirs', lambda: (str(tmp_path), str(tmp_path / 'html'), str(video_root)))
+    monkeypatch.setattr(main, '_hyperlink_prepare_browser_video', lambda file_path: file_path)
+
+    response = main.app.test_client().get('/hyperlink/api/video-chunk/movie.mp4?start=2&size=3')
+
+    assert response.status_code == 200
+    assert response.data == b'deo'
+    assert response.headers['X-File-Size'] == '11'
+
 
 def test_duplicate_video_basenames_use_distinct_nested_cached_files(tmp_path, monkeypatch):
     from main_html import app as main

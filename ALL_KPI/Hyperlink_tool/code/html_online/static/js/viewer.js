@@ -40,6 +40,14 @@ function apiPath(path) {
   return appBasePath() + clean;
 }
 
+function browserVideoUrl(url) {
+  const parsed = new URL(url, window.location.href);
+  if (!parsed.pathname.includes('/hyperlink/data/video/')) return url;
+  parsed.pathname = parsed.pathname.replace('/hyperlink/data/video/', '/hyperlink/api/video-chunk/');
+  parsed.search = '?start=0&size=67108864';
+  return parsed.href;
+}
+
 function getVisibleLabel(entry, key) {
   if (!entry) {
     return key || 'Untitled log';
@@ -458,7 +466,7 @@ function loadVideoIntoPlayer(video, entry, label, options) {
   videoInfo.textContent = 'Loading video...';
 
   video.preload = 'metadata';
-  video.src = entry[urlKey];
+  video.src = browserVideoUrl(entry[urlKey]);
   video.load();
   // Keep Loading visible until onloadedmetadata/onerror confirms the outcome.
 }

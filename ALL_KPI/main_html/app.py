@@ -1802,76 +1802,70 @@ def hyperlink_html_data(filename):
 
 
 def _stream_video_file(file_path: str):
-    """Serve video files with explicit range handling and stable partial reads."""
+    """Purpose: serve bounded byte ranges. Inputs: cached file/current request. Outputs: playable partial response."""
     import mimetypes
 
     route_started = time.perf_counter()
-
     mime_type = mimetypes.guess_type(file_path)[0] or 'video/mp4'
     file_size = os.path.getsize(file_path)
     range_header = (request.headers.get('Range') or '').strip()
-    start = 0
-    end = max(file_size - 1, 0)
-    status_code = 200
+    if not range_header.startswith('bytes='):
+        response = send_file(file_path, mimetype=mime_type, conditional=True, max_age=86400)
+        response.headers['Accept-Ranges'] = 'bytes'
+        response.headers['Cache-Control'] = 'public, max-age=86400'
+        return response
 
-    if range_header.startswith('bytes='):
-        range_value = range_header.split('=', 1)[1].split(',', 1)[0].strip()
-        start_str, _, end_str = range_value.partition('-')
-        try:
-            if start_str:
-                start = int(start_str)
-                end = int(end_str) if end_str else end
-            elif end_str:
-                suffix_length = int(end_str)
-                start = max(file_size - suffix_length, 0)
-            else:
-                raise ValueError('Invalid range')
-        except ValueError:
-            response = Response(status=416)
-            response.headers['Content-Range'] = f'bytes */{file_size}'
-            return response
+    # Krakow's client-facing socket times out while Gunicorn sends multi-MB
+    # single-range responses. Cap each response; browsers request subsequent
+    # ranges as needed, while faststart metadata arrives in the first chunk.
+    max_range_bytes = 256 * 1024
+    value = range_header[6:].split(',', 1)[0].strip()
+    first, separator, last = value.partition('-')
+    if not separator:
+        response = Response(status=416)
+        response.headers['Content-Range'] = f'bytes */{file_size}'
+        return response
+    try:
+        if first:
+            start = int(first)
+            requested_end = int(last) if last else file_size - 1
+        else:
+            suffix = int(last)
+            if suffix <= 0:
+                raise ValueError('Invalid suffix range')
+            start = max(file_size - suffix, 0)
+            requested_end = file_size - 1
+        if start < 0 or start >= file_size or requested_end < start:
+            raise ValueError('Range out of bounds')
+    except ValueError:
+        response = Response(status=416)
+        response.headers['Content-Range'] = f'bytes */{file_size}'
+        return response
 
-        end = min(end, file_size - 1)
-        if start < 0 or start >= file_size or start > end:
-            response = Response(status=416)
-            response.headers['Content-Range'] = f'bytes */{file_size}'
-            return response
-        status_code = 206
-
-    content_length = max(end - start + 1, 0)
-
+    end = min(requested_end, file_size - 1, start + max_range_bytes - 1)
+    content_length = end - start + 1
     if request.method == 'HEAD':
-        response = Response(status=status_code, mimetype=mime_type)
-    elif status_code == 206:
-        read_started = time.perf_counter()
+        response = Response(status=206, mimetype=mime_type)
+    else:
+        # Keep each response small and materialized; the cluster proxy resets
+        # generator-backed MP4 responses before the browser receives headers.
         with open(file_path, 'rb') as handle:
             handle.seek(start)
             data = handle.read(content_length)
-        logger.info(
-            'Hyperlink video range read %s bytes=%s-%s size=%s read_ms=%.1f',
-            os.path.basename(file_path),
-            start,
-            end,
-            len(data),
-            (time.perf_counter() - read_started) * 1000,
-        )
         response = Response(data, status=206, mimetype=mime_type)
         content_length = len(data)
-    else:
-        response = send_file(file_path, mimetype=mime_type, conditional=True, max_age=86400)
-
-    response.headers['Accept-Ranges'] = 'bytes'
     response.headers['Content-Length'] = str(content_length)
-    if status_code == 206:
-        response.headers['Content-Range'] = f'bytes {start}-{end}/{file_size}'
+    response.headers['Content-Range'] = f'bytes {start}-{end}/{file_size}'
+    response.headers['Accept-Ranges'] = 'bytes'
     response.headers['Cache-Control'] = 'public, max-age=86400'
     logger.info(
-        'Hyperlink video response ready %s method=%s status=%s range=%s bytes=%s elapsed_ms=%.1f',
+        'Hyperlink video response ready %s method=%s status=%s range=%s bytes=%s/%s elapsed_ms=%.1f',
         os.path.basename(file_path),
         request.method,
-        status_code,
+        response.status_code,
         request.headers.get('Range', ''),
-        content_length,
+        response.headers.get('Content-Length', ''),
+        file_size,
         (time.perf_counter() - route_started) * 1000,
     )
     return response
@@ -2028,6 +2022,8 @@ def hyperlink_video_chunk(filename):
         file_size = os.path.getsize(file_path)
         start = max(int(request.args.get('start', '0') or 0), 0)
         chunk_size = max(int(request.args.get('size', str(16 * 1024)) or (16 * 1024)), 1)
+        # ponytail: single 200 MP4 response capped at 64 MiB; use chunk assembly if larger sources are needed.
+        chunk_size = min(chunk_size, 64 * 1024 * 1024)
         end = min(start + chunk_size, file_size)
 
         if start >= file_size:
