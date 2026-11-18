@@ -243,10 +243,20 @@ def id_switches(matched: Sequence[Dict[str, Any]]) -> int:
 
 
 def score(in_tracks: Dict[str, np.ndarray], out_tracks: Dict[str, np.ndarray],
-          algorithm: str, gate: float, vel_gate: float) -> Dict[str, Any]:
-    """Run one association backend and reduce it to KPI-grade metrics."""
+          algorithm: str, gate: float, vel_gate: float,
+          gate_y: float | None = None,
+          vel_gate_y: float | None = None) -> Dict[str, Any]:
+    """Run one association backend and reduce it to KPI-grade metrics.
+
+    ``gate_y``/``vel_gate_y`` allow per-axis gates; they default to the
+    symmetric ``gate``/``vel_gate`` used by the original sweep.
+    """
     cfg = AssociationConfig(
-        tx=gate, ty=gate, tvx=vel_gate, tvy=vel_gate, algorithm=algorithm
+        tx=gate,
+        ty=gate if gate_y is None else gate_y,
+        tvx=vel_gate,
+        tvy=vel_gate if vel_gate_y is None else vel_gate_y,
+        algorithm=algorithm,
     )
     t0 = time.perf_counter()
     res = associate_arrays(in_tracks, out_tracks, cfg)
