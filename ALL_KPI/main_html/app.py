@@ -1025,7 +1025,8 @@ def tool_hyperlink():
         )
         db.session.add(job)
         db.session.commit()
-    return redirect(url_for('hyperlink_viewer_app'))
+        return redirect(url_for('tool_hyperlink'))
+    return render_template('tools/hyperlink_tool.html', tool_name='Hyperlink Tool')
 
 
 @app.route('/html/hyperlink_viewer')
