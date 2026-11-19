@@ -30,8 +30,10 @@ def test_download_preserves_old_cache_on_failure_and_skips_unchanged(tmp_path):
     assert len(calls) == 1
 
 
-@pytest.mark.parametrize('video_only', [True, False])
-def test_single_media_add_returns_persisted_viewer_entry(monkeypatch, tmp_path, video_only):
+@pytest.mark.parametrize(('video_only', 'html_cache_name'), [
+    (True, ''), (False, ''), (False, 'html2__report'),
+])
+def test_single_media_add_returns_persisted_viewer_entry(monkeypatch, tmp_path, video_only, html_cache_name):
     from main_html import app as main
     pairs = []
 
@@ -75,6 +77,8 @@ def test_single_media_add_returns_persisted_viewer_entry(monkeypatch, tmp_path, 
     monkeypatch.setattr(main, '_hyperlink_get_user_dirs', lambda: (str(tmp_path), str(html), str(video)))
     body = {'key': '20261113_123115_0000', 'html_path': '' if video_only else '/remote/report',
             'video_path': '/remote/clip.mp4' if video_only else ''}
+    if html_cache_name:
+        body['html_cache_name'] = html_cache_name
     client = main.app.test_client()
     for _ in range(2):
         response = client.post('/hyperlink/api/cluster/download-log', json=body)
@@ -85,4 +89,4 @@ def test_single_media_add_returns_persisted_viewer_entry(monkeypatch, tmp_path, 
         assert response.json['entry']['html_missing'] is video_only
         assert response.json['entry']['cached_video'] is video_only
     assert len(pairs) == 1
-    assert pairs[0].html_folder == ('' if video_only else 'report')
+    assert pairs[0].html_folder == ('' if video_only else (html_cache_name or 'report'))

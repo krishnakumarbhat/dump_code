@@ -33,6 +33,95 @@
   gap: 12px;
 }
 
+.path-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.path-input-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.path-browse-btn {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  background: #fff;
+  color: #334155;
+  cursor: pointer;
+}
+
+.viewer-ai-option {
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.viewer-ai-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.viewer-ai-option small {
+  display: block;
+  margin: 4px 0 0 26px;
+  color: #64748b;
+}
+
+.path-browser-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(15, 23, 42, .65);
+}
+
+.path-browser-modal.active { display: flex; }
+
+.path-browser-content {
+  display: flex;
+  flex-direction: column;
+  width: min(94vw, 760px);
+  max-height: 82vh;
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+}
+
+.path-browser-header,
+.path-browser-current,
+.path-browser-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.path-browser-header h2 { margin: 0; font-size: 19px; }
+.path-browser-header button { border: 0; background: transparent; font-size: 26px; cursor: pointer; }
+.path-browser-current { justify-content: flex-start; margin: 12px 0; }
+.path-browser-current span { min-width: 0; overflow-wrap: anywhere; color: #475569; font-family: monospace; font-size: 12px; }
+.path-browser-list { min-height: 100px; overflow: auto; border: 1px solid #e2e8f0; border-radius: 8px; }
+.path-browser-item { display: block; width: 100%; padding: 9px 12px; border: 0; border-bottom: 1px solid #eef2f6; background: #fff; text-align: left; cursor: pointer; }
+.path-browser-item:hover { background: #f1f5f9; }
+.path-browser-actions { justify-content: flex-end; margin-top: 12px; }
+
+@media (max-width: 600px) {
+  .path-input-row { gap: 5px; }
+  .path-browse-btn { padding: 8px; }
+  .path-browser-content { width: 100%; max-height: 90vh; }
+}
+
 .browser-header {
   display: flex;
   align-items: center;

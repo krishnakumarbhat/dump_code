@@ -146,6 +146,58 @@ def test_timestamp_matching_accepts_new_report_suffixes(name):
     assert viewer.mapping_key_from_name(name) == '20251024_140453_0146'
 
 
+def test_remote_scan_keeps_second_html_root_and_two_best_videos(monkeypatch, tmp_path):
+    from main_html import app as main
+
+    timestamp = '20251024_140453_0146'
+    report_one = f'IRep158_SRR_ThunderMCIP_WS11656_{timestamp}_b05_HDF_Report.h5'
+    report_two = f'DGPS_SRR_ThunderMCIP_WS11656_{timestamp}_b05_HDF_Report.h5'
+    session = f'ThunderMCIP_WS11656_{timestamp}_g02'
+
+    class Attr:
+        def __init__(self, filename, is_dir):
+            import stat
+            self.filename = filename
+            self.st_mode = stat.S_IFDIR if is_dir else stat.S_IFREG
+            self.st_size = 100
+
+    class Sftp:
+        entries = {
+            '/mnt/reports1': [Attr(report_one, True)],
+            '/mnt/reports2': [Attr(report_two, True)],
+            '/mnt/video': [Attr(session, True)],
+            f'/mnt/video/{session}': [Attr('bus91100', True), Attr('bus91200', True)],
+            f'/mnt/video/{session}/bus91100': [Attr('bus91100.mp4', False)],
+            f'/mnt/video/{session}/bus91200': [Attr('bus91200.mp4', False)],
+        }
+
+        def listdir_attr(self, path):
+            return self.entries.get(path, [])
+
+    fake_session = {'sftp': Sftp(), 'ssh': None, 'server': 'southfield'}
+    monkeypatch.setattr(main, '_hyperlink_get_live_session', lambda _user: fake_session)
+    monkeypatch.setattr(main, '_hyperlink_saved_pairs', lambda: [])
+    cache = tmp_path / 'cache'
+    cache.mkdir()
+    monkeypatch.setattr(main, '_hyperlink_get_user_dirs', lambda: (
+        str(cache), str(cache / 'html'), str(cache / 'video')
+    ))
+
+    response = main.app.test_client().post('/hyperlink/api/cluster/scan-logs', json={
+        'html_path': '/mnt/reports1', 'html_path_2': '/mnt/reports2',
+        'video_path': '/mnt/video', 'output_path': '',
+    })
+
+    assert response.status_code == 200, response.get_json()
+    logs = response.get_json()['logs']
+    assert len(logs) == 2
+    html2 = next(item for item in logs.values() if item['html_cache_name'].startswith('html2__'))
+    assert html2['html_path'] == f'/mnt/reports2/{report_two}'
+    assert html2['video_path'].endswith('/bus91100/bus91100.mp4')
+    assert html2['overlay_path'].endswith('/bus91200/bus91200.mp4')
+    assert html2['overlay_cache_name'].startswith('comparison/')
+
+
 def test_session_keys_cover_mcip_suffix_variations_and_duplicate_reports():
     viewer = _load_viewer_module()
     report = 'IRep158_SRR_ThunderMCIP_WS11656_20251024_140453_0146_b05_HDF_Report.h5'

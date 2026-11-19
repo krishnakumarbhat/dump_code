@@ -4,8 +4,8 @@
   <meta charset='UTF-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1.0'>
   <title>Hyperlink Stream</title>
-  <link rel='stylesheet' href='/hyperlink/static/css/viewer.css?v=20261119_stream_202'>
-  <link rel='stylesheet' href='/hyperlink/static/css/cluster.css?v=20261119_stream_202'>
+  <link rel='stylesheet' href='/hyperlink/static/css/viewer.css?v=20261119_stream_203'>
+  <link rel='stylesheet' href='/hyperlink/static/css/cluster.css?v=20261119_stream_203'>
 </head>
 <body>
   <div class='page'>
@@ -150,18 +150,29 @@
       <div id='clusterPanel' class='cluster-panel active'>
         <div class='connection-form stream-form'>
           <div class='form-group'>
-            <label for='remoteHtmlPathInput'>HTML Path <span class='field-optional'>Optional</span></label>
-            <input type='text' id='remoteHtmlPathInput' placeholder='Optional: /mnt/.../HTMLoutput'>
+            <label for='remoteHtmlPathInput'>HTML reports directory <span class='field-optional'>Optional</span></label>
+            <div class='path-input-row'><input type='text' id='remoteHtmlPathInput' placeholder='/mnt/.../HTMLoutput'><button class='path-browse-btn' type='button' data-browse-path='remoteHtmlPathInput'>Browse</button></div>
           </div>
           <div class='form-group'>
-            <label for='remoteVideoPathInput'>Video Path <span class='field-optional'>Optional</span></label>
-            <input type='text' id='remoteVideoPathInput' placeholder='Optional: /mnt/.../VIDEO/out_jpeg'>
+            <label for='remoteHtmlPath2Input'>HTML reports directory 2 <span class='field-optional'>Optional · similar report or DGPS HTML</span></label>
+            <div class='path-input-row'><input type='text' id='remoteHtmlPath2Input' placeholder='/mnt/.../DGPS_HTML'><button class='path-browse-btn' type='button' data-browse-path='remoteHtmlPath2Input'>Browse</button></div>
+          </div>
+          <div class='form-group'>
+            <label for='remoteVideoPathInput'>Video directory <span class='field-optional'>Optional</span></label>
+            <div class='path-input-row'><input type='text' id='remoteVideoPathInput' placeholder='/mnt/.../VIDEO/out_jpeg'><button class='path-browse-btn' type='button' data-browse-path='remoteVideoPathInput'>Browse</button></div>
           </div>
           <div class='form-group'>
             <label for='remoteOverlayPathInput'>Video Overlay Path <span class='field-optional'>Optional</span></label>
-            <input type='text' id='remoteOverlayPathInput' placeholder='/net/.../new_db/video_overlay'>
+            <div class='path-input-row'><input type='text' id='remoteOverlayPathInput' placeholder='/net/.../new_db/video_overlay'><button class='path-browse-btn' type='button' data-browse-path='remoteOverlayPathInput'>Browse</button></div>
           </div>
-          <input type='hidden' id='outputPathInput' value=''>
+          <div class='form-group'>
+            <label for='outputPathInput'>Viewer cache root <span class='field-optional'>Optional</span></label>
+            <div class='path-input-row'><input type='text' id='outputPathInput' placeholder='Leave blank to use your default cache'><button class='path-browse-btn' type='button' data-browse-path='outputPathInput'>Browse</button></div>
+          </div>
+          <div class='form-group viewer-ai-option'>
+            <label class='viewer-ai-label'><input type='checkbox' id='hyperlinkAiEnabled'> <span>Enable AI video description</span></label>
+            <small>Optional. Keep off unless the offline model is configured on this cluster.</small>
+          </div>
           <input type='hidden' id='netIdInput' value=''>
           <div class='form-actions'>
             <button id='clusterScanBtn' class='btn-primary' type='button'>
@@ -222,6 +233,15 @@
     </div>
   </div>
 
-  <script src='/hyperlink/static/js/viewer.js?v=20261119_stream_202'></script>
+  <div id='pathBrowserModal' class='path-browser-modal' role='dialog' aria-modal='true' aria-labelledby='pathBrowserTitle'>
+    <div class='path-browser-content'>
+      <div class='path-browser-header'><h2 id='pathBrowserTitle'>Choose a directory</h2><button id='pathBrowserClose' type='button' aria-label='Close directory browser'>×</button></div>
+      <div class='path-browser-current'><button id='pathBrowserUp' type='button'>Up</button><span id='pathBrowserPath'></span></div>
+      <div id='pathBrowserList' class='path-browser-list'></div>
+      <div class='path-browser-actions'><button id='pathBrowserCancel' class='btn-secondary' type='button'>Cancel</button><button id='pathBrowserSelect' class='btn-primary' type='button'>Use this folder</button></div>
+    </div>
+  </div>
+
+  <script src='/hyperlink/static/js/viewer.js?v=20261119_stream_203'></script>
 </body>
 </html>

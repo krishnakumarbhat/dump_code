@@ -25,6 +25,8 @@ const SAVED_RAIL_DEFAULT_WIDTH = 320;
 const SAVED_RAIL_MIN_WIDTH = 320;
 const SAVED_RAIL_MAX_WIDTH = 780;
 let savedRailResizeState = null;
+let pathBrowserTarget = '';
+let pathBrowserCurrent = '';
 
 function appBasePath() {
   const pathname = window.location.pathname || '/';
@@ -198,7 +200,10 @@ function setupEventListeners() {
     if (event.target === this) closeHtmlComparison();
   });
   document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape') closeHtmlComparison();
+    if (event.key === 'Escape') {
+      closeHtmlComparison();
+      closeViewerPathBrowser();
+    }
   });
   ['htmlCompareSelectA', 'htmlCompareSelectB'].forEach(function (id) {
     document.getElementById(id).addEventListener('change', updateHtmlComparisonFrames);
@@ -211,6 +216,16 @@ function setupEventListeners() {
   });
   document.getElementById('modeLocalBtn').addEventListener('click', function () {
     setConnectMode('local');
+  });
+  document.querySelectorAll('[data-browse-path]').forEach(function (button) {
+    button.addEventListener('click', function () { openViewerPathBrowser(button.dataset.browsePath); });
+  });
+  document.getElementById('pathBrowserClose').addEventListener('click', closeViewerPathBrowser);
+  document.getElementById('pathBrowserCancel').addEventListener('click', closeViewerPathBrowser);
+  document.getElementById('pathBrowserUp').addEventListener('click', browseViewerParent);
+  document.getElementById('pathBrowserSelect').addEventListener('click', selectViewerPath);
+  document.getElementById('pathBrowserModal').addEventListener('click', function (event) {
+    if (event.target === this) closeViewerPathBrowser();
   });
   document.getElementById('clusterScanBtn').addEventListener('click', function () {
     scanRemoteLogs(false);
@@ -915,7 +930,11 @@ function openHtmlComparison() {
     reports.forEach(function (report, reportIndex) {
       const option = document.createElement('option');
       option.value = htmlReportUrl(report.url);
-      option.textContent = report.folder ? report.folder + ' · ' + report.name : report.name;
+      const reportFolder = report.folder || '';
+      const folderLabel = reportFolder.startsWith('html2__')
+        ? 'HTML 2 · ' + reportFolder.slice('html2__'.length)
+        : (reportFolder ? 'HTML 1 · ' + reportFolder : '');
+      option.textContent = (folderLabel ? folderLabel + ' · ' : '') + report.name;
       select.appendChild(option);
       if (reportIndex === index) select.value = htmlReportUrl(report.url);
     });
@@ -1044,6 +1063,7 @@ function applyClusterStatus(data) {
 
   clusterStatusState = data;
   const htmlEl = document.getElementById('remoteHtmlPathInput');
+  const html2El = document.getElementById('remoteHtmlPath2Input');
   const videoEl = document.getElementById('remoteVideoPathInput');
   const overlayEl = document.getElementById('remoteOverlayPathInput');
   const outputEl = document.getElementById('outputPathInput');
@@ -1051,6 +1071,9 @@ function applyClusterStatus(data) {
   const authNetIdDisplay = document.getElementById('authNetIdDisplay');
   if (htmlEl && !htmlEl.value && data.html_path) {
     htmlEl.value = data.html_path;
+  }
+  if (html2El && !html2El.value && data.html_path_2) {
+    html2El.value = data.html_path_2;
   }
   if (videoEl && !videoEl.value && data.video_path) {
     videoEl.value = data.video_path;
@@ -1061,6 +1084,8 @@ function applyClusterStatus(data) {
   if (outputEl) {
     outputEl.value = data.output_root || '';
   }
+  const aiEnabled = document.getElementById('hyperlinkAiEnabled');
+  if (aiEnabled && typeof data.vlm_enabled === 'boolean') aiEnabled.checked = data.vlm_enabled;
   if (netIdEl && data.net_id) {
     netIdEl.value = data.net_id;
   }
@@ -1097,6 +1122,59 @@ async function checkClusterStatus(forceRefresh) {
     }
   })();
   return clusterStatusRequest;
+}
+
+async function openViewerPathBrowser(targetId) {
+  pathBrowserTarget = targetId;
+  const field = document.getElementById(targetId);
+  const status = await checkClusterStatus();
+  pathBrowserCurrent = (field && field.value.trim()) ||
+    ((status && status.server === 'krakow') ? '/net' : '/mnt');
+  document.getElementById('pathBrowserModal').classList.add('active');
+  await loadViewerPathDirectory(pathBrowserCurrent);
+}
+
+async function loadViewerPathDirectory(path) {
+  const list = document.getElementById('pathBrowserList');
+  const pathLabel = document.getElementById('pathBrowserPath');
+  pathBrowserCurrent = path || '/';
+  pathLabel.textContent = pathBrowserCurrent;
+  list.textContent = 'Loading directories…';
+  try {
+    const response = await fetch('/api/browse?path=' + encodeURIComponent(pathBrowserCurrent), { credentials: 'same-origin' });
+    const data = await response.json();
+    if (!response.ok || data.error) throw new Error(data.error || 'Directory browsing failed');
+    pathBrowserCurrent = data.current_path || pathBrowserCurrent;
+    pathLabel.textContent = pathBrowserCurrent;
+    list.replaceChildren();
+    (data.directories || []).forEach(function (directory) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'path-browser-item';
+      button.textContent = '📁 ' + directory.name;
+      button.addEventListener('click', function () { loadViewerPathDirectory(directory.path); });
+      list.appendChild(button);
+    });
+    if (!(data.directories || []).length) list.textContent = 'No subdirectories in this folder.';
+  } catch (error) {
+    list.textContent = error.message || 'Could not list this folder.';
+  }
+}
+
+function browseViewerParent() {
+  const parent = pathBrowserCurrent.replace(/\/+$/, '').split('/').slice(0, -1).join('/') || '/';
+  loadViewerPathDirectory(parent);
+}
+
+function selectViewerPath() {
+  if (pathBrowserTarget) document.getElementById(pathBrowserTarget).value = pathBrowserCurrent;
+  closeViewerPathBrowser();
+}
+
+function closeViewerPathBrowser() {
+  const modal = document.getElementById('pathBrowserModal');
+  if (modal) modal.classList.remove('active');
+  pathBrowserTarget = '';
 }
 
 async function resolveClusterAuthContext(forceRefresh) {
@@ -1179,6 +1257,7 @@ function hideClusterAuth(resetPending) {
 
 async function clusterConnect() {
   const htmlPath = document.getElementById('remoteHtmlPathInput').value.trim();
+  const htmlPath2 = document.getElementById('remoteHtmlPath2Input').value.trim();
   const videoPath = document.getElementById('remoteVideoPathInput').value.trim();
   const overlayPath = document.getElementById('remoteOverlayPathInput').value.trim();
   const outputPath = document.getElementById('outputPathInput').value.trim();
@@ -1187,7 +1266,7 @@ async function clusterConnect() {
   const password = authContext.password;
   const usingSavedPassword = authContext.hasSavedPassword && !password;
 
-  if (!htmlPath && !videoPath) {
+  if (!htmlPath && !htmlPath2 && !videoPath) {
     showClusterMessage('Enter an HTML path, a video path, or both.', 'error');
     return false;
   }
@@ -1208,9 +1287,11 @@ async function clusterConnect() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         html_path: htmlPath,
+        html_path_2: htmlPath2,
         video_path: videoPath,
         overlay_path: overlayPath,
         output_path: outputPath,
+        hyperlink_ai_enabled: document.getElementById('hyperlinkAiEnabled').checked,
         net_id: netId,
         password: password,
       })
@@ -1281,11 +1362,12 @@ async function clusterDisconnect() {
 
 async function scanRemoteLogs(skipConnect) {
   const htmlPath = document.getElementById('remoteHtmlPathInput').value.trim();
+  const htmlPath2 = document.getElementById('remoteHtmlPath2Input').value.trim();
   const videoPath = document.getElementById('remoteVideoPathInput').value.trim();
   const overlayPath = document.getElementById('remoteOverlayPathInput').value.trim();
   const outputPath = document.getElementById('outputPathInput').value.trim();
 
-  if (!htmlPath && !videoPath) {
+  if (!htmlPath && !htmlPath2 && !videoPath) {
     showClusterMessage('Enter an HTML path, a video path, or both.', 'error');
     return;
   }
@@ -1297,16 +1379,18 @@ async function scanRemoteLogs(skipConnect) {
     }
   }
 
-  showLoading(htmlPath && videoPath ? 'Scanning and matching logs...' : 'Scanning selected media...');
+  showLoading((htmlPath || htmlPath2) && videoPath ? 'Scanning and matching reports and media...' : 'Scanning selected media...');
   try {
     const resp = await fetch(apiPath('api/cluster/scan-logs'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         html_path: htmlPath,
+        html_path_2: htmlPath2,
         video_path: videoPath,
         overlay_path: overlayPath,
         output_path: outputPath,
+        hyperlink_ai_enabled: document.getElementById('hyperlinkAiEnabled').checked,
       })
     });
     const data = await resp.json();
@@ -1319,9 +1403,9 @@ async function scanRemoteLogs(skipConnect) {
     displayRemoteLogs();
     const scanNote = data.truncated ? ' Scan limit reached; narrow the selected folder for the rest.' : '';
     const unreadableNote = data.unreadable_dirs ? ' ' + data.unreadable_dirs + ' directories were unreadable.' : '';
-    showClusterMessage(htmlPath && videoPath
+    showClusterMessage((htmlPath || htmlPath2) && videoPath
       ? 'Found ' + Object.keys(remoteLogs).length + ' matching pairs.' + scanNote + unreadableNote
-      : 'Found ' + Object.keys(remoteLogs).length + ' ' + (htmlPath ? 'HTML' : 'video') + ' entries.' + scanNote + unreadableNote, 'success');
+      : 'Found ' + Object.keys(remoteLogs).length + ' ' + (htmlPath || htmlPath2 ? 'HTML' : 'video') + ' entries.' + scanNote + unreadableNote, 'success');
   } catch (error) {
     hideLoading();
     showClusterMessage('Scan error: ' + error.message, 'error');
@@ -1372,8 +1456,8 @@ function displayRemoteLogs() {
     const overlay = document.createElement('div');
     overlay.className = 'remote-log-overlay';
     overlay.textContent = log.html_missing ? 'HTML not selected' : (log.video_missing ? 'Video not selected' : (log.has_overlay
-      ? 'Overlay: ' + (log.overlay_name || log.overlay_path || 'matched')
-      : 'No overlay matched'));
+      ? 'Comparison video: ' + (log.overlay_name || log.overlay_path || 'matched')
+      : 'Single video'));
     overlay.title = overlay.textContent;
 
     const status = document.createElement('div');
@@ -1461,9 +1545,11 @@ async function downloadLog(key) {
       body: JSON.stringify({
         key: key,
         html_path: log.html_missing ? '' : log.html_path,
+        html_cache_name: log.html_cache_name || '',
         video_path: log.video_missing ? '' : log.video_path,
         video_cache_name: log.video_cache_name || '',
         overlay_path: log.overlay_path || '',
+        overlay_cache_name: log.overlay_cache_name || '',
         output_path: document.getElementById('outputPathInput').value.trim(),
       })
     }, 120000);
