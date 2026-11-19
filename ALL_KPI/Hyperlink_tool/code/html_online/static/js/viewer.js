@@ -48,6 +48,15 @@ function browserVideoUrl(url) {
   return parsed.href;
 }
 
+function comparisonVideoForEntry(entry) {
+  const url = entry ? (entry.comparison_video || entry.overlay_video || '') : '';
+  return url.startsWith('/data/') ? apiPath(url) : url;
+}
+
+function htmlReportUrl(url) {
+  return String(url || '').startsWith('/data/') ? apiPath(url) : String(url || '');
+}
+
 function getVisibleLabel(entry, key) {
   if (!entry) {
     return key || 'Untitled log';
@@ -185,6 +194,17 @@ function setupEventListeners() {
     generateVlmDescription(false);
   });
   document.getElementById('openHtmlBtn').addEventListener('click', openHtmlPreview);
+  document.getElementById('compareHtmlBtn').addEventListener('click', openHtmlComparison);
+  document.getElementById('htmlCompareClose').addEventListener('click', closeHtmlComparison);
+  document.getElementById('htmlCompareModal').addEventListener('click', function (event) {
+    if (event.target === this) closeHtmlComparison();
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') closeHtmlComparison();
+  });
+  ['htmlCompareSelectA', 'htmlCompareSelectB'].forEach(function (id) {
+    document.getElementById(id).addEventListener('change', updateHtmlComparisonFrames);
+  });
   document.getElementById('goOnlineBtn').addEventListener('click', openClusterModal);
 
   document.getElementById('clusterModalClose').addEventListener('click', closeClusterModal);
@@ -563,10 +583,12 @@ async function updateScenario(key) {
     updateSensorFilter(null);
     setVlmStatus(vlmEnabled ? '' : 'AI video description is disabled for this session.', vlmEnabled ? '' : 'error');
     setVlmBusy(false);
+    updateHtmlCompareButton(null);
     return;
   }
 
   const entry = mappings[currentKey];
+  updateHtmlCompareButton(entry);
   const label = getVisibleLabel(entry, currentKey);
   logNameDisplay.textContent = label;
   const toolbarParts = [entry.remote_html_path || entry.video_name || 'Cached stream'];
@@ -598,24 +620,26 @@ async function updateScenario(key) {
     });
   }
 
-  const hasOverlay = Boolean(entry.overlay_video || entry.overlay_video_name || entry.remote_overlay_path);
+  const comparisonVideoUrl = comparisonVideoForEntry(entry);
+  const comparisonVideoName = entry.comparison_video_name || entry.overlay_video_name || '';
+  const hasOverlay = Boolean(comparisonVideoUrl || entry.remote_overlay_path);
   setOverlayPanelVisible(hasOverlay);
   overlayVideo.onloadedmetadata = function () {
-    overlayVideoInfo.textContent = entry.overlay_video_name || 'Overlay video';
+    overlayVideoInfo.textContent = comparisonVideoName || 'Comparison video';
   };
   overlayVideo.onerror = function () {
     overlayVideoInfo.textContent = hasOverlay ? 'Overlay could not be loaded' : 'No overlay';
   };
   if (!hasOverlay) {
     resetVideoPlayer(overlayVideo, 'overlayVideoInfo', 'No overlay', 'overlay');
-  } else if (!entry.overlay_video) {
-    resetVideoPlayer(overlayVideo, 'overlayVideoInfo', 'Overlay attached but not cached locally yet.', 'overlay');
+  } else if (!comparisonVideoUrl) {
+    resetVideoPlayer(overlayVideo, 'overlayVideoInfo', 'Comparison video is not cached locally yet.', 'overlay');
   } else {
     overlayVideo.currentTime = 0;
-    await loadVideoIntoPlayer(overlayVideo, entry, entry.overlay_video_name || (label + ' overlay'), {
+    await loadVideoIntoPlayer(overlayVideo, { ...entry, comparison_video: comparisonVideoUrl }, comparisonVideoName || (label + ' comparison'), {
       slot: 'overlay',
-      urlKey: 'overlay_video',
-      nameKey: 'overlay_video_name',
+      urlKey: 'comparison_video',
+      nameKey: 'comparison_video_name',
       infoId: 'overlayVideoInfo'
     });
   }
@@ -862,6 +886,70 @@ function openHtmlPreview() {
     return;
   }
   window.open(entry.html_files[0], '_blank');
+}
+
+function htmlReportsForEntry(entry) {
+  if (!entry) return [];
+  const reports = Array.isArray(entry.html_reports) ? entry.html_reports : [];
+  if (reports.length) return reports.filter(item => item && item.url);
+  return (entry.html_files || []).map(url => ({ url: url, name: url.split('/').pop() || url }));
+}
+
+function updateHtmlCompareButton(entry) {
+  const button = document.getElementById('compareHtmlBtn');
+  if (!button) return;
+  const count = htmlReportsForEntry(entry).length;
+  button.disabled = count < 2;
+  button.title = count < 2 ? 'Two HTML reports are needed for comparison.' : 'Compare two HTML reports side by side.';
+  button.textContent = count >= 2 ? '▤ Compare HTML Reports (' + count + ')' : '▤ Compare HTML Reports';
+}
+
+function openHtmlComparison() {
+  const entry = mappings[currentKey];
+  const reports = htmlReportsForEntry(entry);
+  if (reports.length < 2) {
+    showNotification('At least two HTML reports for this session are required.', 'error');
+    return;
+  }
+  ['A', 'B'].forEach(function (slot, index) {
+    const select = document.getElementById('htmlCompareSelect' + slot);
+    select.innerHTML = '';
+    reports.forEach(function (report, reportIndex) {
+      const option = document.createElement('option');
+      option.value = htmlReportUrl(report.url);
+      option.textContent = report.folder ? report.folder + ' · ' + report.name : report.name;
+      select.appendChild(option);
+      if (reportIndex === index) select.value = htmlReportUrl(report.url);
+    });
+  });
+  updateHtmlComparisonFrames();
+  document.getElementById('htmlCompareModal').classList.add('active');
+}
+
+function updateHtmlComparisonFrames() {
+  const selectA = document.getElementById('htmlCompareSelectA');
+  const selectB = document.getElementById('htmlCompareSelectB');
+  if (selectA && selectB && selectA.value && selectA.value === selectB.value && selectB.options.length > 1) {
+    selectB.selectedIndex = (selectA.selectedIndex + 1) % selectB.options.length;
+  }
+  ['A', 'B'].forEach(function (slot) {
+    const select = document.getElementById('htmlCompareSelect' + slot);
+    const frame = document.getElementById('htmlCompareFrame' + slot);
+    const heading = document.getElementById('htmlCompareHeading' + slot);
+    if (!select || !frame) return;
+    frame.src = select.value || 'about:blank';
+    if (heading) heading.textContent = select.options[select.selectedIndex]?.textContent || ('Report ' + slot);
+  });
+}
+
+function closeHtmlComparison() {
+  const modal = document.getElementById('htmlCompareModal');
+  if (!modal) return;
+  modal.classList.remove('active');
+  ['htmlCompareFrameA', 'htmlCompareFrameB'].forEach(function (id) {
+    const frame = document.getElementById(id);
+    if (frame) frame.src = 'about:blank';
+  });
 }
 
 function setupExpandButtons() {

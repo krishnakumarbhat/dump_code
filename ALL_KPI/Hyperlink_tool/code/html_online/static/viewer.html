@@ -4,8 +4,8 @@
   <meta charset='UTF-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1.0'>
   <title>Hyperlink Stream</title>
-  <link rel='stylesheet' href='/hyperlink/static/css/viewer.css?v=20261117_video_200'>
-  <link rel='stylesheet' href='/hyperlink/static/css/cluster.css?v=20261117_video_200'>
+  <link rel='stylesheet' href='/hyperlink/static/css/viewer.css?v=20261119_compare_201'>
+  <link rel='stylesheet' href='/hyperlink/static/css/cluster.css?v=20261119_compare_201'>
 </head>
 <body>
   <div class='page'>
@@ -52,7 +52,7 @@
                 <div id='videoInfo' class='video-info no-data'>No video</div>
               </div>
               <div id='overlayVideoPanel' class='video-panel hidden'>
-                <div class='video-panel-header'>Overlay Video</div>
+                <div class='video-panel-header'>Comparison / Overlay Video</div>
                 <video id='overlayVideoPlayer' controls playsinline preload='metadata'></video>
                 <div id='overlayVideoInfo' class='video-info no-data'>No overlay</div>
               </div>
@@ -92,6 +92,32 @@
     <button id='openHtmlBtn' class='open-html-btn' type='button'>
       <span>📄</span> Open HTML Report
     </button>
+    <button id='compareHtmlBtn' class='compare-html-btn' type='button' disabled title='Two HTML reports are needed for comparison.'>
+      <span>▤</span> Compare HTML Reports
+    </button>
+  </div>
+
+  <div id='htmlCompareModal' class='html-compare-modal' role='dialog' aria-modal='true' aria-labelledby='htmlCompareTitle'>
+    <div class='html-compare-content'>
+      <div class='html-compare-header'>
+        <div><h2 id='htmlCompareTitle'>Compare HTML Reports</h2><p>Select two reports from this session.</p></div>
+        <button id='htmlCompareClose' class='html-compare-close' type='button' aria-label='Close HTML comparison'>×</button>
+      </div>
+      <div class='html-compare-grid'>
+        <section class='html-compare-panel'>
+          <label for='htmlCompareSelectA'>HTML report 1</label>
+          <select id='htmlCompareSelectA'></select>
+          <h3 id='htmlCompareHeadingA'>Report 1</h3>
+          <iframe id='htmlCompareFrameA' title='First HTML report' sandbox='allow-scripts' src='about:blank'></iframe>
+        </section>
+        <section class='html-compare-panel'>
+          <label for='htmlCompareSelectB'>HTML report 2</label>
+          <select id='htmlCompareSelectB'></select>
+          <h3 id='htmlCompareHeadingB'>Report 2</h3>
+          <iframe id='htmlCompareFrameB' title='Second HTML report' sandbox='allow-scripts' src='about:blank'></iframe>
+        </section>
+      </div>
+    </div>
   </div>
 
   <div id='imageModal' class='image-modal'>
@@ -196,6 +222,6 @@
     </div>
   </div>
 
-  <script src='/hyperlink/static/js/viewer.js?v=20261117_video_200'></script>
+  <script src='/hyperlink/static/js/viewer.js?v=20261119_compare_201'></script>
 </body>
 </html>

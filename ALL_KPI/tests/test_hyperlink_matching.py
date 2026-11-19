@@ -92,6 +92,58 @@ def test_multiple_report_folders_pair_to_one_video_session(tmp_path):
     assert len(mapping) == 2
     assert {entry['html_folder'] for entry in mapping.values()} == set(reports)
     assert all(entry['video_missing'] is False for entry in mapping.values())
+    assert all(len(entry['html_reports']) == 2 for entry in mapping.values())
+
+
+def test_multiple_videos_are_kept_and_best_path_match_selected_per_report(tmp_path):
+    viewer = _load_viewer_module()
+    html = tmp_path / 'html'
+    video = tmp_path / 'video'
+    report = 'IRep158_SRR_ThunderMCIP_WS11656_20251024_140453_0146_bus91100_b05_HDF_Report.h5'
+    (html / report).mkdir(parents=True)
+    (html / report / 'KPI_DashBoard.html').write_text('<html/>', encoding='utf-8')
+    session = video / 'ThunderMCIP_WS11656_20251024_140453_0146_g02'
+    near = session / 'bus91100' / 'bus91100.mp4'
+    far = session / 'bus91200' / 'bus91200.mp4'
+    near.parent.mkdir(parents=True)
+    far.parent.mkdir(parents=True)
+    near.write_bytes(b'near')
+    far.write_bytes(b'far')
+
+    entry = next(iter(viewer.LogViewerApp(str(html), str(video)).build_mapping().values()))
+
+    assert len(entry['video_candidates']) == 2
+    assert entry['video_relative_path'] == near.relative_to(video).as_posix()
+    assert entry['comparison_video'].endswith('/bus91200/bus91200.mp4')
+    assert len(entry['html_reports']) == 1
+
+
+def test_unmatched_videos_remain_visible_as_individual_rows(tmp_path):
+    viewer = _load_viewer_module()
+    html = tmp_path / 'html'
+    video = tmp_path / 'video'
+    (html / 'report_without_session_key').mkdir(parents=True)
+    session = video / 'ThunderMCIP_WS11656_20251024_140453_0199_g02'
+    paths = [session / name / (name + '.mp4') for name in ('bus91100', 'bus91200')]
+    for path in paths:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(b'video')
+
+    mapping = viewer.LogViewerApp(str(html), str(video)).build_mapping()
+
+    video_entries = [entry for entry in mapping.values() if entry['video']]
+    assert len(video_entries) == 2
+    assert all(entry['html_missing'] and not entry['video_missing'] for entry in video_entries)
+    assert {entry['video_name'] for entry in video_entries} == {'bus91100.mp4', 'bus91200.mp4'}
+
+
+@pytest.mark.parametrize('name', [
+    'IRep158_SRR_ThunderMCIP_WS11656_20251024_140453_0146_r01_HDF_Report.html',
+    'IRep158_SRR_ThunderMCIP_WS11656_20251024_140453_0146_v02_export_extra.html',
+])
+def test_timestamp_matching_accepts_new_report_suffixes(name):
+    viewer = _load_viewer_module()
+    assert viewer.mapping_key_from_name(name) == '20251024_140453_0146'
 
 
 def test_session_keys_cover_mcip_suffix_variations_and_duplicate_reports():

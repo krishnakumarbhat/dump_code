@@ -9,6 +9,7 @@ import threading
 import webbrowser
 import json
 import re
+import difflib
 from typing import Any, Dict, List, Optional
 
 # Base directories - handle PyInstaller frozen mode
@@ -36,7 +37,7 @@ def get_cache_dir() -> str:
     Priority:
     1. CACHE_HTML_DIR environment variable
     2. all_services/.cache_html (if running from all_services)
-    3. ~/.cache_html (Linux) or C:\.cache_html (Windows)
+    3. ~/.cache_html (Linux) or C:\\.cache_html (Windows)
     """
     # Check environment variable first
     env_cache = os.environ.get('CACHE_HTML_DIR')
@@ -119,7 +120,9 @@ def mapping_key_from_name(name: str) -> Optional[str]:
     """Extract a shared session key from HTML report folders and video names."""
     base = normalized_video_base(name)
     parts = base.split("_")
-    match = re.search(r'(?i)(\d{8}_\d{6}_\d+)(?:_b\d{2}_hdf_report|_g\d{2}(?:_\d+)?)$', base)
+    # Timestamps are the stable identity; allow b/g/r/v suffixes and arbitrary
+    # report wrappers instead of requiring one exact export naming convention.
+    match = re.search(r'(?i)(\d{8}_\d{6}_\d+)', base)
     if match:
         return match.group(1).lower()
     if len(parts) < 2:
@@ -131,10 +134,37 @@ def video_session_key(relative_path: str) -> Optional[str]:
     """Match the nearest session ancestor, independent of wrapper directory depth."""
     parts = (relative_path or '').replace('\\', '/').split('/')
     for part in reversed(parts):
-        match = re.search(r'(?i)(\d{8}_\d{6}_\d+)(?=_b\d+|_g\d+|\.|$)', part)
+        match = re.search(r'(?i)(\d{8}_\d{6}_\d+)', part)
         if match:
             return match.group(1).lower()
     return mapping_key_from_name(parts[-1]) if parts else None
+
+
+def select_best_video(html_folder: str, candidates: List[Dict[str, str]]) -> Dict[str, str]:
+    """Select the closest video deterministically using report-folder/path names."""
+    if not candidates:
+        return {}
+    if len(candidates) == 1 or not html_folder:
+        return sorted(candidates, key=lambda item: item.get('url', '').lower())[0]
+
+    target = normalized_video_base(html_folder).lower()
+    target_tokens = {token for token in re.split(r'[_\-\s./]+', target) if token}
+
+    def score(item: Dict[str, str]) -> tuple:
+        relative = (item.get('url') or '').replace('\\', '/').removeprefix('/data/video/')
+        video_path = os.path.splitext(relative)[0].lower()
+        video_name = os.path.splitext(item.get('name') or '')[0].lower()
+        path_tokens = {token for token in re.split(r'[_\-\s./]+', video_path) if token}
+        exact_or_substring = int(video_name == target or video_name in target or target in video_path)
+        common_tokens = len(target_tokens & path_tokens)
+        sequence_ratio = difflib.SequenceMatcher(None, target, video_path).ratio()
+        name_ratio = difflib.SequenceMatcher(None, target, video_name).ratio()
+        return (exact_or_substring, common_tokens, sequence_ratio, name_ratio, video_path)
+
+    return min(candidates, key=lambda item: tuple(
+        -value if isinstance(value, (int, float)) else value
+        for value in score(item)
+    ))
 
 
 def is_supported_video_file(name: str) -> bool:
@@ -316,11 +346,11 @@ class LogViewerApp:
             m[k] = {"path": path, "content": content}
         return m
 
-    def _scan_video(self) -> tuple[Dict[str, Dict[str, str]], List[Dict[str, str]]]:
+    def _scan_video(self) -> tuple[Dict[str, List[Dict[str, str]]], List[Dict[str, str]]]:
         """Scan primary videos and overlay candidates."""
         if not self.video_root or not os.path.isdir(self.video_root):
             return {}, []
-        primary_map: Dict[str, Dict[str, str]] = {}
+        primary_map: Dict[str, List[Dict[str, str]]] = {}
         overlay_candidates: List[Dict[str, str]] = []
         for root, dirs, filenames in os.walk(self.video_root):
             dirs[:] = sorted(d for d in dirs if not d.startswith('.') and d != '__pycache__')
@@ -336,7 +366,9 @@ class LogViewerApp:
 
                 key = video_session_key(rel)
                 if key:
-                    primary_map[key] = item
+                    primary_map.setdefault(key, []).append(item)
+        for candidates in primary_map.values():
+            candidates.sort(key=lambda item: item['url'].lower())
         overlay_candidates.sort(key=lambda item: item["name"].lower())
         return primary_map, overlay_candidates
 
@@ -360,10 +392,6 @@ class LogViewerApp:
 
         html_keys = {key.split('::', 1)[0] for key in html_map}
         video_keys = set(video_map)
-        # With one side omitted, expose every discovered item; when both roots
-        # are supplied, retain exact key matching and skip unmatched records.
-        matched = sorted(html_keys & video_keys) if html_map and video_map else sorted(html_keys | video_keys)
-
         if html_map and video_map:
             for k in sorted(html_keys - video_keys):
                 print(f"No video found for key: {k}")
@@ -376,19 +404,48 @@ class LogViewerApp:
         if html_map and video_map:
             for row_key in sorted(html_map):
                 session_key, html_folder = row_key.split('::', 1)
-                if session_key in video_keys:
-                    rows.append((row_key, session_key, html_folder))
+                rows.append((row_key, session_key, html_folder))
+            # Keep unmatched videos visible too; one session may contribute
+            # multiple clips, so each orphan clip gets its own stable row.
+            for session_key in sorted(video_keys - html_keys):
+                for index, item in enumerate(video_map[session_key]):
+                    video_id = item['url'].removeprefix('/data/video/')
+                    rows.append((f'{session_key}::video::{video_id}', session_key, ''))
         elif html_map:
             rows.extend((row_key, row_key.split('::', 1)[0], row_key.split('::', 1)[1]) for row_key in sorted(html_map))
         else:
-            rows.extend((key, key, '') for key in sorted(video_keys))
+            for key in sorted(video_keys):
+                for item in video_map[key]:
+                    video_id = item['url'].removeprefix('/data/video/')
+                    rows.append((f'{key}::{video_id}', key, ''))
+
+        html_reports_by_session: Dict[str, List[Dict[str, str]]] = {}
+        for html_row_key, files in html_map.items():
+            session_key, folder = html_row_key.split('::', 1)
+            html_reports_by_session.setdefault(session_key, []).extend(
+                {'url': url, 'name': os.path.basename(url), 'folder': folder} for url in files
+            )
+        for reports in html_reports_by_session.values():
+            reports.sort(key=lambda item: (item['folder'].lower(), item['name'].lower(), item['url'].lower()))
 
         for row_key, k, html_folder in rows:
-            video_info = video_map.get(k, {})
+            candidates = video_map.get(k, [])
+            if '::video::' in row_key:
+                video_path = row_key.split('::video::', 1)[1]
+                video_info = next((item for item in candidates
+                                   if item['url'].removeprefix('/data/video/') == video_path), {})
+            else:
+                video_info = select_best_video(html_folder, candidates)
             video_url = video_info.get("url", "")
             video_name = video_info.get("name", "")
             overlay_name = find_overlay_video_name(html_folder, video_name, overlay_names) if video_name and html_folder else None
             overlay_info = overlay_by_name.get(overlay_name) if overlay_name else None
+            # Keep the existing overlay as the comparison video when available;
+            # otherwise use the closest second ordinary video in this session.
+            alternates = [item for item in candidates if item.get('url') != video_url]
+            comparison_video = overlay_info or (select_best_video(html_folder, alternates) if alternates else {})
+            session_html_reports = html_reports_by_session.get(k, [])
+            row_html_files = html_map.get(row_key, [])
 
             text_info = text_map.get(k)
             if text_info:
@@ -406,12 +463,19 @@ class LogViewerApp:
                 "video": video_url,
                 "video_name": video_name,
                 "video_relative_path": video_url.removeprefix('/data/video/') if video_url else '',
+                "video_candidates": candidates,
+                "comparison_video": comparison_video.get('url', ''),
+                "comparison_video_name": comparison_video.get('name', ''),
                 "overlay_video": overlay_info["url"] if overlay_info else "",
                 "overlay_video_name": overlay_info["name"] if overlay_info else "",
-                "html_files": html_map.get(row_key, []),
+                "html_files": row_html_files,
+                "html_reports": session_html_reports or [
+                    {'url': url, 'name': os.path.basename(url), 'folder': html_folder}
+                    for url in row_html_files
+                ],
                 "html_folder": html_folder,
                 "images": img_map.get(row_key, {}),
-                "html_missing": not bool(html_folder),
+                "html_missing": not bool(row_html_files),
                 "video_missing": k not in video_map,
                 "comment_path": comment_path,
                 "comment_content": comment_content,
