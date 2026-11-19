@@ -41,11 +41,9 @@ function apiPath(path) {
 }
 
 function browserVideoUrl(url) {
-  const parsed = new URL(url, window.location.href);
-  if (!parsed.pathname.includes('/hyperlink/data/video/')) return url;
-  parsed.pathname = parsed.pathname.replace('/hyperlink/data/video/', '/hyperlink/api/video-chunk/');
-  parsed.search = '?start=0&size=67108864';
-  return parsed.href;
+  // Use native MP4 byte-range requests. The 200-response chunk endpoint buffers
+  // up to 64 MiB before replying, delaying metadata/playback on slower links.
+  return url;
 }
 
 function comparisonVideoForEntry(entry) {

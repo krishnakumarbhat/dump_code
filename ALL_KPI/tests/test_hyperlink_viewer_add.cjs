@@ -46,6 +46,7 @@ context.updateScenario = async () => {};
   assert.ok(notifications.some(message => message.includes('not saved')));
   assert.equal(context.comparisonVideoForEntry({ comparison_video: '/comparison.mp4', overlay_video: '/overlay.mp4' }), '/comparison.mp4');
   assert.equal(context.comparisonVideoForEntry({ overlay_video: '/overlay.mp4' }), '/overlay.mp4');
+  assert.equal(context.browserVideoUrl('/hyperlink/data/video/session/clip.mp4'), '/hyperlink/data/video/session/clip.mp4', 'Video uses native byte ranges rather than a buffered 64 MiB response');
   const reports = context.htmlReportsForEntry({ html_reports: [{ url: '/one.html' }, { url: '/two.html' }] });
   assert.equal(reports.length, 2, 'The viewer keeps both HTML reports available for side-by-side selection');
   console.log('Hyperlink viewer add regression checks passed');
