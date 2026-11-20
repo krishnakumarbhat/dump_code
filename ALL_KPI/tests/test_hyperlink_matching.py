@@ -118,6 +118,19 @@ def test_multiple_videos_are_kept_and_best_path_match_selected_per_report(tmp_pa
     assert len(entry['html_reports']) == 1
 
 
+def test_full_capture_name_video_beats_same_session_bus_fallback():
+    viewer = _load_viewer_module()
+    report = 'IRep10_SRR_CEER_PT047_20261016_120213_0003_b05_HDF_Report.h5'
+    matching = 'CEER_PT047_20261016_120213_0003_g02_combined.mp4'
+    candidates = [
+        {'name': 'bus91001.mp4', 'url': '/data/video/CEER_PT047_20261016_120213_0003_g02/bus91001/bus91001.mp4'},
+        {'name': 'bus91002.mp4', 'url': '/data/video/CEER_PT047_20261016_120213_0003_g02/bus91002/bus91002.mp4'},
+        {'name': matching, 'url': '/data/video/CEER_PT047_20261016_120213_0003_g02/' + matching},
+    ]
+
+    assert viewer.select_best_video(report, candidates)['name'] == matching
+
+
 def test_unmatched_videos_remain_visible_as_individual_rows(tmp_path):
     viewer = _load_viewer_module()
     html = tmp_path / 'html'

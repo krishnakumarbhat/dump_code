@@ -140,26 +140,37 @@ def video_session_key(relative_path: str) -> Optional[str]:
     return mapping_key_from_name(parts[-1]) if parts else None
 
 
+def _video_match_base(name: str) -> str:
+    """Normalize report/video naming wrappers while retaining their shared capture stem."""
+    base = normalized_video_base(name).lower()
+    base = re.sub(r'^irep\d+_(?:mrr|srr)_', '', base)
+    base = re.sub(r'_(?:b\d+_)?hdf_report(?:_out)?$', '', base)
+    base = re.sub(r'_(?:g\d+)(?:_\d+)?(?:_combined)?$', '', base)
+    return base
+
+
 def select_best_video(html_folder: str, candidates: List[Dict[str, str]]) -> Dict[str, str]:
-    """Select the closest video deterministically using report-folder/path names."""
+    """Rank normalized filenames before directory tokens so a matching MP4 beats a bus fallback."""
     if not candidates:
         return {}
     if len(candidates) == 1 or not html_folder:
         return sorted(candidates, key=lambda item: item.get('url', '').lower())[0]
 
-    target = normalized_video_base(html_folder).lower()
+    target = _video_match_base(html_folder)
     target_tokens = {token for token in re.split(r'[_\-\s./]+', target) if token}
 
     def score(item: Dict[str, str]) -> tuple:
         relative = (item.get('url') or '').replace('\\', '/').removeprefix('/data/video/')
         video_path = os.path.splitext(relative)[0].lower()
-        video_name = os.path.splitext(item.get('name') or '')[0].lower()
+        video_name = _video_match_base(item.get('name') or relative)
         path_tokens = {token for token in re.split(r'[_\-\s./]+', video_path) if token}
-        exact_or_substring = int(video_name == target or video_name in target or target in video_path)
-        common_tokens = len(target_tokens & path_tokens)
-        sequence_ratio = difflib.SequenceMatcher(None, target, video_path).ratio()
         name_ratio = difflib.SequenceMatcher(None, target, video_name).ratio()
-        return (exact_or_substring, common_tokens, sequence_ratio, name_ratio, video_path)
+        name_tokens = {token for token in re.split(r'[_\-\s./]+', video_name) if token}
+        exact_name = int(video_name == target)
+        timestamp = re.search(r'\d{8}_\d{6}_\d+', target)
+        timestamp_in_name = int(bool(timestamp and timestamp.group(0) in video_name))
+        return (exact_name, timestamp_in_name, name_ratio, len(target_tokens & name_tokens),
+                len(target_tokens & path_tokens), difflib.SequenceMatcher(None, target, video_path).ratio(), video_path)
 
     return min(candidates, key=lambda item: tuple(
         -value if isinstance(value, (int, float)) else value
