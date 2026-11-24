@@ -1344,7 +1344,15 @@ class RuntimeBroker:
         if interactive_source_target not in {'can_kpi', 'udp_kpi'}:
             interactive_source_target = 'udp_kpi'
         config_xml = _stage_bundle_path_for_user_job(self.workspace_root, _sanitize_runtime_path(paths.get('config_xml', '').strip()))
-        optional_config = _stage_bundle_path_for_user_job(self.workspace_root, _sanitize_runtime_path(paths.get('optional_config', '').strip()))
+        raw_plot_configs = paths.get('plot_config_jsons')
+        if not isinstance(raw_plot_configs, list):
+            raw_plot_configs = [paths.get('optional_config', '')] if paths.get('optional_config') else []
+        plot_configs = [
+            staged for config in raw_plot_configs
+            if (staged := _stage_bundle_path_for_user_job(
+                self.workspace_root, _sanitize_runtime_path(str(config).strip())
+            ))
+        ]
         launcher_path = _runtime_root(self.workspace_root) / 'kpi_runtime_launcher.sh'
 
         if tool_key != 'hyperlink' and image_path is None:
@@ -1363,8 +1371,8 @@ class RuntimeBroker:
             ]
             if config_xml:
                 launcher_args.extend(['--config-xml', config_xml])
-            if optional_config:
-                launcher_args.extend(['--optional-config', optional_config])
+            for plot_config in plot_configs:
+                launcher_args.extend(['--plot-config', plot_config])
             if input_mode == 'mf4':
                 input_mf4 = _sanitize_runtime_path(paths.get('input_hdf', '').strip())
                 output_mf4 = _sanitize_runtime_path(paths.get('output_hdf', '').strip())
@@ -1397,8 +1405,8 @@ class RuntimeBroker:
             ]
             if config_xml:
                 launcher_args.extend(['--config-xml', config_xml])
-            if optional_config:
-                launcher_args.extend(['--optional-config', optional_config])
+            for plot_config in plot_configs:
+                launcher_args.extend(['--plot-config', plot_config])
 
             if input_mode == 'hdf':
                 input_hdf = _stage_bundle_path_for_user_job(self.workspace_root, _sanitize_runtime_path(paths.get('input_hdf', '').strip()))
@@ -1460,8 +1468,8 @@ class RuntimeBroker:
             ]
             if config_xml:
                 launcher_args.extend(['--config-xml', config_xml])
-            if optional_config:
-                launcher_args.extend(['--optional-config', optional_config])
+            for plot_config in plot_configs:
+                launcher_args.extend(['--plot-config', plot_config])
 
             if input_mode == 'hdf':
                 input_hdf = _stage_bundle_path_for_user_job(self.workspace_root, _sanitize_runtime_path(paths.get('input_hdf', '').strip()))

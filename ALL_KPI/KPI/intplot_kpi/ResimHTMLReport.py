@@ -123,12 +123,15 @@ if __name__ == "__main__":
         print(f"Running as PyInstaller bundle. Application path: {application_path}")
 
     # Check command line arguments
-    if len(sys.argv) < 3 or len(sys.argv) > 5:
+    if len(sys.argv) < 3:
         print(
-            "Usage: python ResimHTMLReport.py <config.xml> <inputs.json> [output_directory] [plot_config.json]"
+            "Usage: python ResimHTMLReport.py <config.xml> <inputs.json> "
+            "[output_directory] [plot_config.json ...]"
         )
         print(
-            "Also supported: python ResimHTMLReport.py <config.xml> <inputs.json> <plot_config.json> [output_directory]"
+            "Any number of plot config JSONs may be given, e.g. "
+            "'af.json detection.json general.json'. They are merged in order "
+            "(per-stream union, later file wins per signal) on top of the default config."
         )
         sys.exit(1)
 
@@ -136,27 +139,19 @@ if __name__ == "__main__":
     config_file = sys.argv[1]
     input_plot_json_file = sys.argv[2]
     output_directory = None
-    plot_config_json = None
+    plot_config_jsons = []
 
-    # Flexible optional argument parsing:
-    # Supported patterns:
-    # 1) <xml> <input_json> <out>
-    # 2) <xml> <input_json> <plot_config_json>
-    # 3) <xml> <input_json> <out> <plot_config_json>
-    # 4) <xml> <input_json> <plot_config_json> <out>
-    optional_args = sys.argv[3:]
-    for arg in optional_args:
-        is_json = arg.lower().endswith('.json')
-        if is_json and plot_config_json is None:
-            plot_config_json = arg
+    # Optional args are order-free: every *.json is a plot config, anything else
+    # is the output directory (at most one).
+    for arg in sys.argv[3:]:
+        if arg.lower().endswith('.json'):
+            plot_config_jsons.append(arg)
         elif output_directory is None:
             output_directory = arg
-        elif is_json and plot_config_json is None:
-            plot_config_json = arg
         else:
             print(
                 f"Error: Could not interpret optional argument '{arg}'. "
-                "Use optional args as [output_directory] [plot_config.json] in any order."
+                "Usage: <config.xml> <inputs.json> [output_directory] [plot_config.json ...]"
             )
             sys.exit(1)
 
@@ -177,23 +172,25 @@ if __name__ == "__main__":
         print(f"Current working directory: {os.getcwd()}")
         sys.exit(1)
 
-    if plot_config_json and not os.path.exists(plot_config_json):
-        print(f"Error: Plot config JSON file not found: {plot_config_json}")
-        print(f"Current working directory: {os.getcwd()}")
-        sys.exit(1)
+    if plot_config_jsons:
+        missing = [p for p in plot_config_jsons if not os.path.exists(p)]
+        if missing:
+            print(f"Error: Plot config JSON file(s) not found: {', '.join(missing)}")
+            print(f"Current working directory: {os.getcwd()}")
+            sys.exit(1)
 
     print(f"Config file: {config_file}")
     print(f"JSON file: {input_plot_json_file}")
     if output_directory:
         print(f"Output directory: {output_directory}")
-    if plot_config_json:
-        print(f"Plot config JSON: {plot_config_json}")
+    if plot_config_jsons:
+        print(f"Plot config JSONs (merged in order): {', '.join(plot_config_jsons)}")
 
     processor = MainProcessor(
         config_file,
         input_plot_json_file,
         output_directory,
-        plot_config_json,
+        plot_config_jsons or None,
     )
     
     # Run with asyncio for better performance

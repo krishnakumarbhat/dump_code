@@ -11,6 +11,7 @@ import gc
 import os
 import tempfile
 import shutil
+import threading
 
 try:
     from memory_profiler import memory_usage
@@ -146,11 +147,27 @@ class DataPrep:
 
         # Prepare arguments for multiprocessing (one job per signal)
         mp_args = []
-        lock = mp.Manager().Lock()
-        shared_data = mp.Manager().dict()
         self.temp_dir = tempfile.mkdtemp(prefix="plotly_temp_")
-        shared_data["temp_dir"] = self.temp_dir
         stream_signals = get_plot_config().get(self.stream_name, {})
+        num_processors = max(1, mp.cpu_count() - 2)
+
+        # Multiprocessing is fragile and slow to start on Windows (spawn), and
+        # is mainly useful on Linux/HPC. Default to sequential on Windows.
+        disable_mp = (os.name == 'nt') or (os.environ.get('INTERACTIVE_PLOT_DISABLE_MP', '0') == '1')
+
+        # ponytail: the Manager server is only created when a process pool will
+        # actually run. In sequential mode a plain dict + threading.Lock is used,
+        # which removes a socket round-trip per shared_data access (it was the
+        # dominant cost of the sequential path).
+        if (not disable_mp) and num_processors > 3:
+            manager = mp.Manager()
+            lock = manager.Lock()
+            shared_data = manager.dict()
+            shared_data["temp_dir"] = self.temp_dir
+        else:
+            lock = threading.Lock()
+            shared_data = {"temp_dir": self.temp_dir}
+
         for signal_name, signal_config in stream_signals.items():
             mp_args.append(
                 (
@@ -161,11 +178,6 @@ class DataPrep:
                     lock,
                 )
             )
-        num_processors = max(1, mp.cpu_count() - 2)
-
-        # Multiprocessing is fragile and slow to start on Windows (spawn), and
-        # is mainly useful on Linux/HPC. Default to sequential on Windows.
-        disable_mp = (os.name == 'nt') or (os.environ.get('INTERACTIVE_PLOT_DISABLE_MP', '0') == '1')
 
         signal_plot_path = {}
 
@@ -287,17 +299,21 @@ class DataPrep:
             if not temp_dir:
                 # This should be created once before multiprocessing starts
                 return {}
-            # Process each plot type for this signal
-                try:
-                    if shared_data is not None and hasattr(shared_data, "__setitem__"):
-                        cache_key = f"_signal_bundle::{str(complete_signal_name).strip().lower()}"
-                        shared_data[cache_key] = {
-                            "SI": data_dict.get("SI").tolist() if hasattr(data_dict.get("SI"), "tolist") else data_dict.get("SI"),
-                            "I": data_dict.get("I").tolist() if hasattr(data_dict.get("I"), "tolist") else data_dict.get("I"),
-                            "O": data_dict.get("O").tolist() if hasattr(data_dict.get("O"), "tolist") else data_dict.get("O"),
-                        }
-                except Exception:
-                    logging.debug("Failed caching signal bundle for %s", complete_signal_name)
+
+            # Stage this signal's (SI, I, O) bundle so cross-signal plots
+            # (XY correlation, radar context) can read it by canonical name.
+            # ponytail: this block used to sit under `if not temp_dir: return`,
+            # i.e. it was dead code and every cross-signal plot fell back.
+            try:
+                if shared_data is not None and hasattr(shared_data, "__setitem__"):
+                    cache_key = f"_signal_bundle::{str(complete_signal_name).strip().lower()}"
+                    shared_data[cache_key] = {
+                        "SI": data_dict.get("SI").tolist() if hasattr(data_dict.get("SI"), "tolist") else data_dict.get("SI"),
+                        "I": data_dict.get("I").tolist() if hasattr(data_dict.get("I"), "tolist") else data_dict.get("I"),
+                        "O": data_dict.get("O").tolist() if hasattr(data_dict.get("O"), "tolist") else data_dict.get("O"),
+                    }
+            except Exception:
+                logging.debug("Failed caching signal bundle for %s", complete_signal_name)
 
             # Generalizable (X, Y) plotting: stage the declared signal pairing
             # and pre-resolve every referenced signal's bundle under its
@@ -347,8 +363,9 @@ class DataPrep:
             
                         try:
                             with open(json_path, 'w', encoding='utf-8') as f:
-                                import json
-                                json.dump(figure.to_dict(), f, indent=2)
+                                # ponytail: compact JSON; to_dict()+json.dump(indent=2)
+                                # roughly doubled the bytes the HTML layer re-parses.
+                                f.write(figure.to_json())
                             plot_data_dict[plot_key] = json_path
                         except Exception as e:
                             logging.error(f"Failed to write plot {plot_key} to {json_path}: {e}")

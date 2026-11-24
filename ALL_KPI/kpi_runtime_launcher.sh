@@ -16,7 +16,7 @@ Usage: kpi_runtime_launcher.sh --target <can_kpi|udp_kpi|interactive_plot> \
   [--json-path <file.json>] \
   [--input-hdf <input.h5> --output-hdf <output.h5>] \
   [--config-xml <ConfigInteractivePlots.xml>] \
-  [--optional-config <plot_config.json>] \
+  [--plot-config <plot_config.json> ...] \
   [--output-dir <dir>] \
   [--port <zmq_port>] \
   [--detached]
@@ -32,7 +32,7 @@ INPUT_HDF=''
 OUTPUT_HDF=''
 OUTPUT_DIR=''
 CONFIG_XML=''
-OPTIONAL_CONFIG=''
+PLOT_CONFIGS=()
 PORT="${KPI_SERVER_PORT:-5560}"
 DETACHED=0
 
@@ -75,7 +75,11 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
         --optional-config)
-            OPTIONAL_CONFIG="$(bundle_abs_path "$2")"
+            PLOT_CONFIGS+=("$(bundle_abs_path "$2")")
+            shift 2
+            ;;
+        --plot-config)
+            PLOT_CONFIGS+=("$(bundle_abs_path "$2")")
             shift 2
             ;;
         --port)
@@ -120,14 +124,13 @@ else
     mkdir -p "$OUTPUT_DIR"
 fi
 
-if [[ -n "$OPTIONAL_CONFIG" ]]; then
+for OPTIONAL_CONFIG in "${PLOT_CONFIGS[@]}"; do
     if [[ -d "$OPTIONAL_CONFIG" ]]; then
-        echo "Optional config path is a directory; ignoring it: $OPTIONAL_CONFIG" >&2
-        OPTIONAL_CONFIG=''
-    else
-        bundle_ensure_file "$OPTIONAL_CONFIG"
+        echo "Plot config path is a directory: $OPTIONAL_CONFIG" >&2
+        exit 1
     fi
-fi
+    bundle_ensure_file "$OPTIONAL_CONFIG"
+done
 
 # MF4 -> HDF with the same MUDP container call as the MUDP pipeline, then KPI runs on HDF.
 convert_mf4_inputs() {
@@ -323,9 +326,7 @@ run_interactive_plot() {
     local target_output="$3"
     local -a command
     command=("$BUNDLE_ROOT/kpi/int_plot/run_intplot.sh" "$config_path" "$inputs_json" "$target_output")
-    if [[ -n "$OPTIONAL_CONFIG" ]]; then
-        command+=("$OPTIONAL_CONFIG")
-    fi
+    command+=("${PLOT_CONFIGS[@]}")
     "${command[@]}"
 }
 
@@ -365,9 +366,7 @@ case "$TARGET" in
             # (kpi/can_intplot/canintplot_kpi.simg) and falls back to the sequential
             # run_can.sh + run_intplot.sh flow when it is not present.
             command=("$BUNDLE_ROOT/kpi/inplot_can.sh" --wait "$CONFIG_XML" "$local_json" "$OUTPUT_DIR")
-            if [[ -n "$OPTIONAL_CONFIG" ]]; then
-                command+=("$OPTIONAL_CONFIG")
-            fi
+            command+=("${PLOT_CONFIGS[@]}")
             "${command[@]}"
             exit 0
         fi
@@ -383,9 +382,7 @@ case "$TARGET" in
             local_json="$(pair_json_for_interactive)"
             if (( DETACHED )); then
                 command=("$BUNDLE_ROOT/kpi/inplot_udp.sh" "$CONFIG_XML" "$local_json" "$OUTPUT_DIR" "$PORT")
-                if [[ -n "$OPTIONAL_CONFIG" ]]; then
-                    command+=("$OPTIONAL_CONFIG")
-                fi
+                command+=("${PLOT_CONFIGS[@]}")
                 "${command[@]}"
                 exit 0
             fi

@@ -13,28 +13,33 @@ if [[ "${1:-}" == '--wait' ]]; then
     shift
 fi
 
-if [[ $# -lt 2 || $# -gt 4 ]]; then
-    echo 'Usage: inplot_can.sh [--wait] <config.xml> <inputs.json> [output_dir] [plot_config.json]' >&2
+if [[ $# -lt 2 ]]; then
+    echo 'Usage: inplot_can.sh [--wait] <config.xml> <inputs.json> [output_dir] [plot_config.json ...]' >&2
     exit 1
 fi
 
 CONFIG_XML="$(bundle_abs_path "$1")"
 INPUT_JSON="$(bundle_abs_path "$2")"
 OUTPUT_DIR=''
-PLOT_CONFIG=''
+PLOT_CONFIGS=()
 
 if [[ $# -ge 3 && -n "${3:-}" ]]; then
     OUTPUT_DIR="$(bundle_abs_path "$3")"
 fi
-if [[ $# -ge 4 && -n "${4:-}" ]]; then
-    PLOT_CONFIG="$(bundle_abs_path "$4")"
-fi
+for plot_config in "${@:4}"; do
+    [[ -n "$plot_config" ]] && PLOT_CONFIGS+=("$(bundle_abs_path "$plot_config")")
+done
+PLOT_CONFIGS_DECL=''
+for plot_config in "${PLOT_CONFIGS[@]}"; do
+    printf -v quoted_config '%q' "$plot_config"
+    PLOT_CONFIGS_DECL+=" $quoted_config"
+done
 
 bundle_ensure_file "$CONFIG_XML"
 bundle_ensure_file "$INPUT_JSON"
-if [[ -n "$PLOT_CONFIG" ]]; then
-    bundle_ensure_file "$PLOT_CONFIG"
-fi
+for plot_config in "${PLOT_CONFIGS[@]}"; do
+    bundle_ensure_file "$plot_config"
+done
 
 if [[ -z "$OUTPUT_DIR" ]]; then
     OUTPUT_DIR="$(bundle_default_output_dir "$BUNDLE_ROOT" can_interactive)"
@@ -76,7 +81,8 @@ if ! bundle_wait_for_port 127.0.0.1 "\$port" 90 1; then
   echo "[inplot_can] CAN KPI server failed on port \$port"; cat "$RUN_DIR/can_kpi_server.log"
   printf '1' > "$MAIN_EXIT"; exit 1
 fi
-bundle_run_image --app plot "$COMBINED_IMAGE" "$CONFIG_XML" "$INPUT_JSON" "$OUTPUT_DIR"${PLOT_CONFIG:+ "$PLOT_CONFIG"}
+PLOT_CONFIGS=( ${PLOT_CONFIGS_DECL} )
+bundle_run_image --app plot "$COMBINED_IMAGE" "$CONFIG_XML" "$INPUT_JSON" "$OUTPUT_DIR" "${PLOT_CONFIGS[@]}"
 status=\$?
 printf '%s' "\$status" > "$MAIN_EXIT"
 exit "\$status"
@@ -89,9 +95,8 @@ exec > >(tee -a "$MAIN_LOG") 2>&1
 echo '[inplot_can] experimental sequential CAN + Interactive Plot flow'
 "$BUNDLE_ROOT/kpi/can/run_can.sh" "$INPUT_JSON" "$OUTPUT_DIR/can_kpi"
 run_plot_cmd=("$BUNDLE_ROOT/kpi/int_plot/run_intplot.sh" "$CONFIG_XML" "$INPUT_JSON" "$OUTPUT_DIR/interactive_plot")
-if [[ -n "$PLOT_CONFIG" ]]; then
-  run_plot_cmd+=("$PLOT_CONFIG")
-fi
+PLOT_CONFIGS=( ${PLOT_CONFIGS_DECL} )
+run_plot_cmd+=("${PLOT_CONFIGS[@]}")
 "\${run_plot_cmd[@]}"
 status=\$?
 printf '%s' "\$status" > "$MAIN_EXIT"

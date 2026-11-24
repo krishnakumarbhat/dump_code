@@ -10,12 +10,15 @@ source "$BUNDLE_ROOT/bundle_common.sh"
 usage() {
     cat <<'EOF'
 Usage:
-  run_intplot.sh <config.xml> <inputs.json> [output_dir] [plot_config.json]
-  run_intplot.sh <config.xml> <inputs.json> <plot_config.json> [output_dir]
+  run_intplot.sh <config.xml> <inputs.json> [output_dir] [plot_config.json ...]
+  run_intplot.sh <config.xml> <inputs.json> <plot_config.json> [plot_config.json ...] [output_dir]
+
+Every *.json optional argument is a plot config; they are merged in order
+(per-stream union, later file wins per signal) by ResimHTMLReport.py.
 EOF
 }
 
-if [[ $# -lt 2 || $# -gt 4 ]]; then
+if [[ $# -lt 2 ]]; then
     usage >&2
     exit 1
 fi
@@ -26,11 +29,11 @@ bundle_ensure_file "$IMAGE_PATH"
 CONFIG_XML="$(bundle_abs_path "$1")"
 INPUT_JSON="$(bundle_abs_path "$2")"
 OUTPUT_DIR=''
-PLOT_CONFIG=''
+PLOT_CONFIGS=()
 
 for argument in "${@:3}"; do
-    if [[ "$argument" == *.json && -z "$PLOT_CONFIG" ]]; then
-        PLOT_CONFIG="$(bundle_abs_path "$argument")"
+    if [[ "$argument" == *.json ]]; then
+        PLOT_CONFIGS+=("$(bundle_abs_path "$argument")")
     elif [[ -z "$OUTPUT_DIR" ]]; then
         OUTPUT_DIR="$(bundle_abs_path "$argument")"
     else
@@ -47,16 +50,16 @@ fi
 
 bundle_ensure_file "$CONFIG_XML"
 bundle_ensure_file "$INPUT_JSON"
-if [[ -n "$PLOT_CONFIG" ]]; then
-    bundle_ensure_file "$PLOT_CONFIG"
-fi
+for plot_config in "${PLOT_CONFIGS[@]}"; do
+    bundle_ensure_file "$plot_config"
+done
 
 echo "[run_intplot] config=$CONFIG_XML"
 echo "[run_intplot] json=$INPUT_JSON"
 echo "[run_intplot] output_dir=$OUTPUT_DIR"
-if [[ -n "$PLOT_CONFIG" ]]; then
-    echo "[run_intplot] plot_config=$PLOT_CONFIG"
-    bundle_run_image "$IMAGE_PATH" "$CONFIG_XML" "$INPUT_JSON" "$OUTPUT_DIR" "$PLOT_CONFIG"
+if (( ${#PLOT_CONFIGS[@]} )); then
+    echo "[run_intplot] plot_configs=${PLOT_CONFIGS[*]}"
+    bundle_run_image "$IMAGE_PATH" "$CONFIG_XML" "$INPUT_JSON" "$OUTPUT_DIR" "${PLOT_CONFIGS[@]}"
     exit $?
 fi
 

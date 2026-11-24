@@ -1,0 +1,55 @@
+{
+  "CDC_STREAM": {
+    "num_cdc_records": {"aliases": ["num_cdc_records"], "call": ["num_cdc_records"], "plot_types": ["scatter_plot"], "unit": "count", "grp": "CDC_STREAM"}
+  },
+  "DETECTION_STREAM": {
+    "num_af_det": {"aliases": ["num_af_det"], "call": ["num_af_det"], "plot_types": ["scatter_plot", "scatter_num_af_det"], "unit": "count", "grp": "DETECTION_STREAM"},
+    "bistatic_count": {"aliases": ["bistatic_count"], "call": ["bistatic_count"], "plot_types": ["scatter_plot"], "unit": "count", "grp": "DETECTION_STREAM"},
+    "num_fp_detections": {"aliases": ["num_fp_detections"], "call": ["num_fp_detections"], "plot_types": ["scatter_plot"], "unit": "count", "grp": "DETECTION_STREAM"},
+    "num_sp_detections": {"aliases": ["num_sp_detections"], "call": ["num_sp_detections"], "plot_types": ["scatter_plot"], "unit": "count", "grp": "DETECTION_STREAM"},
+    "rest_count": {"aliases": ["rest_count"], "call": ["rest_count"], "plot_types": ["scatter_plot"], "unit": "count", "grp": "DETECTION_STREAM"},
+    "af_timeout_count": {"aliases": ["af_timeout_count"], "call": ["af_timeout_count"], "plot_types": ["scatter_plot"], "unit": "count", "grp": "DETECTION_STREAM"},
+    "af_saturation_flag": {"aliases": ["af_saturation_flag"], "call": ["af_saturation_flag"], "plot_types": ["scatter_plot"], "unit": "flag", "grp": "DETECTION_STREAM"},
+    "module_time_ms": {"aliases": ["module_time_ms"], "call": ["module_time_ms"], "plot_types": ["scatter_plot"], "unit": "ms", "grp": "DETECTION_STREAM"},
+    "range_coverage": {"aliases": ["range_coverage"], "call": ["range_coverage"], "plot_types": ["scatter_plot"], "unit": "bin", "grp": "DETECTION_STREAM"},
+    "doppler_coverage": {"aliases": ["doppler_coverage"], "call": ["doppler_coverage"], "plot_types": ["scatter_plot"], "unit": "bin", "grp": "DETECTION_STREAM"},
+    "error_info": {"aliases": ["error_info"], "call": ["error_info"], "plot_types": ["scatter_plot"], "unit": "code", "grp": "DETECTION_STREAM"}
+  },
+  "RDD_STREAM": {
+    "rdd1_num_detect": {"aliases": ["rdd1_num_detect"], "call": ["rdd1_num_detect"], "plot_types": ["scatter_plot"], "unit": "count", "grp": "RDD_STREAM"},
+    "rdd2_num_detect": {"aliases": ["rdd2_num_detect"], "call": ["rdd2_num_detect"], "plot_types": ["scatter_plot"], "unit": "count", "grp": "RDD_STREAM"},
+    "rdd_time": {"aliases": ["rdd_time"], "call": ["rdd_time"], "plot_types": ["scatter_plot"], "unit": "count", "grp": "RDD_STREAM"}
+  },
+  "VSE_STREAM": {
+    "veh_speed": {"aliases": ["veh_speed"], "call": ["veh_speed"], "plot_types": ["scatter_plot"], "unit": "m/s", "grp": "VSE_STREAM"},
+    "veh_yaw": {"aliases": ["veh_yaw", "yaw_rate"], "call": ["veh_yaw"], "plot_types": ["scatter_plot"], "unit": "rad/s", "grp": "VSE_STREAM"},
+    "veh_pitch": {"aliases": ["veh_pitch"], "call": ["veh_pitch"], "plot_types": ["scatter_plot"], "unit": "rad", "grp": "VSE_STREAM"},
+    "veh_roll": {"aliases": ["veh_roll"], "call": ["veh_roll"], "plot_types": ["scatter_plot"], "unit": "rad", "grp": "VSE_STREAM"},
+    "veh_steering_angle": {"aliases": ["veh_steering_angle"], "call": ["veh_steering_angle"], "plot_types": ["scatter_plot"], "unit": "rad", "grp": "VSE_STREAM"},
+    "status_of_plate": {"aliases": ["status_of_plate"], "call": ["status_of_plate"], "plot_types": ["scatter_plot"], "unit": "status", "grp": "VSE_STREAM"}
+  },
+  "TOI_STREAM": {
+    "toi_xput_inst": {"aliases": ["toi_xput_inst"], "call": ["toi_xput_inst"], "plot_types": ["scatter_plot"], "unit": "%", "grp": "TOI_STREAM"},
+    "toi_xput_peak": {"aliases": ["toi_xput_peak"], "call": ["toi_xput_peak"], "plot_types": ["scatter_plot"], "unit": "%", "grp": "TOI_STREAM"},
+    "sensor_dwell_time_ms": {"aliases": ["sensor_dwell_time_ms"], "call": ["sensor_dwell_time_ms"], "plot_types": ["scatter_plot"], "unit": "ms", "grp": "TOI_STREAM"},
+    "measurement_latency": {"aliases": ["measurement_latency"], "call": ["measurement_latency"], "plot_types": ["scatter_plot"], "unit": "ms", "grp": "TOI_STREAM"},
+    "time_sync_jitter": {"aliases": ["time_sync_jitter"], "call": ["time_sync_jitter"], "plot_types": ["scatter_plot"], "unit": "ns", "grp": "TOI_STREAM"},
+    "tdd_error_info": {"aliases": ["error_info"], "call": ["error_info"], "plot_types": ["scatter_plot"], "unit": "code", "grp": "TOI_STREAM"}
+  },
+  "DYNAMIC_ALIGNMENT_STREAM": {
+    "vacs_boresight_az_estimated": {"aliases": ["vacs_boresight_az_estimated"], "call": ["vacs_boresight_az_estimated"], "plot_types": ["scatter_plot"], "unit": "deg", "grp": "DYNAMIC_ALIGNMENT_STREAM"},
+    "vacs_boresight_az_kf_internal_V": {"aliases": ["vacs_boresight_az_kf_internal_V"], "call": ["vacs_boresight_az_kf_internal_V"], "plot_types": ["scatter_plot"], "unit": "deg", "grp": "DYNAMIC_ALIGNMENT_STREAM"},
+    "vacs_boresight_az_nominal_V": {"aliases": ["vacs_boresight_az_nominal_V"], "call": ["vacs_boresight_az_nominal_V"], "plot_types": ["scatter_plot"], "unit": "deg", "grp": "DYNAMIC_ALIGNMENT_STREAM"},
+    "vacs_boresight_el_estimated": {"aliases": ["vacs_boresight_el_estimated"], "call": ["vacs_boresight_el_estimated"], "plot_types": ["scatter_plot"], "unit": "deg", "grp": "DYNAMIC_ALIGNMENT_STREAM"},
+    "vacs_boresight_el_kf_internal": {"aliases": ["vacs_boresight_el_kf_internal"], "call": ["vacs_boresight_el_kf_internal"], "plot_types": ["scatter_plot"], "unit": "deg", "grp": "DYNAMIC_ALIGNMENT_STREAM"},
+    "vacs_boresight_el_nominal": {"aliases": ["vacs_boresight_el_nominal"], "call": ["vacs_boresight_el_nominal"], "plot_types": ["scatter_plot"], "unit": "deg", "grp": "DYNAMIC_ALIGNMENT_STREAM"}
+  },
+  "TRACKER_STREAM": {
+    "trkID": {"aliases": ["trkID", "trkid", "track_id"], "call": ["trkID"], "plot_types": ["scatter_plot"], "unit": "id", "grp": "TRACKER_STREAM"},
+    "vcs_xposn": {"aliases": ["vcs_xposn"], "call": ["vcs_xposn"], "plot_types": ["scatter_plot"], "unit": "m", "grp": "TRACKER_STREAM"},
+    "vcs_yposn": {"aliases": ["vcs_yposn"], "call": ["vcs_yposn"], "plot_types": ["scatter_plot"], "unit": "m", "grp": "TRACKER_STREAM"},
+    "vcs_xvel": {"aliases": ["vcs_xvel"], "call": ["vcs_xvel"], "plot_types": ["scatter_plot"], "unit": "m/s", "grp": "TRACKER_STREAM"},
+    "vcs_yvel": {"aliases": ["vcs_yvel"], "call": ["vcs_yvel"], "plot_types": ["scatter_plot"], "unit": "m/s", "grp": "TRACKER_STREAM"},
+    "vcs_heading": {"aliases": ["vcs_heading"], "call": ["vcs_heading"], "plot_types": ["scatter_plot"], "unit": "rad", "grp": "TRACKER_STREAM"}
+  }
+}

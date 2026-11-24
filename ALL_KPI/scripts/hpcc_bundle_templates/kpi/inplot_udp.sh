@@ -13,8 +13,8 @@ if [[ "${1:-}" == '--wait' ]]; then
     shift
 fi
 
-if [[ $# -lt 2 || $# -gt 5 ]]; then
-    echo 'Usage: inplot_udp.sh [--wait] <config.xml> <inputs.json> [output_dir] [port] [plot_config.json]' >&2
+if [[ $# -lt 2 ]]; then
+    echo 'Usage: inplot_udp.sh [--wait] <config.xml> <inputs.json> [output_dir] [port] [plot_config.json ...]' >&2
     exit 1
 fi
 
@@ -22,7 +22,7 @@ CONFIG_XML="$(bundle_abs_path "$1")"
 INPUT_JSON="$(bundle_abs_path "$2")"
 OUTPUT_DIR=''
 PORT='5560'
-PLOT_CONFIG=''
+PLOT_CONFIGS=()
 
 if [[ $# -ge 3 && -n "${3:-}" ]]; then
     OUTPUT_DIR="$(bundle_abs_path "$3")"
@@ -30,15 +30,20 @@ fi
 if [[ $# -ge 4 && -n "${4:-}" ]]; then
     PORT="$4"
 fi
-if [[ $# -ge 5 && -n "${5:-}" ]]; then
-    PLOT_CONFIG="$(bundle_abs_path "$5")"
-fi
+for plot_config in "${@:5}"; do
+    [[ -n "$plot_config" ]] && PLOT_CONFIGS+=("$(bundle_abs_path "$plot_config")")
+done
+PLOT_CONFIGS_DECL=''
+for plot_config in "${PLOT_CONFIGS[@]}"; do
+    printf -v quoted_config '%q' "$plot_config"
+    PLOT_CONFIGS_DECL+=" $quoted_config"
+done
 
 bundle_ensure_file "$CONFIG_XML"
 bundle_ensure_file "$INPUT_JSON"
-if [[ -n "$PLOT_CONFIG" ]]; then
-    bundle_ensure_file "$PLOT_CONFIG"
-fi
+for plot_config in "${PLOT_CONFIGS[@]}"; do
+    bundle_ensure_file "$plot_config"
+done
 
 if [[ -z "$OUTPUT_DIR" ]]; then
     OUTPUT_DIR="$(bundle_default_output_dir "$BUNDLE_ROOT" udp_interactive)"
@@ -79,11 +84,8 @@ export APPTAINERENV_KPI_SERVER_PORT="$PORT"
 export SINGULARITYENV_INTERACTIVE_PLOT_ENABLE_KPI=1
 export SINGULARITYENV_KPI_SERVER_HOST=127.0.0.1
 export SINGULARITYENV_KPI_SERVER_PORT="$PORT"
-if [[ -n "$PLOT_CONFIG" ]]; then
-  "$BUNDLE_ROOT/kpi/int_plot/run_intplot.sh" "$CONFIG_XML" "$INPUT_JSON" "$OUTPUT_DIR" "$PLOT_CONFIG"
-else
-  "$BUNDLE_ROOT/kpi/int_plot/run_intplot.sh" "$CONFIG_XML" "$INPUT_JSON" "$OUTPUT_DIR"
-fi
+PLOT_CONFIGS=( ${PLOT_CONFIGS_DECL} )
+"$BUNDLE_ROOT/kpi/int_plot/run_intplot.sh" "$CONFIG_XML" "$INPUT_JSON" "$OUTPUT_DIR" "${PLOT_CONFIGS[@]}"
 status=\$?
 printf '%s' "\$status" > "$INT_EXIT"
 exit "\$status"

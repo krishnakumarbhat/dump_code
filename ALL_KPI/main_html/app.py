@@ -3337,7 +3337,13 @@ def _build_runtime_kpi_submission(form_source) -> dict:
     )
     optional_config = _normalize_submitted_path(form_source.get('optional_config'))
     if optional_config:
-        paths['optional_config'] = optional_config
+        plot_configs = [_normalize_submitted_path(path) for path in optional_config.split(';')]
+        plot_configs = [path for path in plot_configs if path]
+        invalid_plot_configs = [path for path in plot_configs if not path.lower().endswith('.json')]
+        if invalid_plot_configs:
+            raise ValueError(f'Plot configuration files must be JSON: {", ".join(invalid_plot_configs)}')
+        paths['optional_config'] = plot_configs[0]  # legacy single-config readers
+        paths['plot_config_jsons'] = plot_configs
 
     if interactive_plot_only:
         execution_label = 'Interactive Plot only'
@@ -3761,6 +3767,14 @@ def _rerun_history_job(job: JobHistory):
     for path_key in ('output_dir', 'config_xml', 'json_path', 'input_hdf', 'output_hdf', 'optional_config', 'html_root'):
         if path_key in paths:
             paths[path_key] = _normalize_submitted_path(paths[path_key])
+    if isinstance(paths.get('plot_config_jsons'), list):
+        paths['plot_config_jsons'] = [
+            path for path in (_normalize_submitted_path(item) for item in paths['plot_config_jsons']) if path
+        ]
+    elif paths.get('optional_config'):
+        paths['plot_config_jsons'] = [
+            path for path in (_normalize_submitted_path(item) for item in paths['optional_config'].split(';')) if path
+        ]
 
     execution_target = str(parameters.get('execution_target') or '').strip()
     if not execution_target:

@@ -16,8 +16,12 @@ def test_configurations_are_seeded_and_saved_per_netid(monkeypatch, tmp_path):
 
     alice = manager.configuration_path('udp_config_xml', 'alice')
     bob = manager.configuration_path('udp_config_xml', 'bob')
+    af = manager.configuration_path('af_plot_json', 'alice')
+    detection = manager.configuration_path('detection_plot_json', 'alice')
+    general = manager.configuration_path('general_plot_json', 'alice')
     assert Path(alice).is_file()
     assert Path(bob).is_file()
+    assert all(Path(path).is_file() for path in (af, detection, general))
     assert Path(alice).parent != Path(bob).parent
 
     updated = '<Configuration><PLOT_MODE><KPI>0</KPI></PLOT_MODE></Configuration>'
@@ -25,6 +29,9 @@ def test_configurations_are_seeded_and_saved_per_netid(monkeypatch, tmp_path):
 
     assert manager.get_configuration('udp_config_xml', 'alice')[1] == updated
     assert manager.get_configuration('udp_config_xml', 'bob')[1] != updated
+    original_bob = manager.get_configuration('af_plot_json', 'bob')[1]
+    manager.save_configuration('af_plot_json', '{"example": {"signal": {}}}', 'alice')
+    assert manager.get_configuration('af_plot_json', 'bob')[1] == original_bob
     if os.name == 'posix':
         assert Path(alice).stat().st_mode & 0o077 == 0
 

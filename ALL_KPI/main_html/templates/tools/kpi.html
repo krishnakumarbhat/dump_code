@@ -133,9 +133,10 @@
                             <div class="col-md-6">
                                 <label class="form-label">Optional config</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="optional_config" name="optional_config" placeholder="/path/to/optional-config.json or .xml">
-                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('optional_config', ['xml', 'json'])">Browse</button>
+                                    <input type="text" class="form-control" id="optional_config" name="optional_config" placeholder="Choose your plot config or enter a JSON path">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('optional_config', ['json'])">Browse</button>
                                 </div>
+                                <small class="text-muted d-block mt-1">Choose one personal plot configuration in the configuration section. Selecting another replaces it.</small>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Output directory</label>
@@ -269,6 +270,13 @@
                 <div class="card-body p-0">
                     <div class="list-group list-group-flush">
                         {% for config in configuration_files %}
+                        {% if config.id == 'config_json' %}
+                        <div class="list-group-item bg-body-tertiary"><strong>Interactive Plot configuration</strong><small class="d-block text-muted">Choose the main configuration or one of its separate plot presets for a run.</small></div>
+                        {% elif config.id == 'af_plot_json' %}
+                        <div class="list-group-item bg-body-tertiary ps-4"><strong>Plot presets</strong><small class="d-block text-muted">Personal copies; each preset is selected independently.</small></div>
+                        {% elif config.id == 'input_output_json' %}
+                        <div class="list-group-item bg-body-tertiary"><strong>Input and KPI configuration</strong></div>
+                        {% endif %}
                         <div class="list-group-item bg-transparent border-light-subtle config-row" data-config-id="{{ config.id }}">
                             <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
                                 <div class="min-w-0">
@@ -292,6 +300,8 @@
                                 <button type="button" class="btn btn-sm btn-outline-success config-action" data-action="use">Use for {{ 'CAN KPI' if config.id == 'can_config_xml' else 'UDP KPI' }}</button>
                                 {% elif config.id == 'input_output_json' %}
                                 <button type="button" class="btn btn-sm btn-outline-success config-action" data-action="use">Use as input</button>
+                                {% elif config.id in ['config_json', 'af_plot_json', 'detection_plot_json', 'general_plot_json'] %}
+                                <button type="button" class="btn btn-sm btn-outline-success config-action" data-action="use">Use for plot</button>
                                 {% endif %}
                             </div>
                             <div class="small mt-2 config-status" role="status"></div>
@@ -482,7 +492,7 @@ document.querySelectorAll('.config-row').forEach((row) => {
                 } else if (action === 'use') {
                     const config = configurationById[configId];
                     if (configId === 'input_output_json') document.getElementById('kpi_json').value = config.path;
-                    if (configId === 'config_json') document.getElementById('optional_config').value = config.path;
+                    if (['config_json', 'af_plot_json', 'detection_plot_json', 'general_plot_json'].includes(configId)) document.getElementById('optional_config').value = config.path;
                     if (configId === 'udp_config_xml' || configId === 'can_config_xml') document.getElementById('config_xml').value = config.path;
                     setStatus(rowStatus, `${config.filename} selected for the current run.`, 'success');
                     updateRuntimeForm();

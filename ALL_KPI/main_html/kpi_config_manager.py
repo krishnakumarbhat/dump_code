@@ -19,6 +19,21 @@ CONFIGURATION_SPECS = {
         'purpose': 'Interactive Plot configuration.',
         'format': 'json',
     },
+    'af_plot_json': {
+        'filename': 'af.json',
+        'purpose': 'AF detection plots only (DETECTION_STREAM).',
+        'format': 'json',
+    },
+    'detection_plot_json': {
+        'filename': 'detection.json',
+        'purpose': 'Detection stream plots only (DETECTION_STREAM).',
+        'format': 'json',
+    },
+    'general_plot_json': {
+        'filename': 'general.json',
+        'purpose': 'General plots across configured streams.',
+        'format': 'json',
+    },
     'input_output_json': {
         'filename': 'InputsInteractivePlot.json',
         'purpose': 'Interactive Plot input and output settings.',

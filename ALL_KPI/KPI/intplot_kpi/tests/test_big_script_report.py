@@ -15,8 +15,14 @@ def _make_pair(path: Path, scale: float) -> None:
     with h5py.File(path, 'w') as handle:
         handle.create_dataset('FL/DETECTION_STREAM/Stream_Hdr/scan_index', data=np.arange(n, dtype=np.uint16))
         handle.create_dataset('FL/DETECTION_STREAM/AF_Det/num_af_det', data=(np.arange(n) % 7).astype(np.int32))
-        ran = np.random.default_rng(0).uniform(1, 50, (n, 20)).astype(np.float32) * scale
-        handle.create_dataset('FL/DETECTION_STREAM/AF_Det/ran', data=ran)
+        rng = np.random.default_rng(0)
+        shape = (n, 20)
+        handle.create_dataset('FL/DETECTION_STREAM/AF_Det/ran', data=rng.uniform(1, 50, shape).astype(np.float32) * scale)
+        handle.create_dataset('FL/DETECTION_STREAM/AF_Det/theta', data=rng.uniform(-1, 1, shape).astype(np.float32))
+        handle.create_dataset('FL/DETECTION_STREAM/AF_Det/vel', data=rng.uniform(-20, 20, shape).astype(np.float32))
+        handle.create_dataset('FL/DETECTION_STREAM/AF_Det/snr', data=rng.uniform(0, 40, shape).astype(np.float32))
+        handle.create_dataset('FL/DETECTION_STREAM/AF_Det/rcs', data=rng.uniform(-30, 20, shape).astype(np.float32))
+        handle.create_dataset('FL/DETECTION_STREAM/AF_Det/f_bistatic', data=rng.integers(0, 2, shape, dtype=np.int8))
         handle.create_dataset('FL/Voltage/main_volt', data=np.linspace(11.5, 12.5, n) * scale)
 
 
@@ -34,10 +40,19 @@ def test_big_script_writes_combined_section_reports(tmp_path):
 
     assert written, 'expected at least one sensor report'
     page = Path(written[0]).read_text(encoding='utf-8')
-    assert 'UDP Stream Health' in page
-    assert 'AF Detections' in page
+    assert 'Stream continuity and scan health' in page
+    assert 'AF detections per scan' in page
     assert 'Voltage' in page
     assert 'Normalized' in page
+    assert 'Radar processing story' in page
+    assert 'Not present' in page
+    assert 'Where detections occur' in page
+    assert 'AF detection quality and target mix' in page
+    assert 'scan overlap' in page
+    assert 'not a matched-scan loss metric' in page
+    assert 'AF detections per scan' in page
+    assert 'Detection properties' in page
+    assert 'Input + output' in page
     assert (tmp_path / 'html' / 'big_script' / 'index.html').is_file()
     assert 'big_script/index.html' in master.read_text(encoding='utf-8')
 

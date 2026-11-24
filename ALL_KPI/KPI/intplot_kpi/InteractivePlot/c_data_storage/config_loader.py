@@ -1,13 +1,15 @@
 import json
 import logging
 import os
-from typing import Dict, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 from InteractivePlot.c_data_storage.config_storage import Gen7V1_V2
 
 
 _ACTIVE_PLOT_CONFIG = Gen7V1_V2
 _ACTIVE_PLOT_CONFIG_SOURCE = "InteractivePlot/c_data_storage/config_storage.py"
+
+ConfigPathArg = Union[None, str, Iterable[str]]
 
 
 
@@ -22,6 +24,27 @@ def _normalize_config(raw_config: dict) -> dict:
 
 
 
+def _as_path_list(config_json_path: ConfigPathArg) -> List[str]:
+    """Purpose: accept one path, a list of paths or None. Outputs: clean ordered list."""
+    if not config_json_path:
+        return []
+    if isinstance(config_json_path, (str, os.PathLike)):
+        return [os.fspath(config_json_path)]
+    return [os.fspath(path) for path in config_json_path if path]
+
+
+
+def _merge_config(target: Dict, source: Dict) -> Dict:
+    """Purpose: merge stream/signal maps; per-stream union, later file wins per signal."""
+    for stream, signals in source.items():
+        if isinstance(signals, dict) and isinstance(target.get(stream), dict):
+            target[stream].update(signals)
+        else:
+            target[stream] = signals
+    return target
+
+
+
 def _is_valid_plot_config(candidate: dict) -> bool:
     if not isinstance(candidate, dict) or not candidate:
         return False
@@ -31,37 +54,52 @@ def _is_valid_plot_config(candidate: dict) -> bool:
 
 
 
-def load_plot_config(config_json_path: Optional[str] = None) -> Tuple[Dict, str]:
+def load_plot_config(config_json_path: ConfigPathArg = None) -> Tuple[Dict, str]:
+    """Purpose: load and merge one or many plot config JSONs over the built-in default.
+
+    Inputs: a path, a list of paths (merged in order; per-stream signals are unioned,
+    a later file overrides an earlier one for the same signal), or None to use
+    ./config.json then config_storage.py.
+    Outputs: (active config, human readable source description).
+
+    A file that is missing, empty or malformed is skipped with a warning, matching
+    the previous single-file behaviour: the run never dies because of one bad config.
+    """
     global _ACTIVE_PLOT_CONFIG, _ACTIVE_PLOT_CONFIG_SOURCE
 
-    resolved_path = config_json_path
-    if not resolved_path:
+    paths = _as_path_list(config_json_path)
+    if not paths:
         default_path = os.path.join(os.getcwd(), "config.json")
         if os.path.exists(default_path):
-            resolved_path = default_path
+            paths = [default_path]
 
-    if resolved_path:
+    merged: Dict = {}
+    loaded_sources: List[str] = []
+    for path in paths:
         try:
-            if os.path.getsize(resolved_path) == 0:
+            if os.path.getsize(path) == 0:
                 raise ValueError("Config JSON file is empty")
 
-            with open(resolved_path, "r", encoding="utf-8") as cfg_file:
+            with open(path, "r", encoding="utf-8") as cfg_file:
                 loaded = json.load(cfg_file)
 
             normalized = _normalize_config(loaded)
             if not _is_valid_plot_config(normalized):
                 raise ValueError("Config JSON is not in expected stream/signal format")
-
-            _ACTIVE_PLOT_CONFIG = normalized
-            _ACTIVE_PLOT_CONFIG_SOURCE = resolved_path
-            logging.info("Using plot configuration from JSON: %s", resolved_path)
-            return _ACTIVE_PLOT_CONFIG, _ACTIVE_PLOT_CONFIG_SOURCE
         except Exception as ex:
             logging.warning(
-                "Failed to load plot config from %s (%s). Falling back to config_storage.py",
-                resolved_path,
-                ex,
+                "Failed to load plot config from %s (%s). Skipping it.", path, ex
             )
+            continue
+
+        _merge_config(merged, normalized)
+        loaded_sources.append(path)
+
+    if merged:
+        _ACTIVE_PLOT_CONFIG = merged
+        _ACTIVE_PLOT_CONFIG_SOURCE = " + ".join(loaded_sources)
+        logging.info("Using plot configuration from JSON: %s", _ACTIVE_PLOT_CONFIG_SOURCE)
+        return _ACTIVE_PLOT_CONFIG, _ACTIVE_PLOT_CONFIG_SOURCE
 
     _ACTIVE_PLOT_CONFIG = Gen7V1_V2
     _ACTIVE_PLOT_CONFIG_SOURCE = "InteractivePlot/c_data_storage/config_storage.py"

@@ -86,3 +86,6 @@ ALL_KPI/edge_hdf_test/out_e2e*/
 
 # AGENT NOTE: credentials - never commit
 research/Core_Radar_Gen8_iND13400/.env
+
+# Local scratch dump (interpreter runtimes, PDFs, exported reports)
+dump2/
